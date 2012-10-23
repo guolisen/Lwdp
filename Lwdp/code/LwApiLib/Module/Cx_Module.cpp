@@ -1,4 +1,4 @@
-// Copyright (C), 2006£­2011, Potevio Institute of Technology.
+// Copyright (C), 2006ï¿½ï¿½2011, Potevio Institute of Technology.
 /************************************************************
 *  File name:   LwLogMessage.cpp  	
 *  Author:      guolisen
@@ -7,6 +7,8 @@
 ***********************************************************/
 // 2011.08.11: Create By Guolisen
 
+#include <iostream>
+#include <algorithm>
 #include <LwDp.h>
 #include <PluginInc.h>
 
@@ -42,7 +44,7 @@ void Cx_Module::ClearModuleItems()
 }
 long_ Cx_Module::GetUnfreeObjectCount()
 {
-    long_ n, nTotal = 0;
+    long n, nTotal = 0;
     X3CLASSENTRY* pCls = m_classEntry;
 
     for (; pCls->pfnObjectCreator; ++pCls)
@@ -77,17 +79,17 @@ MODULEID	  Cx_Module::GetModuleInstance() const { return m_hModule; }
 LWRESULT Cx_Module::GetModuleType(TPLUGIN_TYPE& module_type) const
 {
 	module_type = m_moduleInfo->pluginType;
-	return LWDP_OK;
+	return 0;
 }
 LWRESULT Cx_Module::GetModuleDomain(TPLUGIN_CODE_DOMAIN* module_domain) const
 {
 	*module_domain = m_moduleInfo->codeDomain;
-	return LWDP_OK;
+	return 0;
 }
 LWRESULT Cx_Module::GetModuleLevel(TPLUGIN_LEVEL& module_level) const
 {
 	module_level = m_moduleInfo->pluginLevel;
-	return LWDP_OK;
+	return 0;
 }
 
 int32_ Cx_Module::GetClassEntryTable(int32_* pBuildInfo, uint32_* pEntrySize,
@@ -127,7 +129,7 @@ int32_ Cx_Module::GetClassEntryTable(int32_* pBuildInfo, uint32_* pEntrySize,
     nClassCount = nClassCount < nMaxCount ? nClassCount : nMaxCount;
     for (int32_ i = 0; i < nClassCount; i++)
     {
-        memcpy((BYTE*)pTable + i * nEntrySize, m_classEntry + i, nEntrySize);
+        memcpy((byte_*)pTable + i * nEntrySize, m_classEntry + i, nEntrySize);
     }
 
     return nClassCount;
@@ -171,7 +173,7 @@ int32_ Cx_Module::InternalCreateObject(const tchar_* clsid, X3IID iid,
                             			  Ix_Object** ppv, const MODID& fromModule)
 {
     if (NULL == ppv)
-        return LWDP_PARAMETER_ERROR;
+        return -1;
     *ppv = NULL;
 
     LWCLSID clsid2(clsid);
@@ -182,11 +184,11 @@ int32_ Cx_Module::InternalCreateObject(const tchar_* clsid, X3IID iid,
         if (clsid2 == pCls->clsid)
         {
             *ppv = (*pCls->pfnObjectCreator)(iid, fromModule);
-            return LWDP_OK;
+            return 0;
         }
     }
 
-    return LWDP_ERROR;
+    return -1;
 }
 
 

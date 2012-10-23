@@ -1,4 +1,4 @@
-// Copyright (C), 2006£­2011, Potevio Institute of Technology.
+// Copyright (C), 2006ï¿½ï¿½2011, Potevio Institute of Technology.
 /************************************************************
 *  File name:   LwApiDebug.cpp  	
 *  Author:      guolisen
@@ -6,9 +6,9 @@
 *  Create Date: 2011-08-12
 ***********************************************************/
 // 2011.08.12: Create By Guolisen
-
+#if 0
 #include <LwDp.h>
-#include <Platform/LwApi/LwApi.h>
+//#include <Platform/LwApi/LwApi.h>
 
 
 LWDP_NAMESPACE_BEGIN;
@@ -77,3 +77,4 @@ EXTERN_C_END;
 LWDP_NAMESPACE_END;
     
 
+#endif

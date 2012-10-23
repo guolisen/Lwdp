@@ -6,6 +6,7 @@
 #ifndef IX_XML_MANAGER_H
 #define IX_XML_MANAGER_H
 
+#include <LwDp.h>
 #include <list>
 #include <string>
 #include <map>
@@ -86,7 +87,7 @@ public:
 
 
 protected:
-	tstring mTag;
+	std::string mTag;
 			
 };
 
@@ -186,7 +187,7 @@ public:
 	{
 		for(int32_ i=0; i<gNumFunTable; ++i)
 		{
-			if(Api_tcscmp(gFunInfoTable[i].fun_name, mTag.c_str()) == 0)
+			if(Api_tcscmp((char_*)gFunInfoTable[i].fun_name, (const char_*)mTag.c_str()) == 0)
 			{
 				if(gFunInfoTable[i].para_num != 1)
 					return static_cast<tstring>("");

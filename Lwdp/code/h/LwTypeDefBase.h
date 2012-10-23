@@ -88,8 +88,8 @@ typedef int32_              bool_;
     typedef unsigned __int64 uint64_;
 #define UINT64_CONST(n) n
 #else
-    typedef long_ long_ int32_ int64_;
-    typedef unsigned long_ long_ int32_ uint64_;
+    //typedef long_ long_ int32_ int64_;
+    //typedef unsigned long_ long_ int32_ uint64_;
 #define UINT64_CONST(n) n ## ULL
 #endif
 

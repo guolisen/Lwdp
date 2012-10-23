@@ -22,7 +22,7 @@ public:
     DEFINE_IID(Ix_PluginLoader2)
 
     virtual long_ GetPluginCount() = 0;
-    virtual bool GetPluginFileName(long_ index, MODULEID& hdll, tstring& filename) = 0;
+    virtual bool GetPluginFileName(long_ index, MODULEID& hdll, std::string& filename) = 0;
 };
 
 LWDP_NAMESPACE_END;

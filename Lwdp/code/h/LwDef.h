@@ -76,12 +76,12 @@ const int32_ UNICODE_TAG = 0;
 #define STD_OUT	1
 #define STD_ERR	2
 
-#ifndef max
-#define max(a,b) ((a)>(b)?(a):(b))
-#endif
-#ifndef min
-#define min(a,b) ((a)<(b)?(a):(b))
-#endif
+//#ifndef max
+//#define max(a,b) ((a)>(b)?(a):(b))
+//#endif
+//#ifndef min
+//#define min(a,b) ((a)<(b)?(a):(b))
+//#endif
 
 #ifndef LWDP_MAX_PATH
 #define LWDP_MAX_PATH 256

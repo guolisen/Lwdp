@@ -6,6 +6,7 @@
 #ifndef X3_PLUGINIMPL_CLASSITEM_H_
 #define X3_PLUGINIMPL_CLASSITEM_H_
 
+#include <LwDp.h>
 #include <Interface/Ix_Object.h>
 
 LWDP_NAMESPACE_BEGIN;
@@ -32,8 +33,8 @@ typedef long_ (*PFNXRefCountByOthers)();
 class X3CLASSENTRY
 {
 public:
-    BYTE                type;               //!< see MIN_SINGLETON_TYPE and XModuleMacro.h
-    const tchar_*       className;          //!< implement class name
+    byte_                type;               //!< see MIN_SINGLETON_TYPE and XModuleMacro.h
+    const char_*       className;          //!< implement class name
     LWCLSID             clsid;              //!< class id
     MODID               modid;              //!< module id of this class
     PFNXObjectCreator   pfnObjectCreator;   //!< class factory function
@@ -41,8 +42,8 @@ public:
     PFNXRefCountByOthers    pfnRefCountByOthers;    //!< count of objects used by other modules
 
     //! Used by XDEFINE_CLASSMAP_ENTRY, XDEFINE_CLASSMAP_ENTRY_Singleton
-    X3CLASSENTRY(BYTE    _type,
-        const tchar_*           _className,
+    X3CLASSENTRY(byte_    _type,
+        const char_*           _className,
         const LWCLSID&          _clsid,
         const MODID&            _modid,
         PFNXObjectCreator       _pfnObjectCreator,

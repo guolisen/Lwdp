@@ -33,20 +33,21 @@
 
 #define Api_fprintf		Lwdp_fprintf
 #define Api_sprintf		Lwdp_sprintf  
+#define Api_snprintf	Lwdp_snprintf 
 #define Api_vsprintf	Lwdp_vstprintf    
 #define Api_ltot		Lwdp_ltot        
 #define Api_itot		Lwdp_itot         
 
 
 #ifdef __VXWORKS__
-#include <LwApiLib/LwApi/VxWorks/Api4Vxworks.h>
-#elif (WIN32 || _WIN32)
-#include <LwApiLib/LwApi/Win32/Api4Win32.h>
-#include <LwApiLib/LwApi/Win32/CsOsApi.h>  //Vxworks Api
-#elif __linux__
-#include <LwApiLib/LwApi/Linux/Api4Linux.h>
+	#include <LwApiLib/LwApi/VxWorks/Api4Vxworks.h>
+#elif defined(WIN32) || defined(_WIN32)
+	#include <LwApiLib/LwApi/Win32/Api4Win32.h>
+	#include <LwApiLib/LwApi/Win32/CsOsApi.h>  //Vxworks Api
+#elif  defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__)
+	#include <LwApiLib/LwApi/Linux/Api4Linux.h>
 #elif defined (MACOS) || defined (_MAC)
-#include <LwApiLib/LwApi/Mac/NacImpl.h>
+	#include <LwApiLib/LwApi/Mac/NacImpl.h>
 #endif
 
 #include <LwApiLib/LwApi/LwApiCommon.h>

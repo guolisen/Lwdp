@@ -4,11 +4,11 @@
  *  \date   2011.07.14
  */
 
-#ifndef LW_API_FRM_H_
-#define LW_API_FRM_H_
+#ifndef LW_ENTRY_FRM_H_
+#define LW_ENTRY_FRM_H_
 
 #include <Interface/Ix_Object.h>
-#include <Interface/ConfigMgr/Ix_ConfigMgr.h>
+#include <Interface/ConfigMgr/Ix_Configmgr.h>
  
 #include "FwTagDef.h"
 
@@ -43,7 +43,7 @@ typedef struct stru_module_entry{
 							 module_modid(NULL), 
 							 module_ptr(NULL){}
 
-	stru_module_entry(const stru_module_entry& other)   //¿½±´¹¹Ôì
+	stru_module_entry(const stru_module_entry& other)   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	{
 		module_name  = other.module_name;
 		module_modid = other.module_modid;
@@ -60,7 +60,7 @@ typedef struct stru_module_entry{
 	}
 }MODULE_ENTRY;
 
-typedef struct stru_module_table
+struct stru_module_table
 {
 	struct stru_module_entry* moduleEntry[MAX_PLUGIN_NUM];
 	uint32_	tableSize;

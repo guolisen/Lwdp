@@ -17,8 +17,8 @@ EXTERN_C_BEGIN
 
 //Platform Module Config
 
-
-
+#define _LWDP_NO_SYSTEM_SIZE_T
+//#define _STDIO_DEFINED
 
 
 

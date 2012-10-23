@@ -6,6 +6,9 @@
 #ifndef X3_CORE_IOBJECT_H_
 #define X3_CORE_IOBJECT_H_
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <LwDp.h>
 
 LWDP_NAMESPACE_BEGIN;
 EXTERN_C_BEGIN;
@@ -60,28 +63,28 @@ public:
 
     LWCLSID& operator=(const LWCLSID& src)
     {
-        Api_tcsncpy(m_clsid, 40, src.m_clsid, 40);
+        Api_tcsncpy((tchar_ *)m_clsid, 40, (tchar_ *)src.m_clsid, 40);
         return *this;
     }
 
     bool operator==(const LWCLSID& src) const
     {
-        return Api_tcscmp(m_clsid, src.m_clsid) == 0;
+        return Api_tcscmp((tchar_ *)m_clsid, (tchar_ *)src.m_clsid) == 0;
     }
 
     bool operator!=(const LWCLSID& src) const
     {
-        return Api_tcscmp(m_clsid, src.m_clsid) != 0;
+        return Api_tcscmp((tchar_ *)m_clsid, (tchar_ *)src.m_clsid) != 0;
     }
 
     bool operator>(const LWCLSID& src) const
     {
-        return Api_tcscmp(m_clsid, src.m_clsid) > 0;
+        return Api_tcscmp((tchar_ *)m_clsid, (tchar_ *)src.m_clsid) > 0;
     }
 
     bool operator<(const LWCLSID& src) const
     {
-        return Api_tcscmp(m_clsid, src.m_clsid) < 0;
+        return Api_tcscmp((tchar_ *)m_clsid, (tchar_ *)src.m_clsid) < 0;
     }
 
     const tchar_* str() const
@@ -92,8 +95,8 @@ public:
     bool empty() const
     {
         return  m_clsid[0] == 0 || 
-				!Api_tcscmp(m_clsid, __T("")) || 
-				!Api_tcscmp(m_clsid, __T("00000000-0000-0000-0000-000000000000"));
+				!Api_tcscmp((tchar_ *)m_clsid, (tchar_ *)__T("")) ||
+				!Api_tcscmp((tchar_ *)m_clsid, (tchar_ *)__T("00000000-0000-0000-0000-000000000000"));
     }
 
     bool valid() const
@@ -103,7 +106,7 @@ public:
 
 	void clear()
 	{
-		memset(m_clsid, 0, sizeof(m_clsid));
+		memset((char_ *)m_clsid, 0, sizeof(m_clsid));
 	}
 private:
     tchar_ m_clsid[40];

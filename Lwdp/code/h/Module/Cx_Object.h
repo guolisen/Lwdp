@@ -6,6 +6,7 @@
 #ifndef X3_PLUGINIMPL_OBJECT_H_
 #define X3_PLUGINIMPL_OBJECT_H_
 
+#include <LwDp.h>
 //#include "Ix_Object.h"
 
 LWDP_NAMESPACE_BEGIN;

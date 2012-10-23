@@ -1,4 +1,4 @@
-// Copyright (C), 2006£­2011, Potevio Institute of Technology.
+// Copyright (C), 2006ï¿½ï¿½2011, Potevio Institute of Technology.
 /************************************************************
 *  File name:   LwLogMessage.cpp  	
 *  Author:      guolisen
@@ -54,10 +54,10 @@ LWDP_CATEGORY_INFO logcatInfo [] =
 /****************************************************************************
 *  Function:       LwdpLoggerInit
 *  Description:    
-*  Input:          ÎÞ
-*  Output:         // ¶ÔÊä³ö²ÎÊýµÄËµÃ÷
-*  Return:         // º¯Êý·µ»ØÖµµÄËµÃ÷	
-*  Others:         // ÆäËüËµÃ÷
+*  Input:          ï¿½ï¿½
+*  Output:         // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½
+*  Return:         // ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½Ëµï¿½ï¿½	
+*  Others:         // ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½
 *****************************************************************************/
 LWRESULT Api_LoggerFdSet (int32_  category, int32_  fd)
 {
@@ -79,10 +79,10 @@ LWRESULT Api_LoggerFdSet (int32_  category, int32_  fd)
 /****************************************************************************
 *  Function:       LwdpLogLevelChange
 *  Description:    
-*  Input:          ÎÞ
-*  Output:         // ¶ÔÊä³ö²ÎÊýµÄËµÃ÷
-*  Return:         // º¯Êý·µ»ØÖµµÄËµÃ÷	
-*  Others:         // ÆäËüËµÃ÷
+*  Input:          ï¿½ï¿½
+*  Output:         // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½
+*  Return:         // ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½Ëµï¿½ï¿½	
+*  Others:         // ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½
 *****************************************************************************/
 LWRESULT Api_LogLevelSet (int32_ category, uint32_ mask)
 {
@@ -112,10 +112,10 @@ LWRESULT Api_LogLevelSet (int32_ category, uint32_ mask)
 /****************************************************************************
 *  Function:       LwdpLogLevelGet
 *  Description:    
-*  Input:          ÎÞ
-*  Output:         // ¶ÔÊä³ö²ÎÊýµÄËµÃ÷
-*  Return:         // º¯Êý·µ»ØÖµµÄËµÃ÷	
-*  Others:         // ÆäËüËµÃ÷
+*  Input:          ï¿½ï¿½
+*  Output:         // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½
+*  Return:         // ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½Ëµï¿½ï¿½	
+*  Others:         // ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½
 *****************************************************************************/
 LWRESULT Api_LogLevelGet (int32_ category, uint32_* log_level)
 {
@@ -149,10 +149,10 @@ LWRESULT Api_LogLevelGet (int32_ category, uint32_* log_level)
 /****************************************************************************
 *  Function:       LwdpLogDecorationChange
 *  Description:    
-*  Input:          ÎÞ
-*  Output:         // ¶ÔÊä³ö²ÎÊýµÄËµÃ÷
-*  Return:         // º¯Êý·µ»ØÖµµÄËµÃ÷	
-*  Others:         // ÆäËüËµÃ÷
+*  Input:          ï¿½ï¿½
+*  Output:         // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½
+*  Return:         // ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½Ëµï¿½ï¿½	
+*  Others:         // ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½
 *****************************************************************************/
 uint32_  Api_LogDecorationChange (int32_ category, uint32_ disableMask, uint32_ enableMask)
 {
@@ -186,10 +186,10 @@ uint32_  Api_LogDecorationChange (int32_ category, uint32_ disableMask, uint32_ 
 /****************************************************************************
 *  Function:       LwdpLoggerInfoShow
 *  Description:    
-*  Input:          ÎÞ
-*  Output:         // ¶ÔÊä³ö²ÎÊýµÄËµÃ÷
-*  Return:         // º¯Êý·µ»ØÖµµÄËµÃ÷	
-*  Others:         // ÆäËüËµÃ÷
+*  Input:          ï¿½ï¿½
+*  Output:         // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½
+*  Return:         // ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½Ëµï¿½ï¿½	
+*  Others:         // ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½
 *****************************************************************************/
 void Api_LoggerInfoShow()
 {
@@ -262,10 +262,10 @@ LWRESULT SetConsoleColorLeave()
 /****************************************************************************
 *  Function:       _lw_applLog
 *  Description:    
-*  Input:          ÎÞ
-*  Output:         // ¶ÔÊä³ö²ÎÊýµÄËµÃ÷
-*  Return:         // º¯Êý·µ»ØÖµµÄËµÃ÷	
-*  Others:         // ÆäËüËµÃ÷
+*  Input:          ï¿½ï¿½
+*  Output:         // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½
+*  Return:         // ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½Ëµï¿½ï¿½	
+*  Others:         // ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½
 *****************************************************************************/
 LWRESULT _lw_applLog(int32_ priCat, const char_ * file, int32_ line, const tchar_ * fmt, ...)
 {
@@ -309,7 +309,7 @@ LWRESULT _lw_applLog(int32_ priCat, const char_ * file, int32_ line, const tchar
     memset(decoration, 0, LOG_LINE_STR_LEN);
     if ((priCat & LOG_DECOR) != 0)
 	{	
-    	n = Api_sprintf (decoration, LOG_LINE_STR_LEN-1,
+    	n = Api_snprintf (decoration, LOG_LINE_STR_LEN-1,
             		      __T("[%s][%s] "), logPriNames[pri], logCatNames[category]);
 	}
 
@@ -326,7 +326,7 @@ LWRESULT _lw_applLog(int32_ priCat, const char_ * file, int32_ line, const tchar
 	    fileName = Api_PathFindFileName(tmpFileName);
         if(!fileName)
             fileName = __T("NO_FILENAME");
-    	n += Api_sprintf (decoration + n, LOG_LINE_STR_LEN - n,
+    	n += Api_snprintf (decoration + n, LOG_LINE_STR_LEN - n,
     		       			__T("%s:%d: "), fileName, line);
 	}
 
@@ -352,7 +352,7 @@ LWRESULT _lw_applLog(int32_ priCat, const char_ * file, int32_ line, const tchar
         tchar_ buf [LOG_NAME_MAX_STR + 1] = {0};
 
         //strerror_r (err, buf);
-        n += Api_sprintf (decoration + n, LOG_LINE_STR_LEN - n,
+        n += Api_snprintf (decoration + n, LOG_LINE_STR_LEN - n,
 			__T("[%x:%s] "), err, Api_strlen(buf) ? buf : __T("NO_DESCRIP"));
 	}
 

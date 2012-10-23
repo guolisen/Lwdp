@@ -16,6 +16,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <wchar.h>
+#include <LwDp.h>
 
 LWDP_NAMESPACE_BEGIN;
 EXTERN_C_BEGIN;
@@ -36,22 +37,33 @@ typedef void* MODULEID;
 typedef void* HANDLE;
 typedef void* HWND;
 
+typedef int32_ DWORD;
+
 //typedef HMODULE MODULEID;
 
 void LINUX_IMPL_API(TaskDelay)(ulong_ tick);
 void LINUX_IMPL_API(HaltSystem)();
+int  LINUX_IMPL_API(snprintf)( char *buffer, int num, const char *format, ... );
+
+long InterlockedIncrement(long* p);
+long InterlockedDecrement(long* p);
+bool FreeLibrary(MODULEID hdll);
+void* GetProcAddress(MODULEID hdll, const char* name);
+MODULEID LoadLibraryA(const char_* filename);
 
 
 #define Lwdp_InterlockedIncrement    InterlockedIncrement
 #define Lwdp_InterlockedDecrement    InterlockedDecrement
 #define Lwdp_FreeLibrary             FreeLibrary
 #define Lwdp_GetProcAddress          GetProcAddress
-#define Lwdp_LoadLibrary             LoadLibraryW
-#define Lwdp_PathFindFileName        PathFindFileNameA
+#define Lwdp_LoadLibrary             LoadLibraryA
+//#define Lwdp_PathFindFileName        PathFindFileNameA
 
 #define Lwdp_TaskDelay               LINUX_IMPL_API(TaskDelay)
 #define Lwdp_HaltSystem              LINUX_IMPL_API(HaltSystem)
 
+//#define Lwdp_sprintf
+#if 1
 #ifdef UNICODE
 #define Lwdp_strlwr	      _wcslwr_s
 #define Lwdp_strupr	      _wcsupr_s
@@ -62,7 +74,8 @@ void LINUX_IMPL_API(HaltSystem)();
 #define Lwdp_isalpha 	  iswalpha
 
 #define Lwdp_fprintf      fwprintf
-#define Lwdp_sprintf     swprintf_s
+#define Lwdp_sprintf      swprintf_s
+#define Lwdp_snprintf     
 #define Lwdp_vstprintf    vswprintf
 
 #define Lwdp_tcscpy       wcscpy_s
@@ -73,8 +86,8 @@ void LINUX_IMPL_API(HaltSystem)();
 #define Lwdp_tcscmp 	  wcscmp
 #define Lwdp_tcsncmp	  wcsncmp
 #else
-#define Lwdp_strlwr	  	  _strlwr_s
-#define Lwdp_strupr	  	  _strupr_s
+#define Lwdp_strlwr	  	  strlwr
+#define Lwdp_strupr	  	  strupr
 #define Lwdp_strlen		  strlen
 
 #define Lwdp_isalnum      isalnum 
@@ -82,18 +95,20 @@ void LINUX_IMPL_API(HaltSystem)();
 #define Lwdp_isalpha 	  isalpha
 
 #define Lwdp_fprintf      fprintf
-#define Lwdp_sprintf     sprintf_s
+#define Lwdp_sprintf      sprintf
+#define Lwdp_snprintf     LINUX_IMPL_API(snprintf)
 #define Lwdp_vstprintf    vsprintf
 
-#define Lwdp_tcscpy       strcpy_s
-#define Lwdp_tcsncpy      strncpy_s
-#define Lwdp_tcscat       strcat_s
-#define Lwdp_ltot         _ltoa_s
-#define Lwdp_itot         _itoa_s
+#define Lwdp_tcscpy       strcpy
+//#define Lwdp_tcsncpy      strncpy
+#define Lwdp_tcscat       strcat
+#define Lwdp_ltot         ltoa
+#define Lwdp_itot         itoa
 #define Lwdp_tcscmp 	  strcmp
 #define Lwdp_tcsncmp	  strcnmp
 #define Lwdp_tprintf	  printf
 #endif // UNICODE
+#endif
 
 #define XEND_DEFINE_CLASS_SYS XEND_DEFINE_CLASS_DLL
 

@@ -9,8 +9,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h> 
-#include <io.h> 
-#include <string.h> 
+#ifdef WIN32
+#include <io.h>
+#endif
+//#include <string.h>
 
 
 #include <iostream>
@@ -18,11 +20,12 @@
 #include <list>
 #include <map>
 #include <vector>
+#include <algorithm>
 
 #include <LwTypeDefBase.h>
 #include <Config/LwDpConfig.h>
 #include <LwDpVersion.h>
-#include <LwErrnoDef.h>        /*Ä£¿é±àºÅ¶¨Òå*/
+#include <LwErrnoDef.h>        /*Ä£ï¿½ï¿½ï¿½Å¶ï¿½ï¿½ï¿½*/
 #include <LwCpuArch.h>
 #include <LwDef.h>
 #include <LwApi.h>

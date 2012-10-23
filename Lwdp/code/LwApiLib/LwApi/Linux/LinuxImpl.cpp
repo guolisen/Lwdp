@@ -1,6 +1,12 @@
 
+#include <iostream>
+#include <string>
+#include <algorithm>
+
 #include <LwDp.h>
-#include <LwApiLib/LwApi/win32/Api4Linux.h>
+#include <LwApiLib/LwApi/Linux/Api4Linux.h>
+#include <Interface/PluginLoader/Ix_ObjectFactory.h>
+#include <Interface/PluginLoader/Ix_PluginLoader2.h>
 
 #include <dlfcn.h>
 #include <stdio.h>
@@ -11,10 +17,10 @@ EXTERN_C_BEGIN;
 /****************************************************************************
 *  Function:       WIN_TaskDelay
 *  Description:    
-*  Input:          ÎÞ
-*  Output:         // ¶ÔÊä³ö²ÎÊýµÄËµÃ÷
-*  Return:         // º¯Êý·µ»ØÖµµÄËµÃ÷	
-*  Others:         // ÆäËüËµÃ÷
+*  Input:          ï¿½ï¿½
+*  Output:         // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½
+*  Return:         // ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½Ëµï¿½ï¿½	
+*  Others:         // ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½
 *****************************************************************************/
 void LINUX_IMPL_API(TaskDelay)(ulong_ tick)
 {
@@ -24,10 +30,10 @@ void LINUX_IMPL_API(TaskDelay)(ulong_ tick)
 /****************************************************************************
 *  Function:       WIN_HaltSystem
 *  Description:    
-*  Input:          ÎÞ
-*  Output:         // ¶ÔÊä³ö²ÎÊýµÄËµÃ÷
-*  Return:         // º¯Êý·µ»ØÖµµÄËµÃ÷	
-*  Others:         // ÆäËüËµÃ÷
+*  Input:          ï¿½ï¿½
+*  Output:         // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½
+*  Return:         // ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½Ëµï¿½ï¿½	
+*  Others:         // ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½
 *****************************************************************************/
 void LINUX_IMPL_API(HaltSystem)()
 {
@@ -35,20 +41,35 @@ void LINUX_IMPL_API(HaltSystem)()
 }
 
 
+int LINUX_IMPL_API(snprintf)( char *buffer, int num, const char *format, ... )
+{
+	int tempnum = 0;
+	va_list args;
+	va_start (args, format);
+		tempnum = sprintf(buffer, format, args);
+	va_end (args);
 
+  	return tempnum;
+}
+
+
+
+#if 0
 char_*	Co_PathFindFileNameA(const char_* path);
-wchar_*	Co_PathFindFileNameA(const wchar_* path);
-bool	Co_PathIsRelativeA(const wchar_* path);
-void	Co_PathStripPathA(wchar_* path);
-void	Co_PathRemoveFileSpecA(wchar_* path);
-void	Co_PathRemoveExtensionA(wchar_* path);
-void	Co_PathRemoveBackslashA(wchar_* path);
-void	Co_PathAppendA(wchar_* path, const wchar_* more);
-wchar_*	Co_PathAddBackslashA(wchar_* path);
-void	Co_PathRenameExtensionA(wchar_* path, const wchar_* more);
+char_*	Co_PathFindFileNameA(const char_* path);
+bool	Co_PathIsRelativeA(const char_* path);
+void	Co_PathStripPathA(char_* path);
+void	Co_PathRemoveFileSpecA(char_* path);
+void	Co_PathRemoveExtensionA(char_* path);
+void	Co_PathRemoveBackslashA(char_* path);
+void	Co_PathAppendA(char_* path, const char_* more);
+char_*	Co_PathAddBackslashA(char_* path);
+void	Co_PathRenameExtensionA(char_* path, const char_* more);
+#endif
 
+void GetModuleFileNameA(MODULEID hdll, char_* filename, int32_ size);
 
-#define W2A(wstr)   x3::w2a(wstr).c_str()
+#define W2A(wstr)   //x3::w2a(wstr).c_str()
 
 static std::string  s_err;
 static std::map<MODULEID, std::string>   s_plugins;
@@ -70,7 +91,7 @@ bool FreeLibrary(MODULEID hdll)
 
 MODULEID LoadLibraryA(const char_* filename)
 {
-    char_t fullpath[LWDP_MAX_PATH];
+    char_ fullpath[LWDP_MAX_PATH];
 
     if (Co_PathIsRelativeA(filename))
     {
@@ -104,7 +125,8 @@ MODULEID LoadLibraryA(const char_* filename)
 
 MODULEID LoadLibraryW(const wchar_t* filename)
 {
-    wchar_t fullpath[MAX_PATH];
+#if 0
+    wchar_t fullpath[LWDP_MAX_PATH];
 
     if (PathIsRelativeW(filename))
     {
@@ -134,6 +156,8 @@ MODULEID LoadLibraryW(const wchar_t* filename)
     }
 
     return hdll;
+#endif
+    return 0;
 }
 
 MODULEID LoadLibraryExW(const wchar_t* filename)
@@ -156,7 +180,8 @@ static inline bool cmpdl(const char* dpname, const char* match)
     int32_ len = strlen(dpname);
     int32_ len2 = strlen(match);
 
-    if (0 == strncasecmp(match, dpname + std::max(0, len - len2), std::min(len, len2)))
+    int tempNum = std::min(len, len2);
+    if (0 == strncasecmp((const char*)match, (const char*)(dpname + std::max(0, len - len2)), tempNum))
     {
         return true;
     }
@@ -169,6 +194,7 @@ static long s_objFactoryLocker = 0;
 
 MODULEID GetModuleHandleW(const wchar_t* filename)
 {
+#if 0
     std::string match(x3::w2a(filename));
     std::map<MODULEID, std::string>::const_iterator it;
 
@@ -197,7 +223,7 @@ MODULEID GetModuleHandleW(const wchar_t* filename)
             }
         }
     }
-
+#endif
     return NULL;
 }
 
@@ -216,6 +242,7 @@ void* GetProcAddress(MODULEID hdll, const char* name)
 
 void GetModuleFileNameW(MODULEID hdll, wchar_t* filename, int size)
 {
+#if 0
     *filename = 0;
 
     if (!hdll)
@@ -257,6 +284,7 @@ void GetModuleFileNameW(MODULEID hdll, wchar_t* filename, int size)
             }
         }
     }
+#endif
 }
 
 void GetModuleFileNameA(MODULEID hdll, char_* filename, int32_ size)
@@ -273,29 +301,29 @@ void GetModuleFileNameA(MODULEID hdll, char_* filename, int32_ size)
         if (bytes > 0)
         {
             buf[std::min(bytes, LWDP_MAX_PATH - 1)] = '\0';
-            strncpy(filename, size, buf);
+            strncpy(filename, buf, size);
         }
     }
     else
     {
-        std::map<MODULEID, tstring>::const_iterator it = s_plugins.find(hdll);
+        std::map<MODULEID, std::string>::const_iterator it = s_plugins.find(hdll);
         if (it != s_plugins.end())
         {
-            strncpy(filename, size, it->second.c_str());
+            strncpy(filename, it->second.c_str(), size);
         }
 
-        Cx_Interface<Ix_PluginLoader2> factory(x3GetObjectFactory());
+        Cx_Interface<Ix_PluginLoader2> factory(xGetObjectFactory());
 
         if (factory && 0 == filename[0])
         {
             MODULEID hdll2 = NULL;
-            tstring file;
+            std::string file;
 
             for (int32_ i = 0; factory->GetPluginFileName(i, hdll2, file); i++)
             {
                 if (hdll2 == hdll)
                 {
-                    strncpy(filename, size, file.c_str());
+                    strncpy(filename, file.c_str(), size);
                 }
             }
         }

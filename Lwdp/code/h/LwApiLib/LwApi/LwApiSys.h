@@ -6,9 +6,12 @@
 
 #ifndef LW_Api_SYSTEM_H_
 #define LW_Api_SYSTEM_H_
- 
+#include <LwDp.h>
+#include <stdarg.h>
+
 LWDP_NAMESPACE_BEGIN;
 EXTERN_C_BEGIN;
+
 
 #ifdef UNICODE
 #ifdef __GNUC__
@@ -16,30 +19,69 @@ EXTERN_C_BEGIN;
 #include <wctype.h>
 #endif
 
-inline wchar_ * _co_wcslwr_s(wchar_ *str);
-inline wchar_ * _co_wcsupr_s(wchar_ *str);
-inline int32_ 		_co_wcscat_s(wchar_ *str, size_t, const wchar_ *src);
-inline int32_ 		_co_wcsncpy_s(wchar_ *str, size_t size, const wchar_ *src, size_t len);
-inline int32_ 		_co_wcscpy_s(wchar_ *str, size_t size, const wchar_ *src);
-inline int32_ 		_co_wcsncmp_s(wchar_ *str, const wchar_ *src, int32_ size);
-inline int32_ 		_co_wcscmp_s(wchar_ *str, const wchar_ *src);
+inline wchar_ * _co_wcslwr_s(wchar_ *str)
+    { for (wchar_* p = str; *p; p++) towlower(*p); return str; }
+inline wchar_ * _co_wcsupr_s(wchar_ *str)
+    { for (wchar_* p = str; *p; p++) towupper(*p); return str; }
+
+
+inline int32_ _co_wcscat_s(wchar_ *str, size_t, const wchar_ *src)
+    { return wcscat(str, src) ? 0 : -1; }
+
+inline int32_ _co_wcsncpy_s(wchar_ *str, size_t size, const wchar_ *src, size_t len)
+    { return wcsncpy(str, src, min(size, len)) ? 0 : -1; }
+
+
+inline int32_ _co_wcscpy_s(wchar_ *str, size_t size, const wchar_ *src)
+    { return wcsncpy(str, src, size) ? 0 : -1; }
+
+
+inline int32_ _co_wcsncmp_s(wchar_ *str, const wchar_ *src, int32_ size)
+    { return wcsncpy(str, src, size) ? 0 : -1; }
+
+
+inline int32_ _co_wcscmp_s(wchar_ *str, const wchar_ *src)
+    { return wcscpy(str, src) ? 0 : -1; }
+
 
 #if defined(_STDIO_DEFINED)     // stdio.h
-inline int32_ _co_swprintf_s(wchar_ *buffer, size_t size, const wchar_ *format, ...);
-inline int32_ _co_vswprintf_s(wchar_ *buffer, size_t size, const wchar_ *format, va_list arglist);
+inline int32_ _co_swprintf_s(wchar_ *buffer, size_t size, const wchar_ *format, ...)
+{
+    va_list arglist;
+    va_start(arglist, format);
+#if !defined(_WIN32)
+    return vswprintf(buffer, size, format, arglist);
+#else
+    size; return vswprintf(buffer, format, arglist);
+#endif
+}
+inline int32_ _co_vswprintf_s(wchar_ *buffer, size_t size, const wchar_ *format, va_list arglist)
+#if !defined(_WIN32)
+    { return vswprintf(buffer, size, format, arglist); }
+#else
+    { size; return vswprintf(buffer, format, arglist); }
+#endif
+
 #endif // _INC_STDIO
 
 
 #if defined(_WIN32)
-inline int32_ _co_ltow_s(long_ value, wchar_ *str, size_t, int32_ radix);
-inline int32_ _co_itow_s(int32_ value, wchar_ *str, size_t, int32_ radix);
-inline int32_ _co_ultow_s(unsigned long_ value, wchar_ *str, size_t, int32_ radix);
+
+inline int32_ _co_ltow_s(long_ value, wchar_ *str, size_t, int32_ radix)
+    { _ltow(value, str, radix); return errno; }
+inline int32_ _co_itow_s(int32_ value, wchar_ *str, size_t, int32_ radix)
+    { _itow(value, str, radix); return errno; }
+inline int32_ _co_ultow_s(unsigned long_ value, wchar_ *str, size_t, int32_ radix)
+    { _ultow(value, str, radix); return errno; }
 
 #elif defined(_STDIO_DEFINED)
-;
-inline int32_ _co_ltow_s(long_ value, wchar_ *str, size_t size, int32_ radix);
-inline int32_ _co_itow_s(int32_ value, wchar_ *str, size_t size, int32_ radix);
-inline int32_ _co_ultow_s(unsigned long_ value, wchar_ *str, size_t size, int32_ radix);
+
+inline int32_ _co_ltow_s(long_ value, wchar_ *str, size_t size, int32_ radix)
+    { swprintf_s(str, size, 16 == radix ?__T("%lx") :__T("%ld"), value); return 0; }
+inline int32_ _co_itow_s(int32_ value, wchar_ *str, size_t size, int32_ radix)
+    { return _ltow_s(value, str, size, radix); }
+inline int32_ _co_ultow_s(unsigned long_ value, wchar_ *str, size_t size, int32_ radix)
+    { swprintf_s(str, size, 16 == radix ?__T("%ulx") :__T("%uld"), value); return 0; }
 
 #endif
 
@@ -49,10 +91,15 @@ inline int32_ _co_wsplitpath_s(
     const wchar_ * path, wchar_ * drive, size_t,
     wchar_ * dir, size_t,
     wchar_ * fname, size_t,
-    wchar_ * ext,  size_t);
+    wchar_ * ext,  size_t)
+{
+    _wsplitpath(path, drive, dir, fname, ext);
+    return errno;
+}
 
 inline int32_ _co_wmakepath_s(wchar_ *path, size_t,
-    const wchar_ *drive, const wchar_ *dir, const wchar_ *fname, const wchar_ *ext);
+    const wchar_ *drive, const wchar_ *dir, const wchar_ *fname, const tchar_ *ext)
+    { _wmakepath(path, drive, dir, fname, ext); return errno; }
 
 #endif // _INC_STDLIB
 
@@ -62,48 +109,106 @@ inline int32_ _co_wmakepath_s(wchar_ *path, size_t,
 #include <stdlib.h>
 #include <string.h>
 
-inline char_ * 	_co_strlwr_s(char_ *str);
-inline char_ * 	_co_strupr_s(char_ *str);
-inline int32_ 		_co_strcat_s(char_ *str, size_t, const char_ *src);
-inline int32_ 		_co_strncpy_s(char_ *str, size_t size, const char_ *src, size_t len);
-inline int32_ 		_co_strcpy_s(char_ *str, size_t size, const char_ *src);
-inline int32_ 		_co_strcnmp_s(char_ *str, const char_ *src, int32_ size);
-inline int32_ 		_co_strcmp_s(char_ *str, const char_ *src);
+inline char_* _co_strlwr_s(char_ *str)
+{
+	//for (char_* p = str; *p; p++)
+	//	tolower(*p);
+	return str;
+}
+
+inline char_ * _co_strupr_s(char_ *str)
+{
+	//for (char_* p = str; *p; p++)
+	//	toupper(*p);
+	return str;
+}
+
+inline int32_ _co_strcat_s(char_ *str, size_t, const char_ *src)
+    { return strcat(str, src) ? 0 : -1; }
+
+inline int32_ _co_strncpy_s(char_ *str, size_t size, const char_ *src, size_t len)
+    { return strncpy(str, src, std::min(size, len)) ? 0 : -1; }
+
+
+inline int32_ _co_strcpy_s(char_ *str, size_t size, const char_ *src)
+    { return strncpy(str, src, size) ? 0 : -1; }
+
+inline int32_ _co_strcnmp_s(char_ *str, const char_ *src, int32_ size)
+    { return strncmp(str, src, size) ? 0 : -1; }
+
+
+inline int32_ _co_strcmp_s(char_ *str, const char_ *src)
+    { return strcmp(str, src) ? 0 : -1; }
+
 
 #if defined(_STDIO_DEFINED)     // stdio.h
-inline int32_ 		_co_sprintf_s(char_ *buffer, size_t, const char_ *format, ...);
-inline int32_ 		_co_vsprintf_s(char_ *buffer, size_t, const char_ *format, va_list arglist);
+
+inline int32_ _co_sprintf_s(char_ *buffer, size_t, const char_ *format, ...)
+{
+    va_list arglist;
+    va_start(arglist, format);
+    return vsprintf(buffer, format, arglist);
+}
+inline int32_ _co_vsprintf_s(char_ *buffer, size_t, const char_ *format, va_list arglist)
+    { return vsprintf(buffer, format, arglist); }
+
 #endif // _INC_STDIO
 
+
 #if defined(_WIN32)
-inline int32_ 		_co_ltoa_s(long_ value, char_ *str, size_t, int32_ radix);
-inline int32_ 		_co_itoa_s(int32_ value, char_ *str, size_t, int32_ radix);
+inline int32_ _co_ltoa_s(long_ value, char_ *str, size_t, int32_ radix)
+    { _ltoa(value, str, radix); return errno; }
+inline int32_ _co_itoa_s(int32_ value, char_ *str, size_t, int32_ radix)
+    { _itoa(value, str, radix); return errno; }
 
 #elif defined(_STDIO_DEFINED)
-inline int32_ 		_co_ltoa_s(long_ value, char_ *str, size_t size, int32_ radix);
-inline int32_ 		_co_itoa_s(int32_ value, char_ *str, size_t size, int32_ radix);
+inline int32_ _co_ltoa_s(long_ value, char_ *str, size_t size, int32_ radix)
+    { _co_sprintf_s(str, size, 16 == radix ? "%lx" : "%ld", value); return 0; }
+inline int32_ _co_itoa_s(int32_ value, char_ *str, size_t size, int32_ radix)
+    { return _co_ltoa_s(value, str, size, radix); }
+
 #endif
 
 #if defined(_INC_STDLIB) || defined(_STDLIB_H_)
+
 inline int32_ _co_splitpath_s(
     const char_ * path, char_ * drive, size_t,
     char_ * dir, size_t,
     char_ * fname, size_t,
-    char_ * ext,  size_t);
+    char_ * ext,  size_t)
+{
+    _splitpath(path, drive, dir, fname, ext);
+    return errno;
+}
+
 
 inline int32_ _co_makepath_s(char_ *path, size_t,
-    const char_ *drive, const char_ *dir, const char_ *fname, const char_ *ext);
+    const char_ *drive, const char_ *dir, const char_ *fname, const char_ *ext)
+    { _makepath(path, drive, dir, fname, ext); return errno; }
 
 #endif // _INC_STDLIB
 #endif // UNICODE
 
 
+
 #ifdef _INC_TIME        // time.h
-inline void localtime_s(struct tm *tmOut, const time_t *timer);
+inline void localtime_s(struct tm *tmOut, const time_t *timer)
+{
+    struct tm * p = localtime(timer);
+    if (tmOut != NULL && p != NULL)
+        *tmOut = *p;
+}
 #endif // _INC_TIME
 
 #define _sopen_s(fileHandler, filename, oflag, pmode, rw)   \
     (*fileHandler = _open(filename, oflag, pmode), errno)
+
+
+
+
+
+
+
 
 #ifdef UNICODE
 
@@ -208,15 +313,15 @@ inline void localtime_s(struct tm *tmOut, const time_t *timer);
 //                Path Function Api 
 //==================================================
 char_*	Co_PathFindFileNameA(const char_* path);
-wchar_*	Co_PathFindFileNameA(const wchar_* path);
-bool	Co_PathIsRelativeA(const wchar_* path);
-void	Co_PathStripPathA(wchar_* path);
-void	Co_PathRemoveFileSpecA(wchar_* path);
-void	Co_PathRemoveExtensionA(wchar_* path);
-void	Co_PathRemoveBackslashA(wchar_* path);
-void	Co_PathAppendA(wchar_* path, const wchar_* more);
-wchar_*	Co_PathAddBackslashA(wchar_* path);
-void	Co_PathRenameExtensionA(wchar_* path, const wchar_* more);
+char_*	Co_PathFindFileNameA(const char_* path);
+bool	Co_PathIsRelativeA(const char_* path);
+void	Co_PathStripPathA(char_* path);
+void	Co_PathRemoveFileSpecA(char_* path);
+void	Co_PathRemoveExtensionA(char_* path);
+void	Co_PathRemoveBackslashA(char_* path);
+void	Co_PathAppendA(char_* path, const char_* more);
+char_*	Co_PathAddBackslashA(char_* path);
+void	Co_PathRenameExtensionA(char_* path, const char_* more);
 
 
 wchar_*	Co_PathFindFileNameW(const wchar_* path);

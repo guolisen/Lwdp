@@ -1,4 +1,4 @@
-// Copyright (C), 2006£­2011, Potevio Institute of Technology.
+// Copyright (C), 2006ï¿½ï¿½2011, Potevio Institute of Technology.
 /************************************************************
 *  File name:   FrameworkEntry.cpp  	
 *  Author:      guolisen
@@ -11,7 +11,7 @@
 #include <PluginInc.h>
 #include <Interface/PluginLoader/Ix_PluginLoader.h>
 #include <Interface/ScriptMgr/Ix_ScriptMgr.h>
-#include <Interface/ConfigMgr/Ix_ConfigMgr.h>
+#include <Interface/ConfigMgr/Ix_Configmgr.h>
 #include <Interface/FwEntry/Ix_FwIntf.h>
 
 #include <LwApiLib/Framwork/FwEntry/FrameworkEntry.h>
@@ -37,7 +37,7 @@ LWRESULT Fw_Init(Ix_ConfigSrc* config_src, uint32_ entry_count)
 {
 	ASSERT_CHECK_RET(LWDP_API_LOG, LWDP_PARAMETER_ERROR, (config_src), "Fw_Init() Parameter Error");
 
-#ifdef _WIN32 || WIN32
+#ifdef defined(_WIN32) || defined(WIN32)
 	int res = FALSE;
 	res = pthread_win32_process_attach_np(); 
 	if(!res) //if false
@@ -52,7 +52,7 @@ LWRESULT Fw_Init(Ix_ConfigSrc* config_src, uint32_ entry_count)
 	ASSERT_CHECK_RET(LWDP_API_LOG, LWDP_MALLOC_MEMORY_ERROR, (gPluginMgr), "Fw_Init() gPluginMgr new Error");
 	RINOK(gPluginMgr->LoadPluginManager(CFG_PLUGINLOADER_DIR_STR));
 
-	//! ¿ò¼ÜÄ£¿é¼ÓÔØ
+	//! ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½
 	Ix_Module* fwModule = NULL;
 	RINOK(RegisteFwModule(&fwModule));
 	gPluginMgr->GetPluginLoader()->RegisterFrameWork(fwModule);

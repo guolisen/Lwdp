@@ -7,7 +7,7 @@
 #define LWDP_MODULE_DEFINE_H_
 
 #include "Cx_Object.h"
-#include "Cx_SingletonObject.h"
+#include "Cx_Singletonobject.h"
  
 LWDP_NAMESPACE_BEGIN;
 

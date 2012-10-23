@@ -5,8 +5,7 @@
  */
 #ifndef X3_PLUGINIMPL_MODULE_H_
 #define X3_PLUGINIMPL_MODULE_H_
-
-//#include "Ix_Module.h"
+//#include <Interface/Ix_Module.h>
 
 /*! \ingroup _GROUP_PLUGIN_CORE2_
  *  \brief the implement class of plugin module.
@@ -24,14 +23,13 @@ extern void LwUninitializePlugin();
 class Cx_Module : public Ix_Module
 {
 public:	
-    Cx_Module() : m_classEntry(NULL), m_moduleInfo(NULL),m_pFactory(NULL), 
-                      m_hModule(NULL){};
+    Cx_Module():m_pFactory(0), m_hModule(0),  m_moduleInfo(0), m_classEntry(0){};
     virtual ~Cx_Module(){};
 
     //! Initialize this plugin. Used by x3GetModuleInterface().
     virtual void Initialize(Ix_ObjectFactory* pFactory, MODULEID hModule);
-	virtual LWRESULT InitializePlugin() { return LWDP_OK;};
-	virtual LWRESULT UninitializePlugin() { return LWDP_OK;};
+	virtual LWRESULT InitializePlugin() { return 0;};
+	virtual LWRESULT UninitializePlugin() { return 0;};
 
 public:
     virtual void 	ClearModuleItems();

@@ -63,7 +63,7 @@
 
 // define when you want to disable Win32 specific features
 // even when available:
-// #define BOOST_DISABLE_WIN32
+ #define BOOST_DISABLE_WIN32
 
 // BOOST_DISABLE_ABI_HEADERS: Stops boost headers from including any 
 // prefix/suffix headers that normally control things like struct 

@@ -19,7 +19,7 @@
 //#include <Lwdp.h>
 //#include "XClassItem.h"
 #include "Cx_Object.h"
-#include "Cx_SingletonObject.h"
+#include "Cx_Singletonobject.h"
 
 
 

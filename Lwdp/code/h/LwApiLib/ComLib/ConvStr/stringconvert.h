@@ -2,7 +2,7 @@
 
 #ifndef __COMMON_STRING_CONVERT_H
 #define __COMMON_STRING_CONVERT_H
-
+#if 0
 #include "MyString.h"
 
 LWDP_NAMESPACE_BEGIN;
@@ -66,5 +66,5 @@ inline AString GetOemString(const UString &unicodeString)
 #endif
 
 LWDP_NAMESPACE_END;
-
+#endif
 #endif
