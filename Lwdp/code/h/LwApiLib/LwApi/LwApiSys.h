@@ -208,6 +208,17 @@ inline void localtime_s(struct tm *tmOut, const time_t *timer);
 //                Path Function Api 
 //==================================================
 char_*	Co_PathFindFileNameA(const char_* path);
+wchar_*	Co_PathFindFileNameA(const wchar_* path);
+bool	Co_PathIsRelativeA(const wchar_* path);
+void	Co_PathStripPathA(wchar_* path);
+void	Co_PathRemoveFileSpecA(wchar_* path);
+void	Co_PathRemoveExtensionA(wchar_* path);
+void	Co_PathRemoveBackslashA(wchar_* path);
+void	Co_PathAppendA(wchar_* path, const wchar_* more);
+wchar_*	Co_PathAddBackslashA(wchar_* path);
+void	Co_PathRenameExtensionA(wchar_* path, const wchar_* more);
+
+
 wchar_*	Co_PathFindFileNameW(const wchar_* path);
 bool	Co_PathIsRelativeW(const wchar_* path);
 void	Co_PathStripPathW(wchar_* path);

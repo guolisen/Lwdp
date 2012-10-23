@@ -18,7 +18,7 @@ EXTERN_C_BEGIN;
 
 
 
-
+#if 0
 
 
 
@@ -70,6 +70,8 @@ LWRESULT Lw_Log_Event(x3LogType debug_level, const char_* debug_file, long_ code
         pIFManager->WriteLog(type, name, _buf.str().c_str(), file, line); \
     }} while (0)
 
+
+#endif
 
 EXTERN_C_END;
 LWDP_NAMESPACE_END;
