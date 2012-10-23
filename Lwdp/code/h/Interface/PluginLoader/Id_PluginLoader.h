@@ -7,7 +7,7 @@
 #ifndef ID_PLUGIN_LOADER_H
 #define ID_PLUGIN_LOADER_H
 #include <Interface/Ix_Object.h>
-
+ 
 LWDP_NAMESPACE_BEGIN;
 
 CLSID_DEFINE(CLSID_PluginLoader, __T("C1E3BB26-8C32-49f9-A9B2-6AA98006E931"));

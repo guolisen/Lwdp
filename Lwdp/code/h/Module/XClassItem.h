@@ -13,7 +13,7 @@ EXTERN_C_BEGIN;
 
 //! class factory function.
 typedef Ix_Object* (*PFNXObjectCreator)(X3IID, const MODID&);
-
+ 
 //! object count of a class.
 typedef long_ (*PFNXGetObjectCount)();
 

@@ -8,7 +8,7 @@
 
 #include "Cx_Object.h"
 #include "Cx_SingletonObject.h"
-
+ 
 LWDP_NAMESPACE_BEGIN;
 
 #define INTER_MOD_NAME(module)  Inter_##module

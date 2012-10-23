@@ -11,7 +11,7 @@
 
 #include <Interface/ConfigMgr/Ix_XmlMgr.h>
 #include <boost/shared_ptr.hpp>
-
+ 
 #include "Id_ScriptMgr.h"
 
 LWDP_NAMESPACE_BEGIN;

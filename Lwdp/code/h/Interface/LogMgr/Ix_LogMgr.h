@@ -6,7 +6,7 @@
 #include <Interface/ConfigMgr/Ix_ConfigMgr.h>
 
 LWDP_NAMESPACE_BEGIN;
-
+ 
 namespace LWDP_LOG_MGR{
 	enum LwdpLogLevel
 	{

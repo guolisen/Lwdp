@@ -3,7 +3,7 @@
  *  \author Guolisen, LwDp
  *  \date   2011.08.12
  */
-
+ 
 
 ERRNO_DB (LOGMSG_LEVEL_LOW,            (M_logMsg | 1), "The Message LEVEL is Low")
 ERRNO_DB (LOGMSG_OUTPUT_FD_ERROR,      (M_logMsg | 2), "The Output Port is ERROR or NONE")

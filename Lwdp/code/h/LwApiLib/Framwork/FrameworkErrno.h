@@ -7,7 +7,7 @@
 #define _LWDP_FRAMEWORK_ERRNO_H
 
 #include "FwEntry/FwErrno.h"
-#include "LwLog/LwlogErrno.h"
+#include "LwLog/LwLogErrno.h"
 #include "PluginMgr/PluginMgrErrno.h"
 
 #endif

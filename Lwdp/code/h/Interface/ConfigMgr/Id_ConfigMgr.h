@@ -6,7 +6,7 @@
  
 #ifndef ID_CONFIG_MANAGER_H
 #define ID_CONFIG_MANAGER_H
-#include <Interface/ix_object.h>
+#include <Interface/Ix_Object.h>
 
 LWDP_NAMESPACE_BEGIN;
 

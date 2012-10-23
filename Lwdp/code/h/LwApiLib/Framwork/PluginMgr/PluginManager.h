@@ -8,7 +8,7 @@
 
 #include <Interface/PluginLoader/Ix_ObjectFactory.h>
 #include <Interface/PluginLoader/Ix_PluginLoader.h>
-
+ 
 LWDP_NAMESPACE_BEGIN;
 /*! \ingroup _GROUP_PLUGIN_CORE_
  *  \brief Plugin manager wrapper class

@@ -12,7 +12,7 @@ LWDP_NAMESPACE_BEGIN;
 EXTERN_C_BEGIN;
 
 class Ix_ObjectFactory;
-
+ 
 /*! \ingroup _GROUP_PLUGIN_CORE_
  *  \interface Ix_Module
  *  \brief the plugin module interface.

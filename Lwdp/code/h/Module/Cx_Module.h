@@ -12,7 +12,7 @@
  *  \brief the implement class of plugin module.
  *  \note  Each plugin has a object of this class. The object is defined in XModuleImpl.h .
  *  \internal
- */
+ */ 
 
 LWDP_NAMESPACE_BEGIN;
 EXTERN_C_BEGIN;

@@ -8,7 +8,7 @@
 
 #include "XComPtr.h"
 #include "Ix_LogManager.h"
-
+ 
 #include <sstream>      // std::wostringstream
 
 // X3LOG_DEBUG(msg)

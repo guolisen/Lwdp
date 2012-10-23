@@ -87,7 +87,7 @@ const int32_ UNICODE_TAG = 0;
 #define LWDP_MAX_PATH 256
 #endif
 
-
+ 
 #define INTERFACE_NAME(name) Ix_ ## name
 #define INTERFACE_CLSID_NAME(name) CLSID_ ## name
 

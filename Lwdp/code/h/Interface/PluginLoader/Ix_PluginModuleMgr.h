@@ -9,7 +9,7 @@
 #include "Id_PluginLoader.h"
 
 LWDP_NAMESPACE_BEGIN;
-
+ 
 class Ix_ObjectFactory;
 class Ix_PluginMgrModule
 {

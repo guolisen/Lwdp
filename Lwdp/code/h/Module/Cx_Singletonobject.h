@@ -10,7 +10,7 @@
 #include <Module/XModuleItem.h>
 
 LWDP_NAMESPACE_BEGIN;
-
+ 
 extern "C" const MODID& GetModuleModId();
 
 /*! \ingroup _GROUP_PLUGIN_CORE2_

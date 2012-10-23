@@ -3,7 +3,7 @@
  *  \author Guolisen, LwDp
  *  \date   2011.08.12
  */
-
+ 
 
 ERRNO_DB (PLUGMGR_GETM_PTR_ERROR,         (M_pluginmanager | 1), "Get Module Pointer Error")
 ERRNO_DB (PLUGMGR_NOT_PLUGINMGR,          (M_pluginmanager | 2), "The Module is NOT PluginMgr")

@@ -15,7 +15,7 @@
 // XEND_DEFINE_MODULE_DLL()
 // XEND_DEFINE_MODULE_MFCEXTDLL()
 // XEND_DEFINE_MODULE_MFCDLL()
-
+  
 //#include <Lwdp.h>
 //#include "XClassItem.h"
 #include "Cx_Object.h"

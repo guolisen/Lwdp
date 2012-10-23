@@ -10,7 +10,7 @@
 LWDP_NAMESPACE_BEGIN;
 EXTERN_C_BEGIN;
 
-
+  
 /*! \ingroup _GROUP_PLUGIN_CORE2_
  *  \brief the base class of single instance classes.
  *  \internal

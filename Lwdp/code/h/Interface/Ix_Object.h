@@ -15,7 +15,7 @@ EXTERN_C_BEGIN;
 typedef long_ X3IID;
 
 
-
+  
 namespace x3 {
 
 inline long_ hashkey(const tchar_* str)

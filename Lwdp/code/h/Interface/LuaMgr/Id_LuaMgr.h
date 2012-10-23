@@ -6,7 +6,7 @@
  
 #ifndef ID_LUA_MGR_H
 #define ID_LUA_MGR_H
-
+ 
 #include <Interface/Ix_Object.h>
 
 LWDP_NAMESPACE_BEGIN;

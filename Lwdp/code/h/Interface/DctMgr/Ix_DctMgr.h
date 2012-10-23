@@ -6,7 +6,7 @@
 
 LWDP_NAMESPACE_BEGIN;
 
-
+ 
 INTERFACE_BEGIN(DctMgr)
 	virtual LWRESULT Init() = 0;
 

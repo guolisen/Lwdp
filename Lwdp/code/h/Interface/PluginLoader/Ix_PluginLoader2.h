@@ -8,7 +8,7 @@
 
 #include <Interface/Ix_Object.h>
 #include "Id_PluginLoader.h"
-
+ 
 LWDP_NAMESPACE_BEGIN;
 
 /*! \ingroup _GROUP_PLUGIN_CORE2_

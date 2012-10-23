@@ -15,7 +15,7 @@
 
 LWDP_NAMESPACE_BEGIN;
 EXTERN_C_BEGIN;
-
+ 
 //! Begin definition group of how many interfaces supported by the class.
 /*!
     \ingroup _GROUP_PLUGIN_CORE_

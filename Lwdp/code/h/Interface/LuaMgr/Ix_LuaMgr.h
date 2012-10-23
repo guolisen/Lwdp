@@ -5,7 +5,7 @@
 #include "Id_LuaMgr.h"
 
 LWDP_NAMESPACE_BEGIN;
-
+ 
 
 INTERFACE_BEGIN(LuaMgr)
 	virtual LWRESULT Init() = 0;

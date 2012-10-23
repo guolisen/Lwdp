@@ -7,7 +7,7 @@
  */
 #ifndef X3_PLUGINIMPL_MODULEIMPL_H_
 #define X3_PLUGINIMPL_MODULEIMPL_H_
-
+ 
 
 #ifdef LWDP_MODULE_IMPL
 using NLwdp::LWDP_MODULE_LOG;
