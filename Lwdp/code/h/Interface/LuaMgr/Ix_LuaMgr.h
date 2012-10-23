@@ -2,7 +2,7 @@
 #define LUAMGR_INTERFACE_H
 
 #include <Interface/Ix_Object.h>
-#include "ID_LuaMgr.h"
+#include "Id_LuaMgr.h"
 
 LWDP_NAMESPACE_BEGIN;
 

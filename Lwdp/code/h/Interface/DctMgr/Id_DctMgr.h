@@ -7,7 +7,7 @@
 #ifndef ID_DCT_MGR_H
 #define ID_DCT_MGR_H
 
-#include <Interface/ix_object.h>
+#include <Interface/Ix_Object.h>
 
 LWDP_NAMESPACE_BEGIN;
 CLSID_DEFINE(CLSID_DctMgr,  __T("602518CC-C4D6-41df-A2C3-BFD121698AFB"));

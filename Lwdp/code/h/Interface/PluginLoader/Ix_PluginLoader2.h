@@ -7,7 +7,7 @@
 #define X3_MANAGER_IPLUGINLOADER2_H_
 
 #include <Interface/Ix_Object.h>
-#include "ID_PluginLoader.h"
+#include "Id_PluginLoader.h"
 
 LWDP_NAMESPACE_BEGIN;
 

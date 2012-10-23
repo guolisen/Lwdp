@@ -1,4 +1,4 @@
-#include <lwdp.h>
+#include <lwDp.h>
 #include "MyAppender.h"
 
 namespace log4cpp {

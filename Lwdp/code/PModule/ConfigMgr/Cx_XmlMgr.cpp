@@ -1,7 +1,7 @@
-#include <Lwdp.h>
+#include <LwDp.h>
 #include <PluginInc.h>
 
-#include "LwApiLib/ComLib/TinyXpath/xpath_static.h"
+#include "LwApiLib/ComLib/Tinyxpath/xpath_static.h"
 #include "Cx_XmlMgr.h"
 
 LWDP_NAMESPACE_BEGIN;

@@ -6,7 +6,7 @@
 #ifndef LWDP_PLUGIN_MANAGER_MODULE_H_
 #define LWDP_PLUGIN_MANAGER_MODULE_H_
 
-#include "ID_PluginLoader.h"
+#include "Id_PluginLoader.h"
 
 LWDP_NAMESPACE_BEGIN;
 

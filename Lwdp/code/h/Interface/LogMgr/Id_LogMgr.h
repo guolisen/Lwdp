@@ -7,7 +7,7 @@
 #ifndef ID_LOGMGR_H
 #define ID_LOGMGR_H
 
-#include <Interface/ix_object.h>
+#include <Interface/Ix_Object.h>
 
 LWDP_NAMESPACE_BEGIN;
 CLSID_DEFINE(CLSID_LogMgr,  __T("3444BDB5-90DA-4839-8D77-06AD62E36890"));

@@ -28,7 +28,7 @@ Date           CR No      Person        Description
 //==============================================================================
 // Constant / Define Declarations
 //==============================================================================
-#include <Lwdp.h>
+#include <LwDp.h>
 
 const int MAX_MML_USER = 15;    /*支持的最大注册用户数*/
 const int MAX_MML_WNDNUM = 16;  /*同时支持的输出窗口的数量*/

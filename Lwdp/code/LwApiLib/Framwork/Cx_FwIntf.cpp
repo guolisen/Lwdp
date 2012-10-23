@@ -6,7 +6,7 @@
 *  Create Date: 2011-08-11
 ***********************************************************/
 // 2011.08.11: Create By Guolisen
-#include <Lwdp.h>
+#include <LwDp.h>
 #include <PluginInc.h>
 
 //#include <LwApiLib/Framwork/PluginMgr/PluginManager.h>

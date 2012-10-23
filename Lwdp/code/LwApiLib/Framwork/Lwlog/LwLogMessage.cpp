@@ -10,7 +10,7 @@
 #include <LwDp.h>
 //#include "../Common/func_s.h"
 #include <LwApi.h>
-#include <LwApiLib/Framwork/Lwlog/lwlogmessage.h>
+#include <LwApiLib/Framwork/Lwlog/LwLogMessage.h>
 
 LWDP_NAMESPACE_BEGIN;
 EXTERN_C_BEGIN;

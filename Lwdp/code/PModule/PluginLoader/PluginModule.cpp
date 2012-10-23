@@ -2,7 +2,7 @@
 // http://sourceforge.net/projects/x3c/
 
 #define LWDP_MODULE_IMPL
-#include <Lwdp.h>
+#include <LwDp.h>
 #include <PluginInc.h>
 #include <Interface/PluginLoader/Ix_PluginModuleMgr.h>
 #include "Cx_PluginLoader.h"

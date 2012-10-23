@@ -3,7 +3,7 @@
 
 // author: Guolisen
 
-#include <Lwdp.h>
+#include <LwDp.h>
 #include <PluginInc.h>
 #include <Interface/FwEntry/Ix_FwIntf.h>
 

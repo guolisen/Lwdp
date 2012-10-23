@@ -7,7 +7,7 @@
 #ifndef ID_LUA_MGR_H
 #define ID_LUA_MGR_H
 
-#include <Interface/ix_object.h>
+#include <Interface/Ix_Object.h>
 
 LWDP_NAMESPACE_BEGIN;
 CLSID_DEFINE(CLSID_LuaMgr,  __T("90EF8652-7BAE-4b30-9D3D-90191ED751EB"));

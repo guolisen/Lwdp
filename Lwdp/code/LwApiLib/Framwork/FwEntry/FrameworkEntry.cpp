@@ -9,7 +9,7 @@
 
 #include <LwDp.h>
 #include <PluginInc.h>
-#include <Interface/PluginLoader/Ix_pluginloader.h>
+#include <Interface/PluginLoader/Ix_PluginLoader.h>
 #include <Interface/ScriptMgr/Ix_ScriptMgr.h>
 #include <Interface/ConfigMgr/Ix_ConfigMgr.h>
 #include <Interface/FwEntry/Ix_FwIntf.h>

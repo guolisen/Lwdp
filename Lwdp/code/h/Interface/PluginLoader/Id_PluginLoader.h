@@ -6,7 +6,7 @@
  
 #ifndef ID_PLUGIN_LOADER_H
 #define ID_PLUGIN_LOADER_H
-#include <Interface/ix_object.h>
+#include <Interface/Ix_Object.h>
 
 LWDP_NAMESPACE_BEGIN;
 

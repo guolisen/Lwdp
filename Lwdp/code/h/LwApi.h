@@ -46,7 +46,7 @@
 #elif __linux__
 #include <LwApiLib/LwApi/Linux/Api4Linux.h>
 #elif defined (MACOS) || defined (_MAC)
-#include <LwApiLib/LwApi/Mac/macimpl.h>
+#include <LwApiLib/LwApi/Mac/NacImpl.h>
 #endif
 
 #include <LwApiLib/LwApi/LwApiCommon.h>

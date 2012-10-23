@@ -1,6 +1,6 @@
 // Copyright 2008-2011 Zhang Yun Gui, rhcad@hotmail.com
 // http://sourceforge.net/projects/x3c/
-#include <Lwdp.h>
+#include <LwDp.h>
 #include <PluginInc.h>
 #include "Cx_PluginLoader.h"
 

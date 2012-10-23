@@ -8,7 +8,7 @@
 // 2011.08.11: Create By Guolisen
 
 #include <LwDp.h>
-#include <LwApiLib/Framwork/ErrMgr/lwerrmgr.h>
+#include <LwApiLib/Framwork/ErrMgr/LwErrMgr.h>
 
 LWDP_NAMESPACE_BEGIN;
 EXTERN_C_BEGIN;

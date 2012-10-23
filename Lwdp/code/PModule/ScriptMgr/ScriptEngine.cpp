@@ -1,7 +1,7 @@
 // Copyright 2008-2011 Guolisen, guolisen@hotmail.com
 // 
 // 2011.11.10 Create File By Guolisen
-#include <Lwdp.h>
+#include <LwDp.h>
 #include <PluginInc.h>
 
 #include <Interface/ConfigMgr/Ix_XmlMgr.h>

@@ -4,7 +4,7 @@
  *  \date   2012.10.17
  */
  
-#include <Lwdp.h>
+#include <LwDp.h>
 #include <PluginInc.h>
 #include <iostream>
 

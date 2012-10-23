@@ -2,7 +2,7 @@
 // 
 // 2011.11.10 Create File By Guolisen
 
-#include <Lwdp.h>
+#include <LwDp.h>
 #include <PluginInc.h>
 
 #include <Interface/ConfigMgr/Ix_XmlMgr.h>

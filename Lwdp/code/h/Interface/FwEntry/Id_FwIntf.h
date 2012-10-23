@@ -6,7 +6,7 @@
  
 #ifndef ID_FRAMEWORK_INTERFACE_H
 #define ID_FRAMEWORK_INTERFACE_H
-#include <Interface/ix_object.h>
+#include <Interface/Ix_Object.h>
 
 LWDP_NAMESPACE_BEGIN;
 

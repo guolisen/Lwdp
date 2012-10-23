@@ -14,8 +14,8 @@
 #endif
 
 #include <LwApiLib/ComLib/ConvStr/LwStrConvert.h>
-#include <LwApiLib/Framwork/ErrMgr/lwerrmgr.h>
-#include <LwApiLib/Framwork/Lwlog/lwlogmessage.h>
+#include <LwApiLib/Framwork/ErrMgr/LwErrMgr.h>
+#include <LwApiLib/Framwork/Lwlog/LwLogMessage.h>
 
 #endif
 

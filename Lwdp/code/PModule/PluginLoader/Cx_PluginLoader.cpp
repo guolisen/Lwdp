@@ -1,7 +1,7 @@
 // Copyright 2008-2011 Guolisen, guolisen@hotmail.com
 // 
 // author: Guolisen
-#include <LWDP.h>
+#include <LwDp.h>
 #include <PluginInc.h>
 #include <Interface/FwEntry/Ix_FwIntf.h>
 #include "Cx_PluginLoader.h"

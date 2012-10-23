@@ -11,7 +11,7 @@
 #include <iostream>
 #include <LwApiLib/ComLib/log4cpp/LayoutAppender.hh>
 
-#include <LWDP.h>
+#include <LwDp.h>
 #include <Interface/LogMgr/Ix_LogMgr.h>
 
 namespace log4cpp {

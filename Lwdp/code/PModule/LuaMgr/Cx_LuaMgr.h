@@ -17,9 +17,9 @@
 
 extern "C" 
 {
-	#include "../LwApiLib/ComLib/lua/lua.h"
-	#include "../LwApiLib/ComLib/lua/lualib.h"
-	#include "../LwApiLib/ComLib/lua/lauxlib.h"
+	#include "../LwApiLib/ComLib/Lua/lua.h"
+	#include "../LwApiLib/ComLib/Lua/lualib.h"
+	#include "../LwApiLib/ComLib/Lua/lauxlib.h"
 };
 
 LWDP_NAMESPACE_BEGIN;

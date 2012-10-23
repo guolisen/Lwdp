@@ -27,7 +27,7 @@ Date           CR No      Person        Description
 #include "logLib.h"
 #endif
 
-#include <Lwdp.h>
+#include <LwDp.h>
 //#include "phyDrv.h"
 
 #include "DataCollectTool.h"

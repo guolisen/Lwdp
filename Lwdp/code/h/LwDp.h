@@ -28,7 +28,7 @@
 #include <LwApi.h>
 
 #include <LwFramework.h>
-#include <LwDpAssert.h>
+#include <LwdpAssert.h>
 #include <XComPtr.h>
 #endif
 

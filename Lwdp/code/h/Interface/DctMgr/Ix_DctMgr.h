@@ -2,7 +2,7 @@
 #define DCTMGR_INTERFACE_H
 
 #include <Interface/Ix_Object.h>
-#include "ID_DctMgr.h"
+#include "Id_DctMgr.h"
 
 LWDP_NAMESPACE_BEGIN;
 

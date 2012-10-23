@@ -2,7 +2,7 @@
 #define LOGMGR_INTERFACE_H
 
 #include <Interface/Ix_Object.h>
-#include "ID_LogMgr.h"
+#include "Id_LogMgr.h"
 #include <Interface/ConfigMgr/Ix_ConfigMgr.h>
 
 LWDP_NAMESPACE_BEGIN;
