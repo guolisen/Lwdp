@@ -24,6 +24,7 @@
 
 #include <LwCpuArch.h>
 #include <LwdpPlatform.h>
+#include <LwdpComplier.h>
 #include <LwTypeDefBase.h>
 #include <Config/LwDpConfig.h>
 #include <LwDpVersion.h>
