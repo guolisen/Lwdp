@@ -12,18 +12,20 @@
 
 #if defined (_MSC_VER) || defined(__BORLANDC__)
 #    if defined (LOG4CPP_STLPORT_AND_BOOST_BUILD)
-#        include <LwApiLib/ComLib/log4cpp/config-win32-stlport-boost.h>
+#        include <log4cpp/config-win32-stlport-boost.h>
 #    else
-#        include <LwApiLib/ComLib/log4cpp/config-win32.h>
+#        include <log4cpp/config-win32.h>
 #    endif
 #else
 #if defined(__OPENVMS__)
-#    include <LwApiLib/ComLib/log4cpp/config-openvms.h>
+#    include <log4cpp/config-openvms.h>
 #else
 #   if defined(__MINGW32__)
-#       include <LwApiLib/ComLib/log4cpp/config-MinGW32.h>
-#	elif defined(__VXWORKS__)
-#       include <LwApiLib/ComLib/log4cpp/config-vxworks.h>
+#       include <log4cpp/config-MinGW32.h>
+#	elif defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__)
+#       include <config-Linux.h>
+#   else
+#       include <config.h>
 #   endif
 #endif
 #endif
@@ -36,14 +38,18 @@
 #    pragma warning( disable : 4251 ) // "class XXX should be exported"
 #endif
 
-#ifndef LOG4CPP_HAVE_SSTREAM
-#include <strstream>
-namespace std {
-    class LOG4CPP_EXPORT ostringstream : public ostrstream {
-        public:
-        std::string str();
-    };
-}
-#endif
+#ifdef __APPLE__
+#  include <sstream>
+#else
+#  ifndef LOG4CPP_HAVE_SSTREAM
+#    include <strstream>
+     namespace std {
+       class LOG4CPP_EXPORT ostringstream : public ostrstream {
+       public:
+	 std::string str();
+       };
+     };
+#  endif // LOG4CPP_HAVE_SSTREAM
+#endif // _APPLE_
 
 #endif

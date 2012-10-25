@@ -22,11 +22,12 @@
 #include <vector>
 #include <algorithm>
 
+#include <LwCpuArch.h>
+#include <LwdpPlatform.h>
 #include <LwTypeDefBase.h>
 #include <Config/LwDpConfig.h>
 #include <LwDpVersion.h>
 #include <LwErrnoDef.h>        /*ģ���Ŷ���*/
-#include <LwCpuArch.h>
 #include <LwDef.h>
 #include <LwApi.h>
 

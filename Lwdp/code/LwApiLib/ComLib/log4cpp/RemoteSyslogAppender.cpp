@@ -7,14 +7,13 @@
  * See the COPYING file for the terms of usage and distribution.
  */
 
-
 #include "PortabilityImpl.hh"
 
 #ifdef LOG4CPP_HAVE_UNISTD_H
 #    include <unistd.h>
 #endif
 #include <cstdlib>
-#include <cstdio>
+#include <stdio.h>
 #include <cstring>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -105,7 +104,7 @@ namespace log4cpp {
             }
 #endif
             if (pent == NULL) {
-                in_addr_t ip = inet_addr ((char *)_relayer.c_str ());
+                in_addr_t ip = inet_addr (_relayer.c_str ());
                 pent = gethostbyaddr ((const char *) &ip, sizeof(in_addr_t), AF_INET);
                 if (pent == NULL) {
                     // loglog("RemoteSyslogAppender: failed to resolve host %s", _relayer.c_str());
@@ -138,7 +137,7 @@ namespace log4cpp {
         size_t messageLength = message.length();
         char *buf = new char [messageLength + 16];
         int priority = _facility + toSyslogPriority(event.priority);
-        int preambleLength = std::sprintf (buf, "<%d>", priority);
+        int preambleLength = sprintf (buf, "<%d>", priority);
         memcpy (buf + preambleLength, message.data(), messageLength);
 
         sockaddr_in sain;

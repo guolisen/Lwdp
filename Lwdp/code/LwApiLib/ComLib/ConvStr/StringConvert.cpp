@@ -1,11 +1,11 @@
 // Common/StringConvert.cpp
 
-#include <Lwdp.h>
-#include <LwApiLib/ComLib/ConvStr/StringConvert.h>
+#include <LwDp.h>
+#include <LwApiLib/ComLib/ConvStr/stringconvert.h>
 
 
 LWDP_NAMESPACE_BEGIN;
-
+#if 0
 UString MultiByteToUnicodeString(const AString &srcString, UINT codePage)
 {
 	UString resultString;
@@ -38,5 +38,5 @@ AString UnicodeStringToMultiByte(const UString &srcString, UINT codePage)
 	*/
 	return resultString;
 }
-
+#endif
 LWDP_NAMESPACE_END;

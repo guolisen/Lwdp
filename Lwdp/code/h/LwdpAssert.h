@@ -12,6 +12,7 @@ LWDP_NAMESPACE_BEGIN;
 
 #ifdef LWDP_DEBUG_MACRO
 #ifdef C99_VARIADIC_MACROS
+//#if 1
 #define ASSERT_CHECK_RET(cat, ret, a, ...) \
     if(!(a)) \
 	{ \

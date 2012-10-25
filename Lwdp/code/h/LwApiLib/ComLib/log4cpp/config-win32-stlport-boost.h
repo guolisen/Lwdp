@@ -1,21 +1,15 @@
-
-
-
-#ifndef _INCLUDE_LOG4CPP_CONFIG_VXWORKS_H
-#define _INCLUDE_LOG4CPP_CONFIG_VXWORKS_H 1
-
-#include <hostLib.h>
-#include <sockLib.h>
-
+#ifndef _INCLUDE_LOG4CPP_CONFIG_WIN32_H
+#define _INCLUDE_LOG4CPP_CONFIG_WIN32_H 1
+ 
 /* manually edited from include/log4cpp/config.h */
 
 /* Define if you have the syslog function.  */
 /* #undef LOG4CPP_HAVE_SYSLOG */
 
 /* Define if you have the `ftime' function. */
-//#ifndef LOG4CPP_HAVE_FTIME 
-//#define LOG4CPP_HAVE_FTIME  1 
-//#endif
+#ifndef LOG4CPP_HAVE_FTIME 
+#define LOG4CPP_HAVE_FTIME  1 
+#endif
 
 /* Define if you have the `gettimeofday' function. */
 /* #undef LOG4CPP_HAVE_GETTIMEOFDAY */ 
@@ -23,8 +17,11 @@
 /* define if the compiler has int64_t */
 #ifndef LOG4CPP_HAVE_INT64_T 
 #define LOG4CPP_HAVE_INT64_T
-//#define int64_t __int64  
-#define int64_t long long 
+
+#include <boost/cstdint.hpp>
+using boost::int64_t;
+
+#endif
 
 /* define if the compiler has in_addr_t */
 #ifndef LOG4CPP_HAVE_IN_ADDR_T 
@@ -35,16 +32,10 @@ typedef unsigned long u_long;
 #endif
 
 /* u_long is the type of in_addr.s_addr */
-//typedef u_long in_addr_t;
+typedef u_long in_addr_t;
 
 /* u_short is the type of sockaddr_in.sin_port */
 // typedef u_short		in_port_t;
-
-#endif
-
-#if defined(_MSC_VER) && _MSC_VER < 1300
-#define LOG4CPP_MISSING_INT64_OSTREAM_OP   
-#endif
 
 #endif
 
@@ -53,12 +44,8 @@ typedef unsigned long u_long;
 #define LOG4CPP_HAVE_IO_H 1
 #endif
 
-
 /* Define if you have the <unistd.h> header file.  */
 /* #undef LOG4CPP_HAVE_UNISTD_H */
-#ifndef LOG4CPP_HAVE_UNISTD_H
-#define LOG4CPP_HAVE_UNISTD_H 1
-#endif
 
 /* Define if you have the idsa library (-lidsa).  */
 /* #undef LOG4CPP_HAVE_LIBIDSA */
@@ -73,7 +60,7 @@ typedef unsigned long u_long;
 
 /* Version number of package */
 #ifndef LOG4CPP_VERSION
-#define LOG4CPP_VERSION  "0.3.5"
+#define LOG4CPP_VERSION  "1.0"
 #endif
 
 /* define if the compiler implements namespaces */
@@ -86,14 +73,22 @@ typedef unsigned long u_long;
 #define LOG4CPP_HAVE_SSTREAM 1
 #endif
 
-//#define LOG4CPP_HAS_WCHAR_T 1
+#if defined(_MSC_VER)
+#    if _MSC_VER < 1300
+#       define LOG4CPP_HAS_WCHAR_T 0
+#    else
+#       define LOG4CPP_HAS_WCHAR_T 1
+#    endif
+#else
+#   define LOG4CPP_HAS_WCHAR_T 1
+#endif
 
 /* define if the C library has snprintf */
 #ifndef LOG4CPP_HAVE_SNPRINTF
 #define LOG4CPP_HAVE_SNPRINTF 1
 #endif
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && _MSC_VER >= 1300
 #define LOG4CPP_HAVE_LOCALTIME_R 1
 #endif
 
@@ -103,24 +98,24 @@ typedef unsigned long u_long;
 #endif
 
 /* define WIN32 for Borland */
-//#ifndef WIN32
-//#define WIN32
-//#endif
+#ifndef WIN32
+#define WIN32
+#endif
 
 /* use threads */
 #ifndef LOG4CPP_HAVE_THREADING
 #define LOG4CPP_HAVE_THREADING
 #endif
 
-/* use ms threads */
-#ifndef LOG4CPP_USE_PTHREADS
-#define LOG4CPP_USE_PTHREADS
+/* use boost threads */
+#ifndef LOG4CPP_USE_BOOSTTHREADS
+#define LOG4CPP_USE_BOOSTTHREADS
 #endif
 
 /* supply DLL main */
-//#ifndef LOG4CPP_SUPPLY_DLLMAIN
-//#define LOG4CPP_SUPPLY_DLLMAIN
-//#endif
+#ifndef LOG4CPP_SUPPLY_DLLMAIN
+#define LOG4CPP_SUPPLY_DLLMAIN
+#endif
 
 /* MSVCs <cstdlib> and <cstring> headers are broken in the sense that they
    put functions in the global namespace instead of std::
@@ -149,14 +144,7 @@ typedef unsigned long u_long;
 #endif
 
 /* define mode_t. Move to Portability.hh if more platforms need it */
-#if !defined(__BORLANDC__)
 typedef int mode_t;
-#endif
 
-#if defined(_MSC_VER) && _MSC_VER == 1310
-// warning C4275: interface non dll class 'std::runtime_error' utilisée comme base 
-// d'une interface dll class 'log4cpp::ConfigureFailure'
-#pragma warning(disable: 4275)
-#endif
-
+/* _INCLUDE_LOG4CPP_CONFIG_WIN32_H */
 #endif

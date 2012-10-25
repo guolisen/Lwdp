@@ -1,4 +1,4 @@
-// Copyright (C), 2006£­2011, Potevio Institute of Technology.
+// Copyright (C), 2006ï¿½ï¿½2011, Potevio Institute of Technology.
 /************************************************************
 *  File name:   LwLogMessage.cpp  	
 *  Author:      guolisen
@@ -39,6 +39,11 @@ LWRESULT ShowErrnoInfo()
 }
 #endif
 
+
+int Test()
+{
+    return LWDP_OK;
+}
 EXTERN_C_END;
 LWDP_NAMESPACE_END;
     

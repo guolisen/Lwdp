@@ -9,13 +9,7 @@
 
 #include "PortabilityImpl.hh"
 #ifdef LOG4CPP_HAVE_IO_H
-#	if defined(WIN32) || defined(_WIN32)
-	#include <io.h>
-#	endif
-#	if defined(VXWORKS)
-	#include <ioLib.h>
-	#include <iosLib.h>
-#	endif	
+#    include <io.h>
 #endif
 #ifdef LOG4CPP_HAVE_UNISTD_H
 #    include <unistd.h>
@@ -84,7 +78,7 @@ namespace log4cpp {
 
     void FileAppender::_append(const LoggingEvent& event) {
         std::string message(_getLayout().format(event));
-        if (!::write(_fd, (char *)message.data(), message.length())) {
+        if (!::write(_fd, message.data(), message.length())) {
             // XXX help! help!
         }
     }

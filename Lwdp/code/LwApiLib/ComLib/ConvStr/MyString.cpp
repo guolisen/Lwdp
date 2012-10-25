@@ -1,6 +1,6 @@
 // Common/String.cpp
 
-#include <Lwdp.h>
+#include <LwDp.h>
 
 #include <ctype.h>
 #ifdef HAVE_WCTYPE_H
@@ -28,7 +28,7 @@ char_* CharPrevA( const char_* start, const char_* ptr ) { // OK for MBS
 
 char_* CharNextA( const char_* ptr ) {
   if (!*ptr)
-    return (LPSTR)ptr;
+    return (char_*)ptr;
 // #ifdef HAVE_MBRTOWC
 //  if (global_use_utf16_conversion)
 //  {

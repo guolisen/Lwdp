@@ -10,13 +10,7 @@
 
 #include "PortabilityImpl.hh"
 #ifdef LOG4CPP_HAVE_IO_H
-#	if defined(WIN32) || defined(_WIN32)
-	#include <io.h>
-#	endif
-#	if defined(VXWORKS)
-	#include <ioLib.h>
-	#include <iosLib.h>
-#	endif	
+#    include <io.h>
 #endif
 
 #include <windows.h>

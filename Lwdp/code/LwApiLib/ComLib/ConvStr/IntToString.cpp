@@ -1,5 +1,5 @@
 // Common/IntToString.cpp
-
+#if 0
 #include "StdAfx.h"
 
 #include "IntToString.h"
@@ -75,3 +75,4 @@ void ConvertUInt32ToHexWithZeros(UInt32 value, char *s)
   }
   s[8] = '\0';
 }
+#endif

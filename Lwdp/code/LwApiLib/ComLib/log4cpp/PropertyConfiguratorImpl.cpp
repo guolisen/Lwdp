@@ -11,13 +11,7 @@
 #include <unistd.h>
 #endif
 #ifdef LOG4CPP_HAVE_IO_H
-#	if defined(WIN32) || defined(_WIN32)
-	#include <io.h>
-#	endif
-#	if defined(VXWORKS)
-	#include <ioLib.h>
-	#include <iosLib.h>
-#	endif	
+#    include <io.h>
 #endif
 #include <iostream>
 
@@ -274,6 +268,7 @@ namespace log4cpp {
                 appender->setThreshold(Priority::getPriorityValue(thresholdName));
             }
         } catch(std::invalid_argument& e) {
+	    delete appender;	// fix for #3109495
             throw ConfigureFailure(std::string(e.what()) + 
                 " for threshold of appender '" + appenderName + "'");
         }

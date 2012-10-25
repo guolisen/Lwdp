@@ -190,7 +190,7 @@ static inline bool cmpdl(const char* dpname, const char* match)
 }
 
 Ix_ObjectFactory* xGetObjectFactory();
-static long s_objFactoryLocker = 0;
+//static long s_objFactoryLocker = 0;
 
 MODULEID GetModuleHandleW(const wchar_t* filename)
 {

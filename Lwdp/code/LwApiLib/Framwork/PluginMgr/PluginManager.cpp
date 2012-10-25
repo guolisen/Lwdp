@@ -4,7 +4,7 @@
  *  \date   2011.06.30
  */
 
-#include <Lwdp.h>
+#include <LwDp.h>
 #include <PluginInc.h>
 
 #include <Interface/PluginLoader/Ix_ObjectFactory.h>

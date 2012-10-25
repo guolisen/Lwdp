@@ -7,7 +7,7 @@
 #ifndef LW_CPU_ARCH_H_
 #define LW_CPU_ARCH_H_
 
-LWDP_NAMESPACE_BEGIN;
+//LWDP_NAMESPACE_BEGIN;
 
 #define _LWDP_MC68000	1	/* _LWDP_CPU */
 #define _LWDP_MC68010	2	/* _LWDP_CPU */
@@ -406,7 +406,7 @@ Stop_Compiling_Bad_Endian
 #define GetBe16(p) (((uint16_)((const byte_ *)(p))[0] << 8) | ((const byte_ *)(p))[1])
 
 
-LWDP_NAMESPACE_END;
+//LWDP_NAMESPACE_END;
 
 #endif
 

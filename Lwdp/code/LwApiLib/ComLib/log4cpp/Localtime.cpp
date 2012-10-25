@@ -1,9 +1,7 @@
 #include <log4cpp/Portability.hh>
 #include "Localtime.hh"
 #include <time.h>
-#include <stdio.h>
-#include <string.h>
-
+#include <memory.h>
 
 namespace log4cpp         
 {
@@ -26,7 +24,7 @@ namespace log4cpp
    void localtime(const ::time_t* time, ::tm* t)
    {
       ::tm* tmp = ::localtime(time);
-      memcpy((void*)t, (void*)tmp, sizeof(::tm));
+      memcpy(t, tmp, sizeof(::tm));
    }
 #endif
 

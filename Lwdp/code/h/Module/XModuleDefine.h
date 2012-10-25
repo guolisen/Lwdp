@@ -30,7 +30,7 @@ REGISTER_MODULE(module);
 
 
 
-#define DEF_FUN_INT(t, d, f)  t  d##::##f()
+#define DEF_FUN_INT(t, d, f)  t  d::f()
 #define DEF_INIT_FUN(module)  DEF_FUN_INT(LWRESULT, INTER_MOD_NAME(module), InitializePlugin)
 #define DEF_UNINIT_FUN(module)  DEF_FUN_INT(LWRESULT, INTER_MOD_NAME(module), UninitializePlugin)
 
