@@ -87,7 +87,7 @@ void WIN_IMPL_API(HaltSystem)();
 #define Lwdp_isalpha 	  isalpha
 
 #define Lwdp_fprintf      fprintf
-#define Lwdp_sprintf     sprintf_s
+#define Lwdp_sprintf      sprintf
 #define Lwdp_vstprintf    vsprintf
 
 #define Lwdp_tcscpy       strcpy_s

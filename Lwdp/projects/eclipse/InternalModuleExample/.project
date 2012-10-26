@@ -3,6 +3,7 @@
 	<name>InternalModuleExample</name>
 	<comment></comment>
 	<projects>
+		<project>LwdpApi</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

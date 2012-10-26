@@ -40,12 +40,23 @@ typedef void* HWND;
 
 typedef int32_ DWORD;
 
+#ifdef __cplusplus
+
+typedef int         (*FUNCPTR) (...);  /* ptr to function returning int */
+
+#else
+
+typedef int         (*FUNCPTR) ();       /* ptr to function returning int */
+
+#endif/* _cplusplus */
+
 //typedef HMODULE MODULEID;
 
 void LINUX_IMPL_API(TaskDelay)(ulong_ tick);
 void LINUX_IMPL_API(HaltSystem)();
 int  LINUX_IMPL_API(snprintf)( char *buffer, int num, const char *format, ... );
 
+int portable_snprintf(char *str, size_t str_m, const char *fmt, /*args*/ ...);
 long InterlockedIncrement(long* p);
 long InterlockedDecrement(long* p);
 bool FreeLibrary(MODULEID hdll);
@@ -97,7 +108,7 @@ MODULEID LoadLibraryA(const char_* filename);
 
 #define Lwdp_fprintf      fprintf
 #define Lwdp_sprintf      sprintf
-#define Lwdp_snprintf     LINUX_IMPL_API(snprintf)
+#define Lwdp_snprintf     portable_snprintf   //LINUX_IMPL_API(snprintf)
 #define Lwdp_vstprintf    vsprintf
 
 #define Lwdp_tcscpy       strcpy

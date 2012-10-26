@@ -127,7 +127,7 @@ inline int32_ _co_strcat_s(char_ *str, size_t, const char_ *src)
     { return strcat(str, src) ? 0 : -1; }
 
 inline int32_ _co_strncpy_s(char_ *str, size_t size, const char_ *src, size_t len)
-    { return strncpy(str, src, std::min(size, len)) ? 0 : -1; }
+{ return strncpy(str, src, size<len?size:len) ? 0 : -1; }
 
 
 inline int32_ _co_strcpy_s(char_ *str, size_t size, const char_ *src)
@@ -420,6 +420,23 @@ We Need Implyment the Function Api_TaskDelay() In Concrete System;
 We Need Implyment the Function Api_HaltSystem() In Concrete System;
 #endif
 
+#ifndef Lwdp_InterlockedIncrement
+We Need Implyment the Function Lwdp_InterlockedIncrement() In Concrete System;
+#endif
+
+#ifndef Lwdp_InterlockedDecrement
+We Need Implyment the Function Lwdp_InterlockedDecrement() In Concrete System;
+#endif
+#ifndef Lwdp_FreeLibrary
+We Need Implyment the Function Lwdp_FreeLibrary() In Concrete System;
+#endif
+
+#ifndef Lwdp_GetProcAddress
+We Need Implyment the Function Lwdp_GetProcAddress() In Concrete System;
+#endif
+#ifndef Lwdp_LoadLibrary
+We Need Implyment the Function Lwdp_LoadLibrary() In Concrete System;
+#endif
 
 
 EXTERN_C_END;

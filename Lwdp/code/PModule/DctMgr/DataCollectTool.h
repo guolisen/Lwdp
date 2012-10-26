@@ -32,55 +32,47 @@ Date           CR No      Person        Description
 
 using namespace NLwdp;
 
-const int MAX_MML_USER = 15;    /*֧�ֵ����ע���û���*/
-const int MAX_MML_WNDNUM = 16;  /*ͬʱ֧�ֵ�������ڵ�����*/
-const int MAX_MML_MMLNUM = 6; /*ͬʱ֧�ֵ�MML���ӵ�����*/
-const int MAX_MML_STATNUM = 8; /*ͬʱ֧�ֵĲ���ͳ�����ӵ�����*/
-const int MML_NAME_LEN = 16;    /*MML������,������,������ʾ���*/
-const int MML_TOTAL_CMD_NUM = 512;/*���֧�ֵ�MML�������*/
-const int MML_VALUE_LEN = 64;   /*MML�������ֵ����*/
-const int MML_PARA_NUM = 16; /*MML����Dos����������*/
+const int MAX_MML_USER = 15;    
+const int MAX_MML_WNDNUM = 16; 
+const int MAX_MML_MMLNUM = 6; 
+const int MAX_MML_STATNUM = 8; 
+const int MML_NAME_LEN = 16;   
+const int MML_TOTAL_CMD_NUM = 512;
+const int MML_VALUE_LEN = 64;   
+const int MML_PARA_NUM = 16; 
 const int MML_POINTER_SIZE = 4;
 const int STAT_NAME_NUM = 4; 
 const int MAX_WINPTR_NUM = 128;
 const int MAX_STATPTR_NUM = 128;
 
-//#define LOCALDEBUG            //����MmlPrintf()ʱ��ʵ�ֵ���printf����
-//#define DATACOLLECT_DEBUG     //��ӡ������Ϣ
-//#define BASE_PORT             //���ӵĶ˿ڻ���Ĭ��ֵ��8800
-//#define HW_TICK_1MS           //Ӳ����һ���ӵ�tick��Ĭ��ֵ��16384
-//==============================================================================
-// Type Declarations
-//==============================================================================
 
-/*�ڴ���?�������*/
 struct MemoryBuf
 {
-    char*    PhyMemPtr;     /*�����������׵�ַ*/
-    char*    HeadPtr;       /*���������ͷָ��*/
-    char*    TailPtr;       /*���������βָ��*/
+    char*    PhyMemPtr;    
+    char*    HeadPtr;      
+    char*    TailPtr;      
 #ifdef DATACOLLECT_DEBUG
     int      BusyNum;
     int      FreeNum;
 #endif
 } ;
 
-/*��Dos�����*/
+
 struct MmlDosCmd
 {
     char*    NamePtr;
     FUNCPTR  FnPtr;
 };
 
-/*MML����ص�����ע���ṹ*/
+
 struct MmlCallBack
 {
-    FUNCPTR  FnPtr;     /*MML����ص�����ָ��*/
-    void*    ObjPtr;        /*����ʵ��ָ��*/
-    int      MsgBufNum;         /*��ʹ��MsgBuf����*/
+    FUNCPTR  FnPtr;     
+    void*    ObjPtr;       
+    int      MsgBufNum;         
 };
 
-/*MML��������ṹ*/
+
 struct CmdStr
 {
     char     Cmd[MML_NAME_LEN];
@@ -92,25 +84,25 @@ struct MmlPara
 };
 struct MmlCmdType
 {
-    CmdStr   CmdName[3];    /*[0]MML������,[1]��������1,[2]��������2*/
-    int      ParaNum;       /*MML����������*/
-    MmlPara  CmdPara[MML_PARA_NUM];/* MML������� */    
+    CmdStr   CmdName[3];   
+    int      ParaNum;       
+    MmlPara  CmdPara[MML_PARA_NUM];    
 };
 
-/*��Dos��������ṹ*/
+
 struct  DosCmdType
 {
-    int      ParaNum;       /*(��Dos����+����)����*/
-    CmdStr   Para[MML_PARA_NUM];/*[0]��Dos������,�����������*/
+    int      ParaNum;      
+    CmdStr   Para[MML_PARA_NUM];
 };
 
-/*MML����ע���*/
+
 struct MmlCmdItem 
 {
-    CmdStr   CmdName[3];    /*[0]MML������,[1]��������1,[2]��������2*/
-    FUNCPTR  FnPtr;     /*MML����ܺ���API*/
-    void*    ObjPtr;          /*����ָ��*/
-    int      RegisterNum;   /*MMLע��� */
+    CmdStr   CmdName[3];  
+    FUNCPTR  FnPtr;     
+    void*    ObjPtr;    
+    int      RegisterNum; 
 };
 struct MmlCmdList 
 {
@@ -118,7 +110,7 @@ struct MmlCmdList
     MmlCmdItem CmdItem[MML_TOTAL_CMD_NUM];
 };
 
-/*MML����ܿ��ƿ�*/
+
 enum MmlStatus  
 {
     IDLE, 
@@ -131,29 +123,29 @@ enum MmlStatus
 
 struct MmlWinCfg
 {
-    int      WinId;     /*�û�����Ĵ��ں�*/
-    int      PipeId;        /*�û��Ļ���pipe*/
-    int      SockId;        /*�û������socket*/
-    MmlStatus Status;       /*���ڿ��Ʋɼ���������ʽ*/
-    int      Period;        /*���ڿ��ƶ�ʱ�������*/
-    WDOG_ID  WdTimer;       /*�û�����Ķ�ʱ��*/
-    char     Prompt[MML_NAME_LEN];/*�û��������ʾ��*/
-    char     IpAddr[20];    /*�û���Ip��ַ*/
-    char     kit_telnet_connect;       /*��������Kit���ӻ���telnet����*/
-    bool    connect;           /*�����Ƿ���ڵı�־*/
+    int      WinId;     
+    int      PipeId;        
+    int      SockId;        
+    MmlStatus Status;       
+    int      Period;       
+    WDOG_ID  WdTimer;       
+    char     Prompt[MML_NAME_LEN];
+    char     IpAddr[20];    
+    char     kit_telnet_connect;       
+    bool    connect;         
 
 };
 
-/*MML����pipe��������ṹ*/
+
 enum MmlCrlOrdType
 {
-    TOADDMML,           /*�����µ�MML����*/
-    TOADDSTAT,          /*�����µ�ͳ������*/
-    TOADDDBG,           /*�����µ�Debug����*/
-    TOACTIVE,           /*����ĳ���û���ݲɼ����*/
-    TOPAUSE,            /*��ͣĳ���û���ݲɼ����*/
-    TOTIMER,            /*���ö�ʱ���*/
-    TOTIMEOUT           /*��ʱָ��*/
+    TOADDMML,           
+    TOADDSTAT,          
+    TOADDDBG,           
+    TOACTIVE,           
+    TOPAUSE,           
+    TOTIMER,           
+    TOTIMEOUT          
 };
 struct MmlOrdMsg
 {
@@ -164,19 +156,19 @@ struct MmlOrdMsg
 };
 struct MmlCtrlOrd
 {
-    MmlCrlOrdType OrdCode;  /*������*/
-    MmlOrdMsg     OrdMsg;       /*��������*/
+    MmlCrlOrdType OrdCode;  
+    MmlOrdMsg     OrdMsg;       
 };
-/*���ݸ��û���MML��Ϣ*/
+ 
 struct MmlMsg
 {
-    int      indexId;            /* MML���ӵ�socket��*/
-    int      CmdIndex;          /*MML���������*/
-    int      ParaNum;       /*MML����������*/
-    MmlPara  CmdPara[MML_PARA_NUM];/* MML������� */    
+    int      indexId;             
+    int      CmdIndex;          
+    int      ParaNum;        
+    MmlPara  CmdPara[MML_PARA_NUM];   
 };
 
-/*  ���ں������ӿ��ƿ��Ӧ�ṹ*/
+ 
 
 struct winptr
 {
@@ -191,7 +183,7 @@ struct StatName
 struct statptr
 {
     int winNum;
-    StatName    mStatName[STAT_NAME_NUM];    /*����ͳ�����б�*/
+    StatName    mStatName[STAT_NAME_NUM];    
 };
 
 //==============================================================================
@@ -346,40 +338,40 @@ private:
     static STATUS ListenTask();
     static STATUS DataCollectTask(DataCollectTool* appObjPtr);
 
-    /*��ݲɼ�������*/
+ 
     static MemoryBuf    mDataBuf;
 #if defined(SW_CPB)||defined(MCU_SW)
-    /*Ϊ���ר�����õ���ݲɼ�������:4K*100*/  
+ 
     static MemoryBuf    mBBDDataBuf;
 #endif
-    /*MML��Ϣ������*/
+ 
     static MemoryBuf    mMsgBuf;
-    /*ͳ����ݲɼ�������*/
+   
     static MemoryBuf    mStatBuf;
 
-    /*MML����ص������*/                       
+                    
     static MmlCallBack  mMmlCallBack[MAX_MML_USER];
-    /*MML����ע���*/                       
+                     
     static MmlCmdList*  mMmlCmdPtr;
-    /*��Dos�����*/                     
+                    
     static MmlDosCmd    mDosCmd[16];
 
 
     
-    /*��ݲɼ����ƴ�����Ϣ*/                        
+                        
     static MmlWinCfg    mMmlCtrl[MAX_MML_MMLNUM];
-    /*ͳ����ݿ��ƴ�����Ϣ*/
+ 
     static MmlWinCfg    mMmlStat[MAX_MML_STATNUM];
-    /*�û���ݲɼ����ƿ�*/                      
+                   
     static MmlWinCfg    mMmlCnfg[MAX_MML_WNDNUM];
 
-    /*�û���ݲɼ��û����Ӹ���*/                        
+                     
     static int          mWndConnNum;
-    /*MML���Ӹ���*/
+ 
     static int          mMmlConnNum;
-    /*����ͳ�����Ӹ���*/
+ 
     static int          mStatConnNum;
-    /*��ʼ����־*/
+ 
     static int          mInitialized;
 
     static winptr       WinPtr[MAX_WINPTR_NUM];

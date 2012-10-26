@@ -14,9 +14,9 @@ EXTERN_C_BEGIN;
 #ifndef LWDP_FUNCPTR_DEFINED
 #define LWDP_FUNCPTR_DEFINED
 #ifdef __cplusplus
-    typedef LWRESULT  (*FUNCPTR) (...);         /* ptr to function returning LWRESULT */
+//    typedef LWRESULT  (*FUNCPTR) (...);         /* ptr to function returning LWRESULT */
 #else
-    typedef LWRESULT  (*FUNCPTR) ();      /* ptr to func returning LWRESULT */
+//    typedef LWRESULT  (*FUNCPTR) ();      /* ptr to func returning LWRESULT */
 #endif /* __cplusplus */
 #endif /* _FUNCPTR_DEFINED */
 

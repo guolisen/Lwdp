@@ -3,6 +3,14 @@
 	<name>ExternalModuleExample</name>
 	<comment></comment>
 	<projects>
+		<project>ConfigMgrSo</project>
+		<project>DctMgrSo</project>
+		<project>ExampleTestSo</project>
+		<project>LogMgrSo</project>
+		<project>LuaMgrSo</project>
+		<project>LwdpApi</project>
+		<project>PluginLoaderSo</project>
+		<project>ScriptMgrSo</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

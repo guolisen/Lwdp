@@ -309,8 +309,11 @@ LWRESULT _lw_applLog(int32_ priCat, const char_ * file, int32_ line, const tchar
     memset(decoration, 0, LOG_LINE_STR_LEN);
     if ((priCat & LOG_DECOR) != 0)
 	{	
-    	n = Api_snprintf (decoration, LOG_LINE_STR_LEN-1,
+    	//n = Api_snprintf (decoration, LOG_LINE_STR_LEN-1,
+        //    		      __T("[%s][%s] "), logPriNames[pri], logCatNames[category]);
+        n = Api_sprintf (decoration, 
             		      __T("[%s][%s] "), logPriNames[pri], logCatNames[category]);
+
 	}
 
     if (file != NULL && (priCat & LOG_LOC) != 0)
@@ -326,7 +329,9 @@ LWRESULT _lw_applLog(int32_ priCat, const char_ * file, int32_ line, const tchar
 	    fileName = Api_PathFindFileName(tmpFileName);
         if(!fileName)
             fileName = __T("NO_FILENAME");
-    	n += Api_snprintf (decoration + n, LOG_LINE_STR_LEN - n,
+    	//n += Api_snprintf (decoration + n, LOG_LINE_STR_LEN - n,
+    	//	       			__T("%s:%d: "), fileName, line);
+		n += Api_sprintf (decoration + n, 
     		       			__T("%s:%d: "), fileName, line);
 	}
 
@@ -352,8 +357,11 @@ LWRESULT _lw_applLog(int32_ priCat, const char_ * file, int32_ line, const tchar
         tchar_ buf [LOG_NAME_MAX_STR + 1] = {0};
 
         //strerror_r (err, buf);
-        n += Api_snprintf (decoration + n, LOG_LINE_STR_LEN - n,
+        //n += Api_snprintf (decoration + n, LOG_LINE_STR_LEN - n,
+		//	__T("[%x:%s] "), err, Api_strlen(buf) ? buf : __T("NO_DESCRIP"));
+		n += Api_sprintf (decoration + n, 
 			__T("[%x:%s] "), err, Api_strlen(buf) ? buf : __T("NO_DESCRIP"));
+
 	}
 
     va_start (args, fmt);
