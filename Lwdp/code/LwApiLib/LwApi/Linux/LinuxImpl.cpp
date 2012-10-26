@@ -189,7 +189,7 @@ static inline bool cmpdl(const char* dpname, const char* match)
     return false;
 }
 
-Ix_ObjectFactory* xGetObjectFactory();
+Ix_ObjectFactory* GetObjectFactory();
 //static long s_objFactoryLocker = 0;
 
 MODULEID GetModuleHandleW(const wchar_t* filename)
@@ -312,7 +312,7 @@ void GetModuleFileNameA(MODULEID hdll, char_* filename, int32_ size)
             strncpy(filename, it->second.c_str(), size);
         }
 
-        Cx_Interface<Ix_PluginLoader2> factory(xGetObjectFactory());
+        Cx_Interface<Ix_PluginLoader2> factory(GetObjectFactory());
 
         if (factory && 0 == filename[0])
         {

@@ -10,8 +10,8 @@
 
 EXTERN_C_BEGIN
 //Lib Config
-#define CFG_CONFIGMGR_DIR_STR 	 __T("../../../../code/bin/plugins/ConfigMgrDll.dll")  //D:/code/LwDp/LwDp/code/bin/Plugins/ConfigMgrDll.dll
-#define CFG_PLUGINLOADER_DIR_STR __T("../../../../code/bin/Plugins/PluginLoaderDll.dll")
+#define CFG_CONFIGMGR_DIR_STR 	 __T("../../../../code/bin/Plugins/ConfigMgrSo.so")
+#define CFG_PLUGINLOADER_DIR_STR __T("../../../../code/bin/Plugins/PluginLoaderSo.so")
 
 
 

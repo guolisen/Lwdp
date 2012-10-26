@@ -28,7 +28,7 @@ thr(void * arg)
 	{
 		iLogMgr->LogPrint("Test4", LWDP_LOG_MGR::DEBUG, __FILE__, __LINE__, "Thr Hello World3!!");
 		printf("TTTTTTT %d\n", i++);
-		Sleep(1000);
+		sleep(1);
 	}
 }
 

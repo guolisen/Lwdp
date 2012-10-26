@@ -30,55 +30,57 @@ Date           CR No      Person        Description
 //==============================================================================
 #include <LwDp.h>
 
-const int MAX_MML_USER = 15;    /*Ö§³ÖµÄ×î´ó×¢²áÓÃ»§Êý*/
-const int MAX_MML_WNDNUM = 16;  /*Í¬Ê±Ö§³ÖµÄÊä³ö´°¿ÚµÄÊýÁ¿*/
-const int MAX_MML_MMLNUM = 6; /*Í¬Ê±Ö§³ÖµÄMMLÁ¬½ÓµÄÊýÁ¿*/
-const int MAX_MML_STATNUM = 8; /*Í¬Ê±Ö§³ÖµÄ²ÎÊýÍ³¼ÆÁ¬½ÓµÄÊýÁ¿*/
-const int MML_NAME_LEN = 16;    /*MMLÃüÁîÃû,²ÎÊýÃû,´°¿ÚÌáÊ¾·û³¤¶È*/
-const int MML_TOTAL_CMD_NUM = 512;/*×î¶àÖ§³ÖµÄMMLÃüÁî¸öÊý*/
-const int MML_VALUE_LEN = 64;   /*MMLÃüÁî²ÎÊýÖµ³¤¶È*/
-const int MML_PARA_NUM = 16; /*MML¼°ÀàDosÃüÁî²ÎÊý¸öÊý*/
+using namespace NLwdp;
+
+const int MAX_MML_USER = 15;    /*Ö§ï¿½Öµï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½*/
+const int MAX_MML_WNDNUM = 16;  /*Í¬Ê±Ö§ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½*/
+const int MAX_MML_MMLNUM = 6; /*Í¬Ê±Ö§ï¿½Öµï¿½MMLï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½*/
+const int MAX_MML_STATNUM = 8; /*Í¬Ê±Ö§ï¿½ÖµÄ²ï¿½ï¿½ï¿½Í³ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½*/
+const int MML_NAME_LEN = 16;    /*MMLï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½*/
+const int MML_TOTAL_CMD_NUM = 512;/*ï¿½ï¿½ï¿½Ö§ï¿½Öµï¿½MMLï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
+const int MML_VALUE_LEN = 64;   /*MMLï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½*/
+const int MML_PARA_NUM = 16; /*MMLï¿½ï¿½ï¿½ï¿½Dosï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 const int MML_POINTER_SIZE = 4;
 const int STAT_NAME_NUM = 4; 
 const int MAX_WINPTR_NUM = 128;
 const int MAX_STATPTR_NUM = 128;
 
-//#define LOCALDEBUG            //µ÷ÓÃMmlPrintf()Ê±£¬ÊµÏÖµÄÊÇprintf¹¦ÄÜ
-//#define DATACOLLECT_DEBUG     //´òÓ¡µ÷ÊÔÐÅÏ¢
-//#define BASE_PORT             //Á¬½ÓµÄ¶Ë¿Ú»ùÊý£¬Ä¬ÈÏÖµÊÇ8800
-//#define HW_TICK_1MS           //Ó²¼þµÄÒ»ÃëÖÓµÄtickÊý£¬Ä¬ÈÏÖµÊÇ16384
+//#define LOCALDEBUG            //ï¿½ï¿½ï¿½ï¿½MmlPrintf()Ê±ï¿½ï¿½Êµï¿½Öµï¿½ï¿½ï¿½printfï¿½ï¿½ï¿½ï¿½
+//#define DATACOLLECT_DEBUG     //ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
+//#define BASE_PORT             //ï¿½ï¿½ï¿½ÓµÄ¶Ë¿Ú»ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½Öµï¿½ï¿½8800
+//#define HW_TICK_1MS           //Ó²ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Óµï¿½tickï¿½ï¿½Ä¬ï¿½ï¿½Öµï¿½ï¿½16384
 //==============================================================================
 // Type Declarations
 //==============================================================================
 
-/*ÄÚ´æ¹ÜÀí»º³åÇø¶ÓÁÐ*/
+/*ï¿½Ú´ï¿½ï¿½ï¿½?ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 struct MemoryBuf
 {
-    char*    PhyMemPtr;     /*»º³åÇøÎïÀíÊ×µØÖ·*/
-    char*    HeadPtr;       /*»º³åÇø¶ÓÁÐÍ·Ö¸Õë*/
-    char*    TailPtr;       /*»º³åÇø¶ÓÁÐÎ²Ö¸Õë*/
+    char*    PhyMemPtr;     /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×µï¿½Ö·*/
+    char*    HeadPtr;       /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í·Ö¸ï¿½ï¿½*/
+    char*    TailPtr;       /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î²Ö¸ï¿½ï¿½*/
 #ifdef DATACOLLECT_DEBUG
     int      BusyNum;
     int      FreeNum;
 #endif
 } ;
 
-/*ÀàDosÃüÁî±í*/
+/*ï¿½ï¿½Dosï¿½ï¿½ï¿½ï¿½ï¿½*/
 struct MmlDosCmd
 {
     char*    NamePtr;
     FUNCPTR  FnPtr;
 };
 
-/*MMLÃüÁî»Øµ÷º¯Êý×¢²á±í½á¹¹*/
+/*MMLï¿½ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½á¹¹*/
 struct MmlCallBack
 {
-    FUNCPTR  FnPtr;     /*MMLÃüÁî»Øµ÷º¯ÊýÖ¸Õë*/
-    void*    ObjPtr;        /*¶ÔÏóÊµÀýÖ¸Õë*/
-    int      MsgBufNum;         /*ÒÑÊ¹ÓÃMsgBuf¸öÊý*/
+    FUNCPTR  FnPtr;     /*MMLï¿½ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½*/
+    void*    ObjPtr;        /*ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½Ö¸ï¿½ï¿½*/
+    int      MsgBufNum;         /*ï¿½ï¿½Ê¹ï¿½ï¿½MsgBufï¿½ï¿½ï¿½ï¿½*/
 };
 
-/*MMLÃüÁî½âÎö½á¹¹*/
+/*MMLï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½á¹¹*/
 struct CmdStr
 {
     char     Cmd[MML_NAME_LEN];
@@ -90,25 +92,25 @@ struct MmlPara
 };
 struct MmlCmdType
 {
-    CmdStr   CmdName[3];    /*[0]MMLÃüÁîÃû,[1]×ÓÃüÁîÃû1,[2]×ÓÃüÁîÃû2*/
-    int      ParaNum;       /*MMLÃüÁî²ÎÊý¸öÊý*/
-    MmlPara  CmdPara[MML_PARA_NUM];/* MMLÃüÁî²ÎÊý */    
+    CmdStr   CmdName[3];    /*[0]MMLï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,[1]ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1,[2]ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½2*/
+    int      ParaNum;       /*MMLï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
+    MmlPara  CmdPara[MML_PARA_NUM];/* MMLï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */    
 };
 
-/*ÀàDosÃüÁî½âÎö½á¹¹*/
+/*ï¿½ï¿½Dosï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½á¹¹*/
 struct  DosCmdType
 {
-    int      ParaNum;       /*(ÀàDosÃüÁî+²ÎÊý)¸öÊý*/
-    CmdStr   Para[MML_PARA_NUM];/*[0]ÀàDosÃüÁîÃû,ÆäËûÃüÁî²ÎÊý*/
+    int      ParaNum;       /*(ï¿½ï¿½Dosï¿½ï¿½ï¿½ï¿½+ï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½ï¿½ï¿½*/
+    CmdStr   Para[MML_PARA_NUM];/*[0]ï¿½ï¿½Dosï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 };
 
-/*MMLÃüÁî×¢²á±í*/
+/*MMLï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½*/
 struct MmlCmdItem 
 {
-    CmdStr   CmdName[3];    /*[0]MMLÃüÁîÃû,[1]×ÓÃüÁîÃû1,[2]×ÓÃüÁîÃû2*/
-    FUNCPTR  FnPtr;     /*MMLÃüÁî¹¦ÄÜº¯ÊýAPI*/
-    void*    ObjPtr;          /*¶ÔÏóÖ¸Õë*/
-    int      RegisterNum;   /*MML×¢²áºÅ */
+    CmdStr   CmdName[3];    /*[0]MMLï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,[1]ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1,[2]ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½2*/
+    FUNCPTR  FnPtr;     /*MMLï¿½ï¿½ï¿½î¹¦ï¿½Üºï¿½ï¿½ï¿½API*/
+    void*    ObjPtr;          /*ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½*/
+    int      RegisterNum;   /*MML×¢ï¿½ï¿½ï¿½ */
 };
 struct MmlCmdList 
 {
@@ -116,7 +118,7 @@ struct MmlCmdList
     MmlCmdItem CmdItem[MML_TOTAL_CMD_NUM];
 };
 
-/*MMLÃüÁî¹¦ÄÜ¿ØÖÆ¿é*/
+/*MMLï¿½ï¿½ï¿½î¹¦ï¿½Ü¿ï¿½ï¿½Æ¿ï¿½*/
 enum MmlStatus  
 {
     IDLE, 
@@ -129,29 +131,29 @@ enum MmlStatus
 
 struct MmlWinCfg
 {
-    int      WinId;     /*ÓÃ»§¶¨ÒåµÄ´°¿ÚºÅ*/
-    int      PipeId;        /*ÓÃ»§µÄ»º³åpipe*/
-    int      SockId;        /*ÓÃ»§µÄÊä³ösocket*/
-    MmlStatus Status;       /*ÓÃÓÚ¿ØÖÆ²É¼¯Êý¾ÝÊä³ö·½Ê½*/
-    int      Period;        /*ÓÃÓÚ¿ØÖÆ¶¨Ê±Êä³öÖÜÆÚ*/
-    WDOG_ID  WdTimer;       /*ÓÃ»§¶¨ÒåµÄ¶¨Ê±Æ÷*/
-    char     Prompt[MML_NAME_LEN];/*ÓÃ»§¶¨ÒåµÄÌáÊ¾·û*/
-    char     IpAddr[20];    /*ÓÃ»§µÄIpµØÖ·*/
-    char     kit_telnet_connect;       /*¸ÃÁ¬½ÓÊÇKitÁ¬½Ó»¹ÊÇtelnetÁ¬½Ó*/
-    bool    connect;           /*Á¬½ÓÊÇ·ñ´æÔÚµÄ±êÖ¾*/
+    int      WinId;     /*ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½Úºï¿½*/
+    int      PipeId;        /*ï¿½Ã»ï¿½ï¿½Ä»ï¿½ï¿½ï¿½pipe*/
+    int      SockId;        /*ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½socket*/
+    MmlStatus Status;       /*ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½Æ²É¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½*/
+    int      Period;        /*ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½Æ¶ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
+    WDOG_ID  WdTimer;       /*ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ä¶ï¿½Ê±ï¿½ï¿½*/
+    char     Prompt[MML_NAME_LEN];/*ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½*/
+    char     IpAddr[20];    /*ï¿½Ã»ï¿½ï¿½ï¿½Ipï¿½ï¿½Ö·*/
+    char     kit_telnet_connect;       /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Kitï¿½ï¿½ï¿½Ó»ï¿½ï¿½ï¿½telnetï¿½ï¿½ï¿½ï¿½*/
+    bool    connect;           /*ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ÚµÄ±ï¿½Ö¾*/
 
 };
 
-/*MML¿ØÖÆpipe¿ØÖÆÃüÁî½á¹¹*/
+/*MMLï¿½ï¿½ï¿½ï¿½pipeï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½á¹¹*/
 enum MmlCrlOrdType
 {
-    TOADDMML,           /*¼ÓÈëÐÂµÄMMLÁ¬½Ó*/
-    TOADDSTAT,          /*¼ÓÈëÐÂµÄÍ³¼ÆÁ¬½Ó*/
-    TOADDDBG,           /*¼ÓÈëÐÂµÄDebugÁ¬½Ó*/
-    TOACTIVE,           /*¼¤»îÄ³¸öÓÃ»§Êý¾Ý²É¼¯Êä³ö*/
-    TOPAUSE,            /*ÔÝÍ£Ä³¸öÓÃ»§Êý¾Ý²É¼¯Êä³ö*/
-    TOTIMER,            /*ÉèÖÃ¶¨Ê±Êä³ö*/
-    TOTIMEOUT           /*³¬Ê±Ö¸Áî*/
+    TOADDMML,           /*ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½MMLï¿½ï¿½ï¿½ï¿½*/
+    TOADDSTAT,          /*ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½Í³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
+    TOADDDBG,           /*ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½Debugï¿½ï¿½ï¿½ï¿½*/
+    TOACTIVE,           /*ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Ý²É¼ï¿½ï¿½ï¿½ï¿½*/
+    TOPAUSE,            /*ï¿½ï¿½Í£Ä³ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Ý²É¼ï¿½ï¿½ï¿½ï¿½*/
+    TOTIMER,            /*ï¿½ï¿½ï¿½Ã¶ï¿½Ê±ï¿½ï¿½ï¿½*/
+    TOTIMEOUT           /*ï¿½ï¿½Ê±Ö¸ï¿½ï¿½*/
 };
 struct MmlOrdMsg
 {
@@ -162,19 +164,19 @@ struct MmlOrdMsg
 };
 struct MmlCtrlOrd
 {
-    MmlCrlOrdType OrdCode;  /*ÃüÁîÂë*/
-    MmlOrdMsg     OrdMsg;       /*ÃüÁîÄÚÈÝ*/
+    MmlCrlOrdType OrdCode;  /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
+    MmlOrdMsg     OrdMsg;       /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 };
-/*´«µÝ¸øÓÃ»§µÄMMLÏûÏ¢*/
+/*ï¿½ï¿½ï¿½Ý¸ï¿½ï¿½Ã»ï¿½ï¿½ï¿½MMLï¿½ï¿½Ï¢*/
 struct MmlMsg
 {
-    int      indexId;            /* MMLÁ¬½ÓµÄsocketºÅ*/
-    int      CmdIndex;          /*MMLÃüÁîË÷ÒýºÅ*/
-    int      ParaNum;       /*MMLÃüÁî²ÎÊý¸öÊý*/
-    MmlPara  CmdPara[MML_PARA_NUM];/* MMLÃüÁî²ÎÊý */    
+    int      indexId;            /* MMLï¿½ï¿½ï¿½Óµï¿½socketï¿½ï¿½*/
+    int      CmdIndex;          /*MMLï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
+    int      ParaNum;       /*MMLï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
+    MmlPara  CmdPara[MML_PARA_NUM];/* MMLï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */    
 };
 
-/*  ´°¿ÚºÅÓëÁ¬½Ó¿ØÖÆ¿é¶ÔÓ¦½á¹¹*/
+/*  ï¿½ï¿½ï¿½Úºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¿ï¿½ï¿½Æ¿ï¿½ï¿½Ó¦ï¿½á¹¹*/
 
 struct winptr
 {
@@ -189,7 +191,7 @@ struct StatName
 struct statptr
 {
     int winNum;
-    StatName    mStatName[STAT_NAME_NUM];    /*²ÎÊýÍ³¼ÆÃûÁÐ±í*/
+    StatName    mStatName[STAT_NAME_NUM];    /*ï¿½ï¿½ï¿½ï¿½Í³ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½*/
 };
 
 //==============================================================================
@@ -214,7 +216,7 @@ How to use:
  To use this class instantiate a class object. Call MmlInit() before using 
  other functions.
 
-Note£º
+Noteï¿½ï¿½
 ==============================================================================*/
 class DataCollectTool 
 {
@@ -344,40 +346,40 @@ private:
     static STATUS ListenTask();
     static STATUS DataCollectTask(DataCollectTool* appObjPtr);
 
-    /*Êý¾Ý²É¼¯»º³åÇø*/
+    /*ï¿½ï¿½Ý²É¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
     static MemoryBuf    mDataBuf;
 #if defined(SW_CPB)||defined(MCU_SW)
-    /*Îª»ù´ø×¨ÃÅÉèÖÃµÄÊý¾Ý²É¼¯»º³åÇø:4K*100*/  
+    /*Îªï¿½ï¿½ï¿½×¨ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½Ý²É¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:4K*100*/  
     static MemoryBuf    mBBDDataBuf;
 #endif
-    /*MMLÏûÏ¢»º³åÇø*/
+    /*MMLï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
     static MemoryBuf    mMsgBuf;
-    /*Í³¼ÆÊý¾Ý²É¼¯»º³åÇø*/
+    /*Í³ï¿½ï¿½ï¿½ï¿½Ý²É¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
     static MemoryBuf    mStatBuf;
 
-    /*MMLÃüÁî»Øµ÷º¯Êý±í*/                       
+    /*MMLï¿½ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/                       
     static MmlCallBack  mMmlCallBack[MAX_MML_USER];
-    /*MMLÃüÁî×¢²á±í*/                       
+    /*MMLï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½*/                       
     static MmlCmdList*  mMmlCmdPtr;
-    /*ÀàDosÃüÁî±í*/                     
+    /*ï¿½ï¿½Dosï¿½ï¿½ï¿½ï¿½ï¿½*/                     
     static MmlDosCmd    mDosCmd[16];
 
 
     
-    /*Êý¾Ý²É¼¯¿ØÖÆ´°¿ÚÐÅÏ¢*/                        
+    /*ï¿½ï¿½Ý²É¼ï¿½ï¿½ï¿½ï¿½Æ´ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢*/                        
     static MmlWinCfg    mMmlCtrl[MAX_MML_MMLNUM];
-    /*Í³¼ÆÊý¾Ý¿ØÖÆ´°¿ÚÐÅÏ¢*/
+    /*Í³ï¿½ï¿½ï¿½ï¿½Ý¿ï¿½ï¿½Æ´ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢*/
     static MmlWinCfg    mMmlStat[MAX_MML_STATNUM];
-    /*ÓÃ»§Êý¾Ý²É¼¯¿ØÖÆ¿é*/                      
+    /*ï¿½Ã»ï¿½ï¿½ï¿½Ý²É¼ï¿½ï¿½ï¿½ï¿½Æ¿ï¿½*/                      
     static MmlWinCfg    mMmlCnfg[MAX_MML_WNDNUM];
 
-    /*ÓÃ»§Êý¾Ý²É¼¯ÓÃ»§Á¬½Ó¸öÊý*/                        
+    /*ï¿½Ã»ï¿½ï¿½ï¿½Ý²É¼ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½Ó¸ï¿½ï¿½ï¿½*/                        
     static int          mWndConnNum;
-    /*MMLÁ¬½Ó¸öÊý*/
+    /*MMLï¿½ï¿½ï¿½Ó¸ï¿½ï¿½ï¿½*/
     static int          mMmlConnNum;
-    /*²ÎÊýÍ³¼ÆÁ¬½Ó¸öÊý*/
+    /*ï¿½ï¿½ï¿½ï¿½Í³ï¿½ï¿½ï¿½ï¿½ï¿½Ó¸ï¿½ï¿½ï¿½*/
     static int          mStatConnNum;
-    /*³õÊ¼»¯±êÖ¾*/
+    /*ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½Ö¾*/
     static int          mInitialized;
 
     static winptr       WinPtr[MAX_WINPTR_NUM];

@@ -28,6 +28,7 @@ EXTERN_C_BEGIN;
 #define DECLEXPORT
 #define OUTAPI      extern "C" DECLEXPORT
 #define PLNEXT     __T".so"
+#define PLUGINCALL  OUTAPI
 
 #ifndef LWDP_MAX_PATH
 #define LWDP_MAX_PATH 256

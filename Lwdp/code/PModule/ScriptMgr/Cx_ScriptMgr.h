@@ -19,12 +19,13 @@ typedef  std::list<Action_Ptr> Action_Set;
 class Cx_ScriptMgr : public Ix_ScriptMgr
 {
 	friend class Ix_Action;
+
     X3BEGIN_CLASS_DECLARE(Cx_ScriptMgr)
         X3DEFINE_INTERFACE_ENTRY(Ix_ScriptMgr)
     X3END_CLASS_DECLARE();
 
 protected:
-	Cx_ScriptMgr::Cx_ScriptMgr(){mActionSet.clear();}	
+	Cx_ScriptMgr(){mActionSet.clear();}
     virtual ~Cx_ScriptMgr(){}
 
     virtual LWRESULT RegisteAction(Ix_Action* action);

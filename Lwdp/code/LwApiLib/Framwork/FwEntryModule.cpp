@@ -35,7 +35,7 @@ EXTERN_C_BEGIN;
 LWRESULT RegisteFwModule(Ix_Module** pModule)
 {
 	s_lwdpModule = new INTER_MOD_NAME(FwIntf); 
-	ASSERT_CHECK_RET(LWDP_MODULE_LOG, LWDP_MALLOC_MEMORY_ERROR, s_lwdpModule, "RegisteFwModule new Module Error!");
+	//ASSERT_CHECK_RET(LWDP_MODULE_LOG, LWDP_MALLOC_MEMORY_ERROR, s_lwdpModule, "RegisteFwModule new Module Error!");
 	*pModule = s_lwdpModule;
 	return Fw_RegisteModule(s_lwdpModule); 
 }

@@ -201,7 +201,7 @@ bool Cx_ObjectFactory::RegisterClass(int32_ moduleIndex, const X3CLASSENTRY& cls
     if (pOldCls && pOldCls->pfnObjectCreator)
     {
         tchar_ msg[1024] = {0};
- 		Api_sprintf(msg, 256,
+ 		Api_snprintf(msg, 256,
             "The classid '%s' is already registered by '%s', "
             "then '%s' register fail.\n",
             cls.clsid.str(), pOldCls->className, cls.className);

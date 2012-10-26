@@ -258,7 +258,7 @@ LWRESULT Cx_LogMgr::RegisteAppender(MyAppenderFctory_Ptr appender_fctory)
 #else
 /* use alternative snprintf() from http://www.ijs.si/software/snprintf/ */
 
-#define VSNPRINTF portable_vsnprintf
+#define VSNPRINTF Api_snprintf
 
 #endif // LOG4CPP_HAVE_SNPRINTF
 #endif // _MSC_VER

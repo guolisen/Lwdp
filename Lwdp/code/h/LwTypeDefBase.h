@@ -68,6 +68,8 @@ typedef uint32_             dword_;
 
 typedef int32_              bool_;
 
+
+
 #undef TRUE
 #define TRUE   1
 #undef FALSE
