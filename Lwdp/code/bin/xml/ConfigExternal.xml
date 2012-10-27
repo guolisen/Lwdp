@@ -11,7 +11,7 @@
 		<vars Name="@test2">'Hahaha'</vars>
 		<vars Name="@test3">:1111</vars>
 		<vars Name="@test4">:2222</vars>
-		
+		  
 		<printf Level = "ERROR" Param1 = "@test">'Hello World1 %s!!'</printf>
 		<printf Level = "ERROR" Param1 = "Guolisen" Param2 = "2222">Hello World2 %s %s!!</printf>
 		<printf Level = "INFO" Param1 = "Guolisen" Param2 = "@test1" Param3 = "@test2">Hello World3 %s %s %s!!</printf>
