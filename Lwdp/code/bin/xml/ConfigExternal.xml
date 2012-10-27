@@ -16,7 +16,7 @@
 		<printf Level = "ERROR" Param1 = "Guolisen" Param2 = "2222">Hello World2 %s %s!!</printf>
 		<printf Level = "INFO" Param1 = "Guolisen" Param2 = "@test1" Param3 = "@test2">Hello World3 %s %s %s!!</printf>
 		<printf Level = "INFO" Param1 = "@test2">Hello World1 %s!!</printf>
-		
+		  
 		<!--If Test-->
 		<if Expr="$(@test3 != 1111)">
 			<printf Level = "INFO">IF Domain A!</printf>	
