@@ -3,7 +3,7 @@
 	<Property> 
 		<ProjectName>Example</ProjectName>
 		<Version>1.0</Version>
-	</Property>
+	</Property> 
 	<Script Name = "GlobalInit">
 		<!--Var Test-->
 		<vars Name="@test">'My Name is Guolisen'  </vars>
