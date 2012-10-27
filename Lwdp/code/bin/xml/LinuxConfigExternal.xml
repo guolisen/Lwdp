@@ -10,7 +10,7 @@
 		<vars Name="@test1">'HeiHei'</vars>
 		<vars Name="@test2">'Hahaha'</vars>
 		<vars Name="@test3">:1111</vars>
-		<vars Name="@test4">:2222</vars>
+		<vars Name="@test4">:2222</vars>  
 		
 		<printf Level = "ERROR" Param1 = "@test">'Hello World1 %s!!'</printf>
 		<printf Level = "ERROR" Param1 = "Guolisen" Param2 = "2222">Hello World2 %s %s!!</printf>
