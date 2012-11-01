@@ -27,7 +27,7 @@ DEF_INIT_FUN(DctMgr)
 	//Cx_Interface<Ix_ScriptMgr> iScript(CLSID_ScriptMgr);
 	//iScript->RegisteAction(new APrint);
 
-	GET_OBJECT(DctMgr, iDctMgr, LWDP_GET_OBJECT_ERROR);
+	GET_OBJECT_RET(DctMgr, iDctMgr, LWDP_GET_OBJECT_ERROR);
 	RINOK(iDctMgr->Init());
 	
     return LWDP_OK;

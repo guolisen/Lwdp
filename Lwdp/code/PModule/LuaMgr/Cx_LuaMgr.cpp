@@ -14,6 +14,8 @@
 #include "LuaTagDef.h"
 #include "Cx_LuaMgr.h"
 
+typedef int  (*TOLUA_OPEN) (lua_State* tolua_S);
+
 
 LWDP_NAMESPACE_BEGIN;
 
@@ -35,7 +37,7 @@ LWRESULT Cx_LuaMgr::Init()
 	mStackLibPos = lua_gettop(mL);
 
 	XPropertyTable libraryTable;
-	GET_OBJECT(ConfigMgr, iConfigMgr, LWDP_GET_OBJECT_ERROR);
+	GET_OBJECT_RET(ConfigMgr, iConfigMgr, LWDP_GET_OBJECT_ERROR);
 	RINOK(iConfigMgr->GetModuleTable(LW_LUAMGR_MODULE_NAME, LW_LUAMGR_LIBRARY_TABLE_NAME, libraryTable));
 
 	for(uint32_ i=0; libraryTable[i].ThereIs; ++i)
@@ -113,7 +115,13 @@ LWRESULT Cx_LuaMgr::LoadFile(const tstring& file_name)
 	return LWDP_OK;
 }
 
+LWRESULT Cx_LuaMgr::RegisteFuction(void* func)
+{
+	TOLUA_OPEN openfunc = (TOLUA_OPEN)func;
 
+	openfunc(mL);
+	return LWDP_OK;
+}
 
 LWDP_NAMESPACE_END;
 

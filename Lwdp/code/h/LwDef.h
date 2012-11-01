@@ -106,14 +106,20 @@ const int32_ UNICODE_TAG = 0;
 	for(iter = ele.begin(); iter != ele.end(); ++iter)
 
 
-#define GET_OBJECT(Module, Var, Ret) \
+#define GET_OBJECT_RET(Module, Var, Ret) \
 	Cx_Interface<Ix_##Module> (Var)(CLSID_##Module); \
 	if((Var).IsNull()) \
 	{ \
 		lw_log_warning(LWDP_MODULE_LOG, "Can't Get Module(%s) Pointer!(%s, %d)", #Module, __FILE__, __LINE__); \
 		return (Ret); \
 	}
-		
+
+#define GET_OBJECT(Module, Var) \
+	Cx_Interface<Ix_##Module> (Var)(CLSID_##Module); \
+	if((Var).IsNull()) \
+	{ \
+		lw_log_warning(LWDP_MODULE_LOG, "Can't Get Module(%s) Pointer!(%s, %d)", #Module, __FILE__, __LINE__); \
+	}
 
 
 #define PLATFORM_LOG(cat, level, ...) \

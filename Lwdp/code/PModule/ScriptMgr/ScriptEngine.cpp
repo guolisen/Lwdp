@@ -177,7 +177,7 @@ LWRESULT ScriptEngine::scriptRunTag(const TagTree_Ptr& script_code, const tstrin
 
 		if(iterSysAct == mSysActionSet.end())
 		{
-			GET_OBJECT(ScriptMgr, iScript, LWDP_GET_OBJECT_ERROR);
+			GET_OBJECT_RET(ScriptMgr, iScript, LWDP_GET_OBJECT_ERROR);
 			Action_Ptr tmpAction;
 			iScript->GetAction((*iter)->levelEntry->propertyName, tmpAction);
 			if(tmpAction == Action_Ptr())
@@ -368,7 +368,7 @@ LWRESULT ExprParse::ParseBool(const tstring& expr_str, bool& ret_bool, ScriptEng
 	RINOK(ParseStr(expr_str, pSEngine, ret_expr));
 
 	GETWORD(ret_expr);
-	GET_OBJECT(XmlMgr, iXmlMgr, LWDP_GET_OBJECT_ERROR);
+	GET_OBJECT_RET(XmlMgr, iXmlMgr, LWDP_GET_OBJECT_ERROR);
 	iXmlMgr->XmlParse("<Root/>");
 	tstring res;
 	iXmlMgr->XmlParseExprStr(ret_expr, res);
@@ -546,7 +546,7 @@ LWRESULT AComput::DoAction(const TagEntry_Ptr& element, const tstring& domain, c
 	GETWORD(varValue);
 	tstring exprStr = varValue + getOprStr() + stepStr;
 
-	GET_OBJECT(XmlMgr, iXmlMgr, LWDP_GET_OBJECT_ERROR);
+	GET_OBJECT_RET(XmlMgr, iXmlMgr, LWDP_GET_OBJECT_ERROR);
 	iXmlMgr->XmlParse("<Root/>");
 	tstring res;
 	iXmlMgr->XmlParseExprStr(exprStr, res);
