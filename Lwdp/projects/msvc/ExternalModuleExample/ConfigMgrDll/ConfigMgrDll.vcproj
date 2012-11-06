@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\..\code\h;..\..\..\..\code\h\LwApiLib\ComLib"
+				AdditionalIncludeDirectories="..\..\..\..\code\h;..\..\..\..\code\h\LwApiLib\ComLib;..\..\..\..\code\h\LwApiLib\ComLib\Lua"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;CONFIGMGRDLL_EXPORTS;LWDP_PLUGIN_CONTEXT;LWDP_DEBUG_MACRO"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -190,6 +190,10 @@
 		</File>
 		<File
 			RelativePath="..\..\..\..\code\PModule\ConfigMgr\Cx_XmlMgr.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\code\PModule\ConfigMgr\LuaConfigMgr.cpp"
 			>
 		</File>
 	</Files>

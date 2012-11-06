@@ -38,6 +38,7 @@ LWRESULT Cx_LuaMgr::Init()
 
 	XPropertyTable libraryTable;
 	GET_OBJECT_RET(ConfigMgr, iConfigMgr, LWDP_GET_OBJECT_ERROR);
+	RINOK(iConfigMgr->RegisteToLua());
 	RINOK(iConfigMgr->GetModuleTable(LW_LUAMGR_MODULE_NAME, LW_LUAMGR_LIBRARY_TABLE_NAME, libraryTable));
 
 	for(uint32_ i=0; libraryTable[i].ThereIs; ++i)

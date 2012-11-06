@@ -1,14 +1,46 @@
 print("Lua script test2 print!!!!!!!!!!!!")
 
-LogMgr.LuaLogPrint("Test2", 0, "FileName", 13, "Hello!!!!!")
-LogMgr.LuaLogPrint("Test2", 1, "FileName1", 13, "Hello!!!!!1")
-LogMgr.LuaLogPrint("Test2", 2, "FileName2", 13, "Hello!!!!!2")
-LogMgr.LuaLogPrint("Test2", 3, "FileName3", 13, "Hello!!!!!3")
-LogMgr.LuaLogPrint("Test2", 4, "FileName4", 13, "Hello!!!!!4")
-LogMgr.LuaLogPrint("Test2", 5, "FileName5", 13, "Hello!!!!!5")
-LogMgr.LuaLogPrint("Test2", 6, "FileName6", 13, "Hello!!!!!6")
-LogMgr.LuaLogPrint("Test2", 7, "FileName7", 13, "Hello!!!!!7")
 
+--  Log Manager --
+
+print("///////////////////////// <<< Log Manager >>> /////////////////////////")
+LogMgr.LuaLogPrint("Test", 0, "FileName", 13, "Hello!!!!!")
+LogMgr.LuaLogPrint("Test", 1, "FileName1", 13, "Hello!!!!!1")
+LogMgr.LuaLogPrint("Test", 2, "FileName2", 13, "Hello!!!!!2")
+LogMgr.LuaLogPrint("Test", 3, "FileName3", 13, "Hello!!!!!3")
+LogMgr.LuaLogPrint("Test", 4, "FileName4", 13, "Hello!!!!!4")
+LogMgr.LuaLogPrint("Test", 5, "FileName5", 13, "Hello!!!!!5")
+LogMgr.LuaLogPrint("Test", 6, "FileName6", 13, "Hello!!!!!6")
+LogMgr.LuaLogPrint("Test", 7, "FileName7", 13, "Hello!!!!!7")
+print("///////////////////////// <<< Log Manager >>> /////////////////////////\n")
+
+
+--  Config Manager --
+
+print("///////////////////////// <<< Config Manager >>> /////////////////////////")
+a = Script_Ptr.new()
+ConfigMgr.GetScript("LWDP", "GlobalInit", a)
+print(Script_Ptr.get(a))
+
+prop = XmlResults:new();
+ConfigMgr.GetModulePropEntry("ExampleTest", "Version", prop)
+print(XmlResultsMod.get(prop[0].propertyText))
+
+propTab = XmlResultsSet:new();
+ret = ConfigMgr.GetModuleTable("ExampleTest", "TestTable", propTab)
+print("!!!RET: " .. ret)
+
+
+i = 0;
+while propTab[i].ThereIs do
+	print(XmlResultsMod.get(propTab[i][1].AttribValue))
+	i=i+1;
+end
+
+print("//////////////////////// <<< Config Manager >>> /////////////////////////\n")
+
+
+--  Test Fun --
 
 local ret = TestAdd(23, 100)
 

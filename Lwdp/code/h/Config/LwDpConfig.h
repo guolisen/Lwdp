@@ -11,6 +11,7 @@
 EXTERN_C_BEGIN
 //Lib Config
 #ifdef LWDP_PLATFORM_DEF_LINUX
+#define CFG_LUAMGR_DIR_STR 	 __T("../../../../code/bin/Plugins/LuaMgrSo.so")
 #define CFG_CONFIGMGR_DIR_STR 	 __T("../../../../code/bin/Plugins/ConfigMgrSo.so")
 #define CFG_PLUGINLOADER_DIR_STR __T("../../../../code/bin/Plugins/PluginLoaderSo.so")
 
@@ -18,6 +19,7 @@ EXTERN_C_BEGIN
 //#define _STDIO_DEFINED
 
 #elif defined(LWDP_PLATFORM_DEF_WIN32)
+#define CFG_LUAMGR_DIR_STR 	 __T("../../../../code/bin/Plugins/LuaMgrDll.dll")
 #define CFG_CONFIGMGR_DIR_STR 	 __T("../../../../code/bin/Plugins/ConfigMgrDll.dll")
 #define CFG_PLUGINLOADER_DIR_STR __T("../../../../code/bin/Plugins/PluginLoaderDll.dll")
 #endif

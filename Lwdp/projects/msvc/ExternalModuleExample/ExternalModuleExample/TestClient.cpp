@@ -161,6 +161,7 @@ int32_ main()
 //	iExample->Foo(val1);
 
 	system("pause");
+
 	return 0;
 }
 

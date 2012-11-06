@@ -359,7 +359,7 @@ class XmlResults
 {
 public:
 	XmlResults(){mProperty.clear();};
-	virtual ~XmlResults(){};
+	virtual ~XmlResults(){printf("!!!!!!!~XmlResults release!\n");};
 
 	virtual XmlResults& operator=(const XmlResults& other)
 	{
@@ -415,6 +415,10 @@ protected:
 class XmlResultsSet : public XmlResults
 {
 public:
+	
+	XmlResultsSet(){};
+	virtual ~XmlResultsSet(){printf("!!!!!!!~XmlResultsSet release!\n");};
+
 	virtual LWRESULT AddProperty(TagEntry_Ptr result_entry) 
 	{
 		mProperty.push_back(result_entry);

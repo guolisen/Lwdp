@@ -26,6 +26,7 @@ DEF_MODULE_INFO_END(ConfigMgr);
 DEF_INIT_FUN(ConfigMgr)
 {
 	printf("ConfigMgr InitializePlugin\n");
+	
     return LWDP_OK;
 }
 
