@@ -135,7 +135,7 @@ thr1(void * arg)
   int result;
 
 
-	GET_OBJECT(LogMgr, iLogMgr, 0);
+	GET_OBJECT_RET(LogMgr, iLogMgr, 0);
 
 	while(i--)
 	{
@@ -162,7 +162,7 @@ int j = 5 ;
   int result;
 
 
-	GET_OBJECT(LogMgr, iLogMgr, 0);
+	GET_OBJECT_RET(LogMgr, iLogMgr, 0);
 
 	while(i--)
 	{
@@ -239,7 +239,7 @@ int32_ main()
 		return -1;
 	}
 
-	GET_OBJECT(LogMgr, iLogMgr, 0);
+	GET_OBJECT_RET(LogMgr, iLogMgr, 0);
 //	iLogMgr->RegisteAppender(MyAppenderFctory_Ptr(new TestAppenderFactory));
 	//while(1)
 	{
@@ -265,7 +265,7 @@ int32_ main()
 	LWDP_LOG_PRINT("Test", LWDP_LOG_MGR::ERR, "ERR MACRO TEST(%d)", 1);
 	LWDP_LOG_PRINT("Test", LWDP_LOG_MGR::WARNING, "ERR MACRO TEST(%d)", 1);
 	
-	//GET_OBJECT(DctMgr, iDctMgr, 0);
+	//GET_OBJECT_RET(DctMgr, iDctMgr, 0);
 	//iDctMgr->Init();
 	//while(1)
 	{

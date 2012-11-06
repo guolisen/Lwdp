@@ -29,7 +29,7 @@ LWRESULT Cx_ConfigMgr::AddConfigSrc(Ix_ConfigSrc* config_src)
 	if(!xmlData)
 		return LWDP_GET_CONFIG_DATA_ERROR;
 
-	GET_OBJECT(XmlMgr, iXmlMgr, LWDP_GET_OBJECT_ERROR);
+	GET_OBJECT_RET(XmlMgr, iXmlMgr, LWDP_GET_OBJECT_ERROR);
 	if (iXmlMgr->XmlParse((XML_BUFFER*)xmlData) != LWDP_OK)
 	{
 		config_src->ReleseConfigData();

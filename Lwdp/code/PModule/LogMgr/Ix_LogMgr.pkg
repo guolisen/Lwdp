@@ -1,0 +1,24 @@
+
+$#include <LwDp.h>
+$#include <Interface/LogMgr/Ix_LogMgr.h>
+$#include "Lua_Interface_LogMg.h"
+
+$using namespace NLwdp;
+
+module LogMgr {
+
+void LuaLogPrint(const char* module_name, 
+						int level, 
+						const char* file_name,
+						long line,
+						const char* stringFormat)
+{
+	GET_OBJECT(LogMgr, iLogMgr);
+	iLogMgr->LogPrint(module_name, (LWDP_LOG_MGR::LwdpLogLevel)level, file_name, line, stringFormat); 
+}
+	
+}
+
+
+
+

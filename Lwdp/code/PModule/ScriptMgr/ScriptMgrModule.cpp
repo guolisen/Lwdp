@@ -28,7 +28,7 @@ DEF_MODULE_INFO_END(ScriptMgr);
 DEF_INIT_FUN(ScriptMgr)
 {
 	printf("ScriptMgr InitializePlugin\n");
-	GET_OBJECT(ScriptMgr, iScript, LWDP_GET_OBJECT_ERROR);
+	GET_OBJECT_RET(ScriptMgr, iScript, LWDP_GET_OBJECT_ERROR);
 	iScript->RegisteAction(new APrint);
 
     return LWDP_OK;

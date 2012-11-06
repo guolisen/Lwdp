@@ -19,7 +19,7 @@ INTERFACE_BEGIN(LuaMgr)
 	virtual LWRESULT LoadLibraryBuffer(const char* buf) = 0;
 
 
-	virtual LWRESULT RegisteFuction() = 0;
+	virtual LWRESULT RegisteFuction(void* func) = 0;
 	virtual LWRESULT Call() = 0;
 
 	virtual LWRESULT ResetStack() = 0;

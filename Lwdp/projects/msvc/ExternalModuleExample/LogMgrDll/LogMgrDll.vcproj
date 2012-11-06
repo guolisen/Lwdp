@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\..\code\h;..\..\..\..\code\h\LwApiLib\ComLib"
+				AdditionalIncludeDirectories="..\..\..\..\code\h;..\..\..\..\code\h\LwApiLib\ComLib\Lua;..\..\..\..\code\h\LwApiLib\ComLib"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;LOGMGRDLL_EXPORTS;LWDP_PLUGIN_CONTEXT;LWDP_DEBUG_MACRO"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -177,7 +177,27 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\..\code\PModule\LogMgr\Ix_LogMgr.pkg"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\code\PModule\LogMgr\LogMgrErrno.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\..\code\PModule\LogMgr\LogMgrModule.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\code\PModule\LogMgr\LogTagDef.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\code\PModule\LogMgr\Lua_Interface_LogMg.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\code\PModule\LogMgr\Lua_LogMgr.cpp"
 			>
 		</File>
 		<File

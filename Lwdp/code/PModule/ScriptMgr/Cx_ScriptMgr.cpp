@@ -45,7 +45,7 @@ LWRESULT Cx_ScriptMgr::GetAction(const tstring& action_name, Action_Ptr& action)
 LWRESULT Cx_ScriptMgr::SyncScriptRun(Script_Ptr script_code)
 {
 	ASSERT_CHECK_RET(LWDP_MODULE_LOG, LWDP_PARAMETER_ERROR, (script_code), "Cx_ScriptMgr::SyncScriptRun Parameter Error!");
-	GET_OBJECT(XmlMgr, iXmlMgr, LWDP_GET_OBJECT_ERROR);
+	GET_OBJECT_RET(XmlMgr, iXmlMgr, LWDP_GET_OBJECT_ERROR);
 	if (iXmlMgr->XmlParse((XML_BUFFER*)script_code.get()) != LWDP_OK)
 	{
 		return LWDP_PARSE_XML_DATA_ERROR;

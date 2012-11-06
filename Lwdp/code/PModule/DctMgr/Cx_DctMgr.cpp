@@ -68,7 +68,7 @@ LWRESULT Cx_DctMgr::Init()
 		return LWDP_ERROR;
 	}
 
-	GET_OBJECT(LogMgr, iLogMgr, LWDP_GET_OBJECT_ERROR);
+	GET_OBJECT_RET(LogMgr, iLogMgr, LWDP_GET_OBJECT_ERROR);
 	RINOK(iLogMgr->RegisteAppender(MyAppenderFctory_Ptr(new DctAppenderFactory)));
 
 	return LWDP_OK;

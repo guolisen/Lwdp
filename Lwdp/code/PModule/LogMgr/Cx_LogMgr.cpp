@@ -14,12 +14,17 @@
 #include <LwApiLib/ComLib/log4cpp/RollingFileAppender.hh>
 
 #include <Interface/ConfigMgr/Ix_ConfigMgr.h>
+#include <Interface/LuaMgr/Ix_LuaMgr.h>
 
 #include "MyAppender.h"
 #include "LogTagDef.h"
 #include "Cx_LogMgr.h"
+#include "tolua++.h"
+
+int  tolua_LogMgr_open (lua_State* tolua_S);
 
 LWDP_NAMESPACE_BEGIN;
+
 
 
 Cx_LogMgr::Cx_LogMgr()
@@ -33,9 +38,12 @@ Cx_LogMgr::~Cx_LogMgr()
 
 LWRESULT Cx_LogMgr::Init()
 {
+	GET_OBJECT_RET(LuaMgr, iLuaMgr, LWDP_GET_OBJECT_ERROR);
+	iLuaMgr->RegisteFuction((void*)tolua_LogMgr_open);
+
 	XPropertyTable levelTable;
 	log4cpp::Appender* appender = NULL;
-	GET_OBJECT(ConfigMgr, iConfigMgr, LWDP_GET_OBJECT_ERROR);
+	GET_OBJECT_RET(ConfigMgr, iConfigMgr, LWDP_GET_OBJECT_ERROR);
 
 	RINOK(iConfigMgr->GetModuleTable(LW_LOGMGR_MODULE_NAME, LW_LOGMGR_MODULE_TABLE_NAME, levelTable));
 	for(uint32_ i=0; levelTable[i].ThereIs; ++i)
@@ -104,7 +112,7 @@ LWRESULT Cx_LogMgr::Init()
 
 		//Set Level
 		log4cpp::Priority::PriorityLevel level = log4cpp::Priority::INFO;
-		tstring levelStr = levelTable[i][LW_LOGMGR_TABLE_LEVEL_TAG];
+		tstring levelStr = levelTable[i][LW_LOGMGR_TABLE_LEVEL_ATTR_TAG];
 		if(!levelStr.empty())
 			level = getLevel(levelStr);
 		else
@@ -192,7 +200,7 @@ log4cpp::Priority::PriorityLevel Cx_LogMgr::getLevel(LWDP_LOG_MGR::LwdpLogLevel 
 LWRESULT Cx_LogMgr::RegisteAppender(MyAppenderFctory_Ptr appender_fctory)
 {
 	XPropertyTable levelTable;
-	GET_OBJECT(ConfigMgr, iConfigMgr, LWDP_GET_OBJECT_ERROR);
+	GET_OBJECT_RET(ConfigMgr, iConfigMgr, LWDP_GET_OBJECT_ERROR);
 	RINOK(iConfigMgr->GetModuleTable(LW_LOGMGR_MODULE_NAME, LW_LOGMGR_MODULE_TABLE_NAME, levelTable));
 	for(uint32_ i=0; levelTable[i].ThereIs; ++i)
 	{ 

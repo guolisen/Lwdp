@@ -109,9 +109,9 @@
 	<TableSet>
 		<PropertyTable Name = "ModuleLoadTable">
 			<ModuleLoad Name = "ScriptMgr"  Modid = "CABBCCA4-1160-49cf-8450-F35E897202EA" />
+			<ModuleLoad Name = "LuaMgr" 	Modid = "3FAAA9E8-4CBB-4496-A369-172077A3F5EE" />
 			<ModuleLoad Name = "LogMgr"     Modid = "8BBC60DD-D652-454b-B522-6D19D5A1B97A" />
 			<ModuleLoad Name = "DctMgr" 	Modid = "A009B569-707F-4618-A089-C09F776ADEC2" />
-			<ModuleLoad Name = "LuaMgr" 	Modid = "3FAAA9E8-4CBB-4496-A369-172077A3F5EE" />
 			<ModuleLoad Name = "ExampleTest"  Modid = "2F72F07E-5594-45c5-A1EB-654C0A3117AC" />
 		</PropertyTable>
 	</TableSet>
@@ -142,16 +142,16 @@
 			<Version>1.0</Version>
 			<ModuleDir>../../../../code/bin/Plugins/LogMgrDll.dll</ModuleDir>
 			<GlobalLevel>DEBUG</GlobalLevel>
-			<LogPattern>%m %d{%H:%M:%S.%l %d %b %Y}%n</LogPattern>
+			<LogPattern>%p: %m %d{%H:%M:%S.%l %d %b %Y}%n</LogPattern>
 		</Property>
 		<TableSet>
 			<PropertyTable Name = "LevelTable">
 				<!-- STD直接打印  -->
-				<LevelEntry ModuleName = "Test"  Level = "INFO" Type = "STD"/>
+				<LevelEntry ModuleName = "Test"  Level = "DEBUG" Type = "STD"/>
 				<!-- File输出到文件  -->
 				<LevelEntry ModuleName = "Test2" Level = "DEBUG" Type = "FILE" FileName = "Log0203.txt"/>
 				<!-- File输出到Rolling文件  -->
-				<LevelEntry ModuleName = "Test3" Level = "INFO" Type = "ROLFILE" FileName = "RolLog0203.txt" FileSize = ""/>
+				<LevelEntry ModuleName = "Test3" Level = "DEBUG" Type = "ROLFILE" FileName = "RolLog0203.txt" FileSize = ""/>
 				<!-- File输出到DebugTool  -->
 				<LevelEntry ModuleName = "Test4" Level = "DEBUG" Type = "REMOTE" WinId = "2"/>
 			</PropertyTable>

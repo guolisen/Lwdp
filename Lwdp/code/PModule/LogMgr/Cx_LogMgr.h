@@ -1,6 +1,7 @@
 #ifndef CX_LOG_MANAGER_H
 #define CX_LOG_MANAGER_H
 
+#include <LwDp.h>
 #include <boost/shared_ptr.hpp>
 #include <list>
 #include <Interface/LogMgr/Ix_LogMgr.h>
@@ -50,6 +51,7 @@ private:
 private:
 	MyAppender_List mInAppender;
 };
+
 
 LWDP_NAMESPACE_END;
 

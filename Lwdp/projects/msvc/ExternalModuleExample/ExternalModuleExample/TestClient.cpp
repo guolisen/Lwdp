@@ -150,15 +150,17 @@ int32_ main()
 		
 	}
 	
-	//long_ val = 100;
-	//GET_OBJECT(Example, iExample, 0);
-	//iExample->Foo(val);
 
 
-	GET_OBJECT(LuaMgr, iLuaMgr, 0);
-	iLuaMgr->DoFile("../LuaMgrDll/Test2.lua");
 
-	getchar();
+	GET_OBJECT_RET(LuaMgr, iLuaMgr, 0);
+	iLuaMgr->DoFile("../../../../code/bin/Lua/Test2.lua");
+
+//	long_ val1 = 100;
+//	GET_OBJECT_RET(Example, iExample, 0);
+//	iExample->Foo(val1);
+
+	system("pause");
 	return 0;
 }
 

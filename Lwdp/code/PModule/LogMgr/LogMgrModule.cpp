@@ -33,7 +33,7 @@ DEF_MODULE_INFO_END(LogMgr);
 DEF_INIT_FUN(LogMgr)
 {
 	printf("LogMgr InitializePlugin\n");
-	GET_OBJECT(LogMgr, iLogMgr, LWDP_GET_OBJECT_ERROR);
+	GET_OBJECT_RET(LogMgr, iLogMgr, LWDP_GET_OBJECT_ERROR);
 
 	RINOK(iLogMgr->Init());
 

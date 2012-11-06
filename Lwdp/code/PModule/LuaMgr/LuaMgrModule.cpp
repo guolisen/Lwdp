@@ -33,7 +33,7 @@ DEF_INIT_FUN(LuaMgr)
 	//Cx_Interface<Ix_ScriptMgr> iScript(CLSID_ScriptMgr);
 	//iScript->RegisteAction(new APrint);
 
-	GET_OBJECT(LuaMgr, iLuaMgr, LWDP_GET_OBJECT_ERROR);
+	GET_OBJECT_RET(LuaMgr, iLuaMgr, LWDP_GET_OBJECT_ERROR);
 	RINOK(iLuaMgr->Init());
 	
     return LWDP_OK;

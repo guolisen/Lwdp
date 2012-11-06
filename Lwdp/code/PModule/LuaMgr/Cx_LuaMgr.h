@@ -17,9 +17,9 @@
 
 extern "C" 
 {
-	#include "../LwApiLib/ComLib/Lua/lua.h"
-	#include "../LwApiLib/ComLib/Lua/lualib.h"
-	#include "../LwApiLib/ComLib/Lua/lauxlib.h"
+	#include <lua.h>
+	#include <lualib.h>
+	#include <lauxlib.h>
 };
 
 LWDP_NAMESPACE_BEGIN;
@@ -46,7 +46,7 @@ protected:
 	LWRESULT LoadLibraryBuffer(const char* buf){return LWDP_OK;};
 
 
-	LWRESULT RegisteFuction(){return LWDP_OK;};
+	LWRESULT RegisteFuction(void* func);
 	LWRESULT Call(){return LWDP_OK;};
 
 	LWRESULT ResetStack(){return LWDP_OK;};

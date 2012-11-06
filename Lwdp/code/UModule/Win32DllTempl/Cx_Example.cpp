@@ -22,14 +22,14 @@ void *
 thr(void * arg)
 {
 	int i = 5 ;
-	GET_OBJECT(LogMgr, iLogMgr, 0);
+	GET_OBJECT_RET(LogMgr, iLogMgr, 0);
 
 	while(1)
 	{
-		iLogMgr->LogPrint("Test4", LWDP_LOG_MGR::DEBUG, __FILE__, __LINE__, "Thr Hello World3!!");
+		iLogMgr->LogPrint("Test", LWDP_LOG_MGR::DEBUG, __FILE__, __LINE__, "Thr Hello World3!!");
 		printf("TTTTTTT %d\n", i++);
 #ifdef WIN32
-		Sleep(1);
+		Sleep(1000);
 #else
 		sleep(1);
 #endif
