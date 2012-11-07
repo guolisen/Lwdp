@@ -4,14 +4,14 @@ print("Lua script test2 print!!!!!!!!!!!!")
 --  Log Manager --
 
 print("///////////////////////// <<< Log Manager >>> /////////////////////////")
-LogMgr.LuaLogPrint("Test", 0, "FileName", 13, "Hello!!!!!")
-LogMgr.LuaLogPrint("Test", 1, "FileName1", 13, "Hello!!!!!1")
-LogMgr.LuaLogPrint("Test", 2, "FileName2", 13, "Hello!!!!!2")
-LogMgr.LuaLogPrint("Test", 3, "FileName3", 13, "Hello!!!!!3")
-LogMgr.LuaLogPrint("Test", 4, "FileName4", 13, "Hello!!!!!4")
-LogMgr.LuaLogPrint("Test", 5, "FileName5", 13, "Hello!!!!!5")
-LogMgr.LuaLogPrint("Test", 6, "FileName6", 13, "Hello!!!!!6")
-LogMgr.LuaLogPrint("Test", 7, "FileName7", 13, "Hello!!!!!7")
+LogMgr.LuaLogPrint("Test", LWDP_LOG_MGR.DEBUG, "FileName", 13, "Hello!!!!!")
+LogMgr.LuaLogPrint("Test", LWDP_LOG_MGR.INFO, "FileName1", 13, "Hello!!!!!1")
+LogMgr.LuaLogPrint("Test", LWDP_LOG_MGR.NOTICE, "FileName2", 13, "Hello!!!!!2")
+LogMgr.LuaLogPrint("Test", LWDP_LOG_MGR.WARNING, "FileName3", 13, "Hello!!!!!3")
+LogMgr.LuaLogPrint("Test", LWDP_LOG_MGR.ERR, "FileName4", 13, "Hello!!!!!4")
+LogMgr.LuaLogPrint("Test", LWDP_LOG_MGR.CRIT, "FileName5", 13, "Hello!!!!!5")
+LogMgr.LuaLogPrint("Test", LWDP_LOG_MGR.ALERT, "FileName6", 13, "Hello!!!!!6")
+LogMgr.LuaLogPrint("Test", LWDP_LOG_MGR.EMERG, "FileName7", 13, "Hello!!!!!7")
 print("///////////////////////// <<< Log Manager >>> /////////////////////////\n")
 
 
