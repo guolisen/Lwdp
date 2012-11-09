@@ -5,22 +5,22 @@ $#include "Lua_Interface_LogMg.h"
 
 $using namespace NLwdp;
 
-namespace LWDP_LOG_MGR{
-	enum LwdpLogLevel
-	{
-		DEBUG,	/* Messages containing information normally of use */
-			/* only when debugging */
-		INFO,	/* Informational messages */
-		NOTICE,	/* Non-error conditions, which may require special */
-			/* handling */
-		WARNING,	/* Warning messages */
-		ERR,	/* Errors */
-		CRIT,	/* Critical conditions, such as hard device errors */
-		ALERT,	/* A condition which requires immediate corrective */
-			/* action */
-		EMERG	/* Panic condition. The system is unstable. */
-	};
+
+enum LogLevel
+{
+	DEBUG,	/* Messages containing information normally of use */
+		/* only when debugging */
+	INFO,	/* Informational messages */
+	NOTICE,	/* Non-error conditions, which may require special */
+		/* handling */
+	WARNING,	/* Warning messages */
+	ERR,	/* Errors */
+	CRIT,	/* Critical conditions, such as hard device errors */
+	ALERT,	/* A condition which requires immediate corrective */
+		/* action */
+	EMERG	/* Panic condition. The system is unstable. */
 };
+
 
 
 module LogMgr {

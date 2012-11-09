@@ -317,8 +317,17 @@ struct CTagEntry
 				    propertyText(""),
 				    parentName("")
 				    {mAttribute.clear();}
-						  
+	//for lua					  
+	const tstring GetAttrByName(const tstring& attr_name) const
+	{
+		for(uint32_ iter = 0; iter < mAttribute.size(); ++iter)
+		{
+			if(mAttribute[iter]->AttribName == attr_name)
+				return mAttribute[iter]->AttribValue;
+		}
 
+		return static_cast<tstring>("");  //Return empty str
+	}
 	const tstring operator[](const tstring& attr_name) const
 	{
 		for(uint32_ iter = 0; iter < mAttribute.size(); ++iter)

@@ -9,8 +9,8 @@ $using namespace NLwdp;
 
 struct CAttributeStru
 {
-	tstring AttribName;
-	tstring AttribValue;
+	std::string AttribName;
+	std::string AttribValue;
 	CAttributeStru();
 
 	//CAttributeStru(const CAttributeStru& other);
@@ -27,7 +27,7 @@ struct CTagEntry
 	CTagEntry();
 
 	//CTagEntry(const CTagEntry& other);
-				  
+	const std::string GetAttrByName(const std::string attr_name) const;	  
 //	const std::string operator[](const std::string& attr_name) const;
 	const CAttributeStru operator[](const unsigned int index) const;
 	uint32_ GetAttrCount() const;

@@ -1,6 +1,6 @@
 /*
 ** Lua binding: LogMgr
-** Generated automatically by tolua++-1.0.92 on 11/07/12 23:18:43.
+** Generated automatically by tolua++-1.0.92 on 11/09/12 21:29:03.
 */
 
 #ifndef __cplusplus
@@ -17,6 +17,21 @@ TOLUA_API int  tolua_LogMgr_open (lua_State* tolua_S);
 #include <Interface/LogMgr/Ix_LogMgr.h>
 #include "Lua_Interface_LogMg.h"
 using namespace NLwdp;
+
+enum LogLevel
+{
+	DEBUG,	/* Messages containing information normally of use */
+		/* only when debugging */
+	INFO,	/* Informational messages */
+	NOTICE,	/* Non-error conditions, which may require special */
+		/* handling */
+	WARNING,	/* Warning messages */
+	ERR,	/* Errors */
+	CRIT,	/* Critical conditions, such as hard device errors */
+	ALERT,	/* A condition which requires immediate corrective */
+		/* action */
+	EMERG	/* Panic condition. The system is unstable. */
+};
 
 /* function to register type */
 static void tolua_reg_types (lua_State* tolua_S)
@@ -66,17 +81,14 @@ TOLUA_API int tolua_LogMgr_open (lua_State* tolua_S)
  tolua_reg_types(tolua_S);
  tolua_module(tolua_S,NULL,0);
  tolua_beginmodule(tolua_S,NULL);
-  tolua_module(tolua_S,"LWDP_LOG_MGR",0);
-  tolua_beginmodule(tolua_S,"LWDP_LOG_MGR");
-   tolua_constant(tolua_S,"DEBUG",LWDP_LOG_MGR::DEBUG);
-   tolua_constant(tolua_S,"INFO",LWDP_LOG_MGR::INFO);
-   tolua_constant(tolua_S,"NOTICE",LWDP_LOG_MGR::NOTICE);
-   tolua_constant(tolua_S,"WARNING",LWDP_LOG_MGR::WARNING);
-   tolua_constant(tolua_S,"ERR",LWDP_LOG_MGR::ERR);
-   tolua_constant(tolua_S,"CRIT",LWDP_LOG_MGR::CRIT);
-   tolua_constant(tolua_S,"ALERT",LWDP_LOG_MGR::ALERT);
-   tolua_constant(tolua_S,"EMERG",LWDP_LOG_MGR::EMERG);
-  tolua_endmodule(tolua_S);
+  tolua_constant(tolua_S,"DEBUG",DEBUG);
+  tolua_constant(tolua_S,"INFO",INFO);
+  tolua_constant(tolua_S,"NOTICE",NOTICE);
+  tolua_constant(tolua_S,"WARNING",WARNING);
+  tolua_constant(tolua_S,"ERR",ERR);
+  tolua_constant(tolua_S,"CRIT",CRIT);
+  tolua_constant(tolua_S,"ALERT",ALERT);
+  tolua_constant(tolua_S,"EMERG",EMERG);
   tolua_module(tolua_S,"LogMgr",0);
   tolua_beginmodule(tolua_S,"LogMgr");
    tolua_function(tolua_S,"LuaLogPrint",tolua_LogMgr_LogMgr_LuaLogPrint00);

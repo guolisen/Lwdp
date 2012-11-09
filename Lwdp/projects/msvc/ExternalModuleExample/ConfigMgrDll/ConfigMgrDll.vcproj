@@ -193,7 +193,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\..\code\PModule\ConfigMgr\LuaConfigMgr.cpp"
+			RelativePath="..\..\..\..\code\PModule\ConfigMgr\Lua_ConfigMgr.cpp"
 			>
 		</File>
 	</Files>
