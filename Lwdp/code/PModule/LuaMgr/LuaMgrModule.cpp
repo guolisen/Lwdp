@@ -16,7 +16,7 @@
 LWDP_NAMESPACE_BEGIN;
 
 XBEGIN_DEFINE_CLASS()
-    XDEFINE_CLASSMAP_ENTRY_Singleton(MODID_LuaMgr, CLSID_LuaMgr, Cx_LuaMgr)
+    XDEFINE_CLASSMAP_ENTRY(MODID_LuaMgr, CLSID_LuaMgr, Cx_LuaMgr)
 XEND_DEFINE_CLASS_SYS();
 
 
@@ -33,8 +33,10 @@ DEF_INIT_FUN(LuaMgr)
 	//Cx_Interface<Ix_ScriptMgr> iScript(CLSID_ScriptMgr);
 	//iScript->RegisteAction(new APrint);
 
-	GET_OBJECT_RET(LuaMgr, iLuaMgr, LWDP_GET_OBJECT_ERROR);
-	RINOK(iLuaMgr->Init());
+	//GET_OBJECT_RET(LuaMgr, iLuaMgr, LWDP_GET_OBJECT_ERROR);
+	//RINOK(iLuaMgr->Init());
+	GET_OBJECT_RET(ConfigMgr, iConfigMgr, LWDP_GET_OBJECT_ERROR);
+	RINOK(iConfigMgr->RegisteToLua());
 	
     return LWDP_OK;
 }

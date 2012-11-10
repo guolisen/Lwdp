@@ -37,9 +37,9 @@ struct CTagEntry
 
 class XmlResults
 {
-public:
+public: 
 	XmlResults();
-	virtual ~XmlResults();
+	//virtual ~XmlResults();
 
 //	virtual const CTagEntry operator[](const tstring& property_name);
 
@@ -54,7 +54,7 @@ class XmlResultsSet : public XmlResults
 {
 public:
 	XmlResultsSet();
-	virtual ~XmlResultsSet();
+	//virtual ~XmlResultsSet();
 };
 
 module Script_Ptr

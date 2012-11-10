@@ -151,11 +151,13 @@ int32_ main()
 	}
 	
 
+	{
 
-
-	GET_OBJECT_RET(LuaMgr, iLuaMgr, 0);
-	iLuaMgr->DoFile("../../../../code/bin/Lua/Test2.lua");
-
+		GET_OBJECT_RET(LuaMgr, iLuaMgr, 0);
+		iLuaMgr->Init();
+		iLuaMgr->LoadAllLib();
+		iLuaMgr->DoFile("../../../../code/bin/Lua/Test2.lua");
+	}
 //	long_ val1 = 100;
 //	GET_OBJECT_RET(Example, iExample, 0);
 //	iExample->Foo(val1);

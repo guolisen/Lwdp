@@ -317,6 +317,7 @@ struct CTagEntry
 				    propertyText(""),
 				    parentName("")
 				    {mAttribute.clear();}
+
 	//for lua					  
 	const tstring GetAttrByName(const tstring& attr_name) const
 	{
@@ -368,7 +369,7 @@ class XmlResults
 {
 public:
 	XmlResults(){mProperty.clear();};
-	virtual ~XmlResults(){printf("!!!!!!!~XmlResults release!\n");};
+	virtual ~XmlResults(){};
 
 	virtual XmlResults& operator=(const XmlResults& other)
 	{
@@ -426,7 +427,7 @@ class XmlResultsSet : public XmlResults
 public:
 	
 	XmlResultsSet(){};
-	virtual ~XmlResultsSet(){printf("!!!!!!!~XmlResultsSet release!\n");};
+	virtual ~XmlResultsSet(){};
 
 	virtual LWRESULT AddProperty(TagEntry_Ptr result_entry) 
 	{

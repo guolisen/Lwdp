@@ -18,26 +18,24 @@ print("///////////////////////// <<< Log Manager >>> /////////////////////////\n
 --  Config Manager --
 
 print("///////////////////////// <<< Config Manager >>> /////////////////////////")
-a = Script_Ptr.new()
+local a = Script_Ptr.new()
 ConfigMgr.GetScript("LWDP", "GlobalInit", a)
 print(Script_Ptr.get(a))
 
-prop = XmlResults:new();
+local prop = XmlResults:new_local();
 ConfigMgr.GetModulePropEntry("ExampleTest", "Version", prop)
 print(XmlResultsMod.get(prop[0].propertyText))
 
-propTab = XmlResultsSet:new();
-ret = ConfigMgr.GetModuleTable("ExampleTest", "TestTable", propTab)
+local propTab = XmlResultsSet:new_local();
+local ret = ConfigMgr.GetModuleTable("ExampleTest", "TestTable", propTab)
 print("!!!RET: " .. ret)
 
 
 i = 0;
-strTest="ts"
-
 while propTab[i].ThereIs do
 	print(propTab[i]:GetAttrByName("ts"))
-	print("-------------")
 	print(propTab[i][1].AttribValue)
+	print("-------------")
 	i=i+1;
 end
 

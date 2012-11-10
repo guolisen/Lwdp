@@ -9,6 +9,7 @@ LWDP_NAMESPACE_BEGIN;
 
 INTERFACE_BEGIN(LuaMgr)
 	virtual LWRESULT Init() = 0;
+	virtual LWRESULT Destory() = 0;
 
 	virtual LWRESULT DoFile(const tstring& file_name) = 0;
 	virtual LWRESULT LoadFile(const tstring& file_name) = 0;
@@ -23,7 +24,8 @@ INTERFACE_BEGIN(LuaMgr)
 	virtual LWRESULT Call() = 0;
 
 	virtual LWRESULT ResetStack() = 0;
-
+	
+	virtual LWRESULT LoadAllLib() = 0;
 	
 INTERFACE_END();
 

@@ -1,6 +1,6 @@
 /*
 ** Lua binding: ConfigMgr
-** Generated automatically by tolua++-1.0.92 on 11/09/12 23:25:35.
+** Generated automatically by tolua++-1.0.92 on 11/10/12 15:15:41.
 */
 
 #ifndef __cplusplus
@@ -542,35 +542,6 @@ static int tolua_ConfigMgr_XmlResults_new00_local(lua_State* tolua_S)
 }
 #endif //#ifndef TOLUA_DISABLE
 
-/* method: delete of class  XmlResults */
-#ifndef TOLUA_DISABLE_tolua_ConfigMgr_XmlResults_delete00
-static int tolua_ConfigMgr_XmlResults_delete00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"XmlResults",0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,2,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  XmlResults* self = (XmlResults*)  tolua_tousertype(tolua_S,1,0);
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'delete'", NULL);
-#endif
-  Mtolua_delete(self);
- }
- return 0;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'delete'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
 /* method: operator[] of class  XmlResults */
 #ifndef TOLUA_DISABLE_tolua_ConfigMgr_XmlResults__geti00
 static int tolua_ConfigMgr_XmlResults__geti00(lua_State* tolua_S)
@@ -730,35 +701,6 @@ static int tolua_ConfigMgr_XmlResultsSet_new00_local(lua_State* tolua_S)
 #ifndef TOLUA_RELEASE
  tolua_lerror:
  tolua_error(tolua_S,"#ferror in function 'new'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: delete of class  XmlResultsSet */
-#ifndef TOLUA_DISABLE_tolua_ConfigMgr_XmlResultsSet_delete00
-static int tolua_ConfigMgr_XmlResultsSet_delete00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"XmlResultsSet",0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,2,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  XmlResultsSet* self = (XmlResultsSet*)  tolua_tousertype(tolua_S,1,0);
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'delete'", NULL);
-#endif
-  Mtolua_delete(self);
- }
- return 0;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'delete'.",&tolua_err);
  return 0;
 #endif
 }
@@ -993,7 +935,6 @@ TOLUA_API int tolua_ConfigMgr_open (lua_State* tolua_S)
    tolua_function(tolua_S,"new",tolua_ConfigMgr_XmlResults_new00);
    tolua_function(tolua_S,"new_local",tolua_ConfigMgr_XmlResults_new00_local);
    tolua_function(tolua_S,".call",tolua_ConfigMgr_XmlResults_new00_local);
-   tolua_function(tolua_S,"delete",tolua_ConfigMgr_XmlResults_delete00);
    tolua_function(tolua_S,".geti",tolua_ConfigMgr_XmlResults__geti00);
    tolua_function(tolua_S,"Clear",tolua_ConfigMgr_XmlResults_Clear00);
    tolua_function(tolua_S,"Empty",tolua_ConfigMgr_XmlResults_Empty00);
@@ -1007,7 +948,6 @@ TOLUA_API int tolua_ConfigMgr_open (lua_State* tolua_S)
    tolua_function(tolua_S,"new",tolua_ConfigMgr_XmlResultsSet_new00);
    tolua_function(tolua_S,"new_local",tolua_ConfigMgr_XmlResultsSet_new00_local);
    tolua_function(tolua_S,".call",tolua_ConfigMgr_XmlResultsSet_new00_local);
-   tolua_function(tolua_S,"delete",tolua_ConfigMgr_XmlResultsSet_delete00);
   tolua_endmodule(tolua_S);
   tolua_module(tolua_S,"Script_Ptr",0);
   tolua_beginmodule(tolua_S,"Script_Ptr");

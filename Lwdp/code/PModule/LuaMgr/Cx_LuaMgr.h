@@ -24,6 +24,14 @@ extern "C"
 
 LWDP_NAMESPACE_BEGIN;
 
+
+typedef int  (*TOLUA_OPEN) (lua_State* tolua_S);
+
+
+typedef std::list<TOLUA_OPEN>  LIB_REGISTE_FUNC_LIST;
+
+
+
 class Cx_LuaMgr
     : public Ix_LuaMgr
 {
@@ -36,7 +44,8 @@ protected:
 
 protected:
 	LWRESULT Init();
-
+	LWRESULT Destory();
+	
 	LWRESULT DoFile(const tstring& file_name);
 	LWRESULT LoadFile(const tstring& file_name);
 	LWRESULT LoadLuaLibrary(const tstring& file_name);
@@ -49,14 +58,15 @@ protected:
 	LWRESULT RegisteFuction(void* func);
 	LWRESULT Call(){return LWDP_OK;};
 
-	LWRESULT ResetStack(){return LWDP_OK;};
-	
-protected:
+	LWRESULT ResetStack();
 
+	LWRESULT LoadAllLib();
 
 protected:
 	lua_State* mL;
 	int        mStackLibPos;
+
+	static LIB_REGISTE_FUNC_LIST mRegisteFuncList;
 
 };
 
