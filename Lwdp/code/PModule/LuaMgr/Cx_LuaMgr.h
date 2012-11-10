@@ -7,6 +7,7 @@
 #ifndef CX_LUA_MANAGER_H
 #define CX_LUA_MANAGER_H
 
+
 #include <boost/shared_ptr.hpp>
 #include <list>
 #include <Interface/LuaMgr/Ix_LuaMgr.h>
@@ -15,12 +16,7 @@
 
 #include <iostream>
 
-extern "C" 
-{
-	#include <lua.h>
-	#include <lualib.h>
-	#include <lauxlib.h>
-};
+
 
 LWDP_NAMESPACE_BEGIN;
 
@@ -54,18 +50,16 @@ protected:
 	LWRESULT LoadBuffer(const char* buf){return LWDP_OK;};
 	LWRESULT LoadLibraryBuffer(const char* buf){return LWDP_OK;};
 
-
 	LWRESULT RegisteFuction(void* func);
-	LWRESULT Call(){return LWDP_OK;};
-
 	LWRESULT ResetStack();
-
 	LWRESULT LoadAllLib();
 
-protected:
-	lua_State* mL;
-	int        mStackLibPos;
 
+	LWRESULT Call(){return LWDP_OK;};
+
+protected:
+	LuaStateOwner* mState;
+	int        mStackLibPos;
 	static LIB_REGISTE_FUNC_LIST mRegisteFuncList;
 
 };

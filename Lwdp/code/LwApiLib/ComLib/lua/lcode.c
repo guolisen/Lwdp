@@ -24,6 +24,8 @@
 #include "ltable.h"
 
 
+NAMESPACE_LUA_BEGIN
+
 #define hasjumps(e)	((e)->t != (e)->f)
 
 
@@ -237,9 +239,19 @@ static int addk (FuncState *fs, TValue *k, TValue *v) {
   }
   else {  /* constant not found; create a new entry */
     setnvalue(idx, cast_num(fs->nk));
+#if LUA_MEMORY_STATS
+    luaM_setname(L, "lua.parser.constants");
+#endif /* LUA_MEMORY_STATS */
     luaM_growvector(L, f->k, fs->nk, f->sizek, TValue,
                     MAXARG_Bx, "constant table overflow");
+#if LUA_MEMORY_STATS
+    luaM_setname(L, 0);
+#endif /* LUA_MEMORY_STATS */
+#if LUA_REFCOUNT
+    while (oldsize < f->sizek) setnilvalue2n(L, &f->k[oldsize++]);
+#else
     while (oldsize < f->sizek) setnilvalue(&f->k[oldsize++]);
+#endif /* LUA_REFCOUNT */
     setobj(L, &f->k[fs->nk], v);
     luaC_barrier(L, f, v);
     return fs->nk++;
@@ -249,31 +261,71 @@ static int addk (FuncState *fs, TValue *k, TValue *v) {
 
 int luaK_stringK (FuncState *fs, TString *s) {
   TValue o;
+#if LUA_REFCOUNT
+  lua_State *L = fs->L;
+  int ret;
+  setsvalue2n(fs->L, &o, s);
+  ret = addk(fs, &o, &o);
+  setnilvalue(&o);
+  return ret;
+#else
   setsvalue(fs->L, &o, s);
   return addk(fs, &o, &o);
+#endif /* LUA_REFCOUNT */
 }
 
 
 int luaK_numberK (FuncState *fs, lua_Number r) {
   TValue o;
+#if LUA_REFCOUNT
+  lua_State *L = fs->L;
+  int ret;
+  setnvalue2n(&o, r);
+  ret = addk(fs, &o, &o);
+  setnilvalue(&o);
+  return ret;
+#else
   setnvalue(&o, r);
   return addk(fs, &o, &o);
+#endif /* LUA_REFCOUNT */
 }
 
 
 static int boolK (FuncState *fs, int b) {
   TValue o;
+#if LUA_REFCOUNT
+  lua_State *L = fs->L;
+  int ret;
+  setbvalue2n(&o, b);
+  ret = addk(fs, &o, &o);
+  setnilvalue(&o);
+  return ret;
+#else
   setbvalue(&o, b);
   return addk(fs, &o, &o);
+#endif /* LUA_REFCOUNT */
 }
 
 
 static int nilK (FuncState *fs) {
   TValue k, v;
+#if LUA_REFCOUNT
+  lua_State *L = fs->L;
+  int ret;
+  setnilvalue2n(L, &v);
+  luarc_newvalue(&k);
+  /* cannot use nil as key; instead use table itself to represent nil */
+  sethvalue(fs->L, &k, fs->h);
+  ret = addk(fs, &k, &v);
+  luarc_cleanvalue(&k);
+  luarc_cleanvalue(&v);
+  return ret;
+#else
   setnilvalue(&v);
   /* cannot use nil as key; instead use table itself to represent nil */
   sethvalue(fs->L, &k, fs->h);
   return addk(fs, &k, &v);
+#endif /* LUA_REFCOUNT */
 }
 
 
@@ -641,6 +693,13 @@ static int constfolding (OpCode op, expdesc *e1, expdesc *e2) {
       r = luai_nummod(v1, v2); break;
     case OP_POW: r = luai_numpow(v1, v2); break;
     case OP_UNM: r = luai_numunm(v1); break;
+#if LUA_BITFIELD_OPS
+    case OP_BAND: r = (unsigned int)v1 & (unsigned int)v2; break;
+    case OP_BOR:  r = (unsigned int)v1 | (unsigned int)v2; break;
+    case OP_BXOR: r = (unsigned int)v1 ^ (unsigned int)v2; break;
+    case OP_BSHL: r = (unsigned int)v1 << (unsigned int)v2; break;
+    case OP_BSHR: r = (unsigned int)v1 >> (unsigned int)v2; break;
+#endif /* LUA_BITFIELD_OPS */
     case OP_LEN: return 0;  /* no constant folding for 'len' */
     default: lua_assert(0); r = 0; break;
   }
@@ -669,6 +728,74 @@ static void codearith (FuncState *fs, OpCode op, expdesc *e1, expdesc *e2) {
   }
 }
 
+
+#if LUA_MUTATION_OPERATORS
+static void codecompound (FuncState *fs, OpCode op, expdesc *e1, expdesc *e2) {
+  int o1;
+  int o2;
+
+  /* load expresion 2 into a register. */
+  o2 = luaK_exp2RK(fs, e2);
+
+  switch (e1->k) {
+    case VLOCAL: {
+      // compound opcode
+      luaK_codeABC(fs, op, e1->u.s.info, o2, 0);
+      return;
+    }
+    case VUPVAL: {
+      // allocate temp. register
+      o1 = fs->freereg;
+      luaK_reserveregs(fs, 1);
+      // load upval into temp. register
+      luaK_codeABC(fs, OP_GETUPVAL, o1, e1->u.s.info, 0);
+      // compound opcode
+      luaK_codeABC(fs, op, o1, o2, 0);
+      // store results back to upval
+      luaK_codeABC(fs, OP_SETUPVAL, o1, e1->u.s.info, 0);
+      // free temp. register
+      freereg(fs, o1);
+      break;
+    }
+    case VGLOBAL: {
+      // allocate temp. register
+      o1 = fs->freereg;
+      luaK_reserveregs(fs, 1);
+      // load global into temp. register
+      luaK_codeABx(fs, OP_GETGLOBAL, o1, e1->u.s.info);
+      // compound opcode
+      luaK_codeABC(fs, op, o1, o2, 0);
+      // store results back to global
+      luaK_codeABx(fs, OP_SETGLOBAL, o1, e1->u.s.info);
+      // free temp. register
+      freereg(fs, o1);
+      break;
+    }
+    case VINDEXED: {
+      // allocate temp. register
+      o1 = fs->freereg;
+      luaK_reserveregs(fs, 1);
+      // load indexed value into temp. register
+      luaK_codeABC(fs, OP_GETTABLE, o1, e1->u.s.info, e1->u.s.aux);
+      // compound opcode
+      luaK_codeABC(fs, op, o1, o2, 0);
+      // store results back to indexed value
+      luaK_codeABC(fs, OP_SETTABLE, e1->u.s.info, e1->u.s.aux, o1);
+      // free temp. register
+      freereg(fs, o1);
+      freereg(fs, e1->u.s.aux);
+      freereg(fs, e1->u.s.info);
+      break;
+    }
+    default: {
+      lua_assert(0);  /* invalid var kind to store */
+      break;
+    }
+  }
+  /* free register for expression 2 */
+  freeexp(fs, e2);
+}
+#endif /* LUA_MUTATION_OPERATORS */
 
 static void codecomp (FuncState *fs, OpCode op, int cond, expdesc *e1,
                                                           expdesc *e2) {
@@ -770,6 +897,21 @@ void luaK_posfix (FuncState *fs, BinOpr op, expdesc *e1, expdesc *e2) {
     case OPR_DIV: codearith(fs, OP_DIV, e1, e2); break;
     case OPR_MOD: codearith(fs, OP_MOD, e1, e2); break;
     case OPR_POW: codearith(fs, OP_POW, e1, e2); break;
+#if LUA_MUTATION_OPERATORS
+    case OPR_ADD_EQ: codecompound(fs, OP_ADD_EQ, e1, e2); break;
+    case OPR_SUB_EQ: codecompound(fs, OP_SUB_EQ, e1, e2); break;
+    case OPR_MUL_EQ: codecompound(fs, OP_MUL_EQ, e1, e2); break;
+    case OPR_DIV_EQ: codecompound(fs, OP_DIV_EQ, e1, e2); break;
+    case OPR_MOD_EQ: codecompound(fs, OP_MOD_EQ, e1, e2); break;
+    case OPR_POW_EQ: codecompound(fs, OP_POW_EQ, e1, e2); break;
+#endif /* LUA_MUTATION_OPERATORS */
+#if LUA_BITFIELD_OPS
+    case OPR_BAND: codearith(fs, OP_BAND, e1, e2); break;
+    case OPR_BOR:  codearith(fs, OP_BOR, e1, e2); break;
+    case OPR_BXOR: codearith(fs, OP_BXOR, e1, e2); break;
+    case OPR_BSHL: codearith(fs, OP_BSHL, e1, e2); break;
+    case OPR_BSHR: codearith(fs, OP_BSHR, e1, e2); break;
+#endif /* LUA_BITFIELD_OPS */
     case OPR_EQ: codecomp(fs, OP_EQ, 1, e1, e2); break;
     case OPR_NE: codecomp(fs, OP_EQ, 0, e1, e2); break;
     case OPR_LT: codecomp(fs, OP_LT, 1, e1, e2); break;
@@ -790,12 +932,24 @@ static int luaK_code (FuncState *fs, Instruction i, int line) {
   Proto *f = fs->f;
   dischargejpc(fs);  /* `pc' will change */
   /* put new instruction in code array */
+#if LUA_MEMORY_STATS
+  luaM_setname(fs->L, "lua.parser.code");
+#endif /* LUA_MEMORY_STATS */
   luaM_growvector(fs->L, f->code, fs->pc, f->sizecode, Instruction,
                   MAX_INT, "code size overflow");
+#if LUA_MEMORY_STATS
+  luaM_setname(fs->L, 0);
+#endif /* LUA_MEMORY_STATS */
   f->code[fs->pc] = i;
   /* save corresponding line information */
+#if LUA_MEMORY_STATS
+  luaM_setname(fs->L, "lua.parser.lineinfo");
+#endif /* LUA_MEMORY_STATS */
   luaM_growvector(fs->L, f->lineinfo, fs->pc, f->sizelineinfo, int,
                   MAX_INT, "code size overflow");
+#if LUA_MEMORY_STATS
+  luaM_setname(fs->L, 0);
+#endif /* LUA_MEMORY_STATS */
   f->lineinfo[fs->pc] = line;
   return fs->pc++;
 }
@@ -829,3 +983,21 @@ void luaK_setlist (FuncState *fs, int base, int nelems, int tostore) {
   fs->freereg = base + 1;  /* free registers with list values */
 }
 
+#if LUA_WIDESTRING
+int luaK_wstringK (FuncState *fs, TString *s) {
+  TValue o;
+#if LUA_REFCOUNT
+  lua_State *L = fs->L;
+  int ret;
+  setwsvalue2n(fs->L, &o, s);
+  ret = addk(fs, &o, &o);
+  luarc_cleanvalue(&o);
+  return ret;
+#else
+  setwsvalue(fs->L, &o, s);
+  return addk(fs, &o, &o);
+#endif
+}
+#endif /* LUA_WIDESTRING */
+
+NAMESPACE_LUA_END

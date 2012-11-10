@@ -10,6 +10,7 @@
 
 #include <Interface/ConfigMgr/Ix_ConfigMgr.h>
 #include <Interface/LogMgr/Ix_LogMgr.h>
+#include <Interface/LuaMgr/Ix_LuaMgr.h>
 
 #include "LuaTagDef.h"
 #include "Cx_LuaMgr.h"
@@ -21,7 +22,7 @@ LWDP_NAMESPACE_BEGIN;
 
 LIB_REGISTE_FUNC_LIST Cx_LuaMgr::mRegisteFuncList;
 
-Cx_LuaMgr::Cx_LuaMgr():mL(NULL)
+Cx_LuaMgr::Cx_LuaMgr():mState(NULL)
 {
 }
 
@@ -40,11 +41,10 @@ LWRESULT Cx_LuaMgr::Init()
 
 LWRESULT Cx_LuaMgr::Destory()
 {
-	if(mL)
+	if(mState)
 	{
-		//lua_settop(mL, 0);
-		lua_close(mL);//¹Ø±Õ 
-		mL = NULL;
+		delete mState;
+		mState = NULL;
 	}
 
 	return LWDP_OK;
@@ -52,45 +52,24 @@ LWRESULT Cx_LuaMgr::Destory()
 LWRESULT Cx_LuaMgr::ResetStack()
 {
 	Destory();
-	mL = lua_open();
-
-	lua_gc(mL, LUA_GCSTOP, 0);  /* stop collector during initialization */  
-	luaL_openlibs(mL);  /* open libraries */  
-	lua_gc(mL, LUA_GCRESTART, 0);
-	mStackLibPos = lua_gettop(mL);
+	mState = new LuaStateOwner(true);
+	
 	return LWDP_OK;
 }
 
-int on_error(lua_State *L)
-{
-	PLATFORM_LOG(LWDP_LUA_LOG, LWDP_LOG_ERR, "%s", lua_tostring(L, -1));	
-
-	return 0;	
-}
 LWRESULT Cx_LuaMgr::LoadLuaLibrary(const tstring& file_name)
 {
 	if(file_name.empty())
 		return LWDP_PARAMETER_ERROR;
 
-	lua_pushcclosure(mL, (lua_CFunction)on_error, 0);
-	int errfunc = lua_gettop(mL);
-	
-	if(luaL_loadfile(mL, file_name.c_str()) == 0)
+	int iret = (*mState)->DoFile(file_name.c_str());
+	if(iret)
 	{
-		if(lua_pcall(mL, 0, 0, errfunc) != 0)
-		{
-			lua_pop(mL, 1);
-			return LWDP_LOAD_SCRIPT_RUN_ERROR;
-		}
-	}
-	else
-	{
-		PLATFORM_LOG(LWDP_LUA_LOG, LWDP_LOG_ERR, "%s", lua_tostring(mL, -1));	
-		lua_pop(mL, 1);
+		LuaStackObject obj = (*mState)->Stack(-1);
+		PLATFORM_LOG(LWDP_LUA_LOG, LWDP_LOG_ERR, "%s", obj.GetString());
+		(*mState)->Pop();
 		return LWDP_LOAD_SCRIPT_ERROR;
 	}
-
-	mStackLibPos = lua_gettop(mL);
 		
 	return LWDP_OK;
 }
@@ -102,24 +81,15 @@ LWRESULT Cx_LuaMgr::DoFile(const tstring& file_name)
 	if(file_name.empty())
 		return LWDP_PARAMETER_ERROR;
 
-	lua_pushcclosure(mL, (lua_CFunction)on_error, 0);
-	int errfunc = lua_gettop(mL);
-	
-	if(luaL_loadfile(mL, file_name.c_str()) == 0)
+	int iret = (*mState)->DoFile(file_name.c_str());
+	if(iret)
 	{
-		if(lua_pcall(mL, 0, 0, errfunc) != 0)
-		{
-			lua_pop(mL, 1);
-			return LWDP_LOAD_SCRIPT_RUN_ERROR;
-		}
-	}
-	else
-	{
-		PLATFORM_LOG(LWDP_LUA_LOG, LWDP_LOG_ERR, "%s", lua_tostring(mL, -1));	
-		lua_pop(mL, 1);
+		LuaStackObject obj = (*mState)->Stack(-1);
+		PLATFORM_LOG(LWDP_LUA_LOG, LWDP_LOG_ERR, "%s", obj.GetString());
+		(*mState)->Pop();
 		return LWDP_LOAD_SCRIPT_ERROR;
 	}
-	
+
 	return LWDP_OK;
 }
 
@@ -127,14 +97,14 @@ LWRESULT Cx_LuaMgr::LoadFile(const tstring& file_name)
 {
 	if(file_name.empty())
 		return LWDP_PARAMETER_ERROR;
-	
+#if 0	
 	if(luaL_loadfile(mL, file_name.c_str()))
 	{
 		PLATFORM_LOG(LWDP_LUA_LOG, LWDP_LOG_ERR, "%s", lua_tostring(mL, -1));	
 		lua_pop(mL, 1);
 		return LWDP_LOAD_SCRIPT_ERROR;
 	}
-	
+#endif
 	return LWDP_OK;
 }
 
@@ -168,12 +138,15 @@ LWRESULT Cx_LuaMgr::LoadAllLib()
 	}
 
 	LIB_REGISTE_FUNC_LIST::iterator iter;
+	LuaStackObject obj = (*mState)->StackTop();
+	lua_State* tmpStack = obj.GetCState();
 	FOREACH_STL(iter, mRegisteFuncList)
 	{
 		TOLUA_OPEN openfunc = (TOLUA_OPEN)*iter;
-		openfunc(mL);
+		openfunc(tmpStack);
 	}
 
+	return LWDP_OK;
 }
 
 LWDP_NAMESPACE_END;

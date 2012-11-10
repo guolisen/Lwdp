@@ -12,6 +12,7 @@
 #include "lopcodes.h"
 #include "lparser.h"
 
+NAMESPACE_LUA_BEGIN
 
 /*
 ** Marks the end of a patch list. It is an invalid value both as an absolute
@@ -24,11 +25,17 @@
 ** grep "ORDER OPR" if you change these enums
 */
 typedef enum BinOpr {
+#if LUA_BITFIELD_OPS
+  OPR_BAND, OPR_BOR, OPR_BXOR, OPR_BSHL, OPR_BSHR,
+#endif /* LUA_BITFIELD_OPS */
   OPR_ADD, OPR_SUB, OPR_MUL, OPR_DIV, OPR_MOD, OPR_POW,
   OPR_CONCAT,
   OPR_NE, OPR_EQ,
   OPR_LT, OPR_LE, OPR_GT, OPR_GE,
   OPR_AND, OPR_OR,
+#if LUA_MUTATION_OPERATORS
+  OPR_ADD_EQ, OPR_SUB_EQ, OPR_MUL_EQ, OPR_DIV_EQ, OPR_MOD_EQ, OPR_POW_EQ,
+#endif /* LUA_MUTATION_OPERATORS */
   OPR_NOBINOPR
 } BinOpr;
 
@@ -49,6 +56,9 @@ LUAI_FUNC void luaK_nil (FuncState *fs, int from, int n);
 LUAI_FUNC void luaK_reserveregs (FuncState *fs, int n);
 LUAI_FUNC void luaK_checkstack (FuncState *fs, int n);
 LUAI_FUNC int luaK_stringK (FuncState *fs, TString *s);
+#if LUA_WIDESTRING
+LUAI_FUNC int luaK_wstringK (FuncState *fs, TString *s);
+#endif /* LUA_WIDESTRING */
 LUAI_FUNC int luaK_numberK (FuncState *fs, lua_Number r);
 LUAI_FUNC void luaK_dischargevars (FuncState *fs, expdesc *e);
 LUAI_FUNC int luaK_exp2anyreg (FuncState *fs, expdesc *e);
@@ -72,5 +82,6 @@ LUAI_FUNC void luaK_infix (FuncState *fs, BinOpr op, expdesc *v);
 LUAI_FUNC void luaK_posfix (FuncState *fs, BinOpr op, expdesc *v1, expdesc *v2);
 LUAI_FUNC void luaK_setlist (FuncState *fs, int base, int nelems, int tostore);
 
+NAMESPACE_LUA_END
 
 #endif

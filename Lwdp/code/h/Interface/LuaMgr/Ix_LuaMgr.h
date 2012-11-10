@@ -1,8 +1,12 @@
 #ifndef LUAMGR_INTERFACE_H
 #define LUAMGR_INTERFACE_H
 
+#include <LwApiLib/ComLib/Lua/LuaPlus.h>
 #include <Interface/Ix_Object.h>
 #include "Id_LuaMgr.h"
+
+
+using namespace LuaPlus;
 
 LWDP_NAMESPACE_BEGIN;
  
@@ -19,13 +23,18 @@ INTERFACE_BEGIN(LuaMgr)
 	virtual LWRESULT LoadBuffer(const char* buf) = 0;
 	virtual LWRESULT LoadLibraryBuffer(const char* buf) = 0;
 
-
 	virtual LWRESULT RegisteFuction(void* func) = 0;
+	virtual LWRESULT ResetStack() = 0;
+	virtual LWRESULT LoadAllLib() = 0;
+
+
+
+
+
+	
 	virtual LWRESULT Call() = 0;
 
-	virtual LWRESULT ResetStack() = 0;
-	
-	virtual LWRESULT LoadAllLib() = 0;
+
 	
 INTERFACE_END();
 

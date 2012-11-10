@@ -29,6 +29,7 @@
 #include "lvm.h"
 
 
+NAMESPACE_LUA_BEGIN
 
 static const char *getfuncname (lua_State *L, CallInfo *ci, const char **name);
 
@@ -36,8 +37,13 @@ static const char *getfuncname (lua_State *L, CallInfo *ci, const char **name);
 static int currentpc (lua_State *L, CallInfo *ci) {
   if (!isLua(ci)) return -1;  /* function is not a Lua function? */
   if (ci == L->ci)
+#if LUA_EXT_RESUMABLEVM
+    ci->ctx = L->ctx;
+  return pcRel(cast(const Instruction *, ci->ctx), ci_func(ci)->l.p);
+#else
     ci->savedpc = L->savedpc;
   return pcRel(ci->savedpc, ci_func(ci)->l.p);
+#endif /* LUA_EXT_RESUMABLEVM */
 }
 
 
@@ -147,6 +153,27 @@ LUA_API const char *lua_setlocal (lua_State *L, const lua_Debug *ar, int n) {
 }
 
 
+#if LUA_TILDE_DEBUGGER
+LUA_API int lua_getvararg (lua_State *L, const lua_Debug *ar, int n) {
+  CallInfo *ci = L->base_ci + ar->i_ci;
+  if(isLfunction(ci->func))
+  {
+    Closure *cl = (Closure *) clvalue(ci->func);
+    StkId firstVarArg = ci->func + cl->l.p->numparams + 1;
+    int numVarArg = (int) (ci->base - firstVarArg);
+    if(n <= numVarArg)
+    {
+      lua_lock(L);
+      luaA_pushobject(L, firstVarArg + n - 1);
+      lua_unlock(L);
+      return n;
+    }
+  }
+  return 0;
+}
+#endif /* LUA_TILDE_DEBUGGER */
+
+
 static void funcinfo (lua_Debug *ar, Closure *cl) {
   if (cl->c.isC) {
     ar->source = "=[C]";
@@ -184,7 +211,7 @@ static void collectvalidlines (lua_State *L, Closure *f) {
     int i;
     for (i=0; i<f->l.p->sizelineinfo; i++)
       setbvalue(luaH_setnum(L, t, lineinfo[i]), 1);
-    sethvalue(L, L->top, t); 
+    sethvalue(L, L->top, t);
   }
   incr_top(L);
 }
@@ -248,8 +275,13 @@ LUA_API int lua_getinfo (lua_State *L, const char *what, lua_Debug *ar) {
   }
   status = auxgetinfo(L, what, ar, f, ci);
   if (strchr(what, 'f')) {
+#if LUA_REFCOUNT
+    if (f == NULL) { setnilvalue(L->top); }
+    else { setclvalue(L, L->top, f); }
+#else
     if (f == NULL) setnilvalue(L->top);
     else setclvalue(L, L->top, f);
+#endif /* LUA_REFCOUNT */
     incr_top(L);
   }
   if (strchr(what, 'L'))
@@ -587,8 +619,15 @@ void luaG_concaterror (lua_State *L, StkId p1, StkId p2) {
 
 void luaG_aritherror (lua_State *L, const TValue *p1, const TValue *p2) {
   TValue temp;
+#if LUA_REFCOUNT  
+  luarc_newvalue(&temp);
+  if (luaV_tonumber(L, p1, &temp) == NULL)
+    p2 = p1;  /* first operand is wrong */
+  luarc_cleanvalue(&temp);
+#else
   if (luaV_tonumber(p1, &temp) == NULL)
     p2 = p1;  /* first operand is wrong */
+#endif /* LUA_REFCOUNT */
   luaG_typeerror(L, p2, "perform arithmetic on");
 }
 
@@ -615,6 +654,8 @@ static void addinfo (lua_State *L, const char *msg) {
 }
 
 
+#if !LUA_EXT_RESUMABLEVM
+
 void luaG_errormsg (lua_State *L) {
   if (L->errfunc != 0) {  /* is there an error handling function? */
     StkId errfunc = restorestack(L, L->errfunc);
@@ -624,15 +665,28 @@ void luaG_errormsg (lua_State *L) {
     incr_top(L);
     luaD_call(L, L->top - 2, 1);  /* call it */
   }
+#if LUA_TILDE_DEBUGGER
+  if (L->hookmask & LUA_MASKERROR)
+    luaD_callhook(L, LUA_HOOKERROR, -1);
+#endif /* LUA_TILDE_DEBUGGER */
   luaD_throw(L, LUA_ERRRUN);
 }
 
-
+#endif /* LUA_EXT_RESUMABLEVM */
 void luaG_runerror (lua_State *L, const char *fmt, ...) {
   va_list argp;
   va_start(argp, fmt);
   addinfo(L, luaO_pushvfstring(L, fmt, argp));
   va_end(argp);
+#if LUA_TILDE_DEBUGGER
+  if (L->hookmask & LUA_MASKERROR)
+    luaD_callhook(L, LUA_HOOKERROR, -1);
+#endif /* LUA_TILDE_DEBUGGER */
+#if LUA_EXT_RESUMABLEVM
+  luaD_throw(L, LUA_ERRRUN);
+#else
   luaG_errormsg(L);
+#endif /* LUA_EXT_RESUMABLEVM */
 }
 
+NAMESPACE_LUA_END

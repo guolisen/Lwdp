@@ -24,6 +24,7 @@
 
 #include "lauxlib.h"
 
+NAMESPACE_LUA_BEGIN
 
 #define FREELIST_REF	0	/* free list of references */
 
@@ -199,6 +200,19 @@ LUALIB_API lua_Integer luaL_optinteger (lua_State *L, int narg,
   return luaL_opt(L, luaL_checkinteger, narg, def);
 }
 
+#if LUAPLUS_EXTENSIONS
+LUALIB_API lua_Integer luaL_checkboolean (lua_State *L, int narg) {
+	lua_Integer d = lua_toboolean(L, narg);
+	if (d == 0 && !lua_isboolean(L, narg))  /* avoid extra test when d is not 0 */
+		tag_error(L, narg, LUA_TBOOLEAN);
+	return d;
+}
+
+
+LUALIB_API lua_Integer luaL_optboolean (lua_State *L, int narg, int def) {
+	return luaL_opt(L, luaL_checkboolean, narg, def);
+}
+#endif
 
 LUALIB_API int luaL_getmetafield (lua_State *L, int obj, const char *event) {
   if (!lua_getmetatable(L, obj))  /* no metatable? */
@@ -399,7 +413,14 @@ static int emptybuffer (luaL_Buffer *B) {
   size_t l = bufflen(B);
   if (l == 0) return 0;  /* put nothing on stack */
   else {
+#if LUA_WIDESTRING
+    if (B->isWide)
+      lua_pushlwstring(B->L, (const lua_WChar*)B->buffer, l / sizeof(lua_WChar));
+	else
+      lua_pushlstring(B->L, B->buffer, l);
+#else
     lua_pushlstring(B->L, B->buffer, l);
+#endif /* LUA_WIDESTRING */
     B->p = B->buffer;
     B->lvl++;
     return 1;
@@ -454,9 +475,26 @@ LUALIB_API void luaL_pushresult (luaL_Buffer *B) {
 LUALIB_API void luaL_addvalue (luaL_Buffer *B) {
   lua_State *L = B->L;
   size_t vl;
+#if LUA_WIDESTRING
+  const char *s = NULL;
+  const lua_WChar *ws = NULL;
+  
+  if (B->isWide) {
+    ws = lua_tolwstring(L, -1, &vl);
+    vl *= sizeof(lua_WChar);
+  }
+  else {
+     s = lua_tolstring(L, -1, &vl);
+  }
+#else
   const char *s = lua_tolstring(L, -1, &vl);
+#endif /* LUA_WIDESTRING */
   if (vl <= bufffree(B)) {  /* fit into buffer? */
+#if LUA_WIDESTRING
+    memcpy(B->p, B->isWide ? (void*)ws : (void*)s, vl);  /* put it there */
+#else
     memcpy(B->p, s, vl);  /* put it there */
+#endif /* LUA_WIDESTRING */
     B->p += vl;
     lua_pop(L, 1);  /* remove from stack */
   }
@@ -473,6 +511,9 @@ LUALIB_API void luaL_buffinit (lua_State *L, luaL_Buffer *B) {
   B->L = L;
   B->p = B->buffer;
   B->lvl = 0;
+#if LUA_WIDESTRING
+  B->isWide = 0;
+#endif /* LUA_WIDESTRING */
 }
 
 /* }====================================================== */
@@ -565,7 +606,11 @@ LUALIB_API int luaL_loadfile (lua_State *L, const char *filename) {
     if (lf.f == NULL) return errfile(L, "open", fnameindex);
   }
   c = getc(lf.f);
+#if LUAPLUS_EXTENSIONS
+  if (c == '#'  ||  c == '@') {  /* Unix exec. file or DOS .bat file? */
+#else
   if (c == '#') {  /* Unix exec. file? */
+#endif /* LUAPLUS_EXTENSIONS */
     lf.extraline = 1;
     while ((c = getc(lf.f)) != EOF && c != '\n') ;  /* skip first line */
     if (c == '\n') c = getc(lf.f);
@@ -624,7 +669,13 @@ LUALIB_API int (luaL_loadstring) (lua_State *L, const char *s) {
 /* }====================================================== */
 
 
+#if LUAPLUS_EXTENSIONS
+static void *l_alloc (void *ud, void *ptr, size_t osize, size_t nsize, const char* allocName, unsigned int flags) {
+  (void)allocName;
+  (void)flags;
+#else
 static void *l_alloc (void *ud, void *ptr, size_t osize, size_t nsize) {
+#endif /* LUAPLUS_EXTENSIONS */
   (void)ud;
   (void)osize;
   if (nsize == 0) {
@@ -650,3 +701,4 @@ LUALIB_API lua_State *luaL_newstate (void) {
   return L;
 }
 
+NAMESPACE_LUA_END

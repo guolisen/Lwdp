@@ -15,6 +15,7 @@
 
 #define MEMERRMSG	"not enough memory"
 
+NAMESPACE_LUA_BEGIN
 
 #define luaM_reallocv(L,b,on,n,e) \
 	((cast(size_t, (n)+1) <= MAX_SIZET/(e)) ?  /* +1 to avoid warnings */ \
@@ -44,6 +45,20 @@ LUAI_FUNC void *luaM_toobig (lua_State *L);
 LUAI_FUNC void *luaM_growaux_ (lua_State *L, void *block, int *size,
                                size_t size_elem, int limit,
                                const char *errormsg);
+
+#if LUA_MEMORY_STATS
+#ifdef _DEBUG
+#define luaM_setname(L, name) \
+	(L)->allocName = (name)
+#define luaM_setnameif(L, name) \
+	if (!(L)->allocName) (L)->allocName = (name)
+#else /* !_DEBUG */
+#define luaM_setname(L, name)
+#define luaM_setnameif(L, name)
+#endif /* _DEBUG */
+#endif /* LUA_MEMORY_STATS */
+
+NAMESPACE_LUA_END
 
 #endif
 

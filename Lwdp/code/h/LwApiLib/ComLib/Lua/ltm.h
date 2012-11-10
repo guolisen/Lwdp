@@ -10,6 +10,7 @@
 
 #include "lobject.h"
 
+NAMESPACE_LUA_BEGIN
 
 /*
 * WARNING: if you change the order of this enumeration,
@@ -33,6 +34,14 @@ typedef enum {
   TM_LE,
   TM_CONCAT,
   TM_CALL,
+#if LUA_MUTATION_OPERATORS
+  TM_ADD_EQ,
+  TM_SUB_EQ,
+  TM_MUL_EQ,
+  TM_DIV_EQ,
+  TM_MOD_EQ,
+  TM_POW_EQ,
+#endif /* LUA_MUTATION_OPERATORS */
   TM_N		/* number of elements in the enum */
 } TMS;
 
@@ -50,5 +59,7 @@ LUAI_FUNC const TValue *luaT_gettm (Table *events, TMS event, TString *ename);
 LUAI_FUNC const TValue *luaT_gettmbyobj (lua_State *L, const TValue *o,
                                                        TMS event);
 LUAI_FUNC void luaT_init (lua_State *L);
+
+NAMESPACE_LUA_END
 
 #endif

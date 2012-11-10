@@ -14,6 +14,9 @@
 
 #include "lua.h"
 
+NAMESPACE_LUA_BEGIN
+
+LUA_EXTERN_C_BEGIN
 
 #if defined(LUA_COMPAT_GETN)
 LUALIB_API int (luaL_getn) (lua_State *L, int t);
@@ -57,6 +60,10 @@ LUALIB_API lua_Number (luaL_optnumber) (lua_State *L, int nArg, lua_Number def);
 LUALIB_API lua_Integer (luaL_checkinteger) (lua_State *L, int numArg);
 LUALIB_API lua_Integer (luaL_optinteger) (lua_State *L, int nArg,
                                           lua_Integer def);
+#if LUAPLUS_EXTENSIONS
+LUALIB_API lua_Integer (luaL_checkboolean) (lua_State *L, int narg);
+LUALIB_API lua_Integer (luaL_optboolean) (lua_State *L, int narg, int def);
+#endif /* LUAPLUS_EXTENSIONS */
 
 LUALIB_API void (luaL_checkstack) (lua_State *L, int sz, const char *msg);
 LUALIB_API void (luaL_checktype) (lua_State *L, int narg, int t);
@@ -131,6 +138,9 @@ typedef struct luaL_Buffer {
   int lvl;  /* number of strings in the stack (level) */
   lua_State *L;
   char buffer[LUAL_BUFFERSIZE];
+#if LUA_WIDESTRING
+  int isWide;
+#endif /* LUA_WIDESTRING */
 } luaL_Buffer;
 
 #define luaL_addchar(B,c) \
@@ -169,6 +179,36 @@ LUALIB_API void (luaL_pushresult) (luaL_Buffer *B);
 
 #define luaL_reg	luaL_Reg
 
+#if LUA_WIDESTRING
+
+/* }====================================================== */
+
+#define luaL_checkwstring(L,n)	(luaL_checklwstring(L, (n), NULL))
+#define luaL_optwstring(L,n,d)	(luaL_optlwstring(L, (n), (d), NULL))
+LUALIB_API const lua_WChar *luaL_checklwstring (lua_State *L, int numArg,
+                                            size_t *len);
+LUALIB_API const lua_WChar *luaL_optlwstring (lua_State *L, int narg, const lua_WChar *def, size_t *len);
+
+#define luaL_addwchar(B,c) \
+  ((void)((B)->p + 1 < ((B)->buffer+LUAL_BUFFERSIZE) || luaL_prepbuffer(B)), \
+   (*((lua_WChar*)(B)->p) = (lua_WChar)(c)), ((B)->p += sizeof(lua_WChar)))
+
+#define luaL_addwsize(B,n)	((B)->p += (n)*sizeof(lua_WChar))
+
+LUALIB_API void (luaL_wbuffinit) (lua_State *L, luaL_Buffer *B);
+LUALIB_API void (luaL_addlwstring) (luaL_Buffer *B, const lua_WChar *s, size_t l);
+LUALIB_API void (luaL_addwstring) (luaL_Buffer *B, const lua_WChar *s);
+
+LUALIB_API int (luaL_loadwstring) (lua_State *L, const lua_WChar *s);
+#define luaL_dowstring(L, s)	(luaL_loadwstring(L, s) || lua_pcall(L, 0, 0, 0))
+
+#endif /* LUA_WIDESTRING */
+
+LUA_EXTERN_C_END
+
+NAMESPACE_LUA_END
+
+/* }====================================================== */
 #endif
 
 

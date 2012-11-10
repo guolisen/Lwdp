@@ -33,6 +33,7 @@ print("!!!RET: " .. ret)
 
 i = 0;
 while propTab[i].ThereIs do
+	print("-------------")
 	print(propTab[i]:GetAttrByName("ts"))
 	print(propTab[i][1].AttribValue)
 	print("-------------")

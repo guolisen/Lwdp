@@ -17,6 +17,7 @@
 #include "lstate.h"
 #include "lzio.h"
 
+NAMESPACE_LUA_BEGIN
 
 int luaZ_fill (ZIO *z) {
   size_t size;
@@ -44,6 +45,26 @@ int luaZ_lookahead (ZIO *z) {
   return char2int(*z->p);
 }
 
+#if LUA_WIDESTRING
+
+int luaZ_lookahead_2 (ZIO *z) {
+  union
+  {
+	lua_WChar w;
+	unsigned char b[2];
+  } s;
+  if (z->n == 0) {
+    int c = luaZ_fill(z);
+    if (c == EOZ) return c;
+    z->n++;
+    z->p--;
+  }
+  s.b[0] = *(z->p);
+  s.b[1] = *(z->p + 1);
+  return s.w;
+}
+
+#endif /* LUA_WIDESTRING */
 
 void luaZ_init (lua_State *L, ZIO *z, lua_Reader reader, void *data) {
   z->L = L;
@@ -51,6 +72,9 @@ void luaZ_init (lua_State *L, ZIO *z, lua_Reader reader, void *data) {
   z->data = data;
   z->n = 0;
   z->p = NULL;
+#if LUA_WIDESTRING
+  z->isWide = 0;
+#endif /* LUA_WIDESTRING */
 }
 
 
@@ -79,4 +103,15 @@ char *luaZ_openspace (lua_State *L, Mbuffer *buff, size_t n) {
   return buff->buffer;
 }
 
+#if LUA_MEMORY_STATS
+/* ------------------------------------------------------------------------ */
+void luaZ_resizebuffer(lua_State *L, Mbuffer *buff, size_t size)
+{
+  luaM_setname(L, "lua.buffer");
+  luaM_reallocvector(L, buff->buffer, buff->buffsize, size, char);
+  luaM_setname(L, 0);
+  buff->buffsize = size;
+}
+#endif /* LUA_MEMORY_STATS */
 
+NAMESPACE_LUA_END

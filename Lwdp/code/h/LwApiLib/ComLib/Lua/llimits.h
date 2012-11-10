@@ -14,6 +14,7 @@
 
 #include "lua.h"
 
+NAMESPACE_LUA_BEGIN
 
 typedef LUAI_UINT32 lu_int32;
 
@@ -54,7 +55,8 @@ typedef LUAI_UACNUMBER l_uacNumber;
 /* internal assertions for in-house debugging */
 #ifdef lua_assert
 
-#define check_exp(c,e)		(lua_assert(c), (e))
+//#define check_exp(c,e)		(lua_assert(c), (e))
+#define check_exp(c,e)		(e)
 #define api_check(l,e)		lua_assert(e)
 
 #else
@@ -124,5 +126,7 @@ typedef lu_int32 Instruction;
 #else
 #define condhardstacktests(x)	x
 #endif
+
+NAMESPACE_LUA_END
 
 #endif

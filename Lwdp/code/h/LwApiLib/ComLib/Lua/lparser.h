@@ -11,6 +11,7 @@
 #include "lobject.h"
 #include "lzio.h"
 
+NAMESPACE_LUA_BEGIN
 
 /*
 ** Expression descriptor
@@ -68,6 +69,9 @@ typedef struct FuncState {
   int freereg;  /* first free register */
   int nk;  /* number of elements in `k' */
   int np;  /* number of elements in `p' */
+#if LUA_EXT_CONTINUE
+  int prohibitedloc;  /* index (into actvar) of first prohibited local */
+#endif /* LUA_EXT_CONTINUE */
   short nlocvars;  /* number of elements in `locvars' */
   lu_byte nactvar;  /* number of active local variables */
   upvaldesc upvalues[LUAI_MAXUPVALUES];  /* upvalues */
@@ -78,5 +82,6 @@ typedef struct FuncState {
 LUAI_FUNC Proto *luaY_parser (lua_State *L, ZIO *z, Mbuffer *buff,
                                             const char *name);
 
+NAMESPACE_LUA_END
 
 #endif

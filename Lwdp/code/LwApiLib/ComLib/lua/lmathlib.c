@@ -16,6 +16,7 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
+NAMESPACE_LUA_BEGIN
 
 #undef PI
 #define PI (3.14159265358979323846)
@@ -261,3 +262,4 @@ LUALIB_API int luaopen_math (lua_State *L) {
   return 1;
 }
 
+NAMESPACE_LUA_END

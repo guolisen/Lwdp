@@ -10,6 +10,7 @@
 
 #include "lua.h"
 
+NAMESPACE_LUA_BEGIN
 
 /* Key to file-handle type */
 #define LUA_FILEHANDLE		"FILE*"
@@ -49,5 +50,6 @@ LUALIB_API void (luaL_openlibs) (lua_State *L);
 #define lua_assert(x)	((void)0)
 #endif
 
+NAMESPACE_LUA_END
 
 #endif

@@ -18,6 +18,7 @@
 #include "lualib.h"
 
 
+NAMESPACE_LUA_BEGIN
 
 static int db_getregistry (lua_State *L) {
   lua_pushvalue(L, LUA_REGISTRYINDEX);
@@ -396,3 +397,4 @@ LUALIB_API int luaopen_debug (lua_State *L) {
   return 1;
 }
 
+NAMESPACE_LUA_END
