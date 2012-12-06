@@ -38,6 +38,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DctMgrDll", "DctMgrDll\DctM
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LuaMgrDll", "LuaMgrDll\LuaMgrDll.vcproj", "{50D6CBE6-5680-4D89-A877-C0BC3D65546B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ZmqMgrDll", "ZmqMgrDll\ZmqMgrDll.vcproj", "{88628D54-722B-427A-B27A-207019E2D5FC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -80,6 +82,10 @@ Global
 		{50D6CBE6-5680-4D89-A877-C0BC3D65546B}.Debug|Win32.Build.0 = Debug|Win32
 		{50D6CBE6-5680-4D89-A877-C0BC3D65546B}.Release|Win32.ActiveCfg = Release|Win32
 		{50D6CBE6-5680-4D89-A877-C0BC3D65546B}.Release|Win32.Build.0 = Release|Win32
+		{88628D54-722B-427A-B27A-207019E2D5FC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{88628D54-722B-427A-B27A-207019E2D5FC}.Debug|Win32.Build.0 = Debug|Win32
+		{88628D54-722B-427A-B27A-207019E2D5FC}.Release|Win32.ActiveCfg = Release|Win32
+		{88628D54-722B-427A-B27A-207019E2D5FC}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

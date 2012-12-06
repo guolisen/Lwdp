@@ -110,7 +110,7 @@ const int32_ UNICODE_TAG = 0;
 	Cx_Interface<Ix_##Module> (Var)(CLSID_##Module); \
 	if((Var).IsNull()) \
 	{ \
-		lw_log_warning(LWDP_MODULE_LOG, "Can't Get Module(%s) Pointer!(%s, %d)", #Module, __FILE__, __LINE__); \
+		lw_log_err(LWDP_MODULE_LOG, "Can't Get Module(%s) Pointer!(%s, %d)", #Module, __FILE__, __LINE__); \
 		return (Ret); \
 	}
 

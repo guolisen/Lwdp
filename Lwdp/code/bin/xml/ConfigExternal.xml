@@ -5,104 +5,6 @@
 		<Version>1.0</Version>
 	</Property>  
 	<Script Name = "GlobalInit">
-		<!--Var Test-->
-		<vars Name="@test">'My Name is Guolisen'  </vars>
-		<vars Name="@test1">'HeiHei'</vars>
-		<vars Name="@test2">'Hahaha'</vars>
-		<vars Name="@test3">:1111</vars>
-		<vars Name="@test4">:2222</vars>
-		  
-		<printf Level = "ERROR" Param1 = "@test">'Hello World1 %s!!'</printf>
-		<printf Level = "ERROR" Param1 = "Guolisen" Param2 = "2222">Hello World2 %s %s!!</printf>
-		<printf Level = "INFO" Param1 = "Guolisen" Param2 = "@test1" Param3 = "@test2">Hello World3 %s %s %s!!</printf>
-		<printf Level = "INFO" Param1 = "@test2">Hello World1 %s!!</printf>
-		  
-		<!--If Test-->
-		<if Expr="$(@test3 != 1111)">
-			<printf Level = "INFO">IF Domain A!</printf>	
-			<else>
-				<if Expr="$(@test3 = 32)">
-					<printf Level = "INFO">IF Domain B->A!</printf>	
-					<else>
-						<printf Level = "INFO">IF Domain B->B!</printf>
-						<printf Level = "INFO">IF Domain B->B1!</printf>	
-						<printf Level = "INFO">IF Domain B->B2!</printf>
-					</else>		
-				</if>
-				<printf Level = "INFO">IF Domain B!</printf>
-				<printf Level = "INFO">IF Domain B1!</printf>	
-				<printf Level = "INFO">IF Domain B2!</printf>
-			</else>		
-		</if>
-		<if Expr="$(@test1 = 'HeiHei')">
-			<printf Level = "INFO">IF STR B->A!</printf>	
-			<else>
-				<printf Level = "INFO">IF STR B->B!</printf>
-				<printf Level = "INFO">IF STR B->B1!</printf>	
-				<printf Level = "INFO">IF STR B->B2!</printf>
-			</else>		
-		</if>		
-		
-		<!--Dec Inc Test-->
-		<dec Step="4000">@test3</dec>
-		<dec>@test3</dec>
-		<dec>@test3</dec>
-		<printf Level = "INFO" P1="@test3">dec @Test3: %s</printf>
-		
-		<inc>@test3</inc>
-		<inc Step="1000">@test3</inc>
-		<inc>@test3</inc>
-		<printf Level = "INFO" P1="@test3">inc @Test3: %s</printf>
-		
-		<comput Ret="@test3">23+322</comput>
-		<printf Level = "INFO" P1="@test3">23+322  @Test3: %s</printf>
-		
-		<vars Name="@test5">:22</vars>
-		<comput Ret="@test5">112</comput>
-		<printf Level = "INFO" P1="@test5">112 @test5: %s</printf>
-		
-		<vars Name="@test6">$(@test3 * 3)</vars>
-		<comput Ret="@test3">@test6</comput>
-		<printf Level = "INFO" P1="@test3">@test6 @Test3: %s</printf>
-
-		<!--while Test-->
-		<vars Name="@test7">:4</vars>
-		<while Expr="$(@test7 != 0)">
-			<dec>@test7</dec>
-			<printf Level = "INFO" P1="@test7">While  @Test7: %s</printf>
-		</while>
-		
-		<vars Name="@test8">:5</vars>
-		<while Expr="$(@test8 != 0)">
-			<dec>@test8</dec>
-			<if Expr="$(@test8 = 4)">
-				<continue/>
-			</if>
-			<printf Level = "INFO" P1="@test8">While  @Test8: %s</printf>
-			<if Expr="$(@test8 = 2)">
-				<break/>
-			</if>
-		</while>
-		
-		<vars Name="@test9">:5</vars>
-		<while Expr="$(@test9)">
-			<dec>@test9</dec>
-			<if Expr="$(@test9 = 4)">
-				<continue/>
-			</if>
-			<printf Level = "INFO" P1="@test9">While  @Test9: %s</printf>
-		</while>
-			
-		<vars Name="@t1">:5</vars>
-		<vars Name="@t2">:2</vars>
-		<while Expr="$(@t1)">
-			<dec>@t1</dec>
-			<printf Level = "INFO" P1="@t1">While  @T1: %s</printf>
-			<while Expr="$(@t2)">	
-				<dec>@t2</dec>
-				<printf Level = "INFO" P1="@t2">While  @T2: %s</printf>
-			</while>
-		</while>
 	</Script>
 	<Script Name = "GlobalUnInit">
 	</Script>
@@ -112,6 +14,7 @@
 			<ModuleLoad Name = "LuaMgr" 	Modid = "3FAAA9E8-4CBB-4496-A369-172077A3F5EE" />
 			<ModuleLoad Name = "LogMgr"     Modid = "8BBC60DD-D652-454b-B522-6D19D5A1B97A" />
 			<ModuleLoad Name = "DctMgr" 	Modid = "A009B569-707F-4618-A089-C09F776ADEC2" />
+			<ModuleLoad Name = "ZmqMgr" 	Modid = "1C8B1ACD-89A4-48ab-8161-538B7E2545BE" />
 			<ModuleLoad Name = "ExampleTest"  Modid = "2F72F07E-5594-45c5-A1EB-654C0A3117AC" />
 		</PropertyTable>
 	</TableSet>
@@ -184,6 +87,18 @@
 		<Script Name = "LuaMgrInit">
 		</Script>
 	</Module>	
+	<Module Name = "ZmqMgr" Modid = "1C8B1ACD-89A4-48ab-8161-538B7E2545BE">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>../../../../code/bin/Plugins/ZmqMgrDll.dll</ModuleDir>
+		</Property>
+		<TableSet>
+		</TableSet>
+		<Script Name = "ZmqMgrInit">
+		</Script>
+	</Module>
+	
 	<Module Name = "ExampleTest" Modid = "86347b32-64e4-490c-b273-ec7e010f244e">
 		<!--属性名不可重复-->
 		<Property> 

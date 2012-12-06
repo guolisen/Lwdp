@@ -1,7 +1,3 @@
-// TestClient.cpp : Defines the entry point for the console application.
-//
-
-
 
 #include <Lwdp.h>
 #include <LwApi.h>
@@ -12,6 +8,8 @@ using namespace NLwdp;
 #include <Interface/ConfigMgr/Ix_ConfigMgr.h>
 #include <Interface/ScriptMgr/Ix_ScriptMgr.h>
 #include <Interface/LuaMgr/Ix_LuaMgr.h>
+#include <Interface/LogMgr/Ix_LogMgr.h>
+#include <Interface/ZmqMgr/Ix_ZmqMgr.h>
 
 #include <vector>
 #include <set>
@@ -119,6 +117,67 @@ PC_DATA* ConfigSrcImp::LoadConfigData()
 
 typedef std::list<int> INTLIST;
 
+///////////////////////////////////////////////
+
+#define NBR_CLIENTS 1
+#define NBR_WORKERS 1
+
+static unsigned int __stdcall
+worker_task (void *args)
+{
+	GET_OBJECT_RET(ZmqMgr, iZmqMgr, 0);
+
+	ContextHandle context = iZmqMgr->GetNewContext();
+	SocketHandle responder = iZmqMgr->GetNewSocket(context, LWDP_REP);
+
+	iZmqMgr->Connect(responder, "tcp://localhost:5560");
+
+	while (1) {
+		// Wait for next request from client
+		std::string retdata = iZmqMgr->Recv(responder, 0);
+		printf ("Received request: [%s]\n", retdata.c_str());
+
+		// Do some 'work'
+		Sleep (1);
+
+		// Send reply back to client
+		iZmqMgr->Send(responder, "World", 6, 0);
+	}
+	// We never get here but clean up anyhow
+
+	iZmqMgr->CloseSocket(responder);
+	iZmqMgr->CloseContext(context);
+	
+	return 0;
+}
+
+static unsigned int __stdcall
+client_task (void *args)
+{
+	GET_OBJECT_RET(ZmqMgr, iZmqMgr, 0);
+	
+	ContextHandle context = iZmqMgr->GetNewContext();
+	SocketHandle requester = iZmqMgr->GetNewSocket(context, LWDP_REQ);
+
+	iZmqMgr->Connect(requester, "tcp://localhost:5559");
+
+
+	int request_nbr;
+	for (request_nbr = 0; request_nbr != 10; request_nbr++) 
+	{
+		iZmqMgr->Send(requester, "Hello", 6, 0);
+
+		std::string retdata = iZmqMgr->Recv(requester, 0);
+		
+		printf ("Received reply %d [%s]\n", request_nbr, retdata.c_str());
+	
+	}
+
+	iZmqMgr->CloseSocket(requester);
+	iZmqMgr->CloseContext(context);
+	return 0;
+}
+
 
 
 int32_ main()
@@ -149,7 +208,89 @@ int32_ main()
 		return -1;
 		
 	}
+
+    int client_nbr;
+    for (client_nbr = 0; client_nbr < NBR_CLIENTS; client_nbr++) {
+        HANDLE client;
+        client = (HANDLE) _beginthreadex (NULL, 0,
+        client_task, 0, 0 , NULL);
+        if (client == 0) {
+            printf ("error in _beginthreadex\n");
+            return -1;
+        }
+    }
+    int worker_nbr;
+    for (worker_nbr = 0; worker_nbr < NBR_WORKERS; worker_nbr++) {
+        HANDLE worker;
+        worker = (HANDLE) _beginthreadex (NULL, 0,
+        worker_task, 0, 0 , NULL);
+        if (worker == 0) {
+            printf ("error in _beginthreadex\n");
+            return -1;
+        }
+    }
+
+
+
+	GET_OBJECT_RET(ZmqMgr, iZmqMgr, 0);
 	
+	ContextHandle context = iZmqMgr->GetNewContext();
+	SocketHandle frontend = iZmqMgr->GetNewSocket(context, LWDP_ROUTER);
+	SocketHandle backend = iZmqMgr->GetNewSocket(context, LWDP_DEALER);
+
+	iZmqMgr->Bind(frontend, "tcp://*:5559");
+	iZmqMgr->Bind(backend, "tcp://*:5560");
+
+	// Initialize poll set
+	LWDP_POLLITEM_T items [] = {
+	    { frontend, 0, LWDP_POLLIN, 0 },
+	    { backend, 0, LWDP_POLLIN, 0 }
+	};
+	// Switch messages between sockets
+	while (1) {
+		
+	    int more; // Multipart detection
+
+	    iZmqMgr->Poll(items, 2, -1);
+	    if (items [0].revents & LWDP_POLLIN) 
+		{
+	        while (1) 
+			{
+				GET_OBJECT_RET(ZMessage, iZMessage, 0);
+	            // Process all parts of the message
+	            iZMessage->InitZMessage();
+	            iZmqMgr->Recv(frontend, iZMessage, 0);
+	            
+	            uint32_ more_size = sizeof (more);
+				iZmqMgr->Getsockopt(frontend, LWDP_RCVMORE, &more, &more_size);
+				iZmqMgr->Send(backend, iZMessage, more? LWDP_SNDMORE: 0);
+                if (!more)
+                    break; // Last message part
+	         }
+	    }
+        if (items [1].revents & LWDP_POLLIN) 
+		{
+            while (1) 
+			{
+				GET_OBJECT_RET(ZMessage, iZMessage, 0);
+                // Process all parts of the message
+				iZMessage->InitZMessage();
+	            iZmqMgr->Recv(backend, iZMessage, 0);
+				
+                size_t more_size = sizeof (more);
+				iZmqMgr->Getsockopt(backend, LWDP_RCVMORE, &more, &more_size);
+				iZmqMgr->Send(frontend, iZMessage, more? LWDP_SNDMORE: 0);
+                if (!more)
+                    break; // Last message part
+            }
+         }
+	}
+	                // We never get here but clean up anyhow
+	iZmqMgr->CloseSocket(frontend);
+	iZmqMgr->CloseSocket(backend);
+	iZmqMgr->CloseContext(context);
+
+
 
 
 

@@ -47,7 +47,7 @@
 #elif  defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__)
 	#include <LwApiLib/LwApi/Linux/Api4Linux.h>
 #elif defined (MACOS) || defined (_MAC)
-	#include <LwApiLib/LwApi/Mac/NacImpl.h>
+	#include <LwApiLib/LwApi/Mac/MacImpl.h>
 #endif
 
 #include <LwApiLib/LwApi/LwApiCommon.h>

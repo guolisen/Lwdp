@@ -22,6 +22,7 @@ EXTERN_C_BEGIN;
 #define M_logmgr			(8 << 16)
 #define M_dctmgr			(9 << 16)
 #define M_luamgr			(10 << 16)
+#define M_zmqmgr			(11 << 16)
 
 
 enum _ERROR_CAT_NUM

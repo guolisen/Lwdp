@@ -12,6 +12,7 @@
 #include "LogMgr/LogMgrErrno.h"
 #include "DctMgr/DctMgrErrno.h"
 #include "LuaMgr/LuaMgrErrno.h"
+#include "ZmqMgr/ZmqMgrErrno.h"
 
 #endif
 

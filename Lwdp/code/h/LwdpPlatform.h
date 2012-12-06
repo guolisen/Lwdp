@@ -27,7 +27,7 @@
 
 #elif defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 // win32:
-#  define LWDP_PLATFORM_DEF_WIN32
+#define LWDP_PLATFORM_DEF_WIN32
 
 #elif defined(__BEOS__)
 // BeOS
