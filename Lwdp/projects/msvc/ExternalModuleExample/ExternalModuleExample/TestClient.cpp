@@ -119,8 +119,8 @@ typedef std::list<int> INTLIST;
 
 ///////////////////////////////////////////////
 
-#define NBR_CLIENTS 1
-#define NBR_WORKERS 1
+#define NBR_CLIENTS 5
+#define NBR_WORKERS 4
 
 static unsigned int __stdcall
 worker_task (void *args)
