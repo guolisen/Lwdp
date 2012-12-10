@@ -195,4 +195,3 @@ kqueue_fork (EV_P)
   /* re-register interest in fds */
   fd_rearm_all (EV_A);
 }
-

@@ -13,13 +13,13 @@
 
 #include "EventTagDef.h"
 #include "Cx_EventMgr.h"
-
+#include "Cx_Watcher.h"
 
 
 LWDP_NAMESPACE_BEGIN;
 
 
-Cx_EventMgr::Cx_EventMgr()
+Cx_EventMgr::Cx_EventMgr():	mInitTag(0), mMainLoop(NULL)
 {
 }
 
@@ -27,16 +27,111 @@ Cx_EventMgr::~Cx_EventMgr()
 {
 }
 
-LWRESULT Cx_EventMgr::Init()
+
+//main loop
+LWRESULT Cx_EventMgr::InitLoop(uint32_ flags)
 {
-	lw_log_info(LWDP_EVENT_LOG, __T("Cx_EventMgr::Init OK!"));
+	if(mInitTag)
+	{
+		return LWDP_OK;
+	}
+	lw_log_info(LWDP_EVENT_LOG, __T("Cx_EventMgr::InitLoop OK!"));
 
+	mMainLoop = ev_loop_new(LWFLAG_AUTO);
+	if(!mMainloop)
+	{
+		PLATFORM_LOG(LWDP_EVENT_LOG, LWDP_LOG_ERR, "ev_loop_new return null");	
+		return LWDP_INIT_LOOP_ERROR;
+	}
 
+	WatcherFactory_Ptr iofactory(new IOWatcherFactory());
+	mWatcherFactory.push_back(iofactory);
+	WatcherFactory_Ptr timerfactory(new TimerWatcherFactory());
+	mWatcherFactory.push_back(timerfactory);	
+			
+	mInitTag = 1;
+	return LWDP_OK;
+}
+
+LWRESULT Cx_EventMgr::RunLoop(uint32_ flags)
+{
+	ev_run(mMainloop, flags);
+	return LWDP_OK;
+}
+
+//watcher
+WatcherHandle Cx_EventMgr::CreateWatcher(LWEV::WATCHER_TYPE watcher_type, WATCHER_CALLBACK call_back, ...)
+{
+	WATCHER_FACTORY_LIST::iterator iter;
+	FOREACH_STL(iter, mWatcherFactory)
+	{
+		if((*iter)->GetType() == (uint32_)watcher_type)
+			break;
+	}
+
+	if(iter != mWatcherFactory.end())
+	{
+		WATCHER_ENTRY* tmpEntry = new WATCHER_ENTRY;
+		ASSERT_CHECK_RET(LWDP_EVENT_LOG, tmpEntry, "new WATCHER_ENTRY Error");
+		tmpEntry->watcherType = watcher_type;
+		tmpEntry->watcherObject = (*iter)->CreateObject(mMainLoop);
+
+		va_list arg;  
+		va_start(arg, call_back); 
+        tmpEntry->watcherObject->Init(call_back, arg);
+		va_end(arg);  
+		
+		mWatcherList.push_back(tmpEntry);
+
+		return (WatcherHandle)tmpEntry;
+	}
+
+	return (WatcherHandle)NULL;
+}
+
+LWRESULT Cx_EventMgr::DestoryWatcher(WatcherHandle watcher_handle)
+{
+	WATCHER_LIST::iterator iter;
+	FOREACH_STL(iter, mWatcherList)
+	{
+		if(watcher_handle == (WatcherHandle)(*iter)) 
+		{
+			WatcherStop(watcher_handle);
+			mWatcherList.erase(iter);
+			break;
+		}
+
+	}
 
 	return LWDP_OK;
 }
 
+LWRESULT Cx_EventMgr::WatcherStart(WatcherHandle watcher_handle)
+{
+	if(!watcher_handle)
+		return LWDP_POINTER_IS_NULL;
 
+	WATCHER_ENTRY* tmpEntry = watcher_handle;
+	if(!tmpEntry->watcherObject)
+		return LWDP_WATCHER_OBJECT_NULL_ERROR;
+	
+	RINOK(tmpEntry->watcherObject->WatcherStart());
+	return LWDP_OK;
+}
+
+LWRESULT Cx_EventMgr::WatcherStop(WatcherHandle watcher_handle)
+{
+	if(!watcher_handle)
+		return LWDP_POINTER_IS_NULL;
+
+	WATCHER_ENTRY* tmpEntry = watcher_handle;
+	if(!tmpEntry->watcherObject)
+		return LWDP_WATCHER_OBJECT_NULL_ERROR;
+	
+	RINOK(tmpEntry->watcherObject->WatcherStop());
+
+	return LWDP_OK;
+}
 
 LWDP_NAMESPACE_END;
 

@@ -37,6 +37,7 @@
  * either the BSD or the GPL.
  */
 
+
 #include <poll.h>
 
 void inline_size
@@ -145,4 +146,3 @@ poll_destroy (EV_P)
   ev_free (pollidxs);
   ev_free (polls);
 }
-

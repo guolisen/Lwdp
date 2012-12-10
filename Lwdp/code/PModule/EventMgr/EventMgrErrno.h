@@ -5,8 +5,8 @@
  */
 
 
-//ERRNO_DB (LOAD_LIBRARY_ERROR,            (M_eventmgr | 1), "Load Script Library File Error!")
-
+ERRNO_DB (INIT_LOOP_ERROR,            (M_eventmgr | 1), "ev_loop_new return Error!")
+ERRNO_DB (WATCHER_OBJECT_NULL_ERROR,  (M_eventmgr | 2), "WATCHER_ENTRY's watcherObject is NULL Error!")
 
 
 

@@ -1789,34 +1789,6 @@
 					RelativePath="..\..\..\..\code\LwApiLib\ComLib\Libev\ev.c"
 					>
 				</File>
-				<File
-					RelativePath="..\..\..\..\code\LwApiLib\ComLib\Libev\ev_epoll.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\..\code\LwApiLib\ComLib\Libev\ev_kqueue.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\..\code\LwApiLib\ComLib\Libev\ev_poll.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\..\code\LwApiLib\ComLib\Libev\ev_port.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\..\code\LwApiLib\ComLib\Libev\ev_select.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\..\code\LwApiLib\ComLib\Libev\ev_win32.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\..\code\LwApiLib\ComLib\Libev\event.c"
-					>
-				</File>
 			</Filter>
 		</Filter>
 		<File

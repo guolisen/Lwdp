@@ -42,7 +42,7 @@
 # ifdef EV_CONFIG_H
 #  include EV_CONFIG_H
 # else
-#  include "config.h"
+#  include <LwApiLib/ComLib/Libev/config.h>
 # endif
 
 #if HAVE_FLOOR
@@ -182,7 +182,7 @@
 #ifdef EV_H
 # include EV_H
 #else
-# include "ev.h"
+# include <LwApiLib/ComLib/Libev/ev.h>
 #endif
 
 #if EV_NO_THREADS
@@ -1245,10 +1245,10 @@ typedef struct
     ev_tstamp ev_rt_now;
     #define ev_rt_now ((loop)->ev_rt_now)
     #define VAR(name,decl) decl;
-      #include "ev_vars.h"
+	  #include <LwApiLib/ComLib/Libev/ev_vars.h>
     #undef VAR
   };
-  #include "ev_wrap.h"
+  #include <LwApiLib/ComLib/Libev/ev_wrap.h>
 
   static struct ev_loop default_loop_struct;
   EV_API_DECL struct ev_loop *ev_default_loop_ptr = 0; /* needs to be initialised to make it a definition despite extern */
@@ -4471,6 +4471,6 @@ ev_walk (EV_P_ int types, void (*cb)(EV_P_ int type, void *w))
 #endif
 
 #if EV_MULTIPLICITY
-  #include "ev_wrap.h"
+    #include <LwApiLib/ComLib/Libev/ev_wrap.h>
 #endif
 

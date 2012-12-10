@@ -37,8 +37,6 @@
  * either the BSD or the GPL.
  */
 
-#ifdef _WIN32
-
 /* timeb.h is actually xsi legacy functionality */
 #include <sys/timeb.h>
 
@@ -149,5 +147,5 @@ ev_time (void)
   return (LONGLONG)(ui.QuadPart - 116444736000000000) * 1e-7;
 }
 
-#endif
+
 
