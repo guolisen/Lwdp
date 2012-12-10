@@ -13,7 +13,7 @@
 #include "DctMgr/DctMgrErrno.h"
 #include "LuaMgr/LuaMgrErrno.h"
 #include "ZmqMgr/ZmqMgrErrno.h"
-
+#include "EventMgr/EventMgrErrno.h"
 #endif
 
 
