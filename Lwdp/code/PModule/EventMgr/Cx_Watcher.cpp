@@ -51,7 +51,7 @@ typedef void (__cdecl *cb_timer)(struct ev_loop *,ev_timer *,int);
 LWRESULT Cx_WatcherTimer::Init(WATCHER_CALLBACK call_back, va_list argp)
 {
 	ev_tstamp timeout = va_arg( argp, ev_tstamp); 
-	ev_tstamp repeat = va_arg( argp, ev_tstamp); 
+	ev_tstamp repeat  = va_arg( argp, ev_tstamp); 
 	
 	ev_timer_init(&mWatcher, (cb_timer)call_back, timeout, repeat);
    
