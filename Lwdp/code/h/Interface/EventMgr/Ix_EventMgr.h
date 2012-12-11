@@ -44,7 +44,7 @@ enum WATCHER_TYPE
 };
 };
  
-typedef void (*WATCHER_CALLBACK)(void *w, int revents);
+typedef void (*WATCHER_CALLBACK)(void *loop, void *w, int revents);
 typedef void* WatcherHandle;
 
 

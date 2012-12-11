@@ -82,7 +82,7 @@
 //#define HAVE_SYS_INOTIFY_H 1
 
 /* Define to 1 if you have the <sys/select.h> header file. */
-//#define HAVE_SYS_SELECT_H 1
+#define HAVE_SYS_SELECT_H 1
 
 /* Define to 1 if you have the <sys/signalfd.h> header file. */
 /* #undef HAVE_SYS_SIGNALFD_H */

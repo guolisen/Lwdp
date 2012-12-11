@@ -9,7 +9,7 @@
 
 
 LWDP_NAMESPACE_BEGIN;
-EXTERN_C_BEGIN;
+//EXTERN_C_BEGIN;
 
 #define M_errno			    (0x80000000)	
 #define M_logMsg    		(1 << 16)
@@ -36,7 +36,7 @@ enum _ERROR_CAT_NUM
 
     
 #include <LwApiLib/Framwork/ErrMgr/LwErrMgr.h>
-EXTERN_C_END;
+//EXTERN_C_END;
 LWDP_NAMESPACE_END;
 #endif
 

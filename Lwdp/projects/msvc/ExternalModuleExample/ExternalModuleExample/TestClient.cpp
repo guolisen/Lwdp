@@ -10,6 +10,7 @@ using namespace NLwdp;
 #include <Interface/LuaMgr/Ix_LuaMgr.h>
 #include <Interface/LogMgr/Ix_LogMgr.h>
 #include <Interface/ZmqMgr/Ix_ZmqMgr.h>
+#include <Interface/EventMgr/Ix_EventMgr.h>
 
 #include <vector>
 #include <set>
@@ -179,6 +180,10 @@ client_task (void *args)
 }
 
 
+void io_callback(void *loop, void *w, int revents)
+{
+	printf("!!!!!Call Back!!!!\n");
+}
 
 int32_ main()
 {
@@ -189,6 +194,7 @@ int32_ main()
 	if(stat != LWDP_OK)
 	{
 		lw_log_err(LWDP_MODULE_LOG, "Fw_Init Error(0x%x)!", stat);
+		system("pause");
 		return -1;
 		
 	}
@@ -197,6 +203,7 @@ int32_ main()
 	if(stat != LWDP_OK)
 	{
 		lw_log_err(LWDP_MODULE_LOG, "Fw_Start Error(0x%x)!", stat);
+		system("pause");
 		return -1;
 		
 	}
@@ -205,10 +212,21 @@ int32_ main()
 	if(stat != LWDP_OK)
 	{
 		lw_log_err(LWDP_MODULE_LOG, "Fw_Stop Error(0x%x)!", stat);
+		system("pause");
 		return -1;
 		
 	}
 
+
+	GET_OBJECT_RET(EventMgr, iEventMgr, 0);
+
+	RINOK(iEventMgr->InitLoop(0));
+	WatcherHandle wh = iEventMgr->CreateWatcher(LWEV::WATCHER_TIMER, (WATCHER_CALLBACK)io_callback, 1.0, 1.0);
+	iEventMgr->WatcherStart(wh);
+
+	iEventMgr->RunLoop(0);
+
+#if 0
     int client_nbr;
     for (client_nbr = 0; client_nbr < NBR_CLIENTS; client_nbr++) {
         HANDLE client;
@@ -290,7 +308,7 @@ int32_ main()
 	iZmqMgr->CloseSocket(backend);
 	iZmqMgr->CloseContext(context);
 
-
+#endif
 
 
 

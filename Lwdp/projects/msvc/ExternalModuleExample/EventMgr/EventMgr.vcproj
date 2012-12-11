@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="EventMgr"
+	Name="EventMgrDll"
 	ProjectGUID="{D93A15F2-A7A3-444E-9F65-E50120B8FB89}"
 	RootNamespace="EventMgr"
 	Keyword="Win32Proj"
@@ -175,6 +175,14 @@
 		</File>
 		<File
 			RelativePath="..\..\..\..\code\PModule\EventMgr\Cx_EventMgr.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\code\PModule\EventMgr\Cx_Watcher.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\code\PModule\EventMgr\Cx_Watcher.h"
 			>
 		</File>
 		<File

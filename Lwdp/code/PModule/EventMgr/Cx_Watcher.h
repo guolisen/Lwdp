@@ -7,6 +7,7 @@
 #ifndef CX_WATCHER_IMPL_H
 #define CX_WATCHER_IMPL_H
 
+LWDP_NAMESPACE_BEGIN;
 
 //IO
 class Cx_WatcherIO : public Ix_Watcher
@@ -19,9 +20,13 @@ public:
 	virtual LWRESULT WatcherStart();
 	virtual LWRESULT WatcherStop();
 
+public:
+	//void stdin_cb(EV_P_ ev_io *w, int revents);
+	
 protected:
 	ev_io mWatcher;
 	struct ev_loop* mLoop;
+	WATCHER_CALLBACK mCallBack;
 
 };
 class IOWatcherFactory : public Ix_WatcherFactory
@@ -56,4 +61,5 @@ public:
 
 };
 
+LWDP_NAMESPACE_END;
 #endif

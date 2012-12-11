@@ -8,18 +8,19 @@
 // 2011.08.11: Create By Guolisen
 
 #include <LwDp.h>
-#include <LwApiLib/Framwork/ErrMgr/LwErrMgr.h>
+//#include <LwApiLib/Framwork/ErrMgr/LwErrMgr.h>
 
 LWDP_NAMESPACE_BEGIN;
-EXTERN_C_BEGIN;
+//EXTERN_C_BEGIN;
+
 
 #if 0
-static LWDP_ERRNO_MESSAGE platformErrInfo[] = 
+static LWDP_ERRNO_MSG platformErrInfo[] = 
 {
 #undef  ERRNO_DB
-#define ERRNO_DB(x, y, z) {y, __T("LWDP_")__T(#x), __T(z)},
+#define ERRNO_DB(x, y, z) {#y, __T("LWDP_")__T(#x), z},
     #include <LwMErrnoBase.h> 
-    {-1, __T("ENUM END"), __T("NONE")}
+    {"-1", __T("ENUM END"), __T("NONE")}
 };
 
 
@@ -44,7 +45,7 @@ int Test()
 {
     return LWDP_OK;
 }
-EXTERN_C_END;
+//EXTERN_C_END;
 LWDP_NAMESPACE_END;
     
 

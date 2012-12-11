@@ -37,8 +37,8 @@ LWRESULT Cx_EventMgr::InitLoop(uint32_ flags)
 	}
 	lw_log_info(LWDP_EVENT_LOG, __T("Cx_EventMgr::InitLoop OK!"));
 
-	mMainLoop = ev_loop_new(LWFLAG_AUTO);
-	if(!mMainloop)
+	mMainLoop = ev_loop_new(0);
+	if(!mMainLoop)
 	{
 		PLATFORM_LOG(LWDP_EVENT_LOG, LWDP_LOG_ERR, "ev_loop_new return null");	
 		return LWDP_INIT_LOOP_ERROR;
@@ -55,7 +55,7 @@ LWRESULT Cx_EventMgr::InitLoop(uint32_ flags)
 
 LWRESULT Cx_EventMgr::RunLoop(uint32_ flags)
 {
-	ev_run(mMainloop, flags);
+	ev_run(mMainLoop, flags);
 	return LWDP_OK;
 }
 
@@ -71,8 +71,8 @@ WatcherHandle Cx_EventMgr::CreateWatcher(LWEV::WATCHER_TYPE watcher_type, WATCHE
 
 	if(iter != mWatcherFactory.end())
 	{
-		WATCHER_ENTRY* tmpEntry = new WATCHER_ENTRY;
-		ASSERT_CHECK_RET(LWDP_EVENT_LOG, tmpEntry, "new WATCHER_ENTRY Error");
+		WATCHER_ENTRY* tmpEntry = (WATCHER_ENTRY*)malloc(sizeof(WATCHER_ENTRY));
+		ASSERT_CHECK_RET(LWDP_EVENT_LOG, NULL, tmpEntry, "new WATCHER_ENTRY Error");
 		tmpEntry->watcherType = watcher_type;
 		tmpEntry->watcherObject = (*iter)->CreateObject(mMainLoop);
 
@@ -111,7 +111,7 @@ LWRESULT Cx_EventMgr::WatcherStart(WatcherHandle watcher_handle)
 	if(!watcher_handle)
 		return LWDP_POINTER_IS_NULL;
 
-	WATCHER_ENTRY* tmpEntry = watcher_handle;
+	WATCHER_ENTRY* tmpEntry = (WATCHER_ENTRY*)watcher_handle;
 	if(!tmpEntry->watcherObject)
 		return LWDP_WATCHER_OBJECT_NULL_ERROR;
 	
@@ -124,7 +124,7 @@ LWRESULT Cx_EventMgr::WatcherStop(WatcherHandle watcher_handle)
 	if(!watcher_handle)
 		return LWDP_POINTER_IS_NULL;
 
-	WATCHER_ENTRY* tmpEntry = watcher_handle;
+	WATCHER_ENTRY* tmpEntry = (WATCHER_ENTRY*)watcher_handle;
 	if(!tmpEntry->watcherObject)
 		return LWDP_WATCHER_OBJECT_NULL_ERROR;
 	

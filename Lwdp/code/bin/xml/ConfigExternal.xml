@@ -14,6 +14,7 @@
 			<ModuleLoad Name = "LuaMgr" 	Modid = "3FAAA9E8-4CBB-4496-A369-172077A3F5EE" />
 			<ModuleLoad Name = "LogMgr"     Modid = "8BBC60DD-D652-454b-B522-6D19D5A1B97A" />
 			<ModuleLoad Name = "DctMgr" 	Modid = "A009B569-707F-4618-A089-C09F776ADEC2" />
+			<ModuleLoad Name = "EventMgr" 	Modid = "5D2C4C38-6B59-469a-9AE2-133FF44E3182" />
 			<ModuleLoad Name = "ZmqMgr" 	Modid = "1C8B1ACD-89A4-48ab-8161-538B7E2545BE" />
 			<ModuleLoad Name = "ExampleTest"  Modid = "2F72F07E-5594-45c5-A1EB-654C0A3117AC" />
 		</PropertyTable>
@@ -87,6 +88,17 @@
 		<Script Name = "LuaMgrInit">
 		</Script>
 	</Module>	
+	<Module Name = "EventMgr" Modid = "5D2C4C38-6B59-469a-9AE2-133FF44E3182">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>../../../../code/bin/Plugins/EventMgrDll.dll</ModuleDir>
+		</Property>
+		<TableSet>
+		</TableSet>
+		<Script Name = "EventMgrInit">
+		</Script>
+	</Module>
 	<Module Name = "ZmqMgr" Modid = "1C8B1ACD-89A4-48ab-8161-538B7E2545BE">
 		<!--属性名不可重复-->
 		<Property> 
