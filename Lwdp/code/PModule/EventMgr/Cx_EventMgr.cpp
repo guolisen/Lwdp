@@ -37,17 +37,17 @@ LWRESULT Cx_EventMgr::InitLoop(uint32_ flags)
 	}
 	lw_log_info(LWDP_EVENT_LOG, __T("Cx_EventMgr::InitLoop OK!"));
 
-	mMainLoop = ev_loop_new(0);
+	mMainLoop = ev_loop_new(LWFLAG_AUTO);
 	if(!mMainLoop)
 	{
 		PLATFORM_LOG(LWDP_EVENT_LOG, LWDP_LOG_ERR, "ev_loop_new return null");	
 		return LWDP_INIT_LOOP_ERROR;
 	}
 
-	WatcherFactory_Ptr iofactory(new IOWatcherFactory());
-	mWatcherFactory.push_back(iofactory);
-	WatcherFactory_Ptr timerfactory(new TimerWatcherFactory());
-	mWatcherFactory.push_back(timerfactory);	
+	WatcherFactory_Ptr ioFactory(new IOWatcherFactory());
+	mWatcherFactory.push_back(ioFactory);
+	WatcherFactory_Ptr timerFactory(new TimerWatcherFactory());
+	mWatcherFactory.push_back(timerFactory);	
 			
 	mInitTag = 1;
 	return LWDP_OK;

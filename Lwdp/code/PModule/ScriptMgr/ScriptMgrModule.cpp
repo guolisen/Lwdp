@@ -6,7 +6,7 @@
 #include <Interface/ConfigMgr/Ix_ConfigMgr.h>
 #include "Cx_ScriptMgr.h"
 
-#include <../UModule/Interface/Example/Ix_Example.h>
+//#include <../UModule/Interface/Example/Ix_Example.h>
 #include "ScriptAction.h"
 
 LWDP_NAMESPACE_BEGIN;

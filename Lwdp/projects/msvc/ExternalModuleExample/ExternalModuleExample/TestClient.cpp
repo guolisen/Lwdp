@@ -2,7 +2,7 @@
 #include <Lwdp.h>
 #include <LwApi.h>
 using namespace NLwdp;
-#include <../UModule/Interface/Example/Ix_example.h>
+//#include <../UModule/Interface/Example/Ix_example.h>
 
 #include <Interface/ConfigMgr/Ix_XmlMgr.h>
 #include <Interface/ConfigMgr/Ix_ConfigMgr.h>

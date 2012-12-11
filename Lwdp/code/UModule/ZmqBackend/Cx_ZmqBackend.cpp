@@ -20,10 +20,15 @@ Cx_ZmqBackend::~Cx_ZmqBackend()
 
 
 
-
-void Cx_ZmqBackend::Foo(long_& value)
+LWRESULT Cx_ZmqBackend::Init()
 {
 
+	return LWDP_OK;
+}
+LWRESULT Cx_ZmqBackend::RunServer()
+{
+
+	return LWDP_OK;
 }
 
 

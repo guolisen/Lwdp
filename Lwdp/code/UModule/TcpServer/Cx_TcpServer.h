@@ -17,7 +17,8 @@ protected:
 
 private:
     // From Ix_TcpServer
-    virtual void Foo(long_& value);
+	virtual LWRESULT Init();
+	virtual LWRESULT RunServer();
 
 };
 

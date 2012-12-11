@@ -17,8 +17,11 @@ protected:
 
 private:
     // From Ix_TSFrontend
-    virtual void Foo(long_& value);
+	virtual LWRESULT Init();
+	virtual LWRESULT RunServer();
 
+protected:
+	WatcherHandle mIoWatcher;
 };
 
 #endif

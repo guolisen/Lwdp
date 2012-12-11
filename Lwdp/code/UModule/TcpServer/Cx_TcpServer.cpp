@@ -20,10 +20,15 @@ Cx_TcpServer::~Cx_TcpServer()
 
 
 
-
-void Cx_TcpServer::Foo(long_& value)
+LWRESULT Cx_TcpServer::Init()
 {
 
+	return LWDP_OK;
+}
+LWRESULT Cx_TcpServer::RunServer()
+{
+
+	return LWDP_OK;
 }
 
 
