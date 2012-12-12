@@ -77,6 +77,7 @@ protected:
 
 	virtual LWRESULT WatcherStart(WatcherHandle watcher_handle);
 	virtual LWRESULT WatcherStop(WatcherHandle watcher_handle);
+	virtual void* GetCallBackData(CBHandle cb_handle, LWEV::WATCHER_TYPE watcher_type, LWEV::CALLBACK_DATA_TYPE data_type);
 
 protected:
 	int32_ 				mInitTag;

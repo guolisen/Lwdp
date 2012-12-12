@@ -1,6 +1,6 @@
  
 #define LWDP_MODULE_IMPL
-#include <Lwdp.h>
+#include <LwDp.h>
 #include <PluginInc.h>
 
 #include "../Interface/TSFrontend/Ix_TSFrontend.h"
@@ -8,8 +8,6 @@
   
 
 LWDP_NAMESPACE_BEGIN;
-
-
 
 XBEGIN_DEFINE_CLASS()
     XDEFINE_CLASSMAP_ENTRY_Singleton(MODID_TSFrontend, CLSID_TSFrontend, Cx_TSFrontend)
@@ -29,6 +27,18 @@ DEF_MODULE_INFO_END(TSFrontend);
 DEF_INIT_FUN(TSFrontend)
 {
 	printf("TSFrontend InitializePlugin\n");
+
+#ifdef LWDP_PLATFORM_DEF_WIN32
+	int res = FALSE;
+	res = pthread_win32_process_attach_np(); 
+	if(!res) //if false
+	{
+		lw_log_err(LWDP_MODULE_LOG, "pThread Init Error!");
+		return LWDP_ERROR;
+	}
+	lw_log_info(LWDP_MODULE_LOG, "pThread Init OK!");
+#endif
+
     return LWDP_OK;
 }
 

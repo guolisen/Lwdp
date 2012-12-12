@@ -178,6 +178,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\..\code\UModule\TSFrontend\TSFrontendDef.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\code\UModule\TSFrontend\TSFrontendErrno.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\..\code\UModule\TSFrontend\TSFrontendModule.cpp"
 			>
 		</File>

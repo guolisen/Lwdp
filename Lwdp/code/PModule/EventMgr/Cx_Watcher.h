@@ -21,7 +21,7 @@ public:
 	virtual LWRESULT WatcherStop();
 
 public:
-	//void stdin_cb(EV_P_ ev_io *w, int revents);
+	static void* GetTypeData(CBHandle call_back, LWEV::CALLBACK_DATA_TYPE type);
 	
 protected:
 	ev_io mWatcher;
@@ -47,6 +47,9 @@ public:
 	virtual LWRESULT Init(WATCHER_CALLBACK call_back, va_list argp);
 	virtual LWRESULT WatcherStart();
 	virtual LWRESULT WatcherStop();
+
+public:
+	static void* GetTypeData(CBHandle call_back, LWEV::CALLBACK_DATA_TYPE type);
 
 protected:
 	ev_timer mWatcher;

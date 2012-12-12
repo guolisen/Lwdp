@@ -35,6 +35,16 @@ DEF_INIT_FUN(EventMgr)
 
 	//GET_OBJECT_RET(EventMgr, iEventMgr, LWDP_GET_OBJECT_ERROR);
 	//RINOK(iEventMgr->Init());
+#ifdef LWDP_PLATFORM_DEF_WIN32
+	int res = FALSE;
+	res = pthread_win32_process_attach_np(); 
+	if(!res) //if false
+	{
+		lw_log_err(LWDP_MODULE_LOG, "pThread Init Error!");
+		return LWDP_ERROR;
+	}
+	lw_log_info(LWDP_MODULE_LOG, "pThread Init OK!");
+#endif
 	
     return LWDP_OK;
 }

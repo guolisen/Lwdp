@@ -16,6 +16,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <wchar.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
 #include <LwDp.h>
 
 LWDP_NAMESPACE_BEGIN;
@@ -24,7 +27,7 @@ EXTERN_C_BEGIN;
 #define LINUX_IMPL_API(api) LINUX_##api
 
 
-
+#define SOCKET int
 #define DECLEXPORT
 #define OUTAPI      extern "C" DECLEXPORT
 #define PLNEXT     __T".so"

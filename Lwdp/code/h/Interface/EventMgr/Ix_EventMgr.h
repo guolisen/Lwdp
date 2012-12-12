@@ -1,10 +1,40 @@
-#ifndef EVENTMGR_INTERFACE_H
-#define EVENTMGR_INTERFACE_H
+#ifndef _EVENTMGR_INTERFACE_H
+#define _EVENTMGR_INTERFACE_H
 
 #include <Interface/Ix_Object.h>
 #include "Id_EventMgr.h"
 
 LWDP_NAMESPACE_BEGIN;
+
+/* eventmask, revents, events... */
+enum {
+  LW_UNDEF    = 0xFFFFFFFF, /* guaranteed to be invalid */
+  LW_NONE     =       0x00, /* no events */
+  LW_READ     =       0x01, /* ev_io detected read will not block */
+  LW_WRITE    =       0x02, /* ev_io detected write will not block */
+  LW__IOFDSET =       0x80, /* internal use only */
+  LW_IO       =    LW_READ, /* alias for type-detection */
+  LW_TIMER    = 0x00000100, /* timer timed out */
+#if LW_COMPAT3
+  LW_TIMEOUT  =   LW_TIMER, /* pre 4.0 API compatibility */
+#endif
+  LW_PERIODIC = 0x00000200, /* periodic timer timed out */
+  LW_SIGNAL   = 0x00000400, /* signal was received */
+  LW_CHILD    = 0x00000800, /* child/pid had status change */
+  LW_STAT     = 0x00001000, /* stat data changed */
+  LW_IDLE     = 0x00002000, /* event loop is idling */
+  LW_PREPARE  = 0x00004000, /* event loop about to poll */
+  LW_CHECK    = 0x00008000, /* event loop finished poll */
+  LW_EMBED    = 0x00010000, /* embedded event loop needs sweep */
+  LW_FORK     = 0x00020000, /* event loop resumed in child */
+  LW_CLEANUP  = 0x00040000, /* event loop resumed in child */
+  LW_ASYNC    = 0x00080000, /* async intra-loop signal */
+  LW_CUSTOM   = 0x01000000, /* for use by user code */
+  LW_ERROR    = 0x80000000  /* sent when an error occurs */
+};
+
+#define LW_PERSIST                 0x10
+
 
 /* flag bits for ev_default_loop and ev_loop_new */
 enum {
@@ -37,15 +67,24 @@ enum {
 };
 
 namespace LWEV{
-enum WATCHER_TYPE
-{
-	WATCHER_IO,
-	WATCHER_TIMER	
+	enum WATCHER_TYPE
+	{
+		WATCHER_IO,
+		WATCHER_TIMER	
+	};
+
+	enum CALLBACK_DATA_TYPE
+	{
+		WATCHER_IO_FD
+		//WATCHER_TIMER_	
+	};
 };
-};
- 
-typedef void (*WATCHER_CALLBACK)(void *loop, void *w, int revents);
-typedef void* WatcherHandle;
+
+typedef void*  WatcherHandle;
+typedef void*  CBHandle;
+typedef void*  LoopHandle;
+typedef void (*WATCHER_CALLBACK)(LoopHandle loop, CBHandle w, int revents);
+
 
 
 INTERFACE_BEGIN(EventMgr)
@@ -59,6 +98,7 @@ INTERFACE_BEGIN(EventMgr)
 
 	virtual LWRESULT WatcherStart(WatcherHandle watcher_handle) = 0;
 	virtual LWRESULT WatcherStop(WatcherHandle watcher_handle) = 0;
+	virtual void* GetCallBackData(CBHandle cb_handle, LWEV::WATCHER_TYPE watcher_type, LWEV::CALLBACK_DATA_TYPE data_type) = 0;
 
 	
 INTERFACE_END();

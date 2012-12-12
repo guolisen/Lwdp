@@ -16,7 +16,8 @@
 			<ModuleLoad Name = "DctMgr" 	Modid = "A009B569-707F-4618-A089-C09F776ADEC2" />
 			<ModuleLoad Name = "EventMgr" 	Modid = "5D2C4C38-6B59-469a-9AE2-133FF44E3182" />
 			<ModuleLoad Name = "ZmqMgr" 	Modid = "1C8B1ACD-89A4-48ab-8161-538B7E2545BE" />
-			<ModuleLoad Name = "ExampleTest"  Modid = "2F72F07E-5594-45c5-A1EB-654C0A3117AC" />
+			
+			<ModuleLoad Name = "TSFrontend" Modid = "6AD26E68-071F-45d5-B5C1-7B3F7EE20D13" />
 		</PropertyTable>
 	</TableSet>
 	<Module Name = "ConfigMgr" Modid = "6FE0F631-1F70-4557-8156-2D30AA017631">
@@ -115,6 +116,24 @@
 		<Script Name = "ZmqMgrInit">
 		</Script>
 	</Module>
+	<Module Name = "TSFrontend" Modid = "6AD26E68-071F-45d5-B5C1-7B3F7EE20D13">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>../../../../code/bin/Plugins/TSFrontend.dll</ModuleDir>
+			<ConnetTarget>tcp://localhost:5559</ConnetTarget>
+			<ServerPort>12135</ServerPort>
+			<ListenBlock>64</ListenBlock>
+			<RecvBufMaxLen>1024</RecvBufMaxLen>
+			<SendTimeout>5</SendTimeout>
+			<RecvTimeout>5</RecvTimeout>
+		</Property>
+		<TableSet>
+		</TableSet>
+		<Script Name = "TSFrontend">
+		</Script>
+	</Module>
+	
 	
 	<Module Name = "ExampleTest" Modid = "86347b32-64e4-490c-b273-ec7e010f244e">
 		<!--属性名不可重复-->

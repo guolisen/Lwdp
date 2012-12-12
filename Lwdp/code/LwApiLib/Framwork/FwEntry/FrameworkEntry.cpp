@@ -37,7 +37,7 @@ LWRESULT Fw_Init(Ix_ConfigSrc* config_src, uint32_ entry_count)
 {
 	ASSERT_CHECK_RET(LWDP_API_LOG, LWDP_PARAMETER_ERROR, (config_src), "Fw_Init() Parameter Error");
 
-#ifdef defined(_WIN32) || defined(WIN32)
+#ifdef LWDP_PLATFORM_DEF_WIN32
 	int res = FALSE;
 	res = pthread_win32_process_attach_np(); 
 	if(!res) //if false

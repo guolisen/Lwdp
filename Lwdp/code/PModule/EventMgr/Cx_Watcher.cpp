@@ -14,6 +14,8 @@
 #include <Interface/ConfigMgr/Ix_ConfigMgr.h>
 #include <Interface/LogMgr/Ix_LogMgr.h>
 
+#include <LwApiLib/ComLib/Libev/ev.h>
+
 #include "EventTagDef.h"
 #include "Cx_EventMgr.h"
 #include "Cx_Watcher.h"
@@ -28,8 +30,12 @@ LWRESULT Cx_WatcherIO::Init(WATCHER_CALLBACK call_back, va_list argp)
 {
 	int fd = va_arg( argp, int); 
 	int event = va_arg( argp, int); 
-   
-	ev_io_init(&mWatcher, (cb_io)call_back, fd, event);
+
+#ifdef LWDP_PLATFORM_DEF_WIN32
+	ev_io_init(&mWatcher, (cb_io)call_back, _open_osfhandle (fd, 0), event);
+#else
+	ev_io_init(&mWatcher, (cb_io)call_back, (fd), event);
+#endif
    
 	return LWDP_OK;
 }
@@ -44,6 +50,28 @@ LWRESULT Cx_WatcherIO::WatcherStop()
 	ev_io_stop(mLoop, &mWatcher);
 	return LWDP_OK;
 }
+
+
+void* Cx_WatcherIO::GetTypeData(CBHandle call_back, LWEV::CALLBACK_DATA_TYPE type)
+{
+	if(!call_back)
+	{
+		PLATFORM_LOG(LWDP_EVENT_LOG, LWDP_LOG_ERR, "Cx_WatcherIO::GetTypeData Param is NULL");	
+		return NULL;
+	}
+
+	ev_io* ioData = (ev_io*)call_back;
+	switch(type)
+	{
+		case LWEV::WATCHER_IO_FD:
+			return &(ioData->fd);
+			break;
+	}
+
+	return NULL;
+}
+
+
 
 //Timer
 typedef void (__cdecl *cb_timer)(struct ev_loop *,ev_timer *,int);
@@ -68,6 +96,16 @@ LWRESULT Cx_WatcherTimer::WatcherStop()
 	return LWDP_OK;
 }
 
+void* Cx_WatcherTimer::GetTypeData(CBHandle call_back, LWEV::CALLBACK_DATA_TYPE type)
+{
+	if(!call_back)
+	{
+		PLATFORM_LOG(LWDP_EVENT_LOG, LWDP_LOG_ERR, "Cx_WatcherTimer::GetTypeData Param is NULL");	
+		return NULL;
+	}
+	
+	return NULL;
+}
 
 LWDP_NAMESPACE_END;
 

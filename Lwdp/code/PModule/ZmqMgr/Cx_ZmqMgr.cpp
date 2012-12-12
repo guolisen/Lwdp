@@ -3,10 +3,7 @@
  *  \author Guolisen, LwDp
  *  \date   2012.12.03
  */
-#include <LwDpPlatform.h>
-#ifdef LWDP_PLATFORM_DEF_WIN32
-#include <winsock2.h>
-#endif
+
 
 #include <LwDp.h>
 #include <PluginInc.h>

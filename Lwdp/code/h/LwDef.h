@@ -72,6 +72,14 @@ const int32_ UNICODE_TAG = 0;
 #define RINOK(x) { LWRESULT __result__ = (x); if (__result__ != LWDP_OK) return __result__; }
 #endif
 
+#ifndef RINOKV
+#define RINOKV(x) { LWRESULT __result__ = (x); if (__result__ != LWDP_OK) return; }
+#endif
+
+#ifndef RINOKR
+#define RINOKR(x, ret) { LWRESULT __result__ = (x); if (__result__ != LWDP_OK) return (ret); }
+#endif
+
 #define STD_IN	0
 #define STD_OUT	1
 #define STD_ERR	2
@@ -106,6 +114,14 @@ const int32_ UNICODE_TAG = 0;
 	for(iter = ele.begin(); iter != ele.end(); ++iter)
 
 
+#define GET_OBJECT_VOID(Module, Var) \
+	Cx_Interface<Ix_##Module> (Var)(CLSID_##Module); \
+	if((Var).IsNull()) \
+	{ \
+		lw_log_err(LWDP_MODULE_LOG, "Can't Get Module(%s) Pointer!(%s, %d)", #Module, __FILE__, __LINE__); \
+		return; \
+	}
+
 #define GET_OBJECT_RET(Module, Var, Ret) \
 	Cx_Interface<Ix_##Module> (Var)(CLSID_##Module); \
 	if((Var).IsNull()) \
@@ -114,13 +130,14 @@ const int32_ UNICODE_TAG = 0;
 		return (Ret); \
 	}
 
+
+
 #define GET_OBJECT(Module, Var) \
 	Cx_Interface<Ix_##Module> (Var)(CLSID_##Module); \
 	if((Var).IsNull()) \
 	{ \
 		lw_log_warning(LWDP_MODULE_LOG, "Can't Get Module(%s) Pointer!(%s, %d)", #Module, __FILE__, __LINE__); \
 	}
-
 
 #define PLATFORM_LOG(cat, level, ...) \
 	if(level == 0)	\

@@ -37,7 +37,7 @@ LWRESULT Cx_EventMgr::InitLoop(uint32_ flags)
 	}
 	lw_log_info(LWDP_EVENT_LOG, __T("Cx_EventMgr::InitLoop OK!"));
 
-	mMainLoop = ev_loop_new(LWFLAG_AUTO);
+	mMainLoop = ev_loop_new(LWBACKEND_SELECT);
 	if(!mMainLoop)
 	{
 		PLATFORM_LOG(LWDP_EVENT_LOG, LWDP_LOG_ERR, "ev_loop_new return null");	
@@ -73,7 +73,7 @@ WatcherHandle Cx_EventMgr::CreateWatcher(LWEV::WATCHER_TYPE watcher_type, WATCHE
 	{
 		WATCHER_ENTRY* tmpEntry = (WATCHER_ENTRY*)malloc(sizeof(WATCHER_ENTRY));
 		ASSERT_CHECK_RET(LWDP_EVENT_LOG, NULL, tmpEntry, "new WATCHER_ENTRY Error");
-		tmpEntry->watcherType = watcher_type;
+		tmpEntry->watcherType   = watcher_type;
 		tmpEntry->watcherObject = (*iter)->CreateObject(mMainLoop);
 
 		va_list arg;  
@@ -97,10 +97,10 @@ LWRESULT Cx_EventMgr::DestoryWatcher(WatcherHandle watcher_handle)
 		if(watcher_handle == (WatcherHandle)(*iter)) 
 		{
 			WatcherStop(watcher_handle);
+			///!!!!!!!!!!!!!!!!!!
 			mWatcherList.erase(iter);
 			break;
 		}
-
 	}
 
 	return LWDP_OK;
@@ -132,6 +132,22 @@ LWRESULT Cx_EventMgr::WatcherStop(WatcherHandle watcher_handle)
 
 	return LWDP_OK;
 }
+
+void* Cx_EventMgr::GetCallBackData(CBHandle cb_handle, LWEV::WATCHER_TYPE watcher_type, LWEV::CALLBACK_DATA_TYPE data_type)
+{
+	switch(watcher_type)
+	{
+		case LWEV::WATCHER_IO:
+			return Cx_WatcherIO::GetTypeData(cb_handle, data_type);
+			break;
+		case LWEV::WATCHER_TIMER:
+			return Cx_WatcherTimer::GetTypeData(cb_handle, data_type);
+			break;
+	};
+
+	return NULL;
+}
+
 
 LWDP_NAMESPACE_END;
 

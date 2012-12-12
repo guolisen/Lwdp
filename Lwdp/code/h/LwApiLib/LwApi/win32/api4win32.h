@@ -16,6 +16,7 @@
 #include <afxdisp.h>        // MFC Automation classes
 #endif
 #else
+#include <winsock2.h>
 #define _WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers
 #include <windows.h>        // Windows master include file
 #endif // _AFXDLL

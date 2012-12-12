@@ -11,6 +11,7 @@ using namespace NLwdp;
 #include <Interface/LogMgr/Ix_LogMgr.h>
 #include <Interface/ZmqMgr/Ix_ZmqMgr.h>
 #include <Interface/EventMgr/Ix_EventMgr.h>
+#include <../UModule/Interface/TSFrontend/Ix_TSFrontend.h>
 
 #include <vector>
 #include <set>
@@ -197,7 +198,7 @@ int32_ main()
 		system("pause");
 		return -1;
 		
-	}
+	} 
 
 	stat = Fw_Start();
 	if(stat != LWDP_OK)
@@ -217,16 +218,19 @@ int32_ main()
 		
 	}
 
+	//GET_OBJECT_RET(EventMgr, iEventMgr, 0);
 
-	GET_OBJECT_RET(EventMgr, iEventMgr, 0);
+	//RINOK(iEventMgr->InitLoop(0));
 
-	RINOK(iEventMgr->InitLoop(0));
-	WatcherHandle wh = iEventMgr->CreateWatcher(LWEV::WATCHER_TIMER, (WATCHER_CALLBACK)io_callback, 1.0, 1.0);
-	iEventMgr->WatcherStart(wh);
+	GET_OBJECT_RET(TSFrontend, iTSFrontend, 0);
 
-	iEventMgr->RunLoop(0);
+	LWRESULT ret = iTSFrontend->Init();
 
+	ret = iTSFrontend->RunServer();
 #if 0
+
+
+
     int client_nbr;
     for (client_nbr = 0; client_nbr < NBR_CLIENTS; client_nbr++) {
         HANDLE client;
