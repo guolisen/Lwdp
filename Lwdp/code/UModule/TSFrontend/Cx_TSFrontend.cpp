@@ -14,7 +14,7 @@
 #include "TSFrontendDef.h"
 
 
-uint32_     gMaxNum  = LW_TSFRONTEND_RECV_MAX_LEN;
+uint32_      gMaxNum = LW_TSFRONTEND_RECV_MAX_LEN;
 uint32_ gSendTimeout = LW_TSFRONTEND_SEND_TIMEOUT;
 uint32_ gRecvTimeout = LW_TSFRONTEND_RECV_TIMEOUT;
 std::string gConnStr = std::string(LW_TSFRONTEND_CONNECT_TARGET);
@@ -43,11 +43,11 @@ std::string addressToString(struct sockaddr_in* addr)
 
 void* thread_callback(void* vfd)
 {
-	LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::DEBUG, "Thread Callback fd(%x)!", vfd);
+	LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::DEBUG, "Thread Callback fd(%x)!", vfd);
 
 	if(!vfd)
 	{
-		LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::ERR, 
+		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, 
 					   "Thread Param is NULL");
 		return NULL;
 	}
@@ -55,8 +55,12 @@ void* thread_callback(void* vfd)
 	int accept_conn = *(int*)vfd;
 	free(vfd);
 
+
+	//////////////////////////////////////////////////////////////
+	// Recv Tcp Message from Client
+	//////////////////////////////////////////////////////////////
     int ret = 0;
-    uint32_ recvLen = 1024;
+    uint32_ recvLen = 4096;
 	uint8_* recvBuf = (uint8_*)malloc(recvLen * sizeof(uint8_));
 	ASSERT_CHECK_RET(LWDP_PLUGIN_LOG, NULL, recvBuf, "Malloc Recv Buffer Error!");
 	while(1)
@@ -65,7 +69,7 @@ void* thread_callback(void* vfd)
 		ret = recv(accept_conn, (char *)recvBuf, recvLen, 0);
 		if(ret == 0)
 		{
-			LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::WARNING, 
+			LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::WARNING, 
 						   "Remote Socket Closed fd(%x)", accept_conn);
 
 #ifdef LWDP_PLATFORM_DEF_WIN32
@@ -84,12 +88,12 @@ void* thread_callback(void* vfd)
 			if (errno == EAGAIN || errno == EWOULDBLOCK) 
 #endif	
 			{
-				//Sleep(1);
+				Sleep(10);
 				continue;
 			}
 			else
 			{
-				LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::WARNING, 
+				LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::WARNING, 
 							   "Remote Socket Closed fd(%x)", accept_conn);
 
 #ifdef LWDP_PLATFORM_DEF_WIN32
@@ -104,69 +108,13 @@ void* thread_callback(void* vfd)
 		break;
 	};
 
-	LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::INFO, 
-				   "!!!!!Recv Message: (%s)", recvBuf);
-	free(recvBuf);
-#ifdef LWDP_PLATFORM_DEF_WIN32
-	int rc = closesocket(accept_conn);
-#else
-	int rc = ::close (accept_conn);
-#endif
-	return NULL;	
+	LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::INFO, 
+				   "!!!!!Recv Message: (%s)", recvBuf);	
 
-#if 0
-
-
-	//Recv Data Length
-    int ret = 0;
-    uint32_ recvLen = 0;
-    ret = recv(accept_conn, (char *)&recvLen, sizeof(recvLen), 0);
-	if(ret <= 0)
-	{
-		LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::WARNING, 
-					   "Remote Socket Closed fd(%x)", fd);
-
-#ifdef LWDP_PLATFORM_DEF_WIN32
-		int rc = closesocket(accept_conn);
-#else
-		int rc = ::close (accept_conn);
-#endif
-		return NULL;
-	}
-
-
-	LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::INFO, 
-				   "Recv Message Length(%d) ret(%d) fd : %x\n", 
-				   recvLen, ret, fd);
-
-	if(recvLen > gMaxNum)
-	{
-
-		return NULL;
-	}
-	
-	//Recv Data
-	uint8_* recvBuf = (uint8_*)malloc(recvLen * sizeof(uint8_));
-	ASSERT_CHECK_RET(LWDP_PLUGIN_LOG, NULL, recvBuf, "Malloc Recv Buffer Error!");
-	ret = recv(accept_conn, (char *)recvBuf, recvLen, 0);
-	if(ret <= 0)
-	{
-		LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::WARNING, 
-					   "Remote Socket Closed fd(%x)", fd);
-
-		free(recvBuf);
-#ifdef LWDP_PLATFORM_DEF_WIN32
-		int rc = closesocket(accept_conn);
-#else
-		int rc = ::close (accept_conn);
-#endif
-		return NULL;
-	}
-#endif
 
 	GET_OBJECT_RET(ZmqMgr, iZmqMgr, NULL);
 	
-	ContextHandle context = iZmqMgr->GetNewContext();
+	ContextHandle  context = iZmqMgr->GetNewContext();
 	SocketHandle requester = iZmqMgr->GetNewSocket(context, LWDP_REQ);
 	RINOKR(iZmqMgr->Connect(requester, gConnStr.c_str()), NULL);
 
@@ -181,11 +129,14 @@ void* thread_callback(void* vfd)
 		                           &gRecvTimeout, sizeof(gRecvTimeout)), NULL);
 	}
 
-	//Send Message to ZMQ
+	//////////////////////////////////////////////////////////////
+	// Send Message to ZMQ
+	//////////////////////////////////////////////////////////////
+	
 	ret = iZmqMgr->Send(requester, recvBuf, recvLen, 0);
 	if(ret != recvLen)
 	{	
-		LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::ERR, 
+		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, 
 					   "Send Message Timeout or Error fd(%x) ret(%d) send(%d)", accept_conn, ret, recvLen);
 
 		free(recvBuf);
@@ -197,11 +148,19 @@ void* thread_callback(void* vfd)
 		return NULL;		
 	}
 
-	//Recv Message from ZMQ
-	std::string retdata = iZmqMgr->Recv(requester, 0);
+	//////////////////////////////////////////////////////////////
+	// Recv Message from ZMQ
+	//////////////////////////////////////////////////////////////
+
+	GET_OBJECT_RET(ZMessage, iZMessage, 0);
+    // Process all parts of the message
+    iZMessage->InitZMessage();
+	iZmqMgr->Recv(requester, iZMessage, 0);
+	printf("IN2!!!!!! : %s\n", iZMessage->Data());
+#if 0	
 	if(retdata.empty())
 	{	
-		LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::ERR, 
+		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, 
 					   "Recv ZMQ Message Timeout or Error fd(%x) ret(%d)", accept_conn, ret);
 
 		free(recvBuf);
@@ -212,11 +171,71 @@ void* thread_callback(void* vfd)
 #endif
 		return NULL;		
 	}
+#endif
+	//////////////////////////////////////////////////////////////
+	// Tcp Send to Client
+	//////////////////////////////////////////////////////////////
+	uint32_ index = 0;
+	while(1)
+	{
+		//Send Data Length
+//		ret = send(accept_conn, (char *)retdata.data() + index, retdata.size(), 0);
+		if(ret == 0)
+		{
+			LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::WARNING, 
+						   "Remote Socket Closed fd(%x)", accept_conn);
+
+#ifdef LWDP_PLATFORM_DEF_WIN32
+			int rc = closesocket(accept_conn);
+#else
+			int rc = ::close (accept_conn);
+#endif
+			return NULL;
+		}
+		else if(ret < 0)
+		{
+#ifdef LWDP_PLATFORM_DEF_WIN32
+			errno = WSAGetLastError();
+			if(errno == EAGAIN || errno == WSAEWOULDBLOCK)
+#else
+			if (errno == EAGAIN || errno == EWOULDBLOCK) 
+#endif	
+			{
+				Sleep(1);
+				continue;
+			}
+			else
+			{
+				LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::WARNING, 
+							   "Remote Socket Closed fd(%x)", accept_conn);
+
+#ifdef LWDP_PLATFORM_DEF_WIN32
+				int rc = closesocket(accept_conn);
+#else
+				int rc = ::close (accept_conn);
+#endif
+				return NULL;
+			}
+		}
+
+//		if(ret + index < retdata.size())
+		{
+			index += ret;
+			Sleep(1);
+			continue;
+		}
+			
+		break;
+	};
 
 	iZmqMgr->CloseSocket(requester);
 	iZmqMgr->CloseContext(context);
 	free(recvBuf);
-//    close(conn);
+#ifdef LWDP_PLATFORM_DEF_WIN32
+	int rc = closesocket(accept_conn);
+#else
+	int rc = ::close (accept_conn);
+#endif
 
 	return NULL;
 }
@@ -224,13 +243,13 @@ void* thread_callback(void* vfd)
 
 void io_callback(LoopHandle loop, CBHandle w, int revents)
 {
-	LWDP_LOG_PRINT( "TCPSERVER", LWDP_LOG_MGR::DEBUG, 
+	LWDP_LOG_PRINT( "TSFRONTEND", LWDP_LOG_MGR::DEBUG, 
 					"Io Callback Watcher(%x)!", w);
 
 	Cx_Interface<Ix_EventMgr> (iEventMgr)(CLSID_EventMgr); 
 	if((iEventMgr).IsNull()) 
 	{ 
-		LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::ERR, 
+		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, 
 					   "Can't Get Module(%s) Pointer!(%s, %d)", 
 					   "EventMgr", __FILE__, __LINE__);
 
@@ -240,7 +259,7 @@ void io_callback(LoopHandle loop, CBHandle w, int revents)
 	SOCKET* vfd = (SOCKET *)iEventMgr->GetCallBackData(w, LWEV::WATCHER_IO, LWEV::WATCHER_IO_FD);
 	if(!vfd)
 	{
-		LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::ERR, 
+		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, 
 					   "Get io_callback CallBack fd Error");
 		return;
 	}
@@ -262,14 +281,14 @@ void io_callback(LoopHandle loop, CBHandle w, int revents)
 		}
 		else
 		{
-			LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::ERR, 
+			LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, 
 						   "Accept Error.");
 			return;
 		}
 	}
 
     std::string r = addressToString(&addr);
-	LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::DEBUG, 
+	LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::DEBUG, 
 				   "ACCEPT Clinet IP(%s)", r.c_str());
 
 	pthread_t t;
@@ -277,14 +296,14 @@ void io_callback(LoopHandle loop, CBHandle w, int revents)
 
 	result = pthread_create(&t, NULL, thread_callback, accept_conn);
 	if(result != 0){
-		LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::ERR, 
+		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, 
 					   "Can't Create Thread Ret: %d\n", result);
 		return;
 	}
 
 	result = pthread_detach(t);
 	if(result != 0){
-		LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::ERR, 
+		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, 
 					   "Can't Detach Thread Ret: %d\n", result);
 		return;
 	}
@@ -305,7 +324,7 @@ LWRESULT Cx_TSFrontend::Init()
 	}
 	else
 	{
-		LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::WARNING, 
+		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::WARNING, 
 					   "Can't Find <RecvBufMaxLen> In Config File, Default(%d)", gMaxNum);
 	}
 
@@ -319,7 +338,7 @@ LWRESULT Cx_TSFrontend::Init()
 	}
 	else
 	{
-		LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::WARNING, 
+		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::WARNING, 
 					   "Can't Find <ConnetTarget> In Config File, Default(%s)", gConnStr.c_str());
 	}
 
@@ -333,7 +352,7 @@ LWRESULT Cx_TSFrontend::Init()
 	}
 	else
 	{
-		LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::WARNING, 
+		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::WARNING, 
 					   "Can't Find <SendTimeout> In Config File, Default(%d)", gSendTimeout);
 	}
 
@@ -347,7 +366,7 @@ LWRESULT Cx_TSFrontend::Init()
 	}
 	else
 	{
-		LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::WARNING, 
+		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::WARNING, 
 					   "Can't Find <RecvTimeout> In Config File, Default(%d)", gRecvTimeout);
 	}
 
@@ -362,7 +381,7 @@ LWRESULT Cx_TSFrontend::Init()
 	}
 	else
 	{
-		LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::WARNING, 
+		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::WARNING, 
 					   "Can't Find <ServerPort> In Config File, Default(%d)", portNum);
 	}
 
@@ -373,7 +392,7 @@ LWRESULT Cx_TSFrontend::Init()
 	mIoWatcher = iEventMgr->CreateWatcher(LWEV::WATCHER_IO, (WATCHER_CALLBACK)io_callback, mServerSocket, LW_READ);
 	if(!mIoWatcher)
 	{
-		LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::ERR, "iEventMgr->CreateWatcher Create IO Watcher Error");
+		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, "iEventMgr->CreateWatcher Create IO Watcher Error");
 		return TSFRONTEND::LWDP_CREATE_IO_WATCHER_ERR;
 	}
 
@@ -434,7 +453,7 @@ LWRESULT Cx_TSFrontend::createTcpServer(int port)
     mServerSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if(mServerSocket <= 0)
 	{
-		LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::ERR, "Socket Create Failed");
+		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, "Socket Create Failed");
 		return TSFRONTEND::LWDP_CREATE_SOCKET_ERR;
 	}
 	
@@ -455,7 +474,7 @@ LWRESULT Cx_TSFrontend::createTcpServer(int port)
 	}
 	else
 	{
-		LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::WARNING, 
+		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::WARNING, 
 					   "Can't Find <ListenBlock> In Config File, Default(%d)", blockNum);
 	}
 	

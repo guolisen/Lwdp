@@ -246,7 +246,7 @@ LWRESULT Cx_ZmqMgr::Setsockopt (SocketHandle socket_v, int32_ option_,
     int rc = zmq_setsockopt (socket_v, option_, optval_, optvallen_);
     if (rc != 0)
 	{
-		PLATFORM_LOG(LWDP_ZMQ_LOG, LWDP_LOG_ERR, "ZMQ: %s", zmq_strerror (rc));
+		PLATFORM_LOG(LWDP_ZMQ_LOG, LWDP_LOG_ERR, "Setsockopt opt(%d) ZMQ: %s", option_, zmq_strerror (rc));
 		return LWDP_ZMQ_SETSOCKOPT_ERROR;
 	}
 	
@@ -269,7 +269,7 @@ LWRESULT Cx_ZmqMgr::Bind (SocketHandle socket_v, const char_* addr_)
     int rc = zmq_bind (socket_v, addr_);
     if (rc != 0)
 	{
-		PLATFORM_LOG(LWDP_ZMQ_LOG, LWDP_LOG_ERR, "ZMQ: %s", zmq_strerror (rc));
+		PLATFORM_LOG(LWDP_ZMQ_LOG, LWDP_LOG_ERR, "Bind Err(%s) ZMQ: %s", addr_, zmq_strerror (rc));
 		return LWDP_ZMQ_BIND_ERROR;
 	}
 	
@@ -280,7 +280,7 @@ LWRESULT Cx_ZmqMgr::Connect (SocketHandle socket_v, const char_* addr_)
     int rc = zmq_connect (socket_v, addr_);
     if (rc != 0)
 	{
-		PLATFORM_LOG(LWDP_ZMQ_LOG, LWDP_LOG_ERR, "ZMQ: %s", zmq_strerror (rc));
+		PLATFORM_LOG(LWDP_ZMQ_LOG, LWDP_LOG_ERR, "Connect Err(%s) ZMQ: %s", addr_, zmq_strerror (rc));
 		return LWDP_ZMQ_CONNECT_ERROR;
 	}
 	

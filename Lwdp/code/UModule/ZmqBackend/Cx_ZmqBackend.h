@@ -3,6 +3,8 @@
 //#pragma once
 
 using namespace NLwdp;
+#include <Interface/LogMgr/Ix_LogMgr.h>
+#include <Interface/ZmqMgr/Ix_ZmqMgr.h>
 #include "../Interface/ZmqBackend/Ix_ZmqBackend.h"
 
 
@@ -19,6 +21,12 @@ private:
     // From Ix_ZmqBackend
 	virtual LWRESULT Init();
 	virtual LWRESULT RunServer();
+	virtual LWRESULT DestoryServer();	
+
+protected:
+	ContextHandle mContext;
+	SocketHandle  mFrontend;
+	SocketHandle  mBackend;
 
 };
 

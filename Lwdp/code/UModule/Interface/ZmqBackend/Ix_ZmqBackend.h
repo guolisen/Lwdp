@@ -9,6 +9,7 @@ namespace NLwdp {
 INTERFACE_BEGIN(ZmqBackend)
 	virtual LWRESULT Init() = 0;
 	virtual LWRESULT RunServer() = 0;
+	virtual LWRESULT DestoryServer() = 0;
 INTERFACE_END()
 
 }

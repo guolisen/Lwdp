@@ -19,7 +19,7 @@ private:
     // From Ix_TcpServer
 	virtual LWRESULT Init();
 	virtual LWRESULT RunServer();
-
+	virtual LWRESULT DestoryServer();
 };
 
 #endif

@@ -12,6 +12,7 @@ using namespace NLwdp;
 #include <Interface/ZmqMgr/Ix_ZmqMgr.h>
 #include <Interface/EventMgr/Ix_EventMgr.h>
 #include <../UModule/Interface/TSFrontend/Ix_TSFrontend.h>
+#include <../UModule/Interface/TcpServer/Ix_TcpServer.h>
 
 #include <vector>
 #include <set>
@@ -218,15 +219,26 @@ int32_ main()
 		
 	}
 
+
+	GET_OBJECT_RET(TcpServer, iTcpServer, 0);
+
+	LWRESULT ret = iTcpServer->Init();
+
+	LWRESULT ret2 = iTcpServer->RunServer();
+
+	system("pause");
+
+
+
 	//GET_OBJECT_RET(EventMgr, iEventMgr, 0);
 
 	//RINOK(iEventMgr->InitLoop(0));
 
-	GET_OBJECT_RET(TSFrontend, iTSFrontend, 0);
+	//GET_OBJECT_RET(TSFrontend, iTSFrontend, 0);
 
-	LWRESULT ret = iTSFrontend->Init();
+	//LWRESULT ret = iTSFrontend->Init();
 
-	ret = iTSFrontend->RunServer();
+	//ret = iTSFrontend->RunServer();
 #if 0
 
 

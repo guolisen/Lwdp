@@ -178,6 +178,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\..\code\UModule\ZmqBackend\ZmqBackendDef.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\code\UModule\ZmqBackend\ZmqBackendErrno.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\..\code\UModule\ZmqBackend\ZmqBackendModule.cpp"
 			>
 		</File>

@@ -13,14 +13,13 @@
 #define LW_TSFRONTEND_RECV_TIMEOUT  5
 #define LW_TSFRONTEND_CONNECT_TARGET  __T("tcp://localhost:5559")
 
-
 #define LW_TSFRONTEND_MODULE_NAME  			__T("TSFrontend")
 
 #define LW_TSFRONTEND_MODULE_PORT_NAME  	__T("ServerPort")
 #define LW_TSFRONTEND_MODULE_BLOCK_NAME  	__T("ListenBlock")
 #define LW_TSFRONTEND_BUF_MAX_LEN_NAME  	__T("RecvBufMaxLen")
-#define LW_TSFRONTEND_SEND_TIMEOUT_NAME  	__T("SendTimeout")
-#define LW_TSFRONTEND_RECV_TIMEOUT_NAME  	__T("RecvTimeout")
+#define LW_TSFRONTEND_SEND_TIMEOUT_NAME  	__T("SendZmqTimeout")
+#define LW_TSFRONTEND_RECV_TIMEOUT_NAME  	__T("RecvZmqTimeout")
 #define LW_TSFRONTEND_CONNECT_TARGET_NAME  	__T("ConnetTarget")
 
 

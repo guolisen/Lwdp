@@ -26,7 +26,8 @@ EXTERN_C_BEGIN;
 
 #define LINUX_IMPL_API(api) LINUX_##api
 
-
+#define __cdecl  
+#define __stdcall 
 #define SOCKET int
 #define DECLEXPORT
 #define OUTAPI      extern "C" DECLEXPORT

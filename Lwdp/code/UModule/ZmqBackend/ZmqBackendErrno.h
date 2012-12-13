@@ -1,1 +1,21 @@
+#ifndef TS_ZMQBACKEND_ERRNO_H
+#define TS_ZMQBACKEND_ERRNO_H
+
+
+namespace ZMQBACKEND{
+enum TS_ZMQBACKEND_ERRNO
+{
+	LWDP_CREATE_WORK_THREAD_ERR = 1,
+	LWDP_CREATE_DETACH_THREAD_ERR,
+};
+
+};
+#endif
+
+
+
+
+
+
+
 

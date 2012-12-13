@@ -13,11 +13,13 @@
 			<ModuleLoad Name = "ScriptMgr"  Modid = "CABBCCA4-1160-49cf-8450-F35E897202EA" />
 			<ModuleLoad Name = "LuaMgr" 	Modid = "3FAAA9E8-4CBB-4496-A369-172077A3F5EE" />
 			<ModuleLoad Name = "LogMgr"     Modid = "8BBC60DD-D652-454b-B522-6D19D5A1B97A" />
-			<ModuleLoad Name = "DctMgr" 	Modid = "A009B569-707F-4618-A089-C09F776ADEC2" />
+			<!--<ModuleLoad Name = "DctMgr" 	Modid = "A009B569-707F-4618-A089-C09F776ADEC2" /> -->
 			<ModuleLoad Name = "EventMgr" 	Modid = "5D2C4C38-6B59-469a-9AE2-133FF44E3182" />
 			<ModuleLoad Name = "ZmqMgr" 	Modid = "1C8B1ACD-89A4-48ab-8161-538B7E2545BE" />
 			
 			<ModuleLoad Name = "TSFrontend" Modid = "6AD26E68-071F-45d5-B5C1-7B3F7EE20D13" />
+			<ModuleLoad Name = "ZmqBackend" Modid = "789D687B-8962-4cae-8C4A-B129B5B8312F" />
+			<ModuleLoad Name = "TcpServer"  Modid = "85FFE433-F268-4728-8086-BD272EB10B66" />
 		</PropertyTable>
 	</TableSet>
 	<Module Name = "ConfigMgr" Modid = "6FE0F631-1F70-4557-8156-2D30AA017631">
@@ -121,18 +123,44 @@
 		<Property> 
 			<Version>1.0</Version>
 			<ModuleDir>../../../../code/bin/Plugins/TSFrontend.dll</ModuleDir>
-			<ConnetTarget>tcp://localhost:5559</ConnetTarget>
+			<ConnetTarget>tcp://localhost:12136</ConnetTarget>
 			<ServerPort>12135</ServerPort>
-			<ListenBlock>64</ListenBlock>
+			<ListenBlock>128</ListenBlock>
 			<RecvBufMaxLen>1024</RecvBufMaxLen>
-			<SendTimeout>5</SendTimeout>
-			<RecvTimeout>5</RecvTimeout>
+			<SendZmqTimeout>5</SendZmqTimeout>
+			<RecvZmqTimeout>5</RecvZmqTimeout>
 		</Property>
 		<TableSet>
 		</TableSet>
 		<Script Name = "TSFrontend">
 		</Script>
 	</Module>
+	<Module Name = "ZmqBackend" Modid = "789D687B-8962-4cae-8C4A-B129B5B8312F">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>../../../../code/bin/Plugins/ZmqBackend.dll</ModuleDir>
+			<FrontendTarget>tcp://*:12136</FrontendTarget>
+			<BackendTarget>tcp://*:12137</BackendTarget>
+			<WorkThreadConnect>tcp://localhost:12137</WorkThreadConnect>
+			<WorkThreadNum>1</WorkThreadNum>
+		</Property>
+		<TableSet>
+		</TableSet>
+		<Script Name = "ZmqBackend">
+		</Script>
+	</Module>
+	<Module Name = "TcpServer" Modid = "85FFE433-F268-4728-8086-BD272EB10B66">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>../../../../code/bin/Plugins/TcpServerMain.dll</ModuleDir>
+		</Property>
+		<TableSet>
+		</TableSet>
+		<Script Name = "TcpServer">
+		</Script>
+	</Module>	
 	
 	
 	<Module Name = "ExampleTest" Modid = "86347b32-64e4-490c-b273-ec7e010f244e">
