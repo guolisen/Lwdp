@@ -46,6 +46,14 @@ LWRESULT Fw_Init(Ix_ConfigSrc* config_src, uint32_ entry_count)
 		return LWDP_ERROR;
 	}
 	lw_log_info(LWDP_MODULE_LOG, "pThread Init OK!");
+
+	WSADATA wsaData;
+	int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+	if (iResult != NO_ERROR) {
+		lw_log_err(LWDP_MODULE_LOG, "WSAStartup failed with error: %ld\n", iResult);
+		return LWDP_ERROR;
+	}
+
 #endif
 
 	gPluginMgr = new CPluginManager;
