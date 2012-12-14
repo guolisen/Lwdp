@@ -33,6 +33,18 @@ DEF_MODULE_INFO_END(LogMgr);
 DEF_INIT_FUN(LogMgr)
 {
 	printf("LogMgr InitializePlugin\n");
+#ifdef LWDP_PLATFORM_DEF_WIN32
+	int res = FALSE;
+	res = pthread_win32_process_attach_np(); 
+	if(!res) //if false
+	{
+		lw_log_err(LWDP_MODULE_LOG, "pThread Init Error!");
+		return LWDP_ERROR;
+	}
+	lw_log_info(LWDP_MODULE_LOG, "pThread Init OK!");
+#endif
+
+	
 	GET_OBJECT_RET(LogMgr, iLogMgr, LWDP_GET_OBJECT_ERROR);
 
 	RINOK(iLogMgr->Init());

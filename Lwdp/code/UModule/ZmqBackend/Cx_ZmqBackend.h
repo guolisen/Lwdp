@@ -7,6 +7,7 @@ using namespace NLwdp;
 #include <Interface/ZmqMgr/Ix_ZmqMgr.h>
 #include "../Interface/ZmqBackend/Ix_ZmqBackend.h"
 
+typedef std::map<uint32_, MsgDelegate> MSG_DELEGATE_MAP;
 
 class Cx_ZmqBackend: public Ix_ZmqBackend
 {
@@ -23,11 +24,16 @@ private:
 	virtual LWRESULT RunServer();
 	virtual LWRESULT DestoryServer();	
 
+private:
+	virtual LWRESULT RegisteZmqMsg(uint32_ msg_code, MsgDelegate& msg_delegate);	
+	virtual LWRESULT CallBackZmqMsg(const std::string& recv_msg, std::string& ret_data);	
+
+
 protected:
 	ContextHandle mContext;
 	SocketHandle  mFrontend;
 	SocketHandle  mBackend;
-
+	MSG_DELEGATE_MAP mMsgDelegateMap;
 };
 
 #endif

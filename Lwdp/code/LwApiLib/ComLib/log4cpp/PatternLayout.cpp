@@ -399,7 +399,7 @@ namespace log4cpp {
             (*i)->append(message, event);
         }
 
-        return message.str();
+        return std::string(message.str());
     }
 
     std::auto_ptr<Layout> create_pattern_layout(const FactoryParams& params)

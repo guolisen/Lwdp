@@ -25,6 +25,20 @@ int  tolua_LogMgr_open (lua_State* tolua_S);
 
 LWDP_NAMESPACE_BEGIN;
 
+pthread_mutex_t log_mutex = PTHREAD_MUTEX_INITIALIZER;
+class log_mutex_class
+{
+public:	
+	log_mutex_class()
+	{
+		pthread_mutex_lock(&log_mutex);
+	};
+	virtual ~log_mutex_class()
+	{
+		pthread_mutex_unlock(&log_mutex);
+	};
+};
+
 
 
 Cx_LogMgr::Cx_LogMgr()
@@ -286,6 +300,8 @@ void Cx_LogMgr::LogPrint(const tstring& module_name,
 		return;
 	}
 
+	log_mutex_class mutex;
+	
 	ulong_ size = 1024;
 	tstring formatStr = "";
 	char* buffer = new char[size];
@@ -296,7 +312,7 @@ void Cx_LogMgr::LogPrint(const tstring& module_name,
                 
 	    // If that worked, return a string.
 	    if ((n > -1) && (static_cast<ulong_>(n) < size)) {
-			formatStr =  static_cast<tstring>(buffer);
+			formatStr =  tstring(buffer, n);
 			break;
 	    }
                 

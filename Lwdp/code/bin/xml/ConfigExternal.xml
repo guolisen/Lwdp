@@ -49,7 +49,8 @@
 			<Version>1.0</Version>
 			<ModuleDir>../../../../code/bin/Plugins/LogMgrDll.dll</ModuleDir>
 			<GlobalLevel>DEBUG</GlobalLevel>
-			<LogPattern>%p: %m %d{%H:%M:%S.%l %d %b %Y}%n</LogPattern>
+			<!--<LogPattern>%p: %m %d{%H:%M:%S.%l %d %b %Y}%n</LogPattern>-->
+			<LogPattern>[%p] %m%n</LogPattern>
 		</Property>
 		<TableSet>
 			<PropertyTable Name = "LevelTable">
@@ -143,7 +144,7 @@
 			<FrontendTarget>tcp://*:12136</FrontendTarget>
 			<BackendTarget>tcp://*:12137</BackendTarget>
 			<WorkThreadConnect>tcp://localhost:12137</WorkThreadConnect>
-			<WorkThreadNum>1</WorkThreadNum>
+			<WorkThreadNum>10</WorkThreadNum>
 		</Property>
 		<TableSet>
 		</TableSet>

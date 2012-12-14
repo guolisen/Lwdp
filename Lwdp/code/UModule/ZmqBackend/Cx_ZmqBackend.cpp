@@ -7,6 +7,9 @@
 
 #include "../Interface/ZmqBackend/Ix_ZmqBackend.h"
 
+#include "../Common/ExternalInterface.h"
+#include "../Common/InternalInterface.h"
+
 #include "ZmqBackendDef.h"
 #include "ZmqBackendErrno.h"
 #include "Cx_ZmqBackend.h"
@@ -25,13 +28,13 @@ void* worker_task (void *args)
 {
 	GET_OBJECT_RET(ZmqMgr, iZmqMgr, 0);
  
-	ContextHandle context = iZmqMgr->GetNewContext();
+	ContextHandle  context = iZmqMgr->GetNewContext();
 	SocketHandle responder = iZmqMgr->GetNewSocket(context, LWDP_REP);
 
 	GET_OBJECT_RET(ConfigMgr, iConfigMgr, 0);
 	//backend
 	std::string strWorkThread = std::string(LW_ZMQBACKEND_WORKTHREAD_TARGET);
-	XPropertys propWorkThread;
+	XPropertys  propWorkThread;
 	iConfigMgr->GetModulePropEntry(LW_ZMQBACKEND_MODULE_NAME, LW_ZMQBACKEND_WORKTHREAD_TARGET_NAME, propWorkThread);
 
 	if(!propWorkThread[0].propertyText.empty())
@@ -46,16 +49,27 @@ void* worker_task (void *args)
 
 	iZmqMgr->Connect(responder, strWorkThread.c_str());
 
-	while (1) {
+	while (1) 
+	{
 		// Wait for next request from client
 		std::string retdata = iZmqMgr->Recv(responder, 0);
-		printf ("Received request: [%s]\n", retdata.c_str());
+		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::INFO, 
+					   "ZMQ Server Received request: [%s]", retdata.c_str());
 
 		// Do some 'work'
-		Sleep (1);
+		GET_OBJECT_RET(ZmqBackend, iZmqBackend, 0);
+		std::string sendData;
+		LWRESULT res = iZmqBackend->CallBackZmqMsg(retdata, sendData);
+		if(res != LWDP_OK)
+		{
+			LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::ERR, 
+						   "CallBackZmqMsg ret Error(%x)", res);
+			continue;
+		}
 
 		// Send reply back to client
-		iZmqMgr->Send(responder, "World", 6, 0);
+		iZmqMgr->Send(responder, sendData.data(), sendData.size(), 0);
+		Sleep(1);
 	}
 	// We never get here but clean up anyhow
 
@@ -69,6 +83,7 @@ void* worker_task (void *args)
 
 LWRESULT Cx_ZmqBackend::Init()
 {
+	mMsgDelegateMap.clear();
 	GET_OBJECT_RET(ZmqMgr, iZmqMgr, LWDP_GET_OBJECT_ERROR);
 	
 	mContext  = iZmqMgr->GetNewContext();
@@ -131,14 +146,14 @@ LWRESULT Cx_ZmqBackend::Init()
 		result = pthread_create(&t, NULL, worker_task, NULL);
 		if(result != 0){
 			LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::ERR, 
-						   "Can't Create Thread Ret: %d\n", result);
+						   "Can't Create Thread Ret: %d", result);
 			return ZMQBACKEND::LWDP_CREATE_WORK_THREAD_ERR;
 		}
 
 		result = pthread_detach(t);
 		if(result != 0){
 			LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::ERR, 
-						   "Can't Detach Thread Ret: %d\n", result);
+						   "Can't Detach Thread Ret: %d", result);
 			return ZMQBACKEND::LWDP_CREATE_DETACH_THREAD_ERR;
 		}
 	}
@@ -190,11 +205,9 @@ LWRESULT Cx_ZmqBackend::RunServer()
 				iZMessage->InitZMessage();
 	            iZmqMgr->Recv(mBackend, iZMessage, 0);
 
-				printf("IN!!!!!! : %s\n", iZMessage->Data());
                 size_t more_size = sizeof (more);
-				//iZmqMgr->Getsockopt(mBackend, LWDP_RCVMORE, &more, &more_size);
-				//iZmqMgr->Send(mFrontend, iZMessage, more? LWDP_SNDMORE: 0);
-				iZmqMgr->Send(mFrontend, iZMessage, 0);
+				iZmqMgr->Getsockopt(mBackend, LWDP_RCVMORE, &more, &more_size);
+				iZmqMgr->Send(mFrontend, iZMessage, more? LWDP_SNDMORE: 0);
                 if (!more)
                     break; // Last message part
                 Sleep (1);    
@@ -211,6 +224,28 @@ LWRESULT Cx_ZmqBackend::DestoryServer()
 //	iZmqMgr->CloseSocket(mFrontend);
 //	iZmqMgr->CloseSocket(mBackend);
 //	iZmqMgr->CloseContext(mContext);
+
+	return LWDP_OK;
+}
+
+LWRESULT Cx_ZmqBackend::RegisteZmqMsg(uint32_ msg_code, MsgDelegate& msg_delegate)
+{
+	MSG_DELEGATE_MAP::iterator it= mMsgDelegateMap.find(msg_code);
+	if(it != mMsgDelegateMap.end())
+	{
+		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::WARNING, 
+					   "RegisteZmqMsg Msg(%d) has Exist", msg_code);
+		return LWDP_OK;
+	}
+
+	mMsgDelegateMap.insert(std::make_pair(msg_code, msg_delegate));
+
+	return LWDP_OK;
+}
+
+LWRESULT Cx_ZmqBackend::CallBackZmqMsg(const std::string& recv_msg, std::string& ret_data)
+{
+	TS_ZMQ_SERVER_MSG* zMsg = recv_msg.data();
 
 	return LWDP_OK;
 }
