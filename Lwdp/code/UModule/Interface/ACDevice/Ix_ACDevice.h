@@ -7,7 +7,7 @@
 namespace NLwdp {
 
 INTERFACE_BEGIN(ACDevice)
-    virtual void Foo(long_& value) = 0;
+	virtual LWRESULT Init() = 0;
 INTERFACE_END()
 
 }

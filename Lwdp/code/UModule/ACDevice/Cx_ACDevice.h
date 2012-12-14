@@ -3,6 +3,7 @@
 #define CX_ACDEVICE_H
 
 using namespace NLwdp;
+#include "../Interface/ZmqBackend/Ix_ZmqBackend.h"
 #include "../Interface/ACDevice/Ix_ACDevice.h"
 
 
@@ -14,10 +15,12 @@ class Cx_ACDevice: public Ix_ACDevice
 protected:
 	Cx_ACDevice();
 	virtual ~Cx_ACDevice();
-
+public:
+	virtual LWRESULT MsgProcess(const uint8_* ret_msg, uint32_ ret_msg_len, 
+									Data_Ptr& send_msg, uint32_& send_msg_len);
 private:
     // From Ix_ACDevice
-    virtual void Foo(long_& value);
+    virtual LWRESULT Init();
 
 };
 

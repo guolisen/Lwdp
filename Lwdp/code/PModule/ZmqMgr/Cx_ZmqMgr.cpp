@@ -79,6 +79,7 @@ LWRESULT Cx_ZMessage::SetValue(void* data_, uint32_ size_)
 	}
 
     int ret = zmq_msg_init_size (&msg, size_);
+	if (ret != 0)
 	{
 		PLATFORM_LOG(LWDP_ZMQ_LOG, LWDP_LOG_ERR, "ZMQ: %s", zmq_strerror (rc));
 		return LWDP_ZMESSAGE_MSG_INIT_ERROR;

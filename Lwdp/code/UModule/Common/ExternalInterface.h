@@ -4,15 +4,17 @@
  *  \date   2012.12.14
  */
  
-#ifndef EXTERNAL_INTERFACE_H
-#define EXTERNAL_INTERFACE_H
+#ifndef __EXTERNAL_INTERFACE_H
+#define __EXTERNAL_INTERFACE_H
 
+
+LWDP_NAMESPACE_BEGIN;
 ////////////////////////////////////////////
 // Zmq Msg Body
 ////////////////////////////////////////////
 typedef struct stru_zmq_server_msg
 {
-	uint32_ deviceId; 	//格式
+	uint32_ deviceId;
 	uint32_ msgCode;
 	uint8_  customMsgBody[0];  //消息体
 }TS_ZMQ_SERVER_MSG;
@@ -30,7 +32,7 @@ typedef struct stru_tcp_server_msg
 {
 	uint32_ msgLength;  //消息体长度
 	uint32_ returnCode; //消息TcpServer返回码
-	TS_ZMQ_SERVER_MSG zmqMsgBody[0];  //消息体
+	uint8_  zmqMsgBody[0];  //消息体
 }TS_TCP_SERVER_MSG;
 
 
@@ -50,7 +52,9 @@ enum TS_GATECHECK_MSG_ENUM
 	TS_DEVICE_CARD_DATA_REQ_MSG,
 	TS_SERVER_CARD_DATA_RSP_MSG,
 	TS_DEVICE_BULK_DATA_REQ_MSG,
-	TS_SERVER_BULK_DATA_RSP_MSG
+	TS_SERVER_BULK_DATA_RSP_MSG,
+
+	TS_SERVER_UNKNOW_MSG, //客户端发送的消息为未知内容
 };
 
 
@@ -153,8 +157,8 @@ typedef struct stru_dev_card_data_rsp_msg
 ////////////////////////////////////////////
 enum TS_BULK_DATA_MSG_RESAULT_ENUM
 {	
-	TS_SERVER_WRITE_DATA_ERROR = 1, //写数据库失败
-	TS_SERVER_UNKONW_ERROR,     //设备ID未知错误
+	TS_SERVER_BULK_WRITE_DATA_ERROR = 1, //写数据库失败
+	TS_SERVER_BULK_UNKONW_ERROR,     //设备ID未知错误
 };
 
 typedef struct stru_dev_bulk_data_msg
@@ -163,14 +167,15 @@ typedef struct stru_dev_bulk_data_msg
 	uint8_*  cardDataEntry;   //行为ID
 }TS_DEVICE_BULK_DATA_MSG;
 
-typedef struct stru_dev_card_data_rsp_msg
+typedef struct stru_dev_bulk_data_rsp_msg
 {	
 	uint32_  msgResult; //消息发送结果
 	char_    msgResultData[32];  // 可能的错误信息字符串
 	uint32_  errorEntryNum;
 	uint8_   errCardId[0]; //errorEntryNum * 8
-} TS_DEVICE_CARD_DATA_RSP_MSG;
+} TS_DEVICE_BULK_DATA_RSP_MSG;
 
+LWDP_NAMESPACE_END;
 
 #endif
 

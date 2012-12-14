@@ -51,24 +51,53 @@ void* worker_task (void *args)
 
 	while (1) 
 	{
-		// Wait for next request from client
-		std::string retdata = iZmqMgr->Recv(responder, 0);
+		int32_ more = 0;
+		GET_OBJECT_RET(ZMessage, iZMessage, 0);
+		while (1) 
+		{
+			// Wait for next request from client
+	        // Process all parts of the message
+	        iZMessage->InitZMessage();
+	        iZmqMgr->Recv(responder, iZMessage, 0);
+			
+			uint32_ more_size = sizeof(more);
+			iZmqMgr->Getsockopt(responder, LWDP_RCVMORE, &more, &more_size);
+			if (!more)
+			    break; // Last message part
+			Sleep (1); 
+		}
+
+		
 		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::INFO, 
-					   "ZMQ Server Received request: [%s]", retdata.c_str());
+					   "ZMQ Server Received request: [%d]", iZMessage->Size());
 
 		// Do some 'work'
 		GET_OBJECT_RET(ZmqBackend, iZmqBackend, 0);
-		std::string sendData;
-		LWRESULT res = iZmqBackend->CallBackZmqMsg(retdata, sendData);
+		Data_Ptr sendData;
+		sendData.reset();
+		uint32_ sendLen = 0;
+		LWRESULT res = iZmqBackend->CallBackZmqMsg((uint8_*)iZMessage->Data(), iZMessage->Size(), sendData, sendLen);
 		if(res != LWDP_OK)
 		{
 			LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::ERR, 
 						   "CallBackZmqMsg ret Error(%x)", res);
-			continue;
+			//continue;
 		}
 
+		if(sendLen < 0)
+		{
+			LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::ERR, 
+						   "Zmq Send Data Length is too Small(%d)", sendLen);
+
+			//continue;
+		}
 		// Send reply back to client
-		iZmqMgr->Send(responder, sendData.data(), sendData.size(), 0);
+		GET_OBJECT_RET(ZMessage, iZSMessage, 0);
+		iZSMessage->InitZMessage();
+		iZSMessage->SetValue(sendData.get(), sendLen);
+		iZmqMgr->Send(responder, iZSMessage, 0);
+		//iZmqMgr->Send(responder, "Hello Client!", 14, 0);
+	
 		Sleep(1);
 	}
 	// We never get here but clean up anyhow
@@ -78,8 +107,6 @@ void* worker_task (void *args)
 	
 	return 0;
 }
-
-
 
 LWRESULT Cx_ZmqBackend::Init()
 {
@@ -228,7 +255,7 @@ LWRESULT Cx_ZmqBackend::DestoryServer()
 	return LWDP_OK;
 }
 
-LWRESULT Cx_ZmqBackend::RegisteZmqMsg(uint32_ msg_code, MsgDelegate& msg_delegate)
+LWRESULT Cx_ZmqBackend::RegisteZmqMsg(uint32_ msg_code, MsgDelegate msg_delegate)
 {
 	MSG_DELEGATE_MAP::iterator it= mMsgDelegateMap.find(msg_code);
 	if(it != mMsgDelegateMap.end())
@@ -243,10 +270,35 @@ LWRESULT Cx_ZmqBackend::RegisteZmqMsg(uint32_ msg_code, MsgDelegate& msg_delegat
 	return LWDP_OK;
 }
 
-LWRESULT Cx_ZmqBackend::CallBackZmqMsg(const std::string& recv_msg, std::string& ret_data)
+LWRESULT Cx_ZmqBackend::CallBackZmqMsg(const uint8_* recv_msg, uint32_ recv_msg_len, 
+										     Data_Ptr& ret_data ,uint32_& ret_data_len)
 {
-	TS_ZMQ_SERVER_MSG* zMsg = recv_msg.data();
+	if(!recv_msg)
+	{
+		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::ERR, 
+					   "Cx_ZmqBackend::CallBackZmqMsg Param <recv_msg> is NULL");
+		return LWDP_PARAMETER_ERROR;
+	}
+	TS_ZMQ_SERVER_MSG* zMsg = (TS_ZMQ_SERVER_MSG*)recv_msg;
+	TS_ZMQ_SERVER_MSG  returnMsg;
+	MSG_DELEGATE_MAP::iterator it= mMsgDelegateMap.find(zMsg->msgCode);
+	if(it != mMsgDelegateMap.end())
+	{
+		return it->second(recv_msg, recv_msg_len, ret_data, ret_data_len);
+	}
 
+	LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::WARNING, 
+			   "Unknow Request Msg(%d)", zMsg->msgCode);
+
+	returnMsg.deviceId = zMsg->deviceId;
+	returnMsg.msgCode  = TS_SERVER_UNKNOW_MSG;
+
+	uint8_* tmpstr = (uint8_*)new char[strlen("Hello CallBack Client!") + 1];
+	strcpy((char*)tmpstr, "Hello CallBack Client!");
+	Data_Ptr tmpData(tmpstr);
+	ret_data = tmpData;
+	ret_data_len = strlen("Hello CallBack Client!") + 1;
+	
 	return LWDP_OK;
 }
 

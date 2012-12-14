@@ -55,6 +55,7 @@ protected:
     virtual uint32_ Size () const;
 
 private:
+	int32_    mInitTag;
 	zmq_msg_t msg;
 };
 

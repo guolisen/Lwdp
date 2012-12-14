@@ -20,6 +20,7 @@
 			<ModuleLoad Name = "TSFrontend" Modid = "6AD26E68-071F-45d5-B5C1-7B3F7EE20D13" />
 			<ModuleLoad Name = "ZmqBackend" Modid = "789D687B-8962-4cae-8C4A-B129B5B8312F" />
 			<ModuleLoad Name = "TcpServer"  Modid = "85FFE433-F268-4728-8086-BD272EB10B66" />
+			<ModuleLoad Name = "ACDevice"   Modid = "7BE77A1D-4430-4903-BFC3-501987FE9E31" />
 		</PropertyTable>
 	</TableSet>
 	<Module Name = "ConfigMgr" Modid = "6FE0F631-1F70-4557-8156-2D30AA017631">
@@ -162,7 +163,17 @@
 		<Script Name = "TcpServer">
 		</Script>
 	</Module>	
-	
+	<Module Name = "ACDevice" Modid = "7BE77A1D-4430-4903-BFC3-501987FE9E31">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>../../../../code/bin/Plugins/ACDevice.dll</ModuleDir>
+		</Property>
+		<TableSet>
+		</TableSet>
+		<Script Name = "ACDevice">
+		</Script>
+	</Module>
 	
 	<Module Name = "ExampleTest" Modid = "86347b32-64e4-490c-b273-ec7e010f244e">
 		<!--属性名不可重复-->

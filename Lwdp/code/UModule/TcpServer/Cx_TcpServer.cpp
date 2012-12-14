@@ -44,6 +44,9 @@ LWRESULT Cx_TcpServer::Init()
 	GET_OBJECT_RET(ZmqBackend, iZmqBackend, LWDP_GET_OBJECT_ERROR);
 	RINOK(iZmqBackend->Init());
 
+	GET_OBJECT_RET(ACDevice, iACDevice, LWDP_GET_OBJECT_ERROR);
+	RINOK(iACDevice->Init());
+
 	return LWDP_OK;
 }
 LWRESULT Cx_TcpServer::RunServer()

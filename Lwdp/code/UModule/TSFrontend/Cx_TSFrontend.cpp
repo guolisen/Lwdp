@@ -152,20 +152,21 @@ void* thread_callback(void* vfd)
 	// Recv Message from ZMQ
 	//////////////////////////////////////////////////////////////
 	int more = 0;
-	std::string retdata("");
-    while (1) 
+	GET_OBJECT_RET(ZMessage, iZMessage, 0);
+	while (1) 
 	{
         // Process all parts of the message
-		retdata = iZmqMgr->Recv(requester, 0);	
-        
-        uint32_ more_size = sizeof (more);
+        iZMessage->InitZMessage();
+        iZmqMgr->Recv(requester, iZMessage, 0);
+		
+		uint32_ more_size = sizeof(more);
 		iZmqMgr->Getsockopt(requester, LWDP_RCVMORE, &more, &more_size);
-        if (!more)
-            break; // Last message part
-        Sleep (1); 
-     }
+		if (!more)
+		    break; // Last message part
+		Sleep (1); 
+	}
 
-	if(retdata.empty())
+	if(!iZMessage->Size())
 	{	
 		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, 
 					   "Recv ZMQ Message Timeout or Error fd(%x) ret(%d)", accept_conn, ret);
@@ -180,7 +181,8 @@ void* thread_callback(void* vfd)
 	}
 
 	LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::INFO, 
-				   "!!!!!Recv ZMQ Message: (%s)", retdata.c_str());
+				   "!!!!!Recv ZMQ Message: len (%d)", iZMessage->Size());
+	
 	//////////////////////////////////////////////////////////////
 	// Tcp Send to Client
 	//////////////////////////////////////////////////////////////
@@ -188,7 +190,7 @@ void* thread_callback(void* vfd)
 	while(1)
 	{
 		//Send Data Length
-		ret = send(accept_conn, (char *)retdata.data() + index, retdata.size(), 0);
+		ret = send(accept_conn, (char *)iZMessage->Data() + index, iZMessage->Size(), 0);
 		if(ret == 0)
 		{
 			LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::WARNING, 
@@ -227,7 +229,7 @@ void* thread_callback(void* vfd)
 			}
 		}
 
-		if(ret + index < retdata.size())
+		if(ret + index < iZMessage->Size())
 		{
 			index += ret;
 			Sleep(1);
