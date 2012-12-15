@@ -16,7 +16,7 @@ typedef struct stru_zmq_server_msg
 {
 	uint32_ deviceId;
 	uint32_ msgCode;
-	uint8_  customMsgBody[0];  //消息体
+	uint8_  customMsgBody[1];  //消息体
 }TS_ZMQ_SERVER_MSG;
 
 
@@ -32,17 +32,23 @@ typedef struct stru_tcp_server_msg
 {
 	uint32_ msgLength;  //消息体长度
 	uint32_ returnCode; //消息TcpServer返回码
-	uint8_  zmqMsgBody[0];  //消息体
+	uint8_  zmqMsgBody[1];  //消息体
 }TS_TCP_SERVER_MSG;
 
 
 ////////////////////////////////////////////
 // Msg Code
 ////////////////////////////////////////////
-#define TS_GATECHECK_MSG_BASE 0x00000000 //Module:0x00 Code0x000000
+#define TS_SYSTEM_MSG_BASE    0x00000000 //Module:0x00 Code0x000000
+#define TS_GATECHECK_MSG_BASE 0x01000000 //Module:0x01 Code0x000000
 
 enum TS_GATECHECK_MSG_ENUM
 {
+	TS_SERVER_OK = TS_SYSTEM_MSG_BASE,
+	TS_SERVER_UNKNOW_MSG, //客户端发送的消息为未知内容
+	TS_SERVER_MSG_BODY_ERR, //客户端发送的消息为未知内容
+
+	//ACDevice
 	TS_DEVICE_INIT_REQ_MSG = TS_GATECHECK_MSG_BASE,
 	TS_SERVER_INIT_RSP_MSG,
 	TS_DEVICE_CONFIG_REQ_MSG,
@@ -54,7 +60,7 @@ enum TS_GATECHECK_MSG_ENUM
 	TS_DEVICE_BULK_DATA_REQ_MSG,
 	TS_SERVER_BULK_DATA_RSP_MSG,
 
-	TS_SERVER_UNKNOW_MSG, //客户端发送的消息为未知内容
+
 };
 
 
@@ -101,7 +107,7 @@ typedef struct stru_dev_config_body
 	uint8_   sceneryId[8];  //景点ID
 	uint8_   sceneryDomainId[8];  //景区ID
 	uint32_  sceneryPostion;  //偏移
-}TS_DEV_CONFIG_BODY;
+}TS_DEV_CONFIG_RSP_BODY;
 
 
 ////////////////////////////////////////////
@@ -123,7 +129,7 @@ typedef struct stru_dev_status_rsp_body
 	char_    msgResultData[32];  // 可能的错误信息字符串
 	uint32_  oprationCode;  //操作码
 	uint32_  appendDataLength; //附加数据长度
-	uint8_   appendData[0];
+	uint8_   appendData[1];
 }TS_DEV_STATUS_RSP_BODY;
 
 ////////////////////////////////////////////
@@ -142,13 +148,13 @@ typedef struct stru_dev_card_data_msg
 	uint32_  cardType;   //卡类型
 	uint32_  actionId;   //行为ID
 	time_t   checkinTime;
-}TS_DEVICE_CARD_DATA_MSG;
+}TS_DEVICE_CARD_DATA_REQ_BODY;
 
 typedef struct stru_dev_card_data_rsp_msg
 {	
 	uint32_  msgResult; //消息发送结果
 	char_    msgResultData[32];  // 可能的错误信息字符串
-} TS_DEVICE_CARD_DATA_RSP_MSG;
+}TS_DEVICE_CARD_DATA_RSP_BODY;
 
 
 
@@ -172,7 +178,7 @@ typedef struct stru_dev_bulk_data_rsp_msg
 	uint32_  msgResult; //消息发送结果
 	char_    msgResultData[32];  // 可能的错误信息字符串
 	uint32_  errorEntryNum;
-	uint8_   errCardId[0]; //errorEntryNum * 8
+	uint8_   errCardId[1]; //errorEntryNum * 8
 } TS_DEVICE_BULK_DATA_RSP_MSG;
 
 LWDP_NAMESPACE_END;

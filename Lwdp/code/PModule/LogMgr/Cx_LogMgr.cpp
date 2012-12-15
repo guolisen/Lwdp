@@ -39,7 +39,75 @@ public:
 	};
 };
 
+#ifdef _WIN32
+	#define LOGMSG_SET_COLOR(color) \
+	{ \
+        HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE); \
+        SetConsoleTextAttribute(h, color); \
+	}
+#else
+	#define LOGMSG_SET_COLOR(color)      
+#endif
 
+LWRESULT SetConsoleColorEnter(int32_ dbLevel)
+{
+#ifdef _WIN32
+	switch(dbLevel)
+	{
+		case log4cpp::Priority::DEBUG:
+			LOGMSG_SET_COLOR(0x8|FOREGROUND_INTENSITY);
+			break;
+		case log4cpp::Priority::INFO:
+			LOGMSG_SET_COLOR(0x7);
+			break;
+		case log4cpp::Priority::NOTICE:
+			LOGMSG_SET_COLOR(0xA|FOREGROUND_INTENSITY);
+			break;
+		case log4cpp::Priority::WARN:
+			LOGMSG_SET_COLOR(0x7|FOREGROUND_INTENSITY);
+			break;
+		case log4cpp::Priority::ERROR:
+			LOGMSG_SET_COLOR(FOREGROUND_RED|FOREGROUND_INTENSITY);
+			break;
+		case log4cpp::Priority::CRIT:
+			LOGMSG_SET_COLOR(0x6|FOREGROUND_INTENSITY);
+			break;
+		case log4cpp::Priority::ALERT:
+			LOGMSG_SET_COLOR(0x3|FOREGROUND_INTENSITY);
+			break;
+		case log4cpp::Priority::EMERG:
+			LOGMSG_SET_COLOR(0x5|FOREGROUND_INTENSITY);
+			break;
+	};
+#endif
+    return LWDP_OK;
+}
+
+LWRESULT SetConsoleColorLeave()
+{
+#ifdef _WIN32
+    LOGMSG_SET_COLOR(0x7);
+#endif
+    return LWDP_OK;
+}
+
+
+class OstreamColorAppender : public log4cpp::OstreamAppender
+{
+public:
+	OstreamColorAppender(const std::string& name, std::ostream* stream):log4cpp::OstreamAppender(name,stream){};
+	virtual ~OstreamColorAppender(){};
+
+	virtual void close(){};
+protected:
+	virtual void _append(const log4cpp::LoggingEvent& event)
+	{
+		SetConsoleColorEnter(event.priority);	
+		log4cpp::OstreamAppender::_append(event);
+		SetConsoleColorLeave();
+	};
+
+};
 
 Cx_LogMgr::Cx_LogMgr()
 {
@@ -66,7 +134,7 @@ LWRESULT Cx_LogMgr::Init()
 		//Get Appender
 		if(logTypeStr == static_cast<tstring>(LW_LOGMGR_TYPE_STD_TAG))
 		{
-			appender = new log4cpp::OstreamAppender("default", &std::cout); 
+			appender = new OstreamColorAppender("default", &std::cout); 
 			ASSERT_CHECK_RET(LWDP_MODULE_LOG, LWDP_MALLOC_MEMORY_ERROR, (appender), "Can not new OstreamAppender!");
 		}
 		else if(logTypeStr == static_cast<tstring>(LW_LOGMGR_TYPE_FILE_TAG))

@@ -14,6 +14,7 @@
 #include "LuaMgr/LuaMgrErrno.h"
 #include "ZmqMgr/ZmqMgrErrno.h"
 #include "EventMgr/EventMgrErrno.h"
+#include "TimerMgr/TimerMgrErrno.h"
 #endif
 
 

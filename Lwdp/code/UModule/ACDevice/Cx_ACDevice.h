@@ -16,8 +16,21 @@ protected:
 	Cx_ACDevice();
 	virtual ~Cx_ACDevice();
 public:
-	virtual LWRESULT MsgProcess(const uint8_* ret_msg, uint32_ ret_msg_len, 
-									Data_Ptr& send_msg, uint32_& send_msg_len);
+	virtual LWRESULT DeviceInitMsgProcess(const uint8_* ret_msg, uint32_ ret_msg_len, 
+									      Data_Ptr& send_msg, uint32_& send_msg_len);
+
+	virtual LWRESULT DeviceConfigMsgProcess(const uint8_* ret_msg, uint32_ ret_msg_len, 
+									      Data_Ptr& send_msg, uint32_& send_msg_len);
+
+	virtual LWRESULT DeviceHBMsgProcess(const uint8_* ret_msg, uint32_ ret_msg_len, 
+									      Data_Ptr& send_msg, uint32_& send_msg_len);
+
+	virtual LWRESULT DeviceCardDataMsgProcess(const uint8_* ret_msg, uint32_ ret_msg_len, 
+									      Data_Ptr& send_msg, uint32_& send_msg_len);
+
+	virtual LWRESULT DeviceBulkDataMsgProcess(const uint8_* ret_msg, uint32_ ret_msg_len, 
+									      Data_Ptr& send_msg, uint32_& send_msg_len);
+
 private:
     // From Ix_ACDevice
     virtual LWRESULT Init();
