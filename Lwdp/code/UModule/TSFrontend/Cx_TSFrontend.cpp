@@ -7,6 +7,7 @@
 #include <Interface/ZmqMgr/Ix_ZmqMgr.h>
 #include <Interface/EventMgr/Ix_EventMgr.h>
 
+#include "../Common/ExternalInterface.h"
 #include "../Interface/TSFrontend/Ix_TSFrontend.h"
 
 #include "Cx_TSFrontend.h"
@@ -55,23 +56,23 @@ void* thread_callback(void* vfd)
 	int accept_conn = *(int*)vfd;
 	free(vfd);
 
-
 	//////////////////////////////////////////////////////////////
 	// Recv Tcp Message from Client
 	//////////////////////////////////////////////////////////////
-    int ret = 0;
+    int ret_len = 0;
     uint32_ recvLen = 4096;
 	uint8_* recvBuf = (uint8_*)malloc(recvLen * sizeof(uint8_));
 	ASSERT_CHECK_RET(LWDP_PLUGIN_LOG, NULL, recvBuf, "Malloc Recv Buffer Error!");
 	while(1)
 	{
 		//Recv Data Length
-		ret = recv(accept_conn, (char *)recvBuf, recvLen, 0);
-		if(ret == 0)
+		ret_len = recv(accept_conn, (char *)recvBuf, recvLen, 0);
+		if(ret_len == 0)
 		{
 			LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::WARNING, 
 						   "Remote Socket Closed fd(%x)", accept_conn);
 
+			free(recvBuf);
 #ifdef LWDP_PLATFORM_DEF_WIN32
 			int rc = closesocket(accept_conn);
 #else
@@ -79,7 +80,7 @@ void* thread_callback(void* vfd)
 #endif
 			return NULL;
 		}
-		else if(ret < 0)
+		else if(ret_len < 0)
 		{
 #ifdef LWDP_PLATFORM_DEF_WIN32
 			errno = WSAGetLastError();
@@ -96,6 +97,7 @@ void* thread_callback(void* vfd)
 				LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::WARNING, 
 							   "Remote Socket Closed fd(%x)", accept_conn);
 
+				free(recvBuf);
 #ifdef LWDP_PLATFORM_DEF_WIN32
 				int rc = closesocket(accept_conn);
 #else
@@ -108,12 +110,26 @@ void* thread_callback(void* vfd)
 		break;
 	};
 
-	LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::INFO, 
-				   "!!!!!Recv Message: (%s)", recvBuf);	
+	LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::NOTICE, 
+				   "Recv Client Message: (%s)", recvBuf);	
 
+	TS_TCP_SERVER_MSG* clientMsg = (TS_TCP_SERVER_MSG*)recvBuf;
+	if(clientMsg->msgLength > ret_len)
+	{
+		clientMsg->returnCode = TS_SERVER_TCP_MSG_LEN_ERROR;
+		clientMsg->msgLength = sizeof(TS_TCP_SERVER_MSG);
+		send(accept_conn, (char *)clientMsg, clientMsg->msgLength, 0);
+
+		free(recvBuf);
+#ifdef LWDP_PLATFORM_DEF_WIN32
+		int rc = closesocket(accept_conn);
+#else
+		int rc = ::close (accept_conn);
+#endif
+		return NULL;
+	}
 
 	GET_OBJECT_RET(ZmqMgr, iZmqMgr, NULL);
-	
 	ContextHandle  context = iZmqMgr->GetNewContext();
 	SocketHandle requester = iZmqMgr->GetNewSocket(context, LWDP_REQ);
 	RINOKR(iZmqMgr->Connect(requester, gConnStr.c_str()), NULL);
@@ -132,12 +148,13 @@ void* thread_callback(void* vfd)
 	//////////////////////////////////////////////////////////////
 	// Send Message to ZMQ
 	//////////////////////////////////////////////////////////////
-	
-	ret = iZmqMgr->Send(requester, recvBuf, recvLen, 0);
-	if(ret != recvLen)
+
+	uint32_ headLen = sizeof(uint32_) * 2;
+	int zmq_ret_len = iZmqMgr->Send(requester, recvBuf + headLen, ret_len - headLen, 0);
+	if(zmq_ret_len != ret_len - headLen)
 	{	
 		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, 
-					   "Send Message Timeout or Error fd(%x) ret(%d) send(%d)", accept_conn, ret, recvLen);
+					   "Send Message Timeout or Error fd(%x) ret(%d) send(%d)", accept_conn, ret_len, recvLen);
 
 		free(recvBuf);
 #ifdef LWDP_PLATFORM_DEF_WIN32
@@ -169,7 +186,7 @@ void* thread_callback(void* vfd)
 	if(!iZMessage->Size())
 	{	
 		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, 
-					   "Recv ZMQ Message Timeout or Error fd(%x) ret(%d)", accept_conn, ret);
+					   "Recv ZMQ Message Timeout or Error fd(%x) ret(%d)", accept_conn, ret_len);
 
 		free(recvBuf);
 #ifdef LWDP_PLATFORM_DEF_WIN32
@@ -180,22 +197,30 @@ void* thread_callback(void* vfd)
 		return NULL;		
 	}
 
-	LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::INFO, 
-				   "!!!!!Recv ZMQ Message: len (%d)", iZMessage->Size());
+	LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::NOTICE, 
+				   "Recv ZMQ Message: len (%d)", iZMessage->Size());
 	
 	//////////////////////////////////////////////////////////////
 	// Tcp Send to Client
 	//////////////////////////////////////////////////////////////
 	uint32_ index = 0;
+	uint8_* sendBuf = (uint8_ *)malloc(sizeof(TS_TCP_SERVER_MSG) + iZMessage->Size());
+	ASSERT_CHECK_RET(LWDP_PLUGIN_LOG, 0, sendBuf, "TSFrontend thread Malloc Send Buf ERROR");
+	TS_TCP_SERVER_MSG* sendMsgStru = (TS_TCP_SERVER_MSG*)sendBuf;
+	sendMsgStru->msgLength = sizeof(TS_TCP_SERVER_MSG) + iZMessage->Size();
+	sendMsgStru->returnCode = 0;
+	memcpy(sendMsgStru->zmqMsgBody, iZMessage->Data(), iZMessage->Size());
 	while(1)
 	{
 		//Send Data Length
-		ret = send(accept_conn, (char *)iZMessage->Data() + index, iZMessage->Size(), 0);
-		if(ret == 0)
+		ret_len = send(accept_conn, (char *)sendMsgStru + index, sendMsgStru->msgLength - index, 0);
+		if(ret_len == 0)
 		{
 			LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::WARNING, 
 						   "Remote Socket Closed fd(%x)", accept_conn);
-
+			
+			free(recvBuf);
+			free(sendBuf);
 #ifdef LWDP_PLATFORM_DEF_WIN32
 			int rc = closesocket(accept_conn);
 #else
@@ -203,7 +228,7 @@ void* thread_callback(void* vfd)
 #endif
 			return NULL;
 		}
-		else if(ret < 0)
+		else if(ret_len < 0)
 		{
 #ifdef LWDP_PLATFORM_DEF_WIN32
 			errno = WSAGetLastError();
@@ -220,6 +245,8 @@ void* thread_callback(void* vfd)
 				LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::WARNING, 
 							   "Remote Socket Closed fd(%x)", accept_conn);
 
+				free(recvBuf);
+				free(sendBuf);
 #ifdef LWDP_PLATFORM_DEF_WIN32
 				int rc = closesocket(accept_conn);
 #else
@@ -229,9 +256,9 @@ void* thread_callback(void* vfd)
 			}
 		}
 
-		if(ret + index < iZMessage->Size())
+		if(ret_len + index < iZMessage->Size())
 		{
-			index += ret;
+			index += ret_len;
 			Sleep(1);
 			continue;
 		}
@@ -242,6 +269,7 @@ void* thread_callback(void* vfd)
 	iZmqMgr->CloseSocket(requester);
 	iZmqMgr->CloseContext(context);
 	free(recvBuf);
+	free(sendBuf);
 #ifdef LWDP_PLATFORM_DEF_WIN32
 	int rc = closesocket(accept_conn);
 #else

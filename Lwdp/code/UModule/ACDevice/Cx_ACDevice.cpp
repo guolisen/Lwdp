@@ -94,7 +94,7 @@ LWRESULT Cx_ACDevice::DeviceInitMsgProcess(const uint8_* ret_msg, uint32_ ret_ms
 {
 	if(!ret_msg)
 	{
-		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, 
+		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR, 
 					   "Cx_ACDevice::DeviceInitMsgProcess Param ret_msg is NULL");
 		return LWDP_PARAMETER_ERROR;
 	}
@@ -103,22 +103,26 @@ LWRESULT Cx_ACDevice::DeviceInitMsgProcess(const uint8_* ret_msg, uint32_ ret_ms
 	TS_DEVICE_INIT_REQ_BODY* msgBody = (TS_DEVICE_INIT_REQ_BODY*)zmqMsg->customMsgBody;
 	if(!msgBody)
 	{
-		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::WARNING, 
-				   "Unknow Request Msg(%d)", zmqMsg->msgCode);
+		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::WARNING, 
+				       "Msg(%d) Body Error", zmqMsg->msgCode);
 		
-		uint8_* errMsg = new uint8_[sizeof(TS_ZMQ_SERVER_MSG)] ;
+		uint8_* errMsg = new uint8_[sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY)] ;
+		memset(errMsg, 0, sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY));
 		TS_ZMQ_SERVER_MSG* errStru = (TS_ZMQ_SERVER_MSG*)errMsg;
 		errStru->deviceId = zmqMsg->deviceId;
 		errStru->msgCode  = TS_SERVER_MSG_BODY_ERR;
+		TS_SERVER_ERROR_BODY* errBody = (TS_SERVER_ERROR_BODY*)errStru->customMsgBody;
+		errBody->errMsgCode = zmqMsg->msgCode;
+		memcpy(errBody->errData, "Body Empty", 11);
 
 		Data_Ptr tmpData(errMsg);
 		send_msg = tmpData;
-		send_msg_len = sizeof(TS_ZMQ_SERVER_MSG);
+		send_msg_len = sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY);
 		return LWDP_OK;
 	}
 
 	//check
-	LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::INFO,
+	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::INFO,
 				   "[Received] REQ:%x REQCODE: %x, checkResult: %x deviceType: %x sceneryId: %s", 
 			       zmqMsg->deviceId, zmqMsg->msgCode, msgBody->checkResult, msgBody->deviceType, msgBody->sceneryId);
 
@@ -126,6 +130,8 @@ LWRESULT Cx_ACDevice::DeviceInitMsgProcess(const uint8_* ret_msg, uint32_ ret_ms
 								   sizeof(TS_SERVER_INIT_RSP_BODY)];
 	ASSERT_CHECK_RET(LWDP_PLUGIN_LOG, LWDP_MALLOC_MEMORY_ERROR, returnMsg, "Malloc Error");
 
+	memset(returnMsg, 0, sizeof(TS_ZMQ_SERVER_MSG) + 
+						 sizeof(TS_SERVER_INIT_RSP_BODY));
 	TS_ZMQ_SERVER_MSG* retStru = (TS_ZMQ_SERVER_MSG*)returnMsg;
 	retStru->deviceId = zmqMsg->deviceId;
 	retStru->msgCode  = TS_SERVER_INIT_RSP_MSG; //
@@ -163,7 +169,7 @@ LWRESULT Cx_ACDevice::DeviceConfigMsgProcess(const uint8_* ret_msg, uint32_ ret_
 {
 	if(!ret_msg)
 	{
-		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, 
+		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR, 
 					   "Cx_ACDevice::DeviceInitMsgProcess Param ret_msg is NULL");
 		return LWDP_PARAMETER_ERROR;
 	}
@@ -171,7 +177,7 @@ LWRESULT Cx_ACDevice::DeviceConfigMsgProcess(const uint8_* ret_msg, uint32_ ret_
 	TS_ZMQ_SERVER_MSG* zmqMsg = (TS_ZMQ_SERVER_MSG*)ret_msg;
 
 	//check
-	LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::INFO,
+	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::INFO,
 				   "[Received] REQ:%x REQCODE: %x", 
 			       zmqMsg->deviceId, zmqMsg->msgCode);
 
@@ -179,6 +185,8 @@ LWRESULT Cx_ACDevice::DeviceConfigMsgProcess(const uint8_* ret_msg, uint32_ ret_
 								   sizeof(TS_DEV_CONFIG_RSP_BODY)];
 	ASSERT_CHECK_RET(LWDP_PLUGIN_LOG, LWDP_MALLOC_MEMORY_ERROR, returnMsg, "Malloc Error");
 
+	memset(returnMsg, 0, sizeof(TS_ZMQ_SERVER_MSG) + 
+					     sizeof(TS_DEV_CONFIG_RSP_BODY));
 	TS_ZMQ_SERVER_MSG* retStru = (TS_ZMQ_SERVER_MSG*)returnMsg;
 	retStru->deviceId = zmqMsg->deviceId;
 	retStru->msgCode  = TS_SERVER_CONFIG_RSP_MSG; //
@@ -225,7 +233,7 @@ LWRESULT Cx_ACDevice::DeviceHBMsgProcess(const uint8_* ret_msg, uint32_ ret_msg_
 {
 	if(!ret_msg)
 	{
-		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, 
+		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR, 
 					   "Cx_ACDevice::DeviceInitMsgProcess Param ret_msg is NULL");
 		return LWDP_PARAMETER_ERROR;
 	}
@@ -234,22 +242,26 @@ LWRESULT Cx_ACDevice::DeviceHBMsgProcess(const uint8_* ret_msg, uint32_ ret_msg_
 	TS_DEV_STATUS_REQ_BODY* msgBody = (TS_DEV_STATUS_REQ_BODY*)zmqMsg->customMsgBody;
 	if(!msgBody)
 	{
-		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::WARNING, 
-				   "Unknow Request Msg(%d)", zmqMsg->msgCode);
+		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::WARNING, 
+				       "Msg(%d) Body Error", zmqMsg->msgCode);
 		
-		uint8_* errMsg = new uint8_[sizeof(TS_ZMQ_SERVER_MSG)] ;
+		uint8_* errMsg = new uint8_[sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY)] ;
+		memset(errMsg, 0, sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY));
 		TS_ZMQ_SERVER_MSG* errStru = (TS_ZMQ_SERVER_MSG*)errMsg;
 		errStru->deviceId = zmqMsg->deviceId;
 		errStru->msgCode  = TS_SERVER_MSG_BODY_ERR;
+		TS_SERVER_ERROR_BODY* errBody = (TS_SERVER_ERROR_BODY*)errStru->customMsgBody;
+		errBody->errMsgCode = zmqMsg->msgCode;
+		memcpy(errBody->errData, "Body Empty", 11);
 
 		Data_Ptr tmpData(errMsg);
 		send_msg = tmpData;
-		send_msg_len = sizeof(TS_ZMQ_SERVER_MSG);
+		send_msg_len = sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY);
 		return LWDP_OK;
 	}
 
 	//check
-	LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::INFO,
+	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::INFO,
 				   "[Received] REQ:%x REQCODE: %x, statusCode: %x", 
 			       zmqMsg->deviceId, zmqMsg->msgCode, msgBody->statusCode);
 
@@ -257,6 +269,8 @@ LWRESULT Cx_ACDevice::DeviceHBMsgProcess(const uint8_* ret_msg, uint32_ ret_msg_
 								   sizeof(TS_DEV_STATUS_RSP_BODY)];
 	ASSERT_CHECK_RET(LWDP_PLUGIN_LOG, LWDP_MALLOC_MEMORY_ERROR, returnMsg, "Malloc Error");
 
+	memset(returnMsg, 0, sizeof(TS_ZMQ_SERVER_MSG) + 
+					     sizeof(TS_DEV_STATUS_RSP_BODY));
 	TS_ZMQ_SERVER_MSG* retStru = (TS_ZMQ_SERVER_MSG*)returnMsg;
 	retStru->deviceId = zmqMsg->deviceId;
 	retStru->msgCode  = TS_SERVER_HEART_BEAT_RSP_MSG; //
@@ -301,7 +315,7 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(const uint8_* ret_msg, uint32_ re
 {
 	if(!ret_msg)
 	{
-		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, 
+		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR, 
 					   "Cx_ACDevice::DeviceInitMsgProcess Param ret_msg is NULL");
 		return LWDP_PARAMETER_ERROR;
 	}
@@ -310,22 +324,26 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(const uint8_* ret_msg, uint32_ re
 	TS_DEVICE_CARD_DATA_REQ_BODY* msgBody = (TS_DEVICE_CARD_DATA_REQ_BODY*)zmqMsg->customMsgBody;
 	if(!msgBody)
 	{
-		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::WARNING, 
-				   "Unknow Request Msg(%d)", zmqMsg->msgCode);
+		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::WARNING, 
+				       "Msg(%d) Body Error", zmqMsg->msgCode);
 		
-		uint8_* errMsg = new uint8_[sizeof(TS_ZMQ_SERVER_MSG)] ;
+		uint8_* errMsg = new uint8_[sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY)] ;
+		memset(errMsg, 0, sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY));
 		TS_ZMQ_SERVER_MSG* errStru = (TS_ZMQ_SERVER_MSG*)errMsg;
 		errStru->deviceId = zmqMsg->deviceId;
 		errStru->msgCode  = TS_SERVER_MSG_BODY_ERR;
+		TS_SERVER_ERROR_BODY* errBody = (TS_SERVER_ERROR_BODY*)errStru->customMsgBody;
+		errBody->errMsgCode = zmqMsg->msgCode;
+		memcpy(errBody->errData, "Body Empty", 11);
 
 		Data_Ptr tmpData(errMsg);
 		send_msg = tmpData;
-		send_msg_len = sizeof(TS_ZMQ_SERVER_MSG);
+		send_msg_len = sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY);
 		return LWDP_OK;
 	}
 
 	//check
-	LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::INFO,
+	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::INFO,
 				   "[Received] REQ:%x REQCODE: %x, cardId: %s sceneryId: %s cardType: %x actionId: %x checkinTime: %x", 
 			       zmqMsg->deviceId, zmqMsg->msgCode, msgBody->cardId, msgBody->sceneryId, 
 			       msgBody->cardType, msgBody->actionId, msgBody->checkinTime);
@@ -334,6 +352,8 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(const uint8_* ret_msg, uint32_ re
 								   sizeof(TS_DEVICE_CARD_DATA_RSP_BODY)];
 	ASSERT_CHECK_RET(LWDP_PLUGIN_LOG, LWDP_MALLOC_MEMORY_ERROR, returnMsg, "Malloc Error");
 
+	memset(returnMsg, 0, sizeof(TS_ZMQ_SERVER_MSG) + 
+						 sizeof(TS_DEVICE_CARD_DATA_RSP_BODY));
 	TS_ZMQ_SERVER_MSG* retStru = (TS_ZMQ_SERVER_MSG*)returnMsg;
 	retStru->deviceId = zmqMsg->deviceId;
 	retStru->msgCode  = TS_SERVER_CARD_DATA_RSP_MSG; //
@@ -362,7 +382,7 @@ typedef struct stru_dev_bulk_data_msg
 {  
 	uint32_  cardDataCount;   //卡数据条目个数
 	uint8_*  cardDataEntry;   //行为ID
-}TS_DEVICE_BULK_DATA_MSG;
+}TS_DEVICE_BULK_DATA_REQ_BODY;
 
 typedef struct stru_dev_bulk_data_rsp_msg
 {	
@@ -370,7 +390,7 @@ typedef struct stru_dev_bulk_data_rsp_msg
 	char_    msgResultData[32];  // 可能的错误信息字符串
 	uint32_  errorEntryNum;
 	uint8_   errCardId[1]; //errorEntryNum * 8
-} TS_DEVICE_BULK_DATA_RSP_MSG;
+} TS_DEVICE_BULK_DATA_RSP_BODY;
 */
 
 LWRESULT Cx_ACDevice::DeviceBulkDataMsgProcess(const uint8_* ret_msg, uint32_ ret_msg_len, 
@@ -378,49 +398,92 @@ LWRESULT Cx_ACDevice::DeviceBulkDataMsgProcess(const uint8_* ret_msg, uint32_ re
 {
 	if(!ret_msg)
 	{
-		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, 
+		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR, 
 					   "Cx_ACDevice::DeviceInitMsgProcess Param ret_msg is NULL");
 		return LWDP_PARAMETER_ERROR;
 	}
 	
 	TS_ZMQ_SERVER_MSG* zmqMsg = (TS_ZMQ_SERVER_MSG*)ret_msg;
-	TS_DEVICE_INIT_REQ_BODY* msgBody = (TS_DEVICE_INIT_REQ_BODY*)zmqMsg->customMsgBody;
+	TS_DEVICE_BULK_DATA_REQ_BODY* msgBody = (TS_DEVICE_BULK_DATA_REQ_BODY*)zmqMsg->customMsgBody;
 	if(!msgBody)
 	{
-		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::WARNING, 
-				   "Unknow Request Msg(%d)", zmqMsg->msgCode);
+		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::WARNING, 
+				       "Msg(%d) Body Error", zmqMsg->msgCode);
 		
-		uint8_* errMsg = new uint8_[sizeof(TS_ZMQ_SERVER_MSG)] ;
+		uint8_* errMsg = new uint8_[sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY)] ;
+		memset(errMsg, 0, sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY));
 		TS_ZMQ_SERVER_MSG* errStru = (TS_ZMQ_SERVER_MSG*)errMsg;
 		errStru->deviceId = zmqMsg->deviceId;
 		errStru->msgCode  = TS_SERVER_MSG_BODY_ERR;
+		TS_SERVER_ERROR_BODY* errBody = (TS_SERVER_ERROR_BODY*)errStru->customMsgBody;
+		errBody->errMsgCode = zmqMsg->msgCode;
+		memcpy(errBody->errData, "Body Empty", 11);
 
 		Data_Ptr tmpData(errMsg);
 		send_msg = tmpData;
-		send_msg_len = sizeof(TS_ZMQ_SERVER_MSG);
+		send_msg_len = sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY);
 		return LWDP_OK;
 	}
 
-	//check
-	LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::INFO,
-				   "[Received] REQ:%x REQCODE: %x, checkResult: %x deviceType: %x sceneryId: %s\n", 
-			       zmqMsg->deviceId, zmqMsg->msgCode, msgBody->checkResult, msgBody->deviceType, msgBody->sceneryId);
+	//check	
+	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::INFO,
+				   "[Received] REQ:%x REQCODE: %x, cardDataCount: %x", 
+			       zmqMsg->deviceId, zmqMsg->msgCode, msgBody->cardDataCount);
+
+	uint32_ tmpLen = sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_DEVICE_BULK_DATA_REQ_BODY) +
+				     (sizeof(TS_DEVICE_CARD_DATA_REQ_BODY) * msgBody->cardDataCount);
+	if(ret_msg_len < tmpLen)
+	{
+		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR,
+					   "Request Data is too Small,ret_msg_len(%d) Should(%d) cardDataCount(%d)", 
+					   ret_msg_len, tmpLen, msgBody->cardDataCount);
+		
+		uint8_* errMsg = new uint8_[sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY)] ;
+		memset(errMsg, 0, sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY));
+		TS_ZMQ_SERVER_MSG* errStru = (TS_ZMQ_SERVER_MSG*)errMsg;
+		errStru->deviceId = zmqMsg->deviceId;
+		errStru->msgCode  = TS_SERVER_MSG_BODY_ERR;
+		TS_SERVER_ERROR_BODY* errBody = (TS_SERVER_ERROR_BODY*)errStru->customMsgBody;
+		errBody->errMsgCode = zmqMsg->msgCode;
+		memcpy(errBody->errData, "Body Len too small", 19);
+
+		Data_Ptr tmpData(errMsg);
+		send_msg = tmpData;
+		send_msg_len = sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY);
+		
+		return LWDP_OK;
+	}
+	
+	uint32_ i = 0;
+	for(i=0; i<msgBody->cardDataCount; ++i)
+	{
+		TS_DEVICE_CARD_DATA_REQ_BODY* tmpBody = (TS_DEVICE_CARD_DATA_REQ_BODY*)msgBody->cardDataEntry;
+
+		
+		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::INFO,
+					   "[Received] REQ:%x REQCODE: %x, cardId: %s sceneryId: %s cardType: %x actionId: %x checkinTime: %x", 
+				       zmqMsg->deviceId, zmqMsg->msgCode, tmpBody[i].cardId, tmpBody[i].sceneryId, 
+				       tmpBody[i].cardType, tmpBody[i].actionId, tmpBody[i].checkinTime);
+		 	
+	}
 
 	uint8_* returnMsg = new uint8_[sizeof(TS_ZMQ_SERVER_MSG) + 
-								   sizeof(TS_SERVER_INIT_RSP_BODY)];
+								   sizeof(TS_DEVICE_BULK_DATA_RSP_BODY)];
 	ASSERT_CHECK_RET(LWDP_PLUGIN_LOG, LWDP_MALLOC_MEMORY_ERROR, returnMsg, "Malloc Error");
 
+	memset(returnMsg, 0, sizeof(TS_ZMQ_SERVER_MSG) + 
+						 sizeof(TS_DEVICE_BULK_DATA_RSP_BODY));
 	TS_ZMQ_SERVER_MSG* retStru = (TS_ZMQ_SERVER_MSG*)returnMsg;
 	retStru->deviceId = zmqMsg->deviceId;
-	retStru->msgCode  = TS_SERVER_INIT_RSP_MSG; //
-	TS_SERVER_INIT_RSP_BODY* retBody = (TS_SERVER_INIT_RSP_BODY*)retStru->customMsgBody;
+	retStru->msgCode  = TS_SERVER_BULK_DATA_RSP_MSG; //
+	TS_DEVICE_BULK_DATA_RSP_BODY* retBody = (TS_DEVICE_BULK_DATA_RSP_BODY*)retStru->customMsgBody;
 	retBody->msgResult = TS_SERVER_OK;
 	memcpy(retBody->msgResultData, "Check OK!", 10);
 
 	Data_Ptr tmpData(returnMsg);
 	send_msg = tmpData;
 	send_msg_len = sizeof(TS_ZMQ_SERVER_MSG) + 
-				   sizeof(TS_SERVER_INIT_RSP_BODY);
+				   sizeof(TS_DEVICE_BULK_DATA_RSP_BODY);
 	
 	return LWDP_OK;
 }

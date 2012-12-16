@@ -68,7 +68,7 @@ void* worker_task (void *args)
 		}
 
 		
-		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::INFO, 
+		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::NOTICE, 
 					   "ZMQ Server Received request: [%d]", iZMessage->Size());
 
 		// Do some 'work'
@@ -289,16 +289,20 @@ LWRESULT Cx_ZmqBackend::CallBackZmqMsg(const uint8_* recv_msg, uint32_ recv_msg_
 
 	LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::WARNING, 
 			   "Unknow Request Msg(%d)", zMsg->msgCode);
-
-	returnMsg.deviceId = zMsg->deviceId;
-	returnMsg.msgCode  = TS_SERVER_UNKNOW_MSG;
-
-	uint8_* tmpstr = (uint8_*)new char[strlen("Hello CallBack Client!") + 1];
-	strcpy((char*)tmpstr, "Hello CallBack Client!");
-	Data_Ptr tmpData(tmpstr);
-	ret_data = tmpData;
-	ret_data_len = strlen("Hello CallBack Client!") + 1;
 	
+	uint8_* errMsg = new uint8_[sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY)] ;
+	memset(errMsg, 0, sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY));
+	TS_ZMQ_SERVER_MSG* errStru = (TS_ZMQ_SERVER_MSG*)errMsg;
+	errStru->deviceId = zMsg->deviceId;
+	errStru->msgCode  = TS_SERVER_UNKNOW_MSG;
+	TS_SERVER_ERROR_BODY* errBody = (TS_SERVER_ERROR_BODY*)errStru->customMsgBody;
+	errBody->errMsgCode = zMsg->msgCode;
+	memcpy(errBody->errData, "Unknow Msg", 11);
+
+	Data_Ptr tmpData(errMsg);
+	ret_data     = tmpData;
+	ret_data_len = sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY);
 	return LWDP_OK;
+
 }
 

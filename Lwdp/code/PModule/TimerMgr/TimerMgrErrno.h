@@ -5,7 +5,7 @@
  */
 
 
-//ERRNO_DB (LOAD_LIBRARY_ERROR,            (M_timgrmer | 1), "Load Script Library File Error!")
+//ERRNO_DB (LOAD_LIBRARY_ERROR,            (M_timermgr | 1), "Load Script Library File Error!")
 
 
 

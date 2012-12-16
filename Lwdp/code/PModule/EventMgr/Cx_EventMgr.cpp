@@ -159,6 +159,8 @@ WatcherHandle Cx_EventMgr::CBToW(CBHandle cb_handle)
 			return (WatcherHandle)wh;
 		}
 	}
+
+	return NULL;
 }
 
 CBHandle Cx_EventMgr::WToCB(WatcherHandle w_handle)

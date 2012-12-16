@@ -24,8 +24,12 @@ LWDP_NAMESPACE_BEGIN;
 #define M_luamgr			(10 << 16)
 #define M_zmqmgr			(11 << 16)
 #define M_eventmgr			(12 << 16)
-#define M_timgrmer			(13 << 16)
+#define M_timermgr			(13 << 16)
 
+#define M_perfmgr			(14 << 16)
+#define M_consolemgr		(15 << 16)
+#define M_dbmgr			    (16 << 16)
+#define M_commonutilmgr		(17 << 16)
 
 enum _ERROR_CAT_NUM
 {
