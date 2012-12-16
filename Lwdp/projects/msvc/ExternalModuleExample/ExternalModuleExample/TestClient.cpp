@@ -11,6 +11,7 @@ using namespace NLwdp;
 #include <Interface/LogMgr/Ix_LogMgr.h>
 #include <Interface/ZmqMgr/Ix_ZmqMgr.h>
 #include <Interface/EventMgr/Ix_EventMgr.h>
+#include <Interface/TimerMgr/Ix_TimerMgr.h>
 #include <../UModule/Interface/TSFrontend/Ix_TSFrontend.h>
 #include <../UModule/Interface/TcpServer/Ix_TcpServer.h>
 
@@ -187,6 +188,19 @@ void io_callback(void *loop, void *w, int revents)
 	printf("!!!!!Call Back!!!!\n");
 }
 
+void timer_callback1(void *arg)
+{
+	printf("!!!!!Timer Call Back1!!!!\n");
+}
+void timer_callback2(void *arg)
+{
+	int* t = (int*)arg;
+	printf("!!!!!Timer Call Back2: %d!!!!\n", *t);
+}
+void timer_callback3(void *arg)
+{
+	printf("!!!!!Timer Call Back3!!!!\n");
+}
 int32_ main()
 {
 	LWRESULT stat = LWDP_ERROR;
@@ -219,13 +233,32 @@ int32_ main()
 		
 	}
 
-
+  
 	GET_OBJECT_RET(TcpServer, iTcpServer, 0);
 
 	LWRESULT ret = iTcpServer->Init();
 
 	LWRESULT ret2 = iTcpServer->RunServer();
 
+	GET_OBJECT_RET(TimerMgr, iTimerMgr, 0);
+	int argint = 123;
+	TimerHandle timer1 = iTimerMgr->CreateTimer(timer_callback1, &argint, 5.0, 1.0);
+	TimerHandle timer2 = iTimerMgr->CreateTimer(timer_callback2, &argint, 2.0, 1.0);
+	TimerHandle timer3 = iTimerMgr->CreateTimer(timer_callback3, &argint, 1.0, 1.0);
+
+
+	iTimerMgr->TimerStart(timer1);
+	iTimerMgr->TimerStart(timer2);
+	iTimerMgr->TimerStart(timer3);
+	Sleep(15000);
+	iTimerMgr->TimerStop(timer1);
+	iTimerMgr->TimerStop(timer2);
+	iTimerMgr->TimerStop(timer3);
+
+	iTimerMgr->DestoryTimer(timer1);
+	iTimerMgr->DestoryTimer(timer2);
+	iTimerMgr->DestoryTimer(timer3);	
+	
 	system("pause");
 
 

@@ -3,6 +3,7 @@
 
 #include <Interface/ConfigMgr/Ix_ConfigMgr.h>
 #include <Interface/LogMgr/Ix_LogMgr.h>
+#include <Interface/TimerMgr/Ix_TimerMgr.h>
 
 #include "../Interface/TcpServer/Ix_TcpServer.h"
 #include "../Interface/TSFrontend/Ix_TSFrontend.h"
@@ -36,6 +37,7 @@ void* thread_run_backend(void* arg)
 	
 	return NULL;
 }
+
 LWRESULT Cx_TcpServer::Init()
 {
 	GET_OBJECT_RET(TSFrontend, iTSFrontend, LWDP_GET_OBJECT_ERROR);
@@ -46,7 +48,7 @@ LWRESULT Cx_TcpServer::Init()
 
 	GET_OBJECT_RET(ACDevice, iACDevice, LWDP_GET_OBJECT_ERROR);
 	RINOK(iACDevice->Init());
-
+	
 	return LWDP_OK;
 }
 LWRESULT Cx_TcpServer::RunServer()

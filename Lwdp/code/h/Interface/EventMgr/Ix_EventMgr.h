@@ -100,6 +100,8 @@ INTERFACE_BEGIN(EventMgr)
 	virtual LWRESULT WatcherStop(WatcherHandle watcher_handle) = 0;
 	virtual void* GetCallBackData(CBHandle cb_handle, LWEV::WATCHER_TYPE watcher_type, LWEV::CALLBACK_DATA_TYPE data_type) = 0;
 
+	virtual WatcherHandle CBToW(CBHandle cb_handle) = 0;
+	virtual CBHandle WToCB(WatcherHandle w_handle) = 0;
 	
 INTERFACE_END();
 

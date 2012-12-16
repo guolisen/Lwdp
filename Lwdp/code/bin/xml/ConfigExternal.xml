@@ -16,7 +16,7 @@
 			<!--<ModuleLoad Name = "DctMgr" 	Modid = "A009B569-707F-4618-A089-C09F776ADEC2" /> -->
 			<ModuleLoad Name = "EventMgr" 	Modid = "5D2C4C38-6B59-469a-9AE2-133FF44E3182" />
 			<ModuleLoad Name = "ZmqMgr" 	Modid = "1C8B1ACD-89A4-48ab-8161-538B7E2545BE" />
-			<ModuleLoad Name = "TimerMgr" 	Modid = "9FC7011E-B2BF-411c-BB09-BC208DEE71DA" />
+			<ModuleLoad Name = "TimerMgr" 	Modid = "212ED676-7B73-43e7-B2F9-190649FD6EC4" />
 			
 			<ModuleLoad Name = "TSFrontend" Modid = "6AD26E68-071F-45d5-B5C1-7B3F7EE20D13" />
 			<ModuleLoad Name = "ZmqBackend" Modid = "789D687B-8962-4cae-8C4A-B129B5B8312F" />
@@ -121,7 +121,7 @@
 		<Script Name = "ZmqMgrInit">
 		</Script>
 	</Module>
-	<Module Name = "TimerMgr" Modid = "9FC7011E-B2BF-411c-BB09-BC208DEE71DA">
+	<Module Name = "TimerMgr" Modid = "212ED676-7B73-43e7-B2F9-190649FD6EC4">
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>

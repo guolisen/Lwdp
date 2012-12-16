@@ -28,6 +28,8 @@ public:
 	virtual LWRESULT Init(WATCHER_CALLBACK call_back, va_list argp) = 0;
 	virtual LWRESULT WatcherStart() = 0;
 	virtual LWRESULT WatcherStop() = 0;
+
+	virtual void* GetWatcher() = 0;
 };
 
 class Ix_WatcherFactory
@@ -45,7 +47,7 @@ typedef struct stru_watcher_tag
 
 	stru_watcher_tag(const stru_watcher_tag& other)
 	{
-		watcherType = other.watcherType;
+		watcherType   = other.watcherType;
 		watcherObject = other.watcherObject;
 	};
 }WATCHER_ENTRY;
@@ -78,6 +80,9 @@ protected:
 	virtual LWRESULT WatcherStart(WatcherHandle watcher_handle);
 	virtual LWRESULT WatcherStop(WatcherHandle watcher_handle);
 	virtual void* GetCallBackData(CBHandle cb_handle, LWEV::WATCHER_TYPE watcher_type, LWEV::CALLBACK_DATA_TYPE data_type);
+	virtual WatcherHandle CBToW(CBHandle cb_handle);
+	virtual CBHandle WToCB(WatcherHandle w_handle);
+
 
 protected:
 	int32_ 				mInitTag;

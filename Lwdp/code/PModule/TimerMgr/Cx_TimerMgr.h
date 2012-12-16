@@ -15,8 +15,27 @@
 
 #include <iostream>
 
-
 LWDP_NAMESPACE_BEGIN;
+
+struct TIMER_ENTRY
+{
+	void* arg;
+	TIMER_CALLBACK callBack;
+
+	TIMER_ENTRY()
+	{
+		arg = NULL;
+		callBack = NULL;
+	};
+
+	TIMER_ENTRY(const TIMER_ENTRY& other)
+	{
+		arg = other.arg;
+		callBack = other.callBack;
+	}
+};
+
+typedef std::map<TimerHandle, TIMER_ENTRY> TIMER_MAP;
 
 class Cx_TimerMgr
     : public Ix_TimerMgr
@@ -29,9 +48,15 @@ protected:
 	virtual ~Cx_TimerMgr();
 
 protected:
-	LWRESULT Init();
-	
+	virtual LWRESULT Init();
+	virtual TimerHandle CreateTimer(TIMER_CALLBACK call_back, void* arg, double_ delay, double_ repeat);
+	virtual LWRESULT    DestoryTimer(TimerHandle timer_handle);
 
+	virtual LWRESULT TimerStart(TimerHandle timer_handle);
+	virtual LWRESULT TimerStop(TimerHandle timer_handle);
+	
+public:
+	static TIMER_MAP mTimerMap;
 };
 
 

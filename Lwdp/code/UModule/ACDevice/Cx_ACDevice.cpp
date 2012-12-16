@@ -296,7 +296,6 @@ typedef struct stru_dev_card_data_rsp_msg
 
 
 */
-
 LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(const uint8_* ret_msg, uint32_ ret_msg_len, 
 								      Data_Ptr& send_msg, uint32_& send_msg_len)
 {

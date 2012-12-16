@@ -19,7 +19,7 @@ public:
 	virtual LWRESULT Init(WATCHER_CALLBACK call_back, va_list argp);
 	virtual LWRESULT WatcherStart();
 	virtual LWRESULT WatcherStop();
-
+	virtual void* GetWatcher(){return &mWatcher;};
 public:
 	static void* GetTypeData(CBHandle call_back, LWEV::CALLBACK_DATA_TYPE type);
 	
@@ -47,7 +47,7 @@ public:
 	virtual LWRESULT Init(WATCHER_CALLBACK call_back, va_list argp);
 	virtual LWRESULT WatcherStart();
 	virtual LWRESULT WatcherStop();
-
+	virtual void* GetWatcher(){return &mWatcher;};
 public:
 	static void* GetTypeData(CBHandle call_back, LWEV::CALLBACK_DATA_TYPE type);
 

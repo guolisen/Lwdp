@@ -148,6 +148,25 @@ void* Cx_EventMgr::GetCallBackData(CBHandle cb_handle, LWEV::WATCHER_TYPE watche
 	return NULL;
 }
 
+WatcherHandle Cx_EventMgr::CBToW(CBHandle cb_handle)
+{
+	WATCHER_LIST::iterator iter;
+	FOREACH_STL(iter, mWatcherList)
+	{
+		if((*iter)->watcherObject->GetWatcher()== cb_handle)
+		{	
+			WatcherHandle wh = *iter;
+			return (WatcherHandle)wh;
+		}
+	}
+}
+
+CBHandle Cx_EventMgr::WToCB(WatcherHandle w_handle)
+{
+	WATCHER_ENTRY* watcher_entry = (WATCHER_ENTRY*)w_handle;
+	return (CBHandle)watcher_entry->watcherObject->GetWatcher();
+}
+
 
 LWDP_NAMESPACE_END;
 
