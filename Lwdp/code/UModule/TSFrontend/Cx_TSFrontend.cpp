@@ -60,7 +60,7 @@ void* thread_callback(void* vfd)
 	// Recv Tcp Message from Client
 	//////////////////////////////////////////////////////////////
     int ret_len = 0;
-    uint32_ recvLen = 4096;
+    uint32_ recvLen = LW_TSFRONTEND_RECV_BUFFER_LEN;
 	uint8_* recvBuf = (uint8_*)malloc(recvLen * sizeof(uint8_));
 	ASSERT_CHECK_RET(LWDP_PLUGIN_LOG, NULL, recvBuf, "Malloc Recv Buffer Error!");
 	while(1)
@@ -198,7 +198,7 @@ void* thread_callback(void* vfd)
 	}
 
 	LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::NOTICE, 
-				   "Recv ZMQ Message: len (%d)", iZMessage->Size());
+				   "Recv Message from ZMQ: Len (%d)", iZMessage->Size());
 	
 	//////////////////////////////////////////////////////////////
 	// Tcp Send to Client

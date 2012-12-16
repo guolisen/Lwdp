@@ -10,13 +10,16 @@
 	</Script>
 	<TableSet>
 		<PropertyTable Name = "ModuleLoadTable">
+			<ModuleLoad Name = "ConsoleMgr" Modid = "9FC7011E-B2BF-411c-BB09-BC208DEE71DA" />
 			<ModuleLoad Name = "ScriptMgr"  Modid = "CABBCCA4-1160-49cf-8450-F35E897202EA" />
 			<ModuleLoad Name = "LuaMgr" 	Modid = "3FAAA9E8-4CBB-4496-A369-172077A3F5EE" />
+			
 			<ModuleLoad Name = "LogMgr"     Modid = "8BBC60DD-D652-454b-B522-6D19D5A1B97A" />
 			<!--<ModuleLoad Name = "DctMgr" 	Modid = "A009B569-707F-4618-A089-C09F776ADEC2" /> -->
 			<ModuleLoad Name = "EventMgr" 	Modid = "5D2C4C38-6B59-469a-9AE2-133FF44E3182" />
 			<ModuleLoad Name = "ZmqMgr" 	Modid = "1C8B1ACD-89A4-48ab-8161-538B7E2545BE" />
 			<ModuleLoad Name = "TimerMgr" 	Modid = "212ED676-7B73-43e7-B2F9-190649FD6EC4" />
+			
 			
 			<ModuleLoad Name = "TSFrontend" Modid = "6AD26E68-071F-45d5-B5C1-7B3F7EE20D13" />
 			<ModuleLoad Name = "ZmqBackend" Modid = "789D687B-8962-4cae-8C4A-B129B5B8312F" />
@@ -34,6 +37,17 @@
 		<Script Name = "ConfigMgrInit">
 		</Script>
 	</Module>
+	<Module Name = "ConsoleMgr" Modid = "9FC7011E-B2BF-411c-BB09-BC208DEE71DA">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>../../../../code/bin/Plugins/ConsoleMgrDll.dll</ModuleDir>
+		</Property>
+		<TableSet>
+		</TableSet>
+		<Script Name = "ConsoleMgrInit">
+		</Script>
+	</Module>		
 	<Module Name = "ScriptMgr" Modid = "CABBCCA4-1160-49cf-8450-F35E897202EA">
 		<!--属性名不可重复-->
 		<Property> 

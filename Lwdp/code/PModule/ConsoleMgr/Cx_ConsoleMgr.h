@@ -18,6 +18,8 @@
 
 LWDP_NAMESPACE_BEGIN;
 
+
+
 class Cx_ConsoleMgr
     : public Ix_ConsoleMgr
 {
@@ -29,9 +31,17 @@ protected:
 	virtual ~Cx_ConsoleMgr();
 
 protected:
-	LWRESULT Init();
-	
+	virtual LWRESULT Init();
+	virtual LWRESULT RunConsole();
+	virtual LWRESULT RegisteCommand(const std::string& command_str, ConsoleCBDelegate command_fun, 
+								          const std::string& command_info);
 
+protected:
+	virtual LWRESULT CallBackCommand(COMMAND_LINE& command_line);	
+	virtual LWRESULT PraseCommandLine(const std::string& command_str, COMMAND_LINE& command_line);
+	
+protected:
+	COMMAND_MAP	mCommandMap;
 };
 
 

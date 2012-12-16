@@ -12,6 +12,7 @@ using namespace NLwdp;
 #include <Interface/ZmqMgr/Ix_ZmqMgr.h>
 #include <Interface/EventMgr/Ix_EventMgr.h>
 #include <Interface/TimerMgr/Ix_TimerMgr.h>
+#include <Interface/ConsoleMgr/Ix_ConsoleMgr.h>
 #include <../UModule/Interface/TSFrontend/Ix_TSFrontend.h>
 #include <../UModule/Interface/TcpServer/Ix_TcpServer.h>
 
@@ -240,6 +241,24 @@ int32_ main()
 
 	LWRESULT ret2 = iTcpServer->RunServer();
 
+
+	
+	GET_OBJECT_RET(ConsoleMgr, iConsoleMgr, 0);
+
+	iConsoleMgr->RunConsole();
+
+	//GET_OBJECT_RET(EventMgr, iEventMgr, 0);
+
+	//RINOK(iEventMgr->InitLoop(0));
+
+	//GET_OBJECT_RET(TSFrontend, iTSFrontend, 0);
+
+	//LWRESULT ret = iTSFrontend->Init();
+
+	//ret = iTSFrontend->RunServer();
+#if 0
+
+
 	GET_OBJECT_RET(TimerMgr, iTimerMgr, 0);
 	int argint = 123;
 	TimerHandle timer1 = iTimerMgr->CreateTimer(timer_callback1, &argint, 5.0, 1.0);
@@ -258,21 +277,7 @@ int32_ main()
 	iTimerMgr->DestoryTimer(timer1);
 	iTimerMgr->DestoryTimer(timer2);
 	iTimerMgr->DestoryTimer(timer3);	
-	
-	system("pause");
 
-
-
-	//GET_OBJECT_RET(EventMgr, iEventMgr, 0);
-
-	//RINOK(iEventMgr->InitLoop(0));
-
-	//GET_OBJECT_RET(TSFrontend, iTSFrontend, 0);
-
-	//LWRESULT ret = iTSFrontend->Init();
-
-	//ret = iTSFrontend->RunServer();
-#if 0
 
 
 
