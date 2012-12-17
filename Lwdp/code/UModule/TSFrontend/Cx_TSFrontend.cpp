@@ -169,9 +169,9 @@ void* thread_callback(void* vfd)
 	// Recv Message from ZMQ
 	//////////////////////////////////////////////////////////////
 	int more = 0;
-	GET_OBJECT_RET(ZMessage, iZMessage, 0);
 	while (1) 
 	{
+		GET_OBJECT_RET(ZMessage, iZMessage, 0);
         // Process all parts of the message
         iZMessage->InitZMessage();
         iZmqMgr->Recv(requester, iZMessage, 0);

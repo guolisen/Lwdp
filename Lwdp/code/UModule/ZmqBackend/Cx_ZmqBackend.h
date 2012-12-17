@@ -31,9 +31,10 @@ private:
 	virtual LWRESULT CallBackZmqMsg(const uint8_* recv_msg, uint32_ recv_msg_len, 
 										  Data_Ptr& ret_data ,uint32_& ret_data_len);	
 
-
+public:
+	static ContextHandle mContext;
 protected:
-	ContextHandle mContext;
+
 	SocketHandle  mFrontend;
 	SocketHandle  mBackend;
 	MSG_DELEGATE_MAP mMsgDelegateMap;

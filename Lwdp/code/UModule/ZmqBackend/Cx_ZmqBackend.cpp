@@ -14,6 +14,8 @@
 #include "ZmqBackendErrno.h"
 #include "Cx_ZmqBackend.h"
 
+ContextHandle Cx_ZmqBackend::mContext;
+
 Cx_ZmqBackend::Cx_ZmqBackend()
 {
 	printf("ZmqBackend Create!\n");
@@ -28,7 +30,7 @@ void* worker_task (void *args)
 {
 	GET_OBJECT_RET(ZmqMgr, iZmqMgr, 0);
  
-	ContextHandle  context = iZmqMgr->GetNewContext();
+	ContextHandle  context = (ContextHandle)Cx_ZmqBackend::mContext;
 	SocketHandle responder = iZmqMgr->GetNewSocket(context, LWDP_REP);
 
 	GET_OBJECT_RET(ConfigMgr, iConfigMgr, 0);
@@ -113,9 +115,9 @@ LWRESULT Cx_ZmqBackend::Init()
 	mMsgDelegateMap.clear();
 	GET_OBJECT_RET(ZmqMgr, iZmqMgr, LWDP_GET_OBJECT_ERROR);
 	
-	mContext  = iZmqMgr->GetNewContext();
-	mFrontend = iZmqMgr->GetNewSocket(mContext, LWDP_ROUTER);
-	mBackend  = iZmqMgr->GetNewSocket(mContext, LWDP_DEALER);
+	Cx_ZmqBackend::mContext  = iZmqMgr->GetNewContext();
+	mFrontend = iZmqMgr->GetNewSocket(Cx_ZmqBackend::mContext, LWDP_ROUTER);
+	mBackend  = iZmqMgr->GetNewSocket(Cx_ZmqBackend::mContext, LWDP_DEALER);
 
 	GET_OBJECT_RET(ConfigMgr, iConfigMgr, LWDP_GET_OBJECT_ERROR);
 	//frontend
@@ -250,7 +252,7 @@ LWRESULT Cx_ZmqBackend::DestoryServer()
 {
 //	iZmqMgr->CloseSocket(mFrontend);
 //	iZmqMgr->CloseSocket(mBackend);
-//	iZmqMgr->CloseContext(mContext);
+//	iZmqMgr->CloseContext(Cx_ZmqBackend::mContext);
 
 	return LWDP_OK;
 }
@@ -288,7 +290,7 @@ LWRESULT Cx_ZmqBackend::CallBackZmqMsg(const uint8_* recv_msg, uint32_ recv_msg_
 	}
 
 	LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::WARNING, 
-			   "Unknow Request Msg(%d)", zMsg->msgCode);
+			       "Unknow Request Msg(%d)", zMsg->msgCode);
 	
 	uint8_* errMsg = new uint8_[sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY)] ;
 	memset(errMsg, 0, sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY));
