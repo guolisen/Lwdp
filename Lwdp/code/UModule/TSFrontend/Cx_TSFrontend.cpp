@@ -89,7 +89,7 @@ void* thread_callback(void* vfd)
 			if (errno == EAGAIN || errno == EWOULDBLOCK) 
 #endif	
 			{
-				Sleep(10);
+				Api_TaskDelay(10);
 				continue;
 			}
 			else
@@ -180,7 +180,7 @@ void* thread_callback(void* vfd)
 		iZmqMgr->Getsockopt(requester, LWDP_RCVMORE, &more, &more_size);
 		if (!more)
 		    break; // Last message part
-		Sleep (1); 
+		Api_TaskDelay (1); 
 	}
 
 	if(!iZMessage->Size())
@@ -237,7 +237,7 @@ void* thread_callback(void* vfd)
 			if (errno == EAGAIN || errno == EWOULDBLOCK) 
 #endif	
 			{
-				Sleep(1);
+				Api_TaskDelay(1);
 				continue;
 			}
 			else
@@ -259,7 +259,7 @@ void* thread_callback(void* vfd)
 		if(ret_len + index < iZMessage->Size())
 		{
 			index += ret_len;
-			Sleep(1);
+			Api_TaskDelay(1);
 			continue;
 		}
 			

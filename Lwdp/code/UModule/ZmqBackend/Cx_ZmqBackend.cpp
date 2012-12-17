@@ -64,7 +64,7 @@ void* worker_task (void *args)
 			iZmqMgr->Getsockopt(responder, LWDP_RCVMORE, &more, &more_size);
 			if (!more)
 			    break; // Last message part
-			Sleep (1); 
+			Api_TaskDelay (1); 
 		}
 
 		
@@ -98,7 +98,7 @@ void* worker_task (void *args)
 		iZmqMgr->Send(responder, iZSMessage, 0);
 		//iZmqMgr->Send(responder, "Hello Client!", 14, 0);
 	
-		Sleep(1);
+		Api_TaskDelay(1);
 	}
 	// We never get here but clean up anyhow
 
@@ -220,7 +220,7 @@ LWRESULT Cx_ZmqBackend::RunServer()
 				iZmqMgr->Send(mBackend, iZMessage, more? LWDP_SNDMORE: 0);
                 if (!more)
                     break; // Last message part
-                Sleep (1); 
+                Api_TaskDelay (1); 
 	         }
 	    }
         if (items [1].revents & LWDP_POLLIN) 
@@ -237,10 +237,10 @@ LWRESULT Cx_ZmqBackend::RunServer()
 				iZmqMgr->Send(mFrontend, iZMessage, more? LWDP_SNDMORE: 0);
                 if (!more)
                     break; // Last message part
-                Sleep (1);    
+                Api_TaskDelay (1);    
             }
          }
-		 Sleep (1);
+		 Api_TaskDelay (1);
 	}
 
 	return LWDP_OK;

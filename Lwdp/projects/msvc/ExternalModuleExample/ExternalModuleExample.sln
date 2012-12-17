@@ -36,7 +36,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ZmqMgrDll", "ZmqMgrDll\ZmqM
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EventMgrDll", "EventMgr\EventMgr.vcproj", "{D93A15F2-A7A3-444E-9F65-E50120B8FB89}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TcpServerMain", "TcpServerMain\TcpServerMain.vcproj", "{113D3732-C2F2-491C-9A3B-166B0B02103E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TcpServer", "TcpServerMain\TcpServerMain.vcproj", "{113D3732-C2F2-491C-9A3B-166B0B02103E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TSFrontend", "TSFrontend\TSFrontend.vcproj", "{A514B3A7-7E81-46E8-870C-0B0D2EC2B661}"
 EndProject
@@ -46,7 +46,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ACDevice", "ACDevice\ACDevi
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TimerMgrDll", "TimerMgrDll\TimerMgrDll.vcproj", "{06DEABE6-D183-4BEF-94A3-FAFC1742988E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CondoleMgrDll", "CondoleMgrDll\CondoleMgrDll.vcproj", "{C44126AF-506A-4A98-BE5E-9F6B3AFC4DEE}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleMgrDll", "CondoleMgrDll\CondoleMgrDll.vcproj", "{C44126AF-506A-4A98-BE5E-9F6B3AFC4DEE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TSMain", "TSMain\TSMain.vcproj", "{C42BB2CD-0556-47AC-ADD7-E1CC914D2131}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -118,6 +120,10 @@ Global
 		{C44126AF-506A-4A98-BE5E-9F6B3AFC4DEE}.Debug|Win32.Build.0 = Debug|Win32
 		{C44126AF-506A-4A98-BE5E-9F6B3AFC4DEE}.Release|Win32.ActiveCfg = Release|Win32
 		{C44126AF-506A-4A98-BE5E-9F6B3AFC4DEE}.Release|Win32.Build.0 = Release|Win32
+		{C42BB2CD-0556-47AC-ADD7-E1CC914D2131}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C42BB2CD-0556-47AC-ADD7-E1CC914D2131}.Debug|Win32.Build.0 = Debug|Win32
+		{C42BB2CD-0556-47AC-ADD7-E1CC914D2131}.Release|Win32.ActiveCfg = Release|Win32
+		{C42BB2CD-0556-47AC-ADD7-E1CC914D2131}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

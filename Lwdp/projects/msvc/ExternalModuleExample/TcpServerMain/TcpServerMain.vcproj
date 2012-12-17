@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="TcpServerMain"
+	Name="TcpServer"
 	ProjectGUID="{113D3732-C2F2-491C-9A3B-166B0B02103E}"
 	RootNamespace="TcpServerMain"
 	Keyword="Win32Proj"
