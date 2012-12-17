@@ -184,7 +184,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../code/bin/Plugins/TcpServerMain.dll</ModuleDir>
+			<ModuleDir>../../../../code/bin/Plugins/TcpServer.dll</ModuleDir>
 		</Property>
 		<TableSet>
 		</TableSet>

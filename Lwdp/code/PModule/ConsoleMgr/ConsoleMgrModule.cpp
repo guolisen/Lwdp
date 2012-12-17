@@ -30,8 +30,8 @@ DEF_MODULE_INFO_END(ConsoleMgr);
 DEF_INIT_FUN(ConsoleMgr)
 {
 	printf("ConsoleMgr InitializePlugin\n");
-	//Cx_Interface<Ix_ScriptMgr> iScript(CLSID_ScriptMgr);
-	//iScript->RegisteAction(new APrint);
+	Cx_Interface<Ix_ConsoleMgr> iConsoleMgr(CLSID_ConsoleMgr);
+	iConsoleMgr->Init();
 	
     return LWDP_OK;
 }

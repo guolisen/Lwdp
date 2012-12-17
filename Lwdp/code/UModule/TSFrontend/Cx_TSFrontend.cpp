@@ -169,17 +169,21 @@ void* thread_callback(void* vfd)
 	// Recv Message from ZMQ
 	//////////////////////////////////////////////////////////////
 	int more = 0;
+	Cx_Interface<Ix_ZMessage> iZMessage;
 	while (1) 
 	{
-		GET_OBJECT_RET(ZMessage, iZMessage, 0);
+		GET_OBJECT_RET(ZMessage, iMsg, 0);
         // Process all parts of the message
-        iZMessage->InitZMessage();
-        iZmqMgr->Recv(requester, iZMessage, 0);
+        iMsg->InitZMessage();
+        iZmqMgr->Recv(requester, iMsg, 0);
 		
 		uint32_ more_size = sizeof(more);
 		iZmqMgr->Getsockopt(requester, LWDP_RCVMORE, &more, &more_size);
 		if (!more)
+		{
+			iZMessage = iMsg;
 		    break; // Last message part
+		}
 		Api_TaskDelay (1); 
 	}
 

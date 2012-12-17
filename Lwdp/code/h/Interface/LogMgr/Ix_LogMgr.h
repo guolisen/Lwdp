@@ -50,6 +50,7 @@ typedef  boost::shared_ptr<ILwdpAppenderFactory>  MyAppenderFctory_Ptr;
 INTERFACE_BEGIN(LogMgr)
 	virtual LWRESULT Init() = 0;
 	virtual LWRESULT RegisteAppender(MyAppenderFctory_Ptr appender_fctory) = 0;
+	virtual LWRESULT LogSwitch(bool switch_tag) = 0;
 	virtual void LogPrint(const tstring& module_name, 
 						  LWDP_LOG_MGR::LwdpLogLevel level, 
 						  const tchar_* file_name,

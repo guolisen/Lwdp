@@ -34,7 +34,8 @@ Cx_ConsoleMgr::~Cx_ConsoleMgr()
 
 LWRESULT Cx_ConsoleMgr::Init()
 {
-	lw_log_info(LWDP_LUA_LOG, __T("Cx_ConsoleMgr::Init OK!"));
+	ConsoleCBDelegate regFun = MakeDelegate(this, &Cx_ConsoleMgr::ConsoleListCom);
+	RegisteCommand(LW_CONSOLEMGR_COMMAND_NAME, regFun, LW_CONSOLEMGR_COMMAND_INFO);
 
 	return LWDP_OK;
 }
@@ -44,31 +45,44 @@ LWRESULT Cx_ConsoleMgr::RunConsole()
 	LWRESULT res = 0;
 	std::string lineStr("");
 	std::cout << std::endl;
+	Cx_Interface<Ix_LogMgr> iLogMgr(CLSID_LogMgr); 
     while(1)
-    {
-    	COMMAND_LINE commandList;
-        std::cout << "TS> ";
-        std::getline(std::cin, lineStr);           		/*读命令*/
-		if(lineStr.empty() || lineStr[0] == '\r' || lineStr[0] == '\n')
-			continue;
+    {	
+		std::getline(std::cin, lineStr);           		
+		if(!iLogMgr.IsNull()) 
+		{ 
+			iLogMgr->LogSwitch(false);   //
+		}
+	    while(1)
+	    {
+	    	COMMAND_LINE commandList;
+	        std::cout << "TS> ";
+	        std::getline(std::cin, lineStr);           		/*读命令*/
+			if(lineStr.empty() || lineStr[0] == '\r' || lineStr[0] == '\n')
+				continue;
 
-		res = PraseCommandLine(lineStr, commandList);
-        if(res != LWDP_OK)
-    	{
-			std::cout << "Command Line Error" << std::endl;
-			continue;
-    	}
-        res = CallBackCommand(commandList);          /*处理命令，跳到相应函数*/
-        if(res != LWDP_OK)
-    	{
-			if(CON::CONSOLE_EXIT == res)
-			{
-				std::cout << "Bye!" << std::endl;
-					break;
-			}
-    	}
-	}
-	
+			res = PraseCommandLine(lineStr, commandList);
+	        if(res != LWDP_OK)
+	    	{
+				std::cout << "Command Line Error" << std::endl;
+				continue;
+	    	}
+	        res = CallBackCommand(commandList);          /*处理命令，跳到相应函数*/
+	        if(res != LWDP_OK)
+	    	{
+				if(CON::CONSOLE_EXIT == res)
+				{
+					//std::cout << "Bye!" << std::endl;
+						break;
+				}
+	    	}
+		}
+
+		if(!iLogMgr.IsNull()) 
+		{ 
+			iLogMgr->LogSwitch(true);   //
+		}
+    }
 	return LWDP_OK;
 }
 
@@ -141,6 +155,17 @@ LWRESULT Cx_ConsoleMgr::PraseCommandLine(const std::string& command_str, COMMAND
 	return LWDP_OK;
 }
 
+int32_ Cx_ConsoleMgr::ConsoleListCom(COMMAND_LINE& command_line)
+{
+	printf ("Command             CommandInfo\n");
+	COMMAND_MAP::iterator iter;
+	FOREACH_STL(iter, mCommandMap)
+	{
+		printf ("%-15s     %10s\n", iter->first.c_str(), iter->second.commandInfo.c_str());
+	}
+
+	return 0;
+}
 
 LWDP_NAMESPACE_END;
 

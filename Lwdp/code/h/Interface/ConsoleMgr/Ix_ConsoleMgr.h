@@ -10,7 +10,7 @@ using namespace fastdelegate;
 LWDP_NAMESPACE_BEGIN;
 
 typedef std::list<std::string> COMMAND_LINE;
-typedef FastDelegate1<const COMMAND_LINE&, int32_> ConsoleCBDelegate; 
+typedef FastDelegate1<COMMAND_LINE&, int32_> ConsoleCBDelegate; 
 
 typedef struct tag_command_stru 
 {

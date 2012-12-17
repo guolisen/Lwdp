@@ -15,6 +15,7 @@
 
 #include <Interface/ConfigMgr/Ix_ConfigMgr.h>
 #include <Interface/LuaMgr/Ix_LuaMgr.h>
+#include <Interface/ConsoleMgr/Ix_ConsoleMgr.h>
 
 #include "MyAppender.h"
 #include "LogTagDef.h"
@@ -24,6 +25,8 @@
 int  tolua_LogMgr_open (lua_State* tolua_S);
 
 LWDP_NAMESPACE_BEGIN;
+
+int32_ Cx_LogMgr::mLogSwitch = 1;
 
 pthread_mutex_t log_mutex = PTHREAD_MUTEX_INITIALIZER;
 class log_mutex_class
@@ -120,8 +123,11 @@ Cx_LogMgr::~Cx_LogMgr()
 
 LWRESULT Cx_LogMgr::Init()
 {
-	GET_OBJECT_RET(LuaMgr, iLuaMgr, LWDP_GET_OBJECT_ERROR);
-	iLuaMgr->RegisteFuction((void*)tolua_LogMgr_open);
+	Cx_Interface<Ix_LuaMgr> iLuaMgr(CLSID_LuaMgr); 
+	if(!iLuaMgr.IsNull()) 
+	{ 
+		iLuaMgr->RegisteFuction((void*)tolua_LogMgr_open);
+	}
 
 	XPropertyTable levelTable;
 	log4cpp::Appender* appender = NULL;
@@ -208,6 +214,16 @@ LWRESULT Cx_LogMgr::Init()
 		}
 		category.setPriority(level);
 
+	}
+
+	Cx_Interface<Ix_ConsoleMgr> iConsoleMgr(CLSID_ConsoleMgr); 
+	if(!iConsoleMgr.IsNull()) 
+	{ 
+		ConsoleCBDelegate regFun = MakeDelegate(this, &Cx_LogMgr::ConsoleLogSwitch);
+		RINOK(iConsoleMgr->RegisteCommand(LW_LOGMGR_COMMAND_SWITCH_NAME, regFun, LW_LOGMGR_COMMAND_SWITCH_INFO));
+
+		ConsoleCBDelegate regFun2 = MakeDelegate(this, &Cx_LogMgr::ConsoleLogLevel);
+		RINOK(iConsoleMgr->RegisteCommand(LW_LOGMGR_COMMAND_LEVEL_NAME, regFun2, LW_LOGMGR_COMMAND_LEVEL_INFO));
 	}
 
 	return LWDP_OK;
@@ -359,6 +375,9 @@ void Cx_LogMgr::LogPrint(const tstring& module_name,
 						    long line,
 						    const char* stringFormat, ...)
 {
+	if(!Cx_LogMgr::mLogSwitch)
+		return;
+	
 	if(module_name.empty() || !stringFormat)
 		return;
 	
@@ -410,6 +429,161 @@ void Cx_LogMgr::LogPrint(const tstring& module_name,
 
 }
 
+
+int32_ Cx_LogMgr::ConsoleLogSwitch(COMMAND_LINE& command_line)
+{
+	COMMAND_LINE::iterator iter = command_line.begin();
+	if(command_line.size() != 2)
+		goto ERR_TAG;
+	
+	++iter;
+	if(iter->empty())
+		goto ERR_TAG;
+		
+	if(*iter == std::string("on"))
+	{
+		Cx_LogMgr::mLogSwitch = 1;
+	}
+	else if(*iter == std::string("off"))
+	{
+		Cx_LogMgr::mLogSwitch = 0;
+	}
+	else
+	{
+		goto ERR_TAG;
+	}
+
+	return LWDP_OK;
+
+ERR_TAG:
+	std::cout << "Format Error 'logswitch on/off'" << std::endl;
+
+	return 0;
+}
+
+int32_ Cx_LogMgr::ConsoleLogLevel(COMMAND_LINE& command_line)
+{
+	COMMAND_LINE::iterator iter = command_line.begin();
+	if(command_line.size() != 3)
+		goto ERR_TAG;
+	++iter;
+	if(iter->empty())
+		goto ERR_TAG;
+	
+	if(*iter == "all")
+	{
+		XPropertyTable levelTable;
+		GET_OBJECT_RET(ConfigMgr, iConfigMgr, LWDP_GET_OBJECT_ERROR);
+		RINOK(iConfigMgr->GetModuleTable(LW_LOGMGR_MODULE_NAME, LW_LOGMGR_MODULE_TABLE_NAME, levelTable));
+		++iter;
+		if(iter->empty())
+			goto ERR_TAG;
+		for(uint32_ i=0; levelTable[i].ThereIs; ++i)
+		{ 	
+			log4cpp::Category* categoryAll = log4cpp::Category::exists(levelTable[i][LW_LOGMGR_TABLE_MODULE_NAME_TAG]);	
+			if(categoryAll)
+			{
+				if(*iter == std::string("0"))
+				{
+					categoryAll->setPriority(log4cpp::Priority::EMERG);
+				}
+				else if(*iter == std::string("1"))
+				{
+					categoryAll->setPriority(log4cpp::Priority::ALERT);
+				}
+				else if(*iter == std::string("2"))
+				{
+					categoryAll->setPriority(log4cpp::Priority::CRIT);
+				}
+				else if(*iter == std::string("3"))
+				{
+					categoryAll->setPriority(log4cpp::Priority::ERROR);
+				}
+				else if(*iter == std::string("4"))
+				{
+					categoryAll->setPriority(log4cpp::Priority::WARN);
+				}
+				else if(*iter == std::string("5"))
+				{
+					categoryAll->setPriority(log4cpp::Priority::NOTICE);
+				}
+				else if(*iter == std::string("6"))
+				{
+					categoryAll->setPriority(log4cpp::Priority::INFO);
+				}
+				else if(*iter == std::string("7"))
+				{
+					categoryAll->setPriority(log4cpp::Priority::DEBUG);
+				}	
+				else
+				{
+					goto ERR_TAG;
+				}
+			}
+		}
+
+		return LWDP_OK;
+	}
+	
+	log4cpp::Category* category = log4cpp::Category::exists(*iter);
+	if(category)
+	{
+		std::cout << "Can't Find Module Name!" << std::endl;
+		goto ERR_TAG;
+	}	
+	++iter;
+	if(iter->empty())
+		goto ERR_TAG;
+	if(*iter == std::string("0"))
+	{
+		category->setPriority(log4cpp::Priority::EMERG);
+	}
+	else if(*iter == std::string("1"))
+	{
+		category->setPriority(log4cpp::Priority::ALERT);
+	}
+	else if(*iter == std::string("2"))
+	{
+		category->setPriority(log4cpp::Priority::CRIT);
+	}
+	else if(*iter == std::string("3"))
+	{
+		category->setPriority(log4cpp::Priority::ERROR);
+	}
+	else if(*iter == std::string("4"))
+	{
+		category->setPriority(log4cpp::Priority::WARN);
+	}
+	else if(*iter == std::string("5"))
+	{
+		category->setPriority(log4cpp::Priority::NOTICE);
+	}
+	else if(*iter == std::string("6"))
+	{
+		category->setPriority(log4cpp::Priority::INFO);
+	}
+	else if(*iter == std::string("7"))
+	{
+		category->setPriority(log4cpp::Priority::DEBUG);
+	}	
+	else
+	{
+		goto ERR_TAG;
+	}
+	
+	return LWDP_OK;
+
+ERR_TAG:
+	std::cout << "Format Error Example:'loglevel TCPSERVER 5'" << std::endl;
+
+	return LWDP_OK;
+}
+
+LWRESULT Cx_LogMgr::LogSwitch(bool switch_tag)
+{
+	Cx_LogMgr::mLogSwitch = switch_tag;
+	return LWDP_OK;
+}
 
 LWDP_NAMESPACE_END;
 
