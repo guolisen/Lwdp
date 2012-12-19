@@ -48,6 +48,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TimerMgrDll", "TimerMgrDll\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleMgrDll", "CondoleMgrDll\CondoleMgrDll.vcproj", "{C44126AF-506A-4A98-BE5E-9F6B3AFC4DEE}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DbMgrDll", "DbMgrDll\DbMgrDll.vcproj", "{B1B44215-4B0E-4A12-B828-A0FA2B026C48}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -118,6 +120,10 @@ Global
 		{C44126AF-506A-4A98-BE5E-9F6B3AFC4DEE}.Debug|Win32.Build.0 = Debug|Win32
 		{C44126AF-506A-4A98-BE5E-9F6B3AFC4DEE}.Release|Win32.ActiveCfg = Release|Win32
 		{C44126AF-506A-4A98-BE5E-9F6B3AFC4DEE}.Release|Win32.Build.0 = Release|Win32
+		{B1B44215-4B0E-4A12-B828-A0FA2B026C48}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B1B44215-4B0E-4A12-B828-A0FA2B026C48}.Debug|Win32.Build.0 = Debug|Win32
+		{B1B44215-4B0E-4A12-B828-A0FA2B026C48}.Release|Win32.ActiveCfg = Release|Win32
+		{B1B44215-4B0E-4A12-B828-A0FA2B026C48}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

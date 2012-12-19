@@ -79,6 +79,7 @@
 				<!-- FileÊä³öµ½DebugTool  -->
 				<LevelEntry ModuleName = "Test4" Level = "DEBUG" Type = "REMOTE" WinId = "2"/>
 				
+				<LevelEntry ModuleName = "DbMgr"       Level = "DEBUG" Type = "STD"/>
 				<LevelEntry ModuleName = "TCPSERVER"   Level = "DEBUG" Type = "STD"/>
 				<LevelEntry ModuleName = "TSFRONTEND"  Level = "DEBUG" Type = "STD"/>
 				<LevelEntry ModuleName = "ZMQBACKEND"  Level = "DEBUG" Type = "STD"/>
