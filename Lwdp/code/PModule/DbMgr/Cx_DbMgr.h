@@ -10,16 +10,15 @@
 #include <boost/shared_ptr.hpp>
 #include <list>
 #include <Interface/DbMgr/Ix_DbMgr.h>
-//#include <Interface/ScriptMgr/Ix_ScriptMgr.h>
 #include "DbMgrDef.h"
-
+#include <mysql.h>  
 #include <iostream>
 
 
 LWDP_NAMESPACE_BEGIN;
 
-class Cx_DbMgr
-    : public Ix_DbMgr
+class Cx_DbQuery
+    : public Ix_DbQuery
 {
     X3BEGIN_CLASS_DECLARE(Cx_DbQuery)
         X3DEFINE_INTERFACE_ENTRY(Ix_DbQuery)
@@ -28,7 +27,7 @@ protected:
 	Cx_DbQuery();
 	virtual ~Cx_DbQuery();
 
-protected:
+public:
  	virtual uint32_ NumRow();//多少行
     virtual int32_  NumFields();//多少列
     virtual int32_  FieldIndex(const std::string& szField);
@@ -36,18 +35,31 @@ protected:
     virtual const std::string FieldName(int32_ nCol);
 
  	virtual u_long  SeekRow(u_long offerset);
-    virtual int32_  GetIntField(int32_ nField, int32_ nNullValue);
-    virtual int32_  GetIntField(const std::string& szField, int32_ nNullValue);
-    virtual double_ GetFloatField(int32_ nField, double_ fNullValue);
-    virtual double_ GetFloatField(const std::string& szField, double_ fNullValue);
+    virtual int32_  GetIntField(int32_ nField, int32_ nNullValue = 0);
+    virtual int32_  GetIntField(const std::string& szField, int32_ nNullValue = 0);
+    virtual double_ GetFloatField(int32_ nField, double_ fNullValue = 0.0);
+    virtual double_ GetFloatField(const std::string& szField, double_ fNullValue = 0.0);
  //0...n-1列
-    virtual const std::string GetStringField(int32_ nField, const std::string& szNullValue);
-    virtual const std::string GetStringField(const std::string& szField, const std::string& szNullValue);
+    virtual const std::string GetStringField(int32_ nField, const std::string& szNullValue = "");
+    virtual const std::string GetStringField(const std::string& szField, const std::string& szNullValue = "");
     virtual bool FieldIsNull(int32_ nField);
     virtual bool GieldIsNull(const std::string& szField);
     virtual bool Eof();
     virtual void NextRow();
     virtual void Finalize();
+
+protected:
+	void freeRes();
+	void checkVM();
+	Cx_DbQuery::Cx_DbQuery(const Cx_DbQuery& rQuery);
+	Cx_DbQuery& Cx_DbQuery::operator=(const Cx_DbQuery& rQuery);
+
+protected:
+	 MYSQL_RES*  	mMysql_res;
+	 MYSQL_FIELD* 	mField;
+	 MYSQL_ROW  	mRow;
+	 uint32_   		mRow_count;
+	 uint32_   		mField_count;
 };
 
 
@@ -64,8 +76,8 @@ protected:
 
 protected:
 	virtual LWRESULT Init();
-	virtual int32_ 	Open(const std::string& host, const std::string& user, const std::string& passwd, const std::string& db,
-	 					   unsigned int32_ port, unsigned long_ client_flag);
+	virtual LWRESULT Open(const std::string& host, const std::string& user, const std::string& passwd, const std::string& db,
+	 					    int32_ port, long_ client_flag);
 	virtual void 	Close();
 	/* 返回句柄 */
 	virtual DBHandle 	GetDbHandle();
@@ -93,13 +105,13 @@ protected:
 	/* 得到客户信息 */
 	virtual const std::string 	GetClientInfo();
 	/* 主要功能:得到客户版本信息 */
-	virtual const unsigned long_  GetClientVersion();
+	virtual const long_  GetClientVersion();
 	/* 主要功能:得到主机信息 */
 	virtual const std::string 	GetHostInfo();
 	/* 主要功能:得到服务器信息 */
 	virtual const std::string 	GetServerInfo();
 	/*主要功能:得到服务器版本信息*/
-	virtual const unsigned long_  GetServerVersion();
+	virtual const long_  GetServerVersion();
 	/*主要功能:得到 当前连接的默认字符集*/
 	virtual const std::string  	GetCharacterSetName();
 	/* 得到系统时间 */

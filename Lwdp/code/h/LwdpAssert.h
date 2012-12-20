@@ -44,7 +44,7 @@ LWDP_NAMESPACE_BEGIN;
 #define ASSERT_CHECK_RET(cat, ret, a, fmt...) \
     if(!(a)) \
 	{ \
-	    lw_log_crit(cat, "!!!ASSERT_CHECK_RET Find Error!!!"); \
+	    lw_log_crit(cat, "!!!ASSERT_CHECK_RET(%s) Find Error!!!", #a); \
 	    lw_log_crit(cat, fmt); \
 		return (ret); \
 	}
@@ -52,7 +52,7 @@ LWDP_NAMESPACE_BEGIN;
 #define ASSERT_CHECK_VOID(cat, a, fmt...) \
     if(!(a)) \
 	{ \
-		lw_log_alert(cat, "!!!ASSERT_CHECK_HALT Find Error!!!"); \
+		lw_log_alert(cat, "!!!ASSERT_CHECK_HALT(%s) Find Error!!!", #a); \
 	    lw_log_alert(cat, fmt); \
 		return; \
 	}
@@ -60,7 +60,7 @@ LWDP_NAMESPACE_BEGIN;
 #define ASSERT_CHECK_HALT(cat, a, fmt...) \
     if(!(a)) \
 	{ \
-		lw_log_alert(cat, "!!!ASSERT_CHECK_HALT Find Error!!!"); \
+		lw_log_alert(cat, "!!!ASSERT_CHECK_HALT(%s) Find Error!!!", #a); \
 	    lw_log_alert(cat, fmt); \
     	while(1) \
         { \

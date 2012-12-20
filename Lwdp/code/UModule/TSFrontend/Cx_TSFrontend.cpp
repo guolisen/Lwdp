@@ -41,7 +41,7 @@ std::string addressToString(struct sockaddr_in* addr)
     r=r+"("+ip+":"+port+")";
     return r;
 }
-
+ContextHandle  gContextHandle = NULL;
 void* thread_callback(void* vfd)
 {
 	LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::DEBUG, "Thread Callback fd(%x)!", vfd);
@@ -53,6 +53,8 @@ void* thread_callback(void* vfd)
 		return NULL;
 	}
 
+	GET_OBJECT_RET(ZmqMgr, iZmqMgr, NULL);
+	Cx_Interface<Ix_ZMessage> iZMessage;
 	int accept_conn = *(int*)vfd;
 	free(vfd);
 
@@ -71,14 +73,7 @@ void* thread_callback(void* vfd)
 		{
 			LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::WARNING, 
 						   "Remote Socket Closed fd(%x)", accept_conn);
-
-			free(recvBuf);
-#ifdef LWDP_PLATFORM_DEF_WIN32
-			int rc = closesocket(accept_conn);
-#else
-			int rc = ::close (accept_conn);
-#endif
-			return NULL;
+			goto ERR_TCP_TAG;
 		}
 		else if(ret_len < 0)
 		{
@@ -97,13 +92,7 @@ void* thread_callback(void* vfd)
 				LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::WARNING, 
 							   "Remote Socket Closed fd(%x)", accept_conn);
 
-				free(recvBuf);
-#ifdef LWDP_PLATFORM_DEF_WIN32
-				int rc = closesocket(accept_conn);
-#else
-				int rc = ::close (accept_conn);
-#endif
-				return NULL;
+				goto ERR_TCP_TAG;
 			}
 		}
 
@@ -120,18 +109,10 @@ void* thread_callback(void* vfd)
 		clientMsg->msgLength = sizeof(TS_TCP_SERVER_MSG);
 		send(accept_conn, (char *)clientMsg, clientMsg->msgLength, 0);
 
-		free(recvBuf);
-#ifdef LWDP_PLATFORM_DEF_WIN32
-		int rc = closesocket(accept_conn);
-#else
-		int rc = ::close (accept_conn);
-#endif
-		return NULL;
+		goto ERR_TCP_TAG;
 	}
 
-	GET_OBJECT_RET(ZmqMgr, iZmqMgr, NULL);
-	ContextHandle  context = iZmqMgr->GetNewContext();
-	SocketHandle requester = iZmqMgr->GetNewSocket(context, LWDP_REQ);
+	SocketHandle requester = iZmqMgr->GetNewSocket(gContextHandle, LWDP_REQ);
 	RINOKR(iZmqMgr->Connect(requester, gConnStr.c_str()), NULL);
 
 	//Set Option
@@ -156,20 +137,13 @@ void* thread_callback(void* vfd)
 		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, 
 					   "Send Message Timeout or Error fd(%x) ret(%d) send(%d)", accept_conn, ret_len, recvLen);
 
-		free(recvBuf);
-#ifdef LWDP_PLATFORM_DEF_WIN32
-		int rc = closesocket(accept_conn);
-#else
-		int rc = ::close (accept_conn);
-#endif
-		return NULL;		
+		goto ERR_ZMQ_TAG;		
 	}
 
 	//////////////////////////////////////////////////////////////
 	// Recv Message from ZMQ
 	//////////////////////////////////////////////////////////////
 	int more = 0;
-	Cx_Interface<Ix_ZMessage> iZMessage;
 	while (1) 
 	{
 		GET_OBJECT_RET(ZMessage, iMsg, 0);
@@ -192,13 +166,7 @@ void* thread_callback(void* vfd)
 		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, 
 					   "Recv ZMQ Message Timeout or Error fd(%x) ret(%d)", accept_conn, ret_len);
 
-		free(recvBuf);
-#ifdef LWDP_PLATFORM_DEF_WIN32
-		int rc = closesocket(accept_conn);
-#else
-		int rc = ::close (accept_conn);
-#endif
-		return NULL;		
+		goto ERR_ZMQ_TAG;		
 	}
 
 	LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::NOTICE, 
@@ -222,15 +190,8 @@ void* thread_callback(void* vfd)
 		{
 			LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::WARNING, 
 						   "Remote Socket Closed fd(%x)", accept_conn);
-			
-			free(recvBuf);
 			free(sendBuf);
-#ifdef LWDP_PLATFORM_DEF_WIN32
-			int rc = closesocket(accept_conn);
-#else
-			int rc = ::close (accept_conn);
-#endif
-			return NULL;
+			goto ERR_ZMQ_TAG;
 		}
 		else if(ret_len < 0)
 		{
@@ -248,15 +209,8 @@ void* thread_callback(void* vfd)
 			{
 				LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::WARNING, 
 							   "Remote Socket Closed fd(%x)", accept_conn);
-
-				free(recvBuf);
 				free(sendBuf);
-#ifdef LWDP_PLATFORM_DEF_WIN32
-				int rc = closesocket(accept_conn);
-#else
-				int rc = ::close (accept_conn);
-#endif
-				return NULL;
+				goto ERR_ZMQ_TAG;
 			}
 		}
 
@@ -270,10 +224,14 @@ void* thread_callback(void* vfd)
 		break;
 	};
 
-	iZmqMgr->CloseSocket(requester);
-	iZmqMgr->CloseContext(context);
-	free(recvBuf);
 	free(sendBuf);
+ERR_ZMQ_TAG:
+	iZmqMgr->CloseSocket(requester);
+	//iZmqMgr->CloseContext(context);
+	
+ERR_TCP_TAG:
+	free(recvBuf);
+
 #ifdef LWDP_PLATFORM_DEF_WIN32
 	int rc = closesocket(accept_conn);
 #else
@@ -438,6 +396,8 @@ LWRESULT Cx_TSFrontend::Init()
 		return TSFRONTEND::LWDP_CREATE_IO_WATCHER_ERR;
 	}
 
+	GET_OBJECT_RET(ZmqMgr, iZmqMgr, -1);
+	gContextHandle = iZmqMgr->GetNewContext();
 	//Start Watcher
 	iEventMgr->WatcherStart(mIoWatcher);
 	

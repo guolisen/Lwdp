@@ -83,7 +83,7 @@ void* worker_task (void *args)
 		{
 			LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::ERR, 
 						   "CallBackZmqMsg ret Error(%x)", res);
-			//continue;
+			continue;
 		}
 
 		if(sendLen < 0)
@@ -91,7 +91,7 @@ void* worker_task (void *args)
 			LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::ERR, 
 						   "Zmq Send Data Length is too Small(%d)", sendLen);
 
-			//continue;
+			continue;
 		}
 		// Send reply back to client
 		GET_OBJECT_RET(ZMessage, iZSMessage, 0);

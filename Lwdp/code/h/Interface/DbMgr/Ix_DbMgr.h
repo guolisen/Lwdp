@@ -40,8 +40,8 @@ INTERFACE_END();
 
 INTERFACE_BEGIN(DbMgr)
 	virtual LWRESULT Init() = 0;
-	virtual int32_ Open(const std::string& host, const std::string& user, const std::string& passwd, const std::string& db,
-	 			unsigned int32_ port, unsigned long_ client_flag) = 0;
+	virtual LWRESULT Open(const std::string& host, const std::string& user, const std::string& passwd, const std::string& db,
+	 			        int32_ port, long_ client_flag) = 0;
 	virtual void Close() = 0;
 	/* 返回句柄 */
 	virtual DBHandle GetDbHandle() = 0;
@@ -69,13 +69,13 @@ INTERFACE_BEGIN(DbMgr)
 	/* 得到客户信息 */
 	virtual const std::string GetClientInfo() = 0;
 	/* 主要功能:得到客户版本信息 */
-	virtual const unsigned long_  GetClientVersion() = 0;
+	virtual const long_  GetClientVersion() = 0;
 	/* 主要功能:得到主机信息 */
 	virtual const std::string GetHostInfo() = 0;
 	/* 主要功能:得到服务器信息 */
 	virtual const std::string GetServerInfo() = 0;
 	/*主要功能:得到服务器版本信息*/
-	virtual const unsigned long_  GetServerVersion() = 0;
+	virtual const long_  GetServerVersion() = 0;
 	/*主要功能:得到 当前连接的默认字符集*/
 	virtual const std::string  GetCharacterSetName() = 0;
 	/* 得到系统时间 */
