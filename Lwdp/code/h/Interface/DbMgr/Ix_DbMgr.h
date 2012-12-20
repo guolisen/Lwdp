@@ -8,7 +8,7 @@ LWDP_NAMESPACE_BEGIN;
  
 typedef void* DBHandle;
 
-#if 0
+
 INTERFACE_BEGIN(DbQuery)
  	virtual uint32_ NumRow() = 0;//多少行
     virtual int32_ NumFields() = 0;//多少列
@@ -33,7 +33,7 @@ INTERFACE_BEGIN(DbQuery)
 
 INTERFACE_END();
 
-#endif
+
 
 
 

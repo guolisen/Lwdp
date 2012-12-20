@@ -17,7 +17,7 @@
 
 
 LWDP_NAMESPACE_BEGIN;
-#if 0
+
 class Cx_DbMgr
     : public Ix_DbMgr
 {
@@ -50,7 +50,7 @@ protected:
     virtual void Finalize();
 };
 
-#endif
+
 
 class Cx_DbMgr
     : public Ix_DbMgr

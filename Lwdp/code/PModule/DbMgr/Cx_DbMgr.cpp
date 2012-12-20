@@ -290,5 +290,108 @@ void Cx_DbMgr::SetBusyTimeout(int32_ nMillisecs)
 
 
 
+
+uint32_ Cx_DbMgr::NumRow()//多少行
+{
+
+
+}
+int32_  Cx_DbMgr::NumFields()//多少列
+{
+
+
+}
+
+int32_  Cx_DbMgr::FieldIndex(const std::string& szField)
+{
+
+
+}
+
+//0...n-1列
+const std::string Cx_DbMgr::FieldName(int32_ nCol)
+{
+
+
+}
+
+
+uint32_ Cx_DbMgr::SeekRow(u_long offerset)
+{
+
+
+}
+
+int32_  Cx_DbMgr::GetIntField(int32_ nField, int32_ nNullValue)
+{
+
+
+}
+
+int32_  Cx_DbMgr::GetIntField(const std::string& szField, int32_ nNullValue)
+{
+
+
+}
+
+double_ Cx_DbMgr::GetFloatField(int32_ nField, double_ fNullValue)
+{
+
+
+}
+
+double_ Cx_DbMgr::GetFloatField(const std::string& szField, double_ fNullValue)
+{
+
+
+}
+
+//0...n-1列
+const std::string Cx_DbMgr::GetStringField(int32_ nField, const std::string& szNullValue)
+{
+
+
+}
+
+const std::string Cx_DbMgr::GetStringField(const std::string& szField, const std::string& szNullValue)
+{
+
+
+}
+
+bool Cx_DbMgr::FieldIsNull(int32_ nField)
+{
+
+
+}
+
+bool Cx_DbMgr::GieldIsNull(const std::string& szField)
+{
+
+
+}
+
+bool Cx_DbMgr::Eof()
+{
+
+
+}
+
+void Cx_DbMgr::NextRow()
+{
+
+
+}
+
+void Cx_DbMgr::Finalize()
+{
+
+
+}
+
+
+
+
+
 LWDP_NAMESPACE_END;
 
