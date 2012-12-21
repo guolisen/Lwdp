@@ -17,7 +17,7 @@ INTERFACE_BEGIN(DbQuery)
     virtual const std::string FieldName(int32_ nCol) = 0;
  //   const std::string fieldDeclType(int32_ nCol) = 0;
  //   int32_ fieldDataType(int32_ nCol) = 0;
- 	virtual u_long SeekRow(u_long offerset) = 0;
+ 	virtual uint32_ SeekRow(uint32_ offerset) = 0;
     virtual int32_ GetIntField(int32_ nField, int32_ nNullValue) = 0;
     virtual int32_ GetIntField(const std::string& szField, int32_ nNullValue) = 0;
     virtual double_ GetFloatField(int32_ nField, double_ fNullValue) = 0;
@@ -47,7 +47,7 @@ INTERFACE_BEGIN(DbMgr)
 	virtual DBHandle GetDbHandle() = 0;
 	/* 处理返回多行的查询，返回影响的行数 */
 	//返回引用是因为在CppMySQLQuery的赋值构造函数中要把成员变量_mysql_res置为空
-	//virtual CppMySQLQuery& QuerySQL(const std::string& sql) = 0;
+	virtual LWRESULT QuerySQL(const std::string& sql, Cx_Interface<Ix_DbQuery>& query_out) = 0;
 	
 	/* 执行非返回结果查询 */
 	virtual int32_ ExecSQL(const std::string& sql) = 0;

@@ -20,13 +20,14 @@ LWDP_NAMESPACE_BEGIN;
 class Cx_DbQuery
     : public Ix_DbQuery
 {
+	friend class Cx_DbMgr;
     X3BEGIN_CLASS_DECLARE(Cx_DbQuery)
         X3DEFINE_INTERFACE_ENTRY(Ix_DbQuery)
     X3END_CLASS_DECLARE()
-protected:
+public:
 	Cx_DbQuery();
 	virtual ~Cx_DbQuery();
-
+	
 public:
  	virtual uint32_ NumRow();//多少行
     virtual int32_  NumFields();//多少列
@@ -34,11 +35,11 @@ public:
  //0...n-1列
     virtual const std::string FieldName(int32_ nCol);
 
- 	virtual u_long  SeekRow(u_long offerset);
-    virtual int32_  GetIntField(int32_ nField, int32_ nNullValue = 0);
-    virtual int32_  GetIntField(const std::string& szField, int32_ nNullValue = 0);
-    virtual double_ GetFloatField(int32_ nField, double_ fNullValue = 0.0);
-    virtual double_ GetFloatField(const std::string& szField, double_ fNullValue = 0.0);
+ 	virtual uint32_  SeekRow(uint32_ offerset);
+    virtual int32_   GetIntField(int32_ nField, int32_ nNullValue = 0);
+    virtual int32_   GetIntField(const std::string& szField, int32_ nNullValue = 0);
+    virtual double_  GetFloatField(int32_ nField, double_ fNullValue = 0.0);
+    virtual double_  GetFloatField(const std::string& szField, double_ fNullValue = 0.0);
  //0...n-1列
     virtual const std::string GetStringField(int32_ nField, const std::string& szNullValue = "");
     virtual const std::string GetStringField(const std::string& szField, const std::string& szNullValue = "");
@@ -50,12 +51,12 @@ public:
 
 protected:
 	void freeRes();
-	void checkVM();
+
 	Cx_DbQuery::Cx_DbQuery(const Cx_DbQuery& rQuery);
 	Cx_DbQuery& Cx_DbQuery::operator=(const Cx_DbQuery& rQuery);
 
 protected:
-	 MYSQL_RES*  	mMysql_res;
+	 MYSQL_RES*  	mMysqlRes;
 	 MYSQL_FIELD* 	mField;
 	 MYSQL_ROW  	mRow;
 	 uint32_   		mRow_count;
@@ -67,6 +68,7 @@ protected:
 class Cx_DbMgr
     : public Ix_DbMgr
 {
+	friend class Cx_DbQuery;
     X3BEGIN_CLASS_DECLARE(Cx_DbMgr)
         X3DEFINE_INTERFACE_ENTRY(Ix_DbMgr)
     X3END_CLASS_DECLARE()
@@ -83,8 +85,7 @@ protected:
 	virtual DBHandle 	GetDbHandle();
 	/* 处理返回多行的查询，返回影响的行数 */
 	//返回引用是因为在CppMySQLQuery的赋值构造函数中要把成员变量_mysql_res置为空
-	//virtual CppMySQLQuery& QuerySQL(const std::string& sql);
-	
+	virtual LWRESULT QuerySQL(const std::string& sql, Cx_Interface<Ix_DbQuery>& query_out);
 	/* 执行非返回结果查询 */
 	virtual int32_ 		ExecSQL(const std::string& sql);
 	/* 测试mysql服务器是否存活 */
@@ -127,7 +128,7 @@ protected:
 protected:
 	/* msyql 连接句柄 */
 	MYSQL* mDb;
-	//CppMySQLQuery _db_query;
+	//Cx_Interface<Ix_DbQuery> mQuery;
 
 	
 };

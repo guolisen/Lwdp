@@ -89,12 +89,36 @@ DBHandle Cx_DbMgr::GetDbHandle()
 
 /* 处理返回多行的查询，返回影响的行数 */
 //返回引用是因为在CppMySQLQuery的赋值构造函数中要把成员变量_mysql_res置为空
-//CppMySQLQuery& Cx_DbMgr::QuerySQL(const std::string& sql)
-//{
+LWRESULT Cx_DbMgr::QuerySQL(const std::string& sql, Cx_Interface<Ix_DbQuery>& query_out)
+{
+	Cx_Interface<Ix_DbQuery> tmpQuery(CLSID_DbQuery);
+	if(!tmpQuery)
+	{
+		LWDP_LOG_PRINT("DbMgr", LWDP_LOG_MGR::ERR, 
+					   "Get DbQuery Object Error!");
+		return LWDP_GET_QUERY_OBJ_ERROR;
+	}
+	
+	if(mysql_real_query(mDb, sql.c_str(), sql.size()) != 0)
+	{
+		LWDP_LOG_PRINT("DbMgr", LWDP_LOG_MGR::ERR, 
+					   "mysql_real_query Error(%s)!", mysql_error(mDb));
+		return LWDP_REAL_QUERY_ERROR;
+	}
+	
+	Cx_DbQuery* query = dynamic_cast<Cx_DbQuery*>(tmpQuery.P()); 
+	ASSERT_CHECK_RET(LWDP_DB_LOG, LWDP_GET_OBJECT_ERROR, query, 
+					 "Cx_DbMgr::QuerySQL Get Cx_DbQuery error, there is not a Cx_DbQuery obj");
 
+	query->mMysqlRes 	= mysql_store_result(mDb);
+	query->mRow 		= mysql_fetch_row(query->mMysqlRes);
+	query->mRow_count 	= mysql_num_rows(query->mMysqlRes); 
+	//得到字段数量
+	query->mField_count = mysql_num_fields(query->mMysqlRes);
 
-//}
-
+	query_out = tmpQuery;
+	return LWDP_OK;
+}
 
 /* 执行非返回结果查询 */
 int32_ Cx_DbMgr::ExecSQL(const std::string& sql)
@@ -104,8 +128,8 @@ int32_ Cx_DbMgr::ExecSQL(const std::string& sql)
 	{
 		//执行查询失败
 		LWDP_LOG_PRINT("DbMgr", LWDP_LOG_MGR::ERR, 
-					   "ExecSQL mysql_real_query(%s) ret Error(%x)", 
-					   sql.c_str(), ret);
+					   "ExecSQL mysql_real_query(%s) ret Error(%x)(%s)", 
+					   sql.c_str(), ret, mysql_error(mDb));
 		return LWDP_ERROR;
 	}
 
@@ -152,8 +176,8 @@ int32_ Cx_DbMgr::StartTransaction()
 						     (unsigned long)strlen("START TRANSACTION")))
 	{
 		LWDP_LOG_PRINT("DbMgr", LWDP_LOG_MGR::ERR, 
-					   "mysql_real_query(START TRANSACTION) ret Error(%x)", 
-					   ret);
+					   "mysql_real_query(START TRANSACTION) ret Error(%x: %s)", 
+					   ret, mysql_error(mDb));
 		return ret;
 	}
 
@@ -169,8 +193,8 @@ int32_ Cx_DbMgr::Commit()
 						     (unsigned long)strlen("COMMIT")))
 	{
 		LWDP_LOG_PRINT("DbMgr", LWDP_LOG_MGR::ERR, 
-					   "mysql_real_query(COMMIT) ret Error(%x)", 
-					   ret);
+					   "mysql_real_query(COMMIT) ret Error(%x: %s)", 
+					   ret, mysql_error(mDb));
 		return ret;
 	}
 
@@ -185,8 +209,8 @@ int32_ Cx_DbMgr::Rollback()
 						     (unsigned long)strlen("ROLLBACK")))
 	{
 		LWDP_LOG_PRINT("DbMgr", LWDP_LOG_MGR::ERR, 
-					   "mysql_real_query(ROLLBACK) ret Error(%x)", 
-					   ret);
+					   "mysql_real_query(ROLLBACK) ret Error(%x: %s)", 
+					   ret, mysql_error(mDb));
 		return ret;
 	}
 
@@ -246,8 +270,8 @@ int32_ Cx_DbMgr::CreateDB(const std::string& name)
 						     (unsigned long)str.size()))
 	{
 		LWDP_LOG_PRINT("DbMgr", LWDP_LOG_MGR::ERR, 
-					   "mysql_real_query(%s) ret Error(%x)", 
-					   str.c_str(), ret);
+					   "mysql_real_query(%s) ret Error(%x: %s)", 
+					   str.c_str(), ret, mysql_error(mDb));
 		return ret;
 	}
 
@@ -264,8 +288,8 @@ int32_ Cx_DbMgr::DropDB(const std::string& name)
 						     (unsigned long)str.size()))
 	{
 		LWDP_LOG_PRINT("DbMgr", LWDP_LOG_MGR::ERR, 
-					   "mysql_real_query(%s) ret Error(%x)", 
-					   str.c_str(), ret);
+					   "mysql_real_query(%s) ret Error(%x: %s)", 
+					   str.c_str(), ret, mysql_error(mDb));
 		return ret;
 	}
 
@@ -293,7 +317,7 @@ void Cx_DbMgr::SetBusyTimeout(int32_ nMillisecs)
 //////////////////////////////////////////////////////
 Cx_DbQuery::Cx_DbQuery()
 {
-	mMysql_res 	 = NULL;
+	mMysqlRes 	 = NULL;
 	mField 		 = NULL;
 	mRow 		 = NULL;
 	mRow_count 	 = 0;
@@ -307,10 +331,10 @@ Cx_DbQuery::~Cx_DbQuery()
 
 void Cx_DbQuery::freeRes()
 {
-	if(mMysql_res != NULL)
+	if(mMysqlRes != NULL)
 	{
-		mysql_free_result(mMysql_res);
-		mMysql_res = NULL;
+		mysql_free_result(mMysqlRes);
+		mMysqlRes = NULL;
 	}
 }
 
@@ -326,15 +350,15 @@ int32_  Cx_DbQuery::NumFields()//多少列
 
 int32_  Cx_DbQuery::FieldIndex(const std::string& szField)
 {
-	if(NULL == mMysql_res || szField.empty())
+	if(NULL == mMysqlRes || szField.empty())
 		return -1;
 
-	mysql_field_seek(mMysql_res, 0);//定位到第0列
-	int32_ i = 0;
+	mysql_field_seek(mMysqlRes, 0);//定位到第0列
+	uint32_ i = 0;
 	while(i < mField_count)
 	{
-		mField = mysql_fetch_field( mMysql_res );
-		if(mField != NULL && strcmp(mField->name, szField) == 0)//找到
+		mField = mysql_fetch_field( mMysqlRes );
+		if(mField != NULL && (std::string(mField->name) == szField))//找到
 			return i;
 		i++;
 	}
@@ -344,31 +368,31 @@ int32_  Cx_DbQuery::FieldIndex(const std::string& szField)
 //0...n-1列
 const std::string Cx_DbQuery::FieldName(int32_ nCol)
 {
-	if(mMysql_res == NULL)
+	if(mMysqlRes == NULL)
 		return static_cast<const std::string>("");
-	mysql_field_seek(mMysql_res, nCol);
-	mField = mysql_fetch_field(mMysql_res);
+	mysql_field_seek(mMysqlRes, nCol);
+	mField = mysql_fetch_field(mMysqlRes);
 	if(mField != NULL)
 		return static_cast<const std::string>(mField->name);
 	else
 		return  static_cast<const std::string>("");
 }
 
-uint32_ Cx_DbQuery::SeekRow(u_long offerset)
+uint32_ Cx_DbQuery::SeekRow(uint32_ offerset)
 {
 	if(offerset < 0)
 		offerset = 0;
 	if(offerset >= mRow_count)
 		offerset = mRow_count -1;
-	mysql_data_seek(mMysql_res, offerset);
+	mysql_data_seek(mMysqlRes, offerset);
 
-	mRow = mysql_fetch_row(mMysql_res);
+	mRow = mysql_fetch_row(mMysqlRes);
 	return offerset;
 }
 
 int32_  Cx_DbQuery::GetIntField(int32_ nField, int32_ nNullValue)
 {
-	if(NULL == mMysql_res)
+	if(NULL == mMysqlRes)
 		return nNullValue;
 
 	if(nField + 1 > (int)mField_count)
@@ -382,41 +406,41 @@ int32_  Cx_DbQuery::GetIntField(int32_ nField, int32_ nNullValue)
 
 int32_  Cx_DbQuery::GetIntField(const std::string& szField, int32_ nNullValue)
 {
-	if(NULL == mMysql_res || NULL == szField)
+	if(NULL == mMysqlRes || szField.empty())
 		return nNullValue;
 
 	if(NULL == mRow)
 		return nNullValue;
-	const char* filed = getStringField(szField);
-	if(NULL == filed)
+	const std::string filed = GetStringField(szField);
+	if(filed.empty())
 		return nNullValue;
 	
-	return atoi(filed);
+	return atoi(filed.c_str());
 }
 
 double_ Cx_DbQuery::GetFloatField(int32_ nField, double_ fNullValue)
 {
-	const char* field = getStringField(nField);
-	if(NULL == field)
+	const std::string field = GetStringField(nField);
+	if(field.empty())
 		return fNullValue;
 	
-	return atol(field);
+	return atol(field.c_str());
 
 }
 
 double_ Cx_DbQuery::GetFloatField(const std::string& szField, double_ fNullValue)
 {
-	const char* field = getStringField(szField);
-	if ( NULL == field )
+	const std::string field = GetStringField(szField);
+	if (field.empty())
 		return fNullValue;
 	
-	return atol(field);
+	return atol(field.c_str());
 }
 
 //0...n-1列
 const std::string Cx_DbQuery::GetStringField(int32_ nField, const std::string& szNullValue)
 {
-	if(NULL == mMysql_res)
+	if(NULL == mMysqlRes)
 		return szNullValue;
 	if(nField + 1 > (int)mField_count)
 		return szNullValue;
@@ -428,13 +452,13 @@ const std::string Cx_DbQuery::GetStringField(int32_ nField, const std::string& s
 
 const std::string Cx_DbQuery::GetStringField(const std::string& szField, const std::string& szNullValue)
 {
-	if(NULL == mMysql_res)
+	if(NULL == mMysqlRes)
 		return szNullValue;
-	int nField = fieldIndex(szField);
+	int nField = FieldIndex(szField);
 	if(nField == -1)
 		return szNullValue;
 
-	return getStringField(nField);
+	return GetStringField(nField);
 }
 
 bool Cx_DbQuery::FieldIsNull(int32_ nField)
@@ -457,9 +481,9 @@ bool Cx_DbQuery::Eof()
 
 void Cx_DbQuery::NextRow()
 {
-	if ( NULL == mMysql_res )
+	if ( NULL == mMysqlRes )
 		return;
-	mRow = mysql_fetch_row(mMysql_res);
+	mRow = mysql_fetch_row(mMysqlRes);
 }
 
 void Cx_DbQuery::Finalize()
