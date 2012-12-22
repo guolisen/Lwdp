@@ -5,114 +5,27 @@
 		<Version>1.0</Version>
 	</Property>
 	<Script Name = "GlobalInit">
-		<!--Var Test-->
-		<vars Name="@test">'My Name is Guolisen'  </vars>
-		<vars Name="@test1">'HeiHei'</vars>
-		<vars Name="@test2">'Hahaha'</vars>
-		<vars Name="@test3">:1111</vars>
-		<vars Name="@test4">:2222</vars>  
-		
-		<printf Level = "ERROR" Param1 = "@test">'Hello World1 %s!!'</printf>
-		<printf Level = "ERROR" Param1 = "Guolisen" Param2 = "2222">Hello World2 %s %s!!</printf>
-		<printf Level = "INFO" Param1 = "Guolisen" Param2 = "@test1" Param3 = "@test2">Hello World3 %s %s %s!!</printf>
-		<printf Level = "INFO" Param1 = "@test2">Hello World1 %s!!</printf>
-		
-		<!--If Test-->
-		<if Expr="$(@test3 != 1111)">
-			<printf Level = "INFO">IF Domain A!</printf>	
-			<else>
-				<if Expr="$(@test3 = 32)">
-					<printf Level = "INFO">IF Domain B->A!</printf>	
-					<else>
-						<printf Level = "INFO">IF Domain B->B!</printf>
-						<printf Level = "INFO">IF Domain B->B1!</printf>	
-						<printf Level = "INFO">IF Domain B->B2!</printf>
-					</else>		
-				</if>
-				<printf Level = "INFO">IF Domain B!</printf>
-				<printf Level = "INFO">IF Domain B1!</printf>	
-				<printf Level = "INFO">IF Domain B2!</printf>
-			</else>		
-		</if>
-		<if Expr="$(@test1 = 'HeiHei')">
-			<printf Level = "INFO">IF STR B->A!</printf>	
-			<else>
-				<printf Level = "INFO">IF STR B->B!</printf>
-				<printf Level = "INFO">IF STR B->B1!</printf>	
-				<printf Level = "INFO">IF STR B->B2!</printf>
-			</else>		
-		</if>		
-		
-		<!--Dec Inc Test-->
-		<dec Step="4000">@test3</dec>
-		<dec>@test3</dec>
-		<dec>@test3</dec>
-		<printf Level = "INFO" P1="@test3">dec @Test3: %s</printf>
-		
-		<inc>@test3</inc>
-		<inc Step="1000">@test3</inc>
-		<inc>@test3</inc>
-		<printf Level = "INFO" P1="@test3">inc @Test3: %s</printf>
-		
-		<comput Ret="@test3">23+322</comput>
-		<printf Level = "INFO" P1="@test3">23+322  @Test3: %s</printf>
-		
-		<vars Name="@test5">:22</vars>
-		<comput Ret="@test5">112</comput>
-		<printf Level = "INFO" P1="@test5">112 @test5: %s</printf>
-		
-		<vars Name="@test6">$(@test3 * 3)</vars>
-		<comput Ret="@test3">@test6</comput>
-		<printf Level = "INFO" P1="@test3">@test6 @Test3: %s</printf>
-
-		<!--while Test-->
-		<vars Name="@test7">:4</vars>
-		<while Expr="$(@test7 != 0)">
-			<dec>@test7</dec>
-			<printf Level = "INFO" P1="@test7">While  @Test7: %s</printf>
-		</while>
-		
-		<vars Name="@test8">:5</vars>
-		<while Expr="$(@test8 != 0)">
-			<dec>@test8</dec>
-			<if Expr="$(@test8 = 4)">
-				<continue/>
-			</if>
-			<printf Level = "INFO" P1="@test8">While  @Test8: %s</printf>
-			<if Expr="$(@test8 = 2)">
-				<break/>
-			</if>
-		</while>
-		
-		<vars Name="@test9">:5</vars>
-		<while Expr="$(@test9)">
-			<dec>@test9</dec>
-			<if Expr="$(@test9 = 4)">
-				<continue/>
-			</if>
-			<printf Level = "INFO" P1="@test9">While  @Test9: %s</printf>
-		</while>
-			
-		<vars Name="@t1">:5</vars>
-		<vars Name="@t2">:2</vars>
-		<while Expr="$(@t1)">
-			<dec>@t1</dec>
-			<printf Level = "INFO" P1="@t1">While  @T1: %s</printf>
-			<while Expr="$(@t2)">	
-				<dec>@t2</dec>
-				<printf Level = "INFO" P1="@t2">While  @T2: %s</printf>
-			</while>
-		</while>
 	</Script>
 	<Script Name = "GlobalUnInit">
 	</Script>
 	<TableSet>
 		<PropertyTable Name = "ModuleLoadTable">
+			<ModuleLoad Name = "ConsoleMgr" Modid = "9FC7011E-B2BF-411c-BB09-BC208DEE71DA" />
 			<ModuleLoad Name = "ScriptMgr"  Modid = "CABBCCA4-1160-49cf-8450-F35E897202EA" />
-			<ModuleLoad Name = "LogMgr"     Modid = "8BBC60DD-D652-454b-B522-6D19D5A1B97A" />
-			<!--<ModuleLoad Name = "DctMgr" 	Modid = "A009B569-707F-4618-A089-C09F776ADEC2" />-->
 			<ModuleLoad Name = "LuaMgr" 	Modid = "3FAAA9E8-4CBB-4496-A369-172077A3F5EE" />
-			<ModuleLoad Name = "ExampleTest"  Modid = "2F72F07E-5594-45c5-A1EB-654C0A3117AC" />
+			
+			<ModuleLoad Name = "LogMgr"     Modid = "8BBC60DD-D652-454b-B522-6D19D5A1B97A" />
+			<!--<ModuleLoad Name = "DctMgr" 	Modid = "A009B569-707F-4618-A089-C09F776ADEC2" /> -->
+			<ModuleLoad Name = "EventMgr" 	Modid = "5D2C4C38-6B59-469a-9AE2-133FF44E3182" />
+			<ModuleLoad Name = "ZmqMgr" 	Modid = "1C8B1ACD-89A4-48ab-8161-538B7E2545BE" />
+			<ModuleLoad Name = "TimerMgr" 	Modid = "212ED676-7B73-43e7-B2F9-190649FD6EC4" />
+			<ModuleLoad Name = "DbMgr"      Modid = "18D1C5FE-2D94-4a9b-B878-E8A51CA9AF67" />
+			
+			
+			<ModuleLoad Name = "TSFrontend" Modid = "6AD26E68-071F-45d5-B5C1-7B3F7EE20D13" />
+			<ModuleLoad Name = "ZmqBackend" Modid = "789D687B-8962-4cae-8C4A-B129B5B8312F" />
+			<ModuleLoad Name = "TcpServer"  Modid = "85FFE433-F268-4728-8086-BD272EB10B66" />
+			<ModuleLoad Name = "ACDevice"   Modid = "7BE77A1D-4430-4903-BFC3-501987FE9E31" />
 		</PropertyTable>
 	</TableSet>
 	<Module Name = "ConfigMgr" Modid = "6FE0F631-1F70-4557-8156-2D30AA017631">
@@ -125,6 +38,17 @@
 		<Script Name = "ConfigMgrInit">
 		</Script>
 	</Module>
+	<Module Name = "ConsoleMgr" Modid = "9FC7011E-B2BF-411c-BB09-BC208DEE71DA">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>../../../../code/bin/Plugins/ConsoleMgrSo.so</ModuleDir>
+		</Property>
+		<TableSet>
+		</TableSet>
+		<Script Name = "ConsoleMgrInit">
+		</Script>
+	</Module>		
 	<Module Name = "ScriptMgr" Modid = "CABBCCA4-1160-49cf-8450-F35E897202EA">
 		<!--属性名不可重复-->
 		<Property> 
@@ -142,7 +66,8 @@
 			<Version>1.0</Version>
 			<ModuleDir>../../../../code/bin/Plugins/LogMgrSo.so</ModuleDir>
 			<GlobalLevel>DEBUG</GlobalLevel>
-			<LogPattern>%m %d{%H:%M:%S.%l %d %b %Y}%n</LogPattern>
+			<!--<LogPattern>%p: %m %d{%H:%M:%S.%l %d %b %Y}%n</LogPattern>-->
+			<LogPattern>[%p] %m%n</LogPattern>
 		</Property>
 		<TableSet>
 			<PropertyTable Name = "LevelTable">
@@ -154,6 +79,12 @@
 				<LevelEntry ModuleName = "Test3" Level = "INFO" Type = "ROLFILE" FileName = "RolLog0203.txt" FileSize = ""/>
 				<!-- File输出到DebugTool  -->
 				<LevelEntry ModuleName = "Test4" Level = "DEBUG" Type = "REMOTE" WinId = "2"/>
+				
+				<LevelEntry ModuleName = "DbMgr"       Level = "DEBUG" Type = "STD"/>
+				<LevelEntry ModuleName = "TCPSERVER"   Level = "DEBUG" Type = "STD"/>
+				<LevelEntry ModuleName = "TSFRONTEND"  Level = "DEBUG" Type = "STD"/>
+				<LevelEntry ModuleName = "ZMQBACKEND"  Level = "DEBUG" Type = "STD"/>
+				<LevelEntry ModuleName = "ACDEVICE"    Level = "DEBUG" Type = "STD"/>
 			</PropertyTable>
 		</TableSet>
 		<Script Name = "LogMgrInit">
@@ -184,6 +115,126 @@
 		<Script Name = "LuaMgrInit">
 		</Script>
 	</Module>	
+	<Module Name = "EventMgr" Modid = "5D2C4C38-6B59-469a-9AE2-133FF44E3182">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>../../../../code/bin/Plugins/EventMgrSO.so</ModuleDir>
+		</Property>
+		<TableSet>
+		</TableSet>
+		<Script Name = "EventMgrInit">
+		</Script>
+	</Module>
+	<Module Name = "ZmqMgr" Modid = "1C8B1ACD-89A4-48ab-8161-538B7E2545BE">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>../../../../code/bin/Plugins/ZmqMgrSO.so</ModuleDir>
+		</Property>
+		<TableSet>
+		</TableSet>
+		<Script Name = "ZmqMgrInit">
+		</Script>
+	</Module>
+	<Module Name = "TimerMgr" Modid = "212ED676-7B73-43e7-B2F9-190649FD6EC4">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>../../../../code/bin/Plugins/TimerMgrSO.so</ModuleDir>
+		</Property>
+		<TableSet>
+		</TableSet>
+		<Script Name = "TimerMgrInit">
+		</Script>
+	</Module>
+	<Module Name = "DbMgr" Modid = "18D1C5FE-2D94-4a9b-B878-E8A51CA9AF67">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>../../../../code/bin/Plugins/DbMgrSO.so</ModuleDir>
+		</Property>
+		<TableSet>
+		</TableSet>
+		<Script Name = "DbMgrInit">
+		</Script>
+	</Module>	
+	<Module Name = "TSFrontend" Modid = "6AD26E68-071F-45d5-B5C1-7B3F7EE20D13">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>../../../../code/bin/Plugins/TSFrontend.so</ModuleDir>
+			<ConnetTarget>tcp://localhost:12136</ConnetTarget>
+			<ServerPort>12135</ServerPort>
+			<ListenBlock>128</ListenBlock>
+			<RecvBufMaxLen>1024</RecvBufMaxLen>
+			<SendZmqTimeout>5</SendZmqTimeout>
+			<RecvZmqTimeout>5</RecvZmqTimeout>
+		</Property>
+		<TableSet>
+		</TableSet>
+		<Script Name = "TSFrontend">
+		</Script>
+	</Module>
+	<Module Name = "ZmqBackend" Modid = "789D687B-8962-4cae-8C4A-B129B5B8312F">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>../../../../code/bin/Plugins/ZmqBackend.so</ModuleDir>
+			<FrontendTarget>tcp://*:12136</FrontendTarget>
+			<BackendTarget>inproc://work_thread</BackendTarget>
+			<!-- <BackendTarget>tcp://*:12137</BackendTarget> -->
+			<!-- <WorkThreadConnect>tcp://localhost:12137</WorkThreadConnect>  -->
+			<WorkThreadConnect>inproc://work_thread</WorkThreadConnect>
+			<WorkThreadNum>1</WorkThreadNum>
+		</Property>
+		<TableSet>
+		</TableSet>
+		<Script Name = "ZmqBackend">
+		</Script>
+	</Module>
+	<Module Name = "TcpServer" Modid = "85FFE433-F268-4728-8086-BD272EB10B66">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>../../../../code/bin/Plugins/TcpServer.so</ModuleDir>
+			<DbIp>127.0.0.1</DbIp>
+			<DbUser>root</DbUser>
+			<DbPassword>lifesgood</DbPassword>
+			<DbSelect>test</DbSelect>
+			<DbPort>3306</DbPort>
+		</Property>
+		<TableSet>
+		</TableSet>
+		<Script Name = "TcpServer">
+		</Script>
+	</Module>	
+	<Module Name = "ACDevice" Modid = "7BE77A1D-4430-4903-BFC3-501987FE9E31">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>../../../../code/bin/Plugins/ACDevice.so</ModuleDir>
+			<InitSql>select * from gate_info where gate_id = %d</InitSql>
+			<ConfigSql>select * from gate_info where gate_id = %d</ConfigSql>
+			<CardSql>insert into card_swipecard(card_id, scenery_id, gate_id, card_type, action, checkin_time) 
+			                            VALUES ('%s', '%s', %d, %d, %d, '%x')
+			</CardSql>
+			
+		</Property>
+		<TableSet>
+			<PropertyTable Name = "GateInfoCol">
+				<GateIdCol>gate_id</GateIdCol>
+				<SceneryIdCol>scenery_id</SceneryIdCol>
+				<ManufacturerCol>manufacturer</ManufacturerCol>
+				<PositionCol>position</PositionCol>
+				<typeCol>gate_type</typeCol>
+			</PropertyTable>
+		
+		</TableSet>
+		<Script Name = "ACDevice">
+		</Script>
+	</Module>
+	
 	<Module Name = "ExampleTest" Modid = "86347b32-64e4-490c-b273-ec7e010f244e">
 		<!--属性名不可重复-->
 		<Property> 
