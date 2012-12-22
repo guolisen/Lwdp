@@ -290,7 +290,7 @@ LWRESULT Cx_ZmqBackend::CallBackZmqMsg(const uint8_* recv_msg, uint32_ recv_msg_
 	}
 
 	LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::WARNING, 
-			       "Unknow Request Msg(%d)", zMsg->msgCode);
+			       "Unknow Request Msg(%x)", zMsg->msgCode);
 	
 	uint8_* errMsg = new uint8_[sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY)] ;
 	memset(errMsg, 0, sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY));

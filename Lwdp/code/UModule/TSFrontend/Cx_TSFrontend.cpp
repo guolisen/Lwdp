@@ -105,7 +105,7 @@ void* thread_callback(void* vfd)
 	TS_TCP_SERVER_MSG* clientMsg = (TS_TCP_SERVER_MSG*)recvBuf;
 	if(clientMsg->msgLength > ret_len)
 	{
-		clientMsg->returnCode = TS_SERVER_TCP_MSG_LEN_ERROR;
+		clientMsg->statusCode = TS_SERVER_TCP_MSG_LEN_ERROR;
 		clientMsg->msgLength = sizeof(TS_TCP_SERVER_MSG);
 		send(accept_conn, (char *)clientMsg, clientMsg->msgLength, 0);
 
@@ -180,8 +180,8 @@ void* thread_callback(void* vfd)
 	ASSERT_CHECK_RET(LWDP_PLUGIN_LOG, 0, sendBuf, "TSFrontend thread Malloc Send Buf ERROR");
 	TS_TCP_SERVER_MSG* sendMsgStru = (TS_TCP_SERVER_MSG*)sendBuf;
 	sendMsgStru->msgLength = sizeof(TS_TCP_SERVER_MSG) + iZMessage->Size();
-	sendMsgStru->returnCode = 0;
-	memcpy(sendMsgStru->zmqMsgBody, iZMessage->Data(), iZMessage->Size());
+	sendMsgStru->statusCode = 0;
+	memcpy(sendMsgStru->tcpMsgBody, iZMessage->Data(), iZMessage->Size());
 	while(1)
 	{
 		//Send Data Length

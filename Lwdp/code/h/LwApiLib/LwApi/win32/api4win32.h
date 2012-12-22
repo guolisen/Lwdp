@@ -16,6 +16,7 @@
 #include <afxdisp.h>        // MFC Automation classes
 #endif
 #else
+#define  FD_SETSIZE 1024
 #include <winsock2.h>
 #define _WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers
 #include <windows.h>        // Windows master include file
@@ -69,6 +70,7 @@ void WIN_IMPL_API(HaltSystem)();
 
 #define Lwdp_fprintf      fwprintf
 #define Lwdp_sprintf     swprintf_s
+#define Lwdp_snprintf     _snprintf
 #define Lwdp_vstprintf    vswprintf
 
 #define Lwdp_tcscpy       wcscpy_s
@@ -89,6 +91,7 @@ void WIN_IMPL_API(HaltSystem)();
 
 #define Lwdp_fprintf      fprintf
 #define Lwdp_sprintf      sprintf
+#define Lwdp_snprintf     _snprintf
 #define Lwdp_vstprintf    vsprintf
 
 #define Lwdp_tcscpy       strcpy_s

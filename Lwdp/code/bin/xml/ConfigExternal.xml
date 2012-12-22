@@ -198,6 +198,11 @@
 		<Property> 
 			<Version>1.0</Version>
 			<ModuleDir>../../../../code/bin/Plugins/TcpServer.dll</ModuleDir>
+			<DbIp>127.0.0.1</DbIp>
+			<DbUser>root</DbUser>
+			<DbPassword>lifesgood</DbPassword>
+			<DbSelect>test</DbSelect>
+			<DbPort>3306</DbPort>
 		</Property>
 		<TableSet>
 		</TableSet>
@@ -209,8 +214,22 @@
 		<Property> 
 			<Version>1.0</Version>
 			<ModuleDir>../../../../code/bin/Plugins/ACDevice.dll</ModuleDir>
+			<InitSql>select * from gate_info where gate_id = %d</InitSql>
+			<ConfigSql>select * from gate_info where gate_id = %d</ConfigSql>
+			<CardSql>insert into card_swipecard(card_id, scenery_id, gate_id, card_type, action, checkin_time) 
+			                            VALUES ('%s', '%s', %d, %d, %d, '%x')
+			</CardSql>
+			
 		</Property>
 		<TableSet>
+			<PropertyTable Name = "GateInfoCol">
+				<GateIdCol>gate_id</GateIdCol>
+				<SceneryIdCol>scenery_id</SceneryIdCol>
+				<ManufacturerCol>manufacturer</ManufacturerCol>
+				<PositionCol>position</PositionCol>
+				<typeCol>gate_type</typeCol>
+			</PropertyTable>
+		
 		</TableSet>
 		<Script Name = "ACDevice">
 		</Script>

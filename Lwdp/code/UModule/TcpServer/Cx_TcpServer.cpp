@@ -3,6 +3,7 @@
 
 #include <Interface/ConfigMgr/Ix_ConfigMgr.h>
 #include <Interface/LogMgr/Ix_LogMgr.h>
+#include <Interface/DbMgr/Ix_DbMgr.h>
 #include <Interface/TimerMgr/Ix_TimerMgr.h>
 
 #include "../Interface/TcpServer/Ix_TcpServer.h"
@@ -10,6 +11,7 @@
 #include "../Interface/ZmqBackend/Ix_ZmqBackend.h"
 #include "../Interface/ACDevice/Ix_ACDevice.h"
 
+#include "TcpServerDef.h"
 #include "TcpServerErrno.h"
 #include "Cx_TcpServer.h"
 
@@ -45,6 +47,77 @@ LWRESULT Cx_TcpServer::Init()
 
 	GET_OBJECT_RET(ZmqBackend, iZmqBackend, LWDP_GET_OBJECT_ERROR);
 	RINOK(iZmqBackend->Init());
+
+	GET_OBJECT_RET(ConfigMgr, iConfigMgr, LWDP_GET_OBJECT_ERROR);
+
+	std::string strDbIp 		= std::string(LW_TCPSERVER_DB_IP_DEFAULT);
+	std::string strDbUserName 	= std::string(LW_TCPSERVER_DB_USER_DEFAULT);
+	std::string strDbPassword 	= std::string(LW_TCPSERVER_DB_PASSWORD);
+	std::string strDbName 		= std::string(LW_TCPSERVER_DB_SELECT_DBNAME);
+	uint32_     DbPort 		    = LW_TCPSERVER_DB_PORT_DEFAULT;
+	
+	XPropertys propDbIp;
+	iConfigMgr->GetModulePropEntry(LW_TCPSERVER_MODULE_NAME, LW_TCPSERVER_DB_IP_NAME, propDbIp);
+	if(!propDbIp[0].propertyText.empty())
+	{
+		strDbIp = propDbIp[0].propertyText;
+	}
+	else
+	{
+		LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::WARNING, 
+					   "Can't Find <DbIp> In Config File, Default(%s)", strDbIp.c_str());
+	}
+
+	XPropertys propDbUserName;
+	iConfigMgr->GetModulePropEntry(LW_TCPSERVER_MODULE_NAME, LW_TCPSERVER_DB_USER_NAME, propDbUserName);
+	if(!propDbUserName[0].propertyText.empty())
+	{
+		strDbUserName = propDbUserName[0].propertyText;
+	}
+	else
+	{
+		LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::WARNING, 
+					   "Can't Find <DbUser> In Config File, Default(%s)", strDbUserName.c_str());
+	}
+
+	XPropertys propDbPassword;
+	iConfigMgr->GetModulePropEntry(LW_TCPSERVER_MODULE_NAME, LW_TCPSERVER_DB_PASSWORD_NAME, propDbPassword);
+	if(!propDbPassword[0].propertyText.empty())
+	{
+		strDbPassword = propDbPassword[0].propertyText;
+	}
+	else
+	{
+		LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::WARNING, 
+					   "Can't Find <DbPassword> In Config File, Default(%s)", strDbPassword.c_str());
+	}
+
+	XPropertys propDbName;
+	iConfigMgr->GetModulePropEntry(LW_TCPSERVER_MODULE_NAME, LW_TCPSERVER_DB_SELECT_DB_NAME, propDbName);
+	if(!propDbName[0].propertyText.empty())
+	{
+		strDbName = propDbName[0].propertyText;
+	}
+	else
+	{
+		LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::WARNING, 
+					   "Can't Find <DbName> In Config File, Default(%s)", strDbName.c_str());
+	}
+
+	XPropertys propDbPort;
+	iConfigMgr->GetModulePropEntry(LW_TCPSERVER_MODULE_NAME, LW_TCPSERVER_DB_PORT_NAME, propDbPort);
+	if(!propDbPort[0].propertyText.empty())
+	{
+		DbPort = atol(propDbPort[0].propertyText.c_str());
+	}
+	else
+	{
+		LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::WARNING, 
+					   "Can't Find <DbPort> In Config File, Default(%d)", DbPort);
+	}	
+
+	GET_OBJECT_RET(DbMgr, iDbMgr, 0);	
+	RINOK(iDbMgr->Open(strDbIp.c_str(), strDbUserName.c_str(), strDbPassword.c_str(), strDbName.c_str(), DbPort, 0));
 
 	GET_OBJECT_RET(ACDevice, iACDevice, LWDP_GET_OBJECT_ERROR);
 	RINOK(iACDevice->Init());
