@@ -21,7 +21,8 @@ namespace CON
 {
 enum CALLBACK_LINE_ERR_ENUM
 {
-	CONSOLE_EXIT = 1
+	CONSOLE_EXIT = 1,
+	CONSOLE_BREAK
 };
 };
 Cx_ConsoleMgr::Cx_ConsoleMgr()
@@ -70,10 +71,13 @@ LWRESULT Cx_ConsoleMgr::RunConsole()
 	        res = CallBackCommand(commandList);          /*处理命令，跳到相应函数*/
 	        if(res != LWDP_OK)
 	    	{
+				if(CON::CONSOLE_BREAK== res)
+				{
+					break;
+				}
 				if(CON::CONSOLE_EXIT == res)
 				{
-					//std::cout << "Bye!" << std::endl;
-						break;
+					goto GOOD_BYE;
 				}
 	    	}
 		}
@@ -83,6 +87,10 @@ LWRESULT Cx_ConsoleMgr::RunConsole()
 			iLogMgr->LogSwitch(true);   //
 		}
     }
+
+GOOD_BYE:
+	std::cout << "Bye!" << std::endl;
+	
 	return LWDP_OK;
 }
 
@@ -107,9 +115,12 @@ LWRESULT Cx_ConsoleMgr::CallBackCommand(COMMAND_LINE& command_line)
 
 	COMMAND_LINE::iterator lineIter = command_line.begin();
 	
-	if(*lineIter == "break")
-		return CON::CONSOLE_EXIT;
+	if(*lineIter == "b")
+		return CON::CONSOLE_BREAK;
 
+	if(*lineIter == "q!")
+		return CON::CONSOLE_EXIT;
+	
 	COMMAND_MAP::iterator iter = mCommandMap.find(*lineIter);
 	if(iter == mCommandMap.end())
 	{

@@ -184,16 +184,14 @@ LWRESULT Cx_ACDevice::DeviceInitMsgProcess(const uint8_* ret_msg, uint32_ ret_ms
 				   "[Received] REQ:%x REQCODE: %x, checkResult: %x deviceType: %x sceneryId: %s", 
 			       zmqMsg->deviceId, zmqMsg->msgCode, msgBody->checkResult, msgBody->deviceType, msgBody->sceneryId);
 
-	std::ostringstream tmps;
-	tmps << Cx_ACDevice::mInitSql <<"'" << zmqMsg->deviceId << "'";
-	std::string strTemp = tmps.str();
-	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::DEBUG,
-				   "Select Db Str(%s)", strTemp.c_str());
+	char_ buffer[2048] = {0};
+	Api_snprintf(buffer, 2047, Cx_ACDevice::mInitSql.c_str(), zmqMsg->deviceId);
+
 
 	GET_OBJECT_RET(DbMgr, iDbMgr, LWDP_GET_OBJECT_ERROR);
 	Cx_Interface<Ix_DbQuery> gateQuery;
 	LWRESULT queryRes = 0;
-	if((queryRes = iDbMgr->QuerySQL(strTemp, gateQuery)) != LWDP_OK)
+	if((queryRes = iDbMgr->QuerySQL(buffer, gateQuery)) != LWDP_OK)
 	{
 		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR, 
 				       "Msg(%d) DB Select Table Error", zmqMsg->msgCode);
@@ -245,7 +243,8 @@ LWRESULT Cx_ACDevice::DeviceInitMsgProcess(const uint8_* ret_msg, uint32_ ret_ms
 	std::string scidCol   = Cx_ACDevice::gateInfoTable[LW_ACDEVICE_GATE_INFO_SCENERY_ID_COL].propertyText;
 	std::string scidValue = gateQuery->GetStringField(scidCol, "");
 	ASSERT_CHECK_HALT(LWDP_PLUGIN_LOG, !scidValue.empty(), "scidValue Empty");
-	if(scidValue != std::string((char_ *)msgBody->sceneryId, sizeof(msgBody->sceneryId)))
+	std::string clientScId = std::string((char_ *)msgBody->sceneryId, sizeof(msgBody->sceneryId));
+	if(scidValue != clientScId)
 	{
 		retCode = TS_SERVER_CHECK_OK_RECONFIG;
 		retStr = "sceneryId reconfig";
@@ -327,22 +326,22 @@ LWRESULT Cx_ACDevice::DeviceConfigMsgProcess(const uint8_* ret_msg, uint32_ ret_
 				   "[Received] REQ:%x REQCODE: %x", 
 			       zmqMsg->deviceId, zmqMsg->msgCode);
 
-	std::ostringstream tmps;
-	tmps << Cx_ACDevice::mConfigSql <<"'" << zmqMsg->deviceId << "'";
-	std::string strTemp = tmps.str();
+	char_ buffer[2048] = {0};
+	Api_snprintf(buffer, 2047, Cx_ACDevice::mConfigSql.c_str(), zmqMsg->deviceId);
+
 	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::DEBUG,
-				   "Config Select Db Str(%s)", strTemp.c_str());
+				   "Config Select Db Str(%s)", buffer);
 
 	GET_OBJECT_RET(DbMgr, iDbMgr, LWDP_GET_OBJECT_ERROR);
 	Cx_Interface<Ix_DbQuery> gateQuery;
 	LWRESULT queryRes = 0;
 	uint32_ retCode = 0;
 	char_*  retMsg  = "NO ERROR!";
-	if((queryRes = iDbMgr->QuerySQL(strTemp, gateQuery)) != LWDP_OK)
+	if((queryRes = iDbMgr->QuerySQL(buffer, gateQuery)) != LWDP_OK)
 	{
 		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR, 
 				       "Msg(%d) DB Select(%s) Table Error", 
-				       zmqMsg->msgCode, strTemp.c_str());
+				       zmqMsg->msgCode, buffer);
 		
 		retCode = TS_SERVER_DB_ERR;
 		retMsg  = "Db Error";
@@ -353,7 +352,7 @@ LWRESULT Cx_ACDevice::DeviceConfigMsgProcess(const uint8_* ret_msg, uint32_ ret_
 	{
 		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR, 
 				       "Msg(%d) Can't Find id(%d) Select(%s) Table Error", 
-				       zmqMsg->msgCode, zmqMsg->deviceId, strTemp.c_str());
+				       zmqMsg->msgCode, zmqMsg->deviceId, buffer);
 		
 		retCode = TS_SERVER_ID_ERROR;
 		retMsg  = "Can't Find ID";
@@ -536,7 +535,6 @@ typedef struct stru_dev_card_data_rsp_msg
 LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(const uint8_* ret_msg, uint32_ ret_msg_len, 
 								      Data_Ptr& send_msg, uint32_& send_msg_len)
 {
-return -1;
 	if(!ret_msg)
 	{
 		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR, 
