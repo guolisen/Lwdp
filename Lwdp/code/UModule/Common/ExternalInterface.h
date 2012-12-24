@@ -10,6 +10,7 @@
 
 LWDP_NAMESPACE_BEGIN;
 
+#define TS_GATE_ID_STRU_LEN      32
 
 ////////////////////////////////////////////
 // Tcp Msg Body
@@ -34,7 +35,7 @@ typedef struct stru_tcp_server_msg
 ////////////////////////////////////////////
 typedef struct stru_zmq_server_msg
 {
-	uint32_ deviceId;
+	char_   deviceId[TS_GATE_ID_STRU_LEN];
 	uint32_ msgCode;
 	uint8_  customMsgBody[0];  //ПыПўМе
 }TS_ZMQ_SERVER_MSG;

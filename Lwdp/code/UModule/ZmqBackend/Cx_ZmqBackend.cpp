@@ -295,7 +295,7 @@ LWRESULT Cx_ZmqBackend::CallBackZmqMsg(const uint8_* recv_msg, uint32_ recv_msg_
 	uint8_* errMsg = new uint8_[sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY)] ;
 	memset(errMsg, 0, sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY));
 	TS_ZMQ_SERVER_MSG* errStru = (TS_ZMQ_SERVER_MSG*)errMsg;
-	errStru->deviceId = zMsg->deviceId;
+	memcpy(errStru->deviceId, zMsg->deviceId, sizeof(errStru->deviceId));
 	errStru->msgCode  = TS_SERVER_UNKNOW_MSG;
 	TS_SERVER_ERROR_BODY* errBody = (TS_SERVER_ERROR_BODY*)errStru->customMsgBody;
 	errBody->errMsgCode = zMsg->msgCode;

@@ -167,7 +167,7 @@ LWRESULT Cx_ACDevice::DeviceInitMsgProcess(const uint8_* ret_msg, uint32_ ret_ms
 
 		memset(errMsg, 0, sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY));
 		TS_ZMQ_SERVER_MSG* errStru = (TS_ZMQ_SERVER_MSG*)errMsg;
-		errStru->deviceId = zmqMsg->deviceId;
+		memcpy(errStru->deviceId, zmqMsg->deviceId, sizeof(errStru->deviceId));
 		errStru->msgCode  = TS_SERVER_MSG_BODY_ERR;
 		TS_SERVER_ERROR_BODY* errBody = (TS_SERVER_ERROR_BODY*)errStru->customMsgBody;
 		errBody->errMsgCode = zmqMsg->msgCode;
@@ -181,11 +181,14 @@ LWRESULT Cx_ACDevice::DeviceInitMsgProcess(const uint8_* ret_msg, uint32_ ret_ms
 
 	//check
 	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::INFO,
-				   "[Received] REQ:%x REQCODE: %x, checkResult: %x deviceType: %x sceneryId: %s", 
-			       zmqMsg->deviceId, zmqMsg->msgCode, msgBody->checkResult, msgBody->deviceType, msgBody->sceneryId);
+				   "[Received] REQ:%s REQCODE: %x, checkResult: %x deviceType: %x sceneryId: %s", 
+			       std::string((char_*)zmqMsg->deviceId, sizeof(zmqMsg->deviceId)).c_str(), 
+			       zmqMsg->msgCode, msgBody->checkResult, msgBody->deviceType, 
+				   std::string((char_*)msgBody->sceneryId, sizeof(msgBody->sceneryId)).c_str());
 
 	char_ buffer[2048] = {0};
-	Api_snprintf(buffer, 2047, Cx_ACDevice::mInitSql.c_str(), zmqMsg->deviceId);
+	Api_snprintf(buffer, 2047, Cx_ACDevice::mInitSql.c_str(), 
+		         std::string((char_*)zmqMsg->deviceId, sizeof(zmqMsg->deviceId)).c_str());
 
 
 	GET_OBJECT_RET(DbMgr, iDbMgr, LWDP_GET_OBJECT_ERROR);
@@ -202,7 +205,7 @@ LWRESULT Cx_ACDevice::DeviceInitMsgProcess(const uint8_* ret_msg, uint32_ ret_ms
 
 		memset(errMsg, 0, sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY));
 		TS_ZMQ_SERVER_MSG* errStru = (TS_ZMQ_SERVER_MSG*)errMsg;
-		errStru->deviceId = zmqMsg->deviceId;
+		memcpy(errStru->deviceId, zmqMsg->deviceId, sizeof(errStru->deviceId));
 		errStru->msgCode  = TS_SERVER_DB_ERR;
 		TS_SERVER_ERROR_BODY* errBody = (TS_SERVER_ERROR_BODY*)errStru->customMsgBody;
 		errBody->errMsgCode = zmqMsg->msgCode;
@@ -224,7 +227,7 @@ LWRESULT Cx_ACDevice::DeviceInitMsgProcess(const uint8_* ret_msg, uint32_ ret_ms
 		memset(returnMsg, 0, sizeof(TS_ZMQ_SERVER_MSG) + 
 							 sizeof(TS_SERVER_INIT_RSP_BODY));
 		TS_ZMQ_SERVER_MSG* retStru = (TS_ZMQ_SERVER_MSG*)returnMsg;
-		retStru->deviceId = zmqMsg->deviceId;
+		memcpy(retStru->deviceId, zmqMsg->deviceId, sizeof(retStru->deviceId));
 		retStru->msgCode  = TS_SERVER_INIT_RSP_MSG; //
 		TS_SERVER_INIT_RSP_BODY* retBody = (TS_SERVER_INIT_RSP_BODY*)retStru->customMsgBody;
 		retBody->msgResult = TS_SERVER_ID_ERROR;
@@ -246,8 +249,8 @@ LWRESULT Cx_ACDevice::DeviceInitMsgProcess(const uint8_* ret_msg, uint32_ ret_ms
 	std::string clientScId = std::string((char_ *)msgBody->sceneryId, sizeof(msgBody->sceneryId));
 	if(scidValue != clientScId)
 	{
-		retCode = TS_SERVER_CHECK_OK_RECONFIG;
-		retStr = "sceneryId reconfig";
+		//retCode = TS_SERVER_CHECK_OK_RECONFIG;
+		//retStr = "sceneryId reconfig";
 	}
 
 	std::string positionCol   = Cx_ACDevice::gateInfoTable[LW_ACDEVICE_GATE_INFO_POSITION_COL].propertyText;
@@ -277,7 +280,7 @@ LWRESULT Cx_ACDevice::DeviceInitMsgProcess(const uint8_* ret_msg, uint32_ ret_ms
 	memset(returnMsg, 0, sizeof(TS_ZMQ_SERVER_MSG) + 
 						 sizeof(TS_SERVER_INIT_RSP_BODY));
 	TS_ZMQ_SERVER_MSG* retStru = (TS_ZMQ_SERVER_MSG*)returnMsg;
-	retStru->deviceId = zmqMsg->deviceId;
+	memcpy(retStru->deviceId, zmqMsg->deviceId, sizeof(retStru->deviceId));
 	retStru->msgCode  = TS_SERVER_INIT_RSP_MSG; //
 	TS_SERVER_INIT_RSP_BODY* retBody = (TS_SERVER_INIT_RSP_BODY*)retStru->customMsgBody;
 	retBody->msgResult = retCode;
@@ -324,11 +327,13 @@ LWRESULT Cx_ACDevice::DeviceConfigMsgProcess(const uint8_* ret_msg, uint32_ ret_
 
 	//check
 	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::INFO,
-				   "[Received] REQ:%x REQCODE: %x", 
-			       zmqMsg->deviceId, zmqMsg->msgCode);
+				   "[Received] REQ:%s REQCODE: %x", 
+			       std::string((char_*)zmqMsg->deviceId, sizeof(zmqMsg->deviceId)).c_str(), 
+			       zmqMsg->msgCode);
 
 	char_ buffer[2048] = {0};
-	Api_snprintf(buffer, 2047, Cx_ACDevice::mConfigSql.c_str(), zmqMsg->deviceId);
+	Api_snprintf(buffer, 2047, Cx_ACDevice::mConfigSql.c_str(), 
+				 std::string((char_*)zmqMsg->deviceId, sizeof(zmqMsg->deviceId)).c_str());
 
 	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::DEBUG,
 				   "Config Select Db Str(%s)", buffer);
@@ -353,7 +358,9 @@ LWRESULT Cx_ACDevice::DeviceConfigMsgProcess(const uint8_* ret_msg, uint32_ ret_
 	{
 		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR, 
 				       "Msg(%d) Can't Find id(%d) Select(%s) Table Error", 
-				       zmqMsg->msgCode, zmqMsg->deviceId, buffer);
+				       zmqMsg->msgCode, 
+				       std::string((char_*)zmqMsg->deviceId, sizeof(zmqMsg->deviceId)).c_str(), 
+				       buffer);
 		
 		retCode = TS_SERVER_ID_ERROR;
 		retMsg  = "Can't Find ID";
@@ -370,7 +377,7 @@ LWRESULT Cx_ACDevice::DeviceConfigMsgProcess(const uint8_* ret_msg, uint32_ ret_
 		memset(returnMsg, 0, sizeof(TS_ZMQ_SERVER_MSG) + 
 							 sizeof(TS_DEV_CONFIG_RSP_BODY));
 		TS_ZMQ_SERVER_MSG* retStru = (TS_ZMQ_SERVER_MSG*)returnMsg;
-		retStru->deviceId = zmqMsg->deviceId;
+		memcpy(retStru->deviceId, zmqMsg->deviceId, sizeof(retStru->deviceId));
 		retStru->msgCode  = TS_SERVER_CONFIG_RSP_MSG; //
 		TS_DEV_CONFIG_RSP_BODY* retBody = (TS_DEV_CONFIG_RSP_BODY*)retStru->customMsgBody;
 		retBody->msgResult = TS_SERVER_OK;
@@ -380,7 +387,7 @@ LWRESULT Cx_ACDevice::DeviceConfigMsgProcess(const uint8_* ret_msg, uint32_ ret_
 		std::string scidCol   = Cx_ACDevice::gateInfoTable[LW_ACDEVICE_GATE_INFO_SCENERY_ID_COL].propertyText;
 		std::string scidValue = gateQuery->GetStringField(scidCol, "");
 		ASSERT_CHECK_HALT(LWDP_PLUGIN_LOG, !scidValue.empty(), "scidValue Empty");
-		memcpy(retBody->sceneryId, scidValue.c_str(), 8);
+		memcpy(retBody->sceneryId, scidValue.c_str(), sizeof(retBody->sceneryId));
 
 		//position
 		std::string positionCol   = Cx_ACDevice::gateInfoTable[LW_ACDEVICE_GATE_INFO_POSITION_COL].propertyText;
@@ -395,8 +402,8 @@ LWRESULT Cx_ACDevice::DeviceConfigMsgProcess(const uint8_* ret_msg, uint32_ ret_
 		retBody->deviceType = atol(typeValue.c_str());
 
 		//deviceId
-		retBody->deviceId = retStru->deviceId;  //�豸����	
-		memcpy(retBody->sceneryDomainId, "1234567", 8);
+		memcpy(retBody->deviceId, retStru->deviceId, sizeof(retBody->deviceId));
+		//memcpy(retBody->sceneryDomainId, "1234567", 8);
 	}
 
 	tmpData.reset(returnMsg);
@@ -414,7 +421,7 @@ ERR_RET:
 	memset(returnErrMsg, 0, sizeof(TS_ZMQ_SERVER_MSG) + 
 					        sizeof(TS_DEV_CONFIG_RSP_BODY));
 	TS_ZMQ_SERVER_MSG* retStru = (TS_ZMQ_SERVER_MSG*)returnErrMsg;
-	retStru->deviceId = zmqMsg->deviceId;
+	memcpy(retStru->deviceId, zmqMsg->deviceId, sizeof(retStru->deviceId));
 	retStru->msgCode  = TS_SERVER_CONFIG_RSP_MSG; //
 	TS_DEV_CONFIG_RSP_BODY* retBody = (TS_DEV_CONFIG_RSP_BODY*)retStru->customMsgBody;
 	retBody->msgResult = retCode;
@@ -468,7 +475,7 @@ LWRESULT Cx_ACDevice::DeviceHBMsgProcess(const uint8_* ret_msg, uint32_ ret_msg_
 		uint8_* errMsg = new uint8_[sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY)] ;
 		memset(errMsg, 0, sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY));
 		TS_ZMQ_SERVER_MSG* errStru = (TS_ZMQ_SERVER_MSG*)errMsg;
-		errStru->deviceId = zmqMsg->deviceId;
+		memcpy(errStru->deviceId, zmqMsg->deviceId, sizeof(errStru->deviceId));
 		errStru->msgCode  = TS_SERVER_MSG_BODY_ERR;
 		TS_SERVER_ERROR_BODY* errBody = (TS_SERVER_ERROR_BODY*)errStru->customMsgBody;
 		errBody->errMsgCode = zmqMsg->msgCode;
@@ -482,8 +489,9 @@ LWRESULT Cx_ACDevice::DeviceHBMsgProcess(const uint8_* ret_msg, uint32_ ret_msg_
 
 	//check
 	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::INFO,
-				   "[Received] REQ:%x REQCODE: %x, statusCode: %x", 
-			       zmqMsg->deviceId, zmqMsg->msgCode, msgBody->statusCode);
+				   "[Received] REQ:%s REQCODE: %x, statusCode: %x", 
+			       std::string((char_*)zmqMsg->deviceId, sizeof(zmqMsg->deviceId)).c_str(), 
+			       zmqMsg->msgCode, msgBody->statusCode);
 
 
 	uint8_* returnMsg = new uint8_[sizeof(TS_ZMQ_SERVER_MSG) + 
@@ -493,7 +501,7 @@ LWRESULT Cx_ACDevice::DeviceHBMsgProcess(const uint8_* ret_msg, uint32_ ret_msg_
 	memset(returnMsg, 0, sizeof(TS_ZMQ_SERVER_MSG) + 
 					     sizeof(TS_DEV_STATUS_RSP_BODY));
 	TS_ZMQ_SERVER_MSG* retStru = (TS_ZMQ_SERVER_MSG*)returnMsg;
-	retStru->deviceId = zmqMsg->deviceId;
+	memcpy(retStru->deviceId, zmqMsg->deviceId, sizeof(retStru->deviceId));
 	retStru->msgCode  = TS_SERVER_HEART_BEAT_RSP_MSG; //
 	TS_DEV_STATUS_RSP_BODY* retBody = (TS_DEV_STATUS_RSP_BODY*)retStru->customMsgBody;
 	retBody->msgResult = TS_SERVER_OK;
@@ -532,7 +540,6 @@ typedef struct stru_dev_card_data_rsp_msg
 
 */
 
-
 LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(const uint8_* ret_msg, uint32_ ret_msg_len, 
 								      Data_Ptr& send_msg, uint32_& send_msg_len)
 {
@@ -554,7 +561,7 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(const uint8_* ret_msg, uint32_ re
 		uint8_* errMsg = new uint8_[sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY)] ;
 		memset(errMsg, 0, sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY));
 		TS_ZMQ_SERVER_MSG* errStru = (TS_ZMQ_SERVER_MSG*)errMsg;
-		errStru->deviceId = zmqMsg->deviceId;
+		memcpy(errStru->deviceId, zmqMsg->deviceId, sizeof(errStru->deviceId));
 		errStru->msgCode  = TS_SERVER_MSG_BODY_ERR;
 		TS_SERVER_ERROR_BODY* errBody = (TS_SERVER_ERROR_BODY*)errStru->customMsgBody;
 		errBody->errMsgCode = zmqMsg->msgCode;
@@ -567,18 +574,23 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(const uint8_* ret_msg, uint32_ re
 	}
 
 	//check
+	std::string carIdStr;
+	IntArrayToStr(msgBody->cardId, TS_CARD_ID_STRU_LEN, carIdStr);
 	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::INFO,
-				   "[Received] REQ:%x REQCODE: %x, cardId: %s sceneryId: %s cardType: %x actionId: %x checkinTime: %x", 
-			       zmqMsg->deviceId, zmqMsg->msgCode, msgBody->cardId, msgBody->sceneryId, 
+				   "[Received] REQ:%s REQCODE: %x, cardId: %s sceneryId: %s cardType: %x actionId: %x checkinTime: %x", 
+			       std::string((char_*)zmqMsg->deviceId, sizeof(zmqMsg->deviceId)).c_str(), 
+			       zmqMsg->msgCode, carIdStr.c_str(), 
+			       std::string((char_*)msgBody->sceneryId, sizeof(msgBody->sceneryId)).c_str(), 
 			       msgBody->cardType, msgBody->actionId, msgBody->checkinTime);
 
-	char_ buffer[2048] = {0};
-	Api_snprintf(buffer, 2047, Cx_ACDevice::mCardSql.c_str(), std::string((char_ *)msgBody->cardId, sizeof(msgBody->cardId)).c_str(), 
+	char_ buffer[3072] = {0};
+	Api_snprintf(buffer, 3071, Cx_ACDevice::mCardSql.c_str(),  carIdStr.c_str(), 
 				  											   std::string((char_ *)msgBody->sceneryId, sizeof(msgBody->sceneryId)).c_str(),
-				  								               zmqMsg->deviceId,
+				  								               std::string((char_*)zmqMsg->deviceId, sizeof(zmqMsg->deviceId)).c_str(),
 				  								               msgBody->cardType,
 				  								               msgBody->actionId,
-				  								               msgBody->checkinTime);
+				  								               "2012-12-24 14:53:12");
+				  								               //msgBody->checkinTime);
 
 
 	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::DEBUG,
@@ -606,7 +618,7 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(const uint8_* ret_msg, uint32_ re
 	memset(returnMsg, 0, sizeof(TS_ZMQ_SERVER_MSG) + 
 						 sizeof(TS_DEVICE_CARD_DATA_RSP_BODY));
 	TS_ZMQ_SERVER_MSG* retStru = (TS_ZMQ_SERVER_MSG*)returnMsg;
-	retStru->deviceId = zmqMsg->deviceId;
+	memcpy(retStru->deviceId, zmqMsg->deviceId, sizeof(retStru->deviceId));
 	retStru->msgCode  = TS_SERVER_CARD_DATA_RSP_MSG; //
 	TS_DEVICE_CARD_DATA_RSP_BODY* retBody = (TS_DEVICE_CARD_DATA_RSP_BODY*)retStru->customMsgBody;
 	retBody->msgResult = retCode;
@@ -664,7 +676,7 @@ LWRESULT Cx_ACDevice::DeviceBulkDataMsgProcess(const uint8_* ret_msg, uint32_ re
 		uint8_* errMsg = new uint8_[sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY)] ;
 		memset(errMsg, 0, sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY));
 		TS_ZMQ_SERVER_MSG* errStru = (TS_ZMQ_SERVER_MSG*)errMsg;
-		errStru->deviceId = zmqMsg->deviceId;
+		memcpy(errStru->deviceId, zmqMsg->deviceId, sizeof(errStru->deviceId));
 		errStru->msgCode  = TS_SERVER_MSG_BODY_ERR;
 		TS_SERVER_ERROR_BODY* errBody = (TS_SERVER_ERROR_BODY*)errStru->customMsgBody;
 		errBody->errMsgCode = zmqMsg->msgCode;
@@ -679,7 +691,8 @@ LWRESULT Cx_ACDevice::DeviceBulkDataMsgProcess(const uint8_* ret_msg, uint32_ re
 	//check	
 	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::INFO,
 				   "[Received] REQ:%x REQCODE: %x, cardDataCount: %x", 
-			       zmqMsg->deviceId, zmqMsg->msgCode, msgBody->cardDataCount);
+			       std::string((char_*)zmqMsg->deviceId, sizeof(zmqMsg->deviceId)).c_str(), 
+			       zmqMsg->msgCode, msgBody->cardDataCount);
 
 	uint32_ tmpLen = sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_DEVICE_BULK_DATA_REQ_BODY) +
 				     (sizeof(TS_DEVICE_CARD_DATA_REQ_BODY) * msgBody->cardDataCount);
@@ -692,7 +705,7 @@ LWRESULT Cx_ACDevice::DeviceBulkDataMsgProcess(const uint8_* ret_msg, uint32_ re
 		uint8_* errMsg = new uint8_[sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY)] ;
 		memset(errMsg, 0, sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY));
 		TS_ZMQ_SERVER_MSG* errStru = (TS_ZMQ_SERVER_MSG*)errMsg;
-		errStru->deviceId = zmqMsg->deviceId;
+		memcpy(errStru->deviceId, zmqMsg->deviceId, sizeof(errStru->deviceId));
 		errStru->msgCode  = TS_SERVER_MSG_BODY_ERR;
 		TS_SERVER_ERROR_BODY* errBody = (TS_SERVER_ERROR_BODY*)errStru->customMsgBody;
 		errBody->errMsgCode = zmqMsg->msgCode;
@@ -708,21 +721,24 @@ LWRESULT Cx_ACDevice::DeviceBulkDataMsgProcess(const uint8_* ret_msg, uint32_ re
 	uint32_ i = 0;
 	std::vector<std::string> errList;
 	TS_DEVICE_CARD_DATA_REQ_BODY* tmpBody = NULL;
+	uint32_ newLen = sizeof(TS_ZMQ_SERVER_MSG) + 
+					 sizeof(TS_DEVICE_CARD_DATA_REQ_BODY);
+	uint8_* fakeMsg = new uint8_[newLen];
+
 	for(i=0; i<msgBody->cardDataCount; ++i)
 	{
+		memset(fakeMsg, 0, newLen);
 		tmpBody = (TS_DEVICE_CARD_DATA_REQ_BODY*)msgBody->cardDataEntry;
-
-		
 		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::INFO,
-					   "[Received] REQ:%x REQCODE: %x, cardId: %s sceneryId: %s cardType: %x actionId: %x checkinTime: %x", 
-				       zmqMsg->deviceId, zmqMsg->msgCode, tmpBody[i].cardId, tmpBody[i].sceneryId, 
+					   "[Received] REQ:%x REQCODE: %x, cardId: %x sceneryId: %s cardType: %x actionId: %x checkinTime: %x", 
+				       std::string((char_*)zmqMsg->deviceId, sizeof(zmqMsg->deviceId)).c_str(), 
+				       zmqMsg->msgCode, tmpBody[i].cardId,
+						std::string((char_*)tmpBody[i].sceneryId, sizeof(tmpBody[i].sceneryId)).c_str(),
 				       tmpBody[i].cardType, tmpBody[i].actionId, tmpBody[i].checkinTime);
 
-		uint8_* fakeMsg = new uint8_[sizeof(TS_ZMQ_SERVER_MSG) + 
-							    sizeof(TS_DEVICE_CARD_DATA_REQ_BODY)];
 
 		TS_ZMQ_SERVER_MSG* fakeCardMsg = (TS_ZMQ_SERVER_MSG*)fakeMsg;
-		fakeCardMsg->deviceId = zmqMsg->deviceId;
+		memcpy(fakeCardMsg->deviceId, zmqMsg->deviceId, sizeof(fakeCardMsg->deviceId));
 		fakeCardMsg->msgCode  = zmqMsg->msgCode;
 		memcpy(fakeCardMsg->customMsgBody, &tmpBody[i], sizeof(TS_DEVICE_CARD_DATA_REQ_BODY));
 
@@ -734,8 +750,11 @@ LWRESULT Cx_ACDevice::DeviceBulkDataMsgProcess(const uint8_* ret_msg, uint32_ re
 		{
 			errList.push_back(std::string((char_*)tmpBody[i].cardId, sizeof(tmpBody[i].cardId)));
 		}
+
+		
 	}
 
+	DELETE_MULTIPLE(fakeMsg);
 	uint8_* returnMsg = NULL;
 	uint32_ retSize = 0;
 	if(!errList.empty())
@@ -755,7 +774,7 @@ LWRESULT Cx_ACDevice::DeviceBulkDataMsgProcess(const uint8_* ret_msg, uint32_ re
 	ASSERT_CHECK_RET(LWDP_PLUGIN_LOG, LWDP_MALLOC_MEMORY_ERROR, returnMsg, "Malloc Error");
 
 	TS_ZMQ_SERVER_MSG* retStru = (TS_ZMQ_SERVER_MSG*)returnMsg;
-	retStru->deviceId = zmqMsg->deviceId;
+	memcpy(retStru->deviceId, zmqMsg->deviceId, sizeof(retStru->deviceId));
 	retStru->msgCode  = TS_SERVER_BULK_DATA_RSP_MSG; //
 	TS_DEVICE_BULK_DATA_RSP_BODY* retBody = (TS_DEVICE_BULK_DATA_RSP_BODY*)retStru->customMsgBody;
 	retBody->msgResult = TS_SERVER_OK;
@@ -777,6 +796,25 @@ LWRESULT Cx_ACDevice::DeviceBulkDataMsgProcess(const uint8_* ret_msg, uint32_ re
 	send_msg     = tmpData;
 	send_msg_len = retSize;
 	
+	return LWDP_OK;
+}
+
+LWRESULT Cx_ACDevice::IntArrayToStr(uint32_ int_array[], uint32_ size, std::string& ret_str)
+{
+	std::string tagStr("%x");
+	std::string formatStr("");
+	char_* tmpStrCell = new char_[32];
+	for(uint32_ i = 0; i < size; ++i)
+	{
+		memset(tmpStrCell, 0, 32);
+		Api_snprintf(tmpStrCell, 32, "%x", int_array[i]);
+		if(!int_array[i])
+			break;
+		formatStr += std::string(tmpStrCell);
+	}
+
+	ret_str = formatStr;
+	DELETE_MULTIPLE(tmpStrCell);
 	return LWDP_OK;
 }
 

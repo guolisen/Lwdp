@@ -198,10 +198,10 @@
 		<Property> 
 			<Version>1.0</Version>
 			<ModuleDir>../../../../code/bin/Plugins/TcpServer.dll</ModuleDir>
-			<DbIp>127.0.0.1</DbIp>
-			<DbUser>root</DbUser>
-			<DbPassword>lifesgood</DbPassword>
-			<DbSelect>test</DbSelect>
+			<DbIp>10.3.18.27</DbIp>
+			<DbUser>ptsf</DbUser>
+			<DbPassword>123456</DbPassword>
+			<DbSelect>scenic</DbSelect>
 			<DbPort>3306</DbPort>
 		</Property>
 		<TableSet>
@@ -214,20 +214,21 @@
 		<Property> 
 			<Version>1.0</Version>
 			<ModuleDir>../../../../code/bin/Plugins/ACDevice.dll</ModuleDir>
-			<InitSql>select * from gate_info where gate_id = %d</InitSql>
-			<ConfigSql>select * from gate_info where gate_id = %d</ConfigSql>
-			<CardSql>insert into card_swipecard(card_id, scenery_id, gate_id, card_type, action, checkin_time) 
-			                            VALUES ('%s', '%s', %d, %d, %d, '%x')
+			<InitSql>select * from sc_gate where gate_id = '%s'</InitSql>
+			<ConfigSql>select * from sc_gate where gate_id = '%s'</ConfigSql>
+			<CardSql>insert into sc_swiping(card_id, gate_id, scenic_id, ticket_type, action, create_time) 
+			                                VALUES (%s, '%s', '%s', %d, %d, '%s')
 			</CardSql>
 			
 		</Property>
 		<TableSet>
 			<PropertyTable Name = "GateInfoCol">
 				<GateIdCol>gate_id</GateIdCol>
-				<SceneryIdCol>scenery_id</SceneryIdCol>
+				<SceneryIdCol>scenic_id</SceneryIdCol>
 				<ManufacturerCol>manufacturer</ManufacturerCol>
 				<PositionCol>position</PositionCol>
-				<typeCol>gate_type</typeCol>
+				<typeCol>type</typeCol>
+				<statusCol>status</statusCol>
 			</PropertyTable>
 		
 		</TableSet>

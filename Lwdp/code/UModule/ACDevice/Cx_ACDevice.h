@@ -37,6 +37,10 @@ public:
 	static std::string mConfigSql;
 	static std::string mCardSql;
 	static XPropertyTable gateInfoTable;
+
+protected:
+	LWRESULT IntArrayToStr(uint32_ int_array[], uint32_ size, std::string& ret_str);
+	
 private:
     // From Ix_ACDevice
     virtual LWRESULT Init();

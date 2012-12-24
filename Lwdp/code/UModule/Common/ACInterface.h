@@ -10,6 +10,9 @@
 
 LWDP_NAMESPACE_BEGIN;
 
+#define TS_CARD_ID_STRU_LEN      12
+#define TS_SCENERY_ID_STRU_LEN   32
+
 ////////////////////////////////////////////
 // Client Msg Code
 ////////////////////////////////////////////
@@ -59,7 +62,7 @@ enum TS_RET_MSG_RESAULT_ENUM
 typedef struct stru_device_init_req_body
 {	
 	uint32_ deviceType;  //设备类型
-	uint8_  sceneryId[8];  //景点ID
+	char_   sceneryId[TS_SCENERY_ID_STRU_LEN];  //景点ID
 	uint32_ checkResult; //设备自检结果
 	uint32_ position;  //
 }TS_DEVICE_INIT_REQ_BODY;
@@ -81,10 +84,10 @@ typedef struct stru_dev_config_body
 {	
 	uint32_  msgResult; //消息发送结果
 	char_    msgResultData[32];  // 可能的错误信息字符串
-	uint32_  deviceId;  //设备类型
+	char_    deviceId[TS_GATE_ID_STRU_LEN];  //设备类型
 	uint32_  deviceType;  //设备类型
-	uint8_   sceneryId[8];  //景点ID
-	uint8_   sceneryDomainId[8];  //景区ID
+	char_    sceneryId[TS_SCENERY_ID_STRU_LEN];  //景点ID
+	//uint8_   sceneryDomainId[8];  //景区ID
 	uint32_  sceneryPostion;  //偏移
 }TS_DEV_CONFIG_RSP_BODY;
 
@@ -112,8 +115,8 @@ typedef struct stru_dev_status_rsp_body
 
 typedef struct stru_dev_card_data_msg
 {
-	uint8_   cardId[8];  
-    uint8_   sceneryId[8];
+	uint32_  cardId[TS_CARD_ID_STRU_LEN];  
+    char_    sceneryId[TS_SCENERY_ID_STRU_LEN];
 	uint32_  cardType;   //卡类型
 	uint32_  actionId;   //行为ID
 	time_t   checkinTime;
