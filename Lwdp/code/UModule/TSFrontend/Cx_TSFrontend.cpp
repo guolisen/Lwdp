@@ -394,7 +394,7 @@ LWRESULT Cx_TSFrontend::Init()
 	RINOK(createTcpServer(portNum));
 
 	GET_OBJECT_RET(EventMgr, iEventMgr, 0);
-	RINOK(iEventMgr->InitLoop(0));
+	RINOK(iEventMgr->InitLoop(LWBACKEND_EPOLL));
 	mIoWatcher = iEventMgr->CreateWatcher(LWEV::WATCHER_IO, (WATCHER_CALLBACK)io_callback, mServerSocket, LW_READ);
 	if(!mIoWatcher)
 	{
@@ -440,7 +440,7 @@ void Cx_TSFrontend::setAddress(const char* ip, int port, struct sockaddr_in* add
 {
     memset(addr, 0, sizeof(*addr));
     addr->sin_family=AF_INET;
-	addr->sin_addr.s_addr = inet_addr(ip);
+	addr->sin_addr.s_addr = INADDR_ANY;
     addr->sin_port = htons(port);
 }
 
@@ -458,7 +458,7 @@ std::string Cx_TSFrontend::addressToString(struct sockaddr_in* addr)
 
 LWRESULT Cx_TSFrontend::createTcpServer(int port)
 {
-    mServerSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    mServerSocket = socket(AF_INET, SOCK_STREAM, 0);
 	if(mServerSocket <= 0)
 	{
 		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, "Socket Create Failed");
@@ -469,8 +469,14 @@ LWRESULT Cx_TSFrontend::createTcpServer(int port)
     setReuseaddr(mServerSocket);
     sockaddr_in addr;
     setAddress("0.0.0.0", port, &addr);
-    bind(mServerSocket, (struct sockaddr*)&addr, sizeof(addr));
-
+    int ret = bind(mServerSocket, (struct sockaddr*)&addr, sizeof(addr));
+    if(ret)
+    {
+		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, 
+			           "Bind(port:%d) Socket Failed", port);
+		return TSFRONTEND::LWDP_BIND_SOCKET_ERR;
+    }
+	
 	GET_OBJECT_RET(ConfigMgr, iConfigMgr, LWDP_GET_OBJECT_ERROR);
 	XPropertys propBlock;
 	iConfigMgr->GetModulePropEntry(LW_TSFRONTEND_MODULE_NAME, LW_TSFRONTEND_MODULE_BLOCK_NAME, propBlock);
@@ -486,7 +492,13 @@ LWRESULT Cx_TSFrontend::createTcpServer(int port)
 					   "Can't Find <ListenBlock> In Config File, Default(%d)", blockNum);
 	}
 	
-    listen(mServerSocket, blockNum); // 
+	ret = listen(mServerSocket, blockNum); //
+	if(ret)
+    {
+		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, 
+			           "Listen Socket Failed");
+		return TSFRONTEND::LWDP_LISTEN_SOCKET_ERR;
+    }
     return LWDP_OK;
 }
 
