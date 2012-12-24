@@ -117,6 +117,9 @@ LWRESULT Cx_TcpServer::Init()
 	}	
 
 	GET_OBJECT_RET(DbMgr, iDbMgr, 0);	
+	LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::INFO, 
+				   "Connect to Db Server Ip:%s User:%s DbName:%s Port:%d", 
+				   strDbIp.c_str(), strDbUserName.c_str(), strDbName.c_str(), DbPort);
 	RINOK(iDbMgr->Open(strDbIp.c_str(), strDbUserName.c_str(), strDbPassword.c_str(), strDbName.c_str(), DbPort, 0));
 
 	GET_OBJECT_RET(ACDevice, iACDevice, LWDP_GET_OBJECT_ERROR);

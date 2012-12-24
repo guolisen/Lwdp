@@ -118,30 +118,30 @@ LWRESULT MsgProcess(const uint8_* ret_msg, uint32_ ret_msg_len,
 /*
 enum TS_INIT_MSG_RESAULT_ENUM
 {	
-	TS_SERVER_CHECK_OK_RECONFIG = 1, //ÑéÖ¤³É¹¦£¬µ«ÐëÖØÅä²ÎÊý
-	TS_SERVER_ID_ERROR,     //Éè±¸IDÎ´Öª´íÎó
-	TS_SERVER_TYPE_ERROR,   //Éè±¸ÀàÐÍ´íÎó
-	TS_SERVER_UNKNOW_ERROR //Î´Öª´íÎó£¬¾ßÌå¼û¸½¼ÓÐÅÏ¢
+	TS_SERVER_CHECK_OK_RECONFIG = 1, //ï¿½ï¿½Ö¤ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	TS_SERVER_ID_ERROR,     //ï¿½è±¸IDÎ´Öªï¿½ï¿½ï¿½ï¿½
+	TS_SERVER_TYPE_ERROR,   //ï¿½è±¸ï¿½ï¿½ï¿½Í´ï¿½ï¿½ï¿½
+	TS_SERVER_UNKNOW_ERROR //Î´Öªï¿½ï¿½ï¿½ó£¬¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
 };
 typedef struct stru_device_init_req_body
 {	
-	uint32_ deviceType;  //Éè±¸ÀàÐÍ
-	uint8_  sceneryId[8];  //¾°µãID
-	uint32_ checkResult; //Éè±¸×Ô¼ì½á¹û
+	uint32_ deviceType;  //ï¿½è±¸ï¿½ï¿½ï¿½ï¿½
+	uint8_  sceneryId[8];  //ï¿½ï¿½ï¿½ï¿½ID
+	uint32_ checkResult; //ï¿½è±¸ï¿½Ô¼ï¿½ï¿½ï¿½
 }TS_DEVICE_INIT_REQ_BODY;
 
 typedef struct stru_server_init_rsp_body
 {	
-	uint32_  msgResult; //ÏûÏ¢·¢ËÍ½á¹û
-	char_    msgResultData[32];  // ¿ÉÄÜµÄ´íÎóÐÅÏ¢×Ö·û´®
-	uint32_  appendDataLength; //¸½¼ÓÊý¾Ý³¤¶È
+	uint32_  msgResult; //ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½Í½ï¿½ï¿½
+	char_    msgResultData[32];  // ï¿½ï¿½ï¿½ÜµÄ´ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½Ö·ï¿½
+	uint32_  appendDataLength; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½
 	uint8_*  appendData;
 }TS_SERVER_INIT_RSP_BODY;
 typedef struct stru_zmq_server_msg
 {
 	uint32_ deviceId;
 	uint32_ msgCode;
-	uint8_  customMsgBody[0];  //ÏûÏ¢Ìå
+	uint8_  customMsgBody[0];  //ï¿½ï¿½Ï¢ï¿½ï¿½
 }TS_ZMQ_SERVER_MSG;
 */
 LWRESULT Cx_ACDevice::DeviceInitMsgProcess(const uint8_* ret_msg, uint32_ ret_msg_len, 
@@ -294,18 +294,18 @@ LWRESULT Cx_ACDevice::DeviceInitMsgProcess(const uint8_* ret_msg, uint32_ ret_ms
 /*
 enum TS_SERVER_CONFIG_MSG_RESAULT_ENUM
 {	
-	TS_SERVER_CONFIG_ERROR = 1, //Ê§°Ü
+	TS_SERVER_CONFIG_ERROR = 1, //Ê§ï¿½ï¿½
 };
 
 typedef struct stru_dev_config_body
 {	
-	uint32_  msgResult; //ÏûÏ¢·¢ËÍ½á¹û
-	char_    msgResultData[32];  // ¿ÉÄÜµÄ´íÎóÐÅÏ¢×Ö·û´®
-	uint32_  deviceId;  //Éè±¸ÀàÐÍ
-	uint32_  deviceType;  //Éè±¸ÀàÐÍ
-	uint8_   sceneryId[8];  //¾°µãID
-	uint8_   sceneryDomainId[8];  //¾°ÇøID
-	uint32_  sceneryPostion;  //Æ«ÒÆ
+	uint32_  msgResult; //ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½Í½ï¿½ï¿½
+	char_    msgResultData[32];  // ï¿½ï¿½ï¿½ÜµÄ´ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½Ö·ï¿½
+	uint32_  deviceId;  //ï¿½è±¸ï¿½ï¿½ï¿½ï¿½
+	uint32_  deviceType;  //ï¿½è±¸ï¿½ï¿½ï¿½ï¿½
+	uint8_   sceneryId[8];  //ï¿½ï¿½ï¿½ï¿½ID
+	uint8_   sceneryDomainId[8];  //ï¿½ï¿½ï¿½ï¿½ID
+	uint32_  sceneryPostion;  //Æ«ï¿½ï¿½
 }TS_DEV_CONFIG_BODY;
 */
 LWRESULT Cx_ACDevice::DeviceConfigMsgProcess(const uint8_* ret_msg, uint32_ ret_msg_len, 
@@ -318,6 +318,7 @@ LWRESULT Cx_ACDevice::DeviceConfigMsgProcess(const uint8_* ret_msg, uint32_ ret_
 		return LWDP_PARAMETER_ERROR;
 	}
 	
+	uint8_* returnMsg = NULL;
 	Data_Ptr tmpData;
 	TS_ZMQ_SERVER_MSG* zmqMsg = (TS_ZMQ_SERVER_MSG*)ret_msg;
 
@@ -360,7 +361,7 @@ LWRESULT Cx_ACDevice::DeviceConfigMsgProcess(const uint8_* ret_msg, uint32_ ret_
 		goto ERR_RET;
 	}
 
-	uint8_* returnMsg = new uint8_[sizeof(TS_ZMQ_SERVER_MSG) + 
+	returnMsg = new uint8_[sizeof(TS_ZMQ_SERVER_MSG) +
 							   sizeof(TS_DEV_CONFIG_RSP_BODY)];
 
 	{
@@ -394,7 +395,7 @@ LWRESULT Cx_ACDevice::DeviceConfigMsgProcess(const uint8_* ret_msg, uint32_ ret_
 		retBody->deviceType = atol(typeValue.c_str());
 
 		//deviceId
-		retBody->deviceId = retStru->deviceId;  //Éè±¸ÀàÐÍ	
+		retBody->deviceId = retStru->deviceId;  //ï¿½è±¸ï¿½ï¿½ï¿½ï¿½	
 		memcpy(retBody->sceneryDomainId, "1234567", 8);
 	}
 
@@ -429,20 +430,20 @@ ERR_RET:
 /*
 enum TS_SERVER_HB_MSG_RESAULT_ENUM
 {	
-	TS_SERVER_HB_ERROR = 1, //Ê§°Ü
+	TS_SERVER_HB_ERROR = 1, //Ê§ï¿½ï¿½
 };
 
 typedef struct stru_dev_status_req_body
 {	
-	uint32_ statusCode;  //×´Ì¬Âë
+	uint32_ statusCode;  //×´Ì¬ï¿½ï¿½
 }TS_DEV_STATUS_REQ_BODY;
 
 typedef struct stru_dev_status_rsp_body
 {	
-	uint32_  msgResult; //ÏûÏ¢·¢ËÍ½á¹û
-	char_    msgResultData[32];  // ¿ÉÄÜµÄ´íÎóÐÅÏ¢×Ö·û´®
-	uint32_  oprationCode;  //²Ù×÷Âë
-	uint32_  appendDataLength; //¸½¼ÓÊý¾Ý³¤¶È
+	uint32_  msgResult; //ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½Í½ï¿½ï¿½
+	char_    msgResultData[32];  // ï¿½ï¿½ï¿½ÜµÄ´ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½Ö·ï¿½
+	uint32_  oprationCode;  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	uint32_  appendDataLength; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½
 	uint8_   appendData[1];
 }TS_DEV_STATUS_RSP_BODY;
 
@@ -509,23 +510,23 @@ LWRESULT Cx_ACDevice::DeviceHBMsgProcess(const uint8_* ret_msg, uint32_ ret_msg_
 /*
 enum TS_CARD_DATA_MSG_RESAULT_ENUM
 {	
-	TS_SERVER_WRITE_DATA_ERROR = 1, //Ð´Êý¾Ý¿âÊ§°Ü
-	TS_SERVER_UNKONW_ERROR,     //Éè±¸IDÎ´Öª´íÎó
+	TS_SERVER_WRITE_DATA_ERROR = 1, //Ð´ï¿½ï¿½Ý¿ï¿½Ê§ï¿½ï¿½
+	TS_SERVER_UNKONW_ERROR,     //ï¿½è±¸IDÎ´Öªï¿½ï¿½ï¿½ï¿½
 };
 
 typedef struct stru_dev_card_data_msg
 {
 	uint8_   cardId[8];  
     uint8_   sceneryId[8];
-	uint32_  cardType;   //¿¨ÀàÐÍ
-	uint32_  actionId;   //ÐÐÎªID
+	uint32_  cardType;   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	uint32_  actionId;   //ï¿½ï¿½ÎªID
 	time_t   checkinTime;
 }TS_DEVICE_CARD_DATA_REQ_BODY;
 
 typedef struct stru_dev_card_data_rsp_msg
 {	
-	uint32_  msgResult; //ÏûÏ¢·¢ËÍ½á¹û
-	char_    msgResultData[32];  // ¿ÉÄÜµÄ´íÎóÐÅÏ¢×Ö·û´®
+	uint32_  msgResult; //ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½Í½ï¿½ï¿½
+	char_    msgResultData[32];  // ï¿½ï¿½ï¿½ÜµÄ´ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½Ö·ï¿½
 } TS_DEVICE_CARD_DATA_RSP_BODY;
 
 
@@ -624,20 +625,20 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(const uint8_* ret_msg, uint32_ re
 /*
 enum TS_BULK_DATA_MSG_RESAULT_ENUM
 {	
-	TS_SERVER_BULK_WRITE_DATA_ERROR = 1, //Ð´Êý¾Ý¿âÊ§°Ü
-	TS_SERVER_BULK_UNKONW_ERROR,     //Éè±¸IDÎ´Öª´íÎó
+	TS_SERVER_BULK_WRITE_DATA_ERROR = 1, //Ð´ï¿½ï¿½Ý¿ï¿½Ê§ï¿½ï¿½
+	TS_SERVER_BULK_UNKONW_ERROR,     //ï¿½è±¸IDÎ´Öªï¿½ï¿½ï¿½ï¿½
 };
 
 typedef struct stru_dev_bulk_data_msg
 {  
-	uint32_  cardDataCount;   //¿¨Êý¾ÝÌõÄ¿¸öÊý
-	uint8_*  cardDataEntry;   //ÐÐÎªID
+	uint32_  cardDataCount;   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½
+	uint8_*  cardDataEntry;   //ï¿½ï¿½ÎªID
 }TS_DEVICE_BULK_DATA_REQ_BODY;
 
 typedef struct stru_dev_bulk_data_rsp_msg
 {	
-	uint32_  msgResult; //ÏûÏ¢·¢ËÍ½á¹û
-	char_    msgResultData[32];  // ¿ÉÄÜµÄ´íÎóÐÅÏ¢×Ö·û´®
+	uint32_  msgResult; //ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½Í½ï¿½ï¿½
+	char_    msgResultData[32];  // ï¿½ï¿½ï¿½ÜµÄ´ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½Ö·ï¿½
 	uint32_  errorEntryNum;
 	uint8_   errCardId[1]; //errorEntryNum * 8
 } TS_DEVICE_BULK_DATA_RSP_BODY;

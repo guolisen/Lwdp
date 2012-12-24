@@ -2,7 +2,7 @@
 #define ACDEVICE_INTERFACE_H
 
 #include <Interface/Ix_Object.h>
-#include "../Interface/ACDevice/Id_ACDevice.h"
+#include "Id_ACDevice.h"
 
 namespace NLwdp {
 

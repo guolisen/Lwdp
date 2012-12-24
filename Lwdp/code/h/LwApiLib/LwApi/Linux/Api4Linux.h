@@ -18,6 +18,7 @@
 #include <wchar.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <errno.h>
 #include <arpa/inet.h>
 #include <LwDp.h>
 
@@ -112,7 +113,8 @@ MODULEID LoadLibraryA(const char_* filename);
 
 #define Lwdp_fprintf      fprintf
 #define Lwdp_sprintf      sprintf
-#define Lwdp_snprintf     portable_snprintf   //LINUX_IMPL_API(snprintf)
+#define Lwdp_snprintf     snprintf//portable_snprintf   //LINUX_IMPL_API(snprintf)
+#define Lwdp_vsnprintf    vsnprintf
 #define Lwdp_vstprintf    vsprintf
 
 #define Lwdp_tcscpy       strcpy

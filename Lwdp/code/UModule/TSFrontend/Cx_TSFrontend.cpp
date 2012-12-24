@@ -58,6 +58,14 @@ void* thread_callback(void* vfd)
 	int accept_conn = *(int*)vfd;
 	free(vfd);
 
+	int more = 0;
+	uint32_ index = 0;
+	TS_TCP_SERVER_MSG* sendMsgStru = NULL;
+	uint8_* sendBuf = NULL;
+	TS_TCP_SERVER_MSG* clientMsg = NULL;
+	uint32_ headLen = sizeof(uint32_) * 2;
+	int zmq_ret_len = 0;
+	SocketHandle requester = NULL;
 	//////////////////////////////////////////////////////////////
 	// Recv Tcp Message from Client
 	//////////////////////////////////////////////////////////////
@@ -102,7 +110,7 @@ void* thread_callback(void* vfd)
 	LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::NOTICE, 
 				   "Recv Client Message: (%s)", recvBuf);	
 
-	TS_TCP_SERVER_MSG* clientMsg = (TS_TCP_SERVER_MSG*)recvBuf;
+	clientMsg = (TS_TCP_SERVER_MSG*)recvBuf;
 	if(clientMsg->msgLength > ret_len)
 	{
 		clientMsg->statusCode = TS_SERVER_TCP_MSG_LEN_ERROR;
@@ -112,7 +120,7 @@ void* thread_callback(void* vfd)
 		goto ERR_TCP_TAG;
 	}
 
-	SocketHandle requester = iZmqMgr->GetNewSocket(gContextHandle, LWDP_REQ);
+	requester = iZmqMgr->GetNewSocket(gContextHandle, LWDP_REQ);
 	RINOKR(iZmqMgr->Connect(requester, gConnStr.c_str()), NULL);
 
 	//Set Option
@@ -130,8 +138,8 @@ void* thread_callback(void* vfd)
 	// Send Message to ZMQ
 	//////////////////////////////////////////////////////////////
 
-	uint32_ headLen = sizeof(uint32_) * 2;
-	int zmq_ret_len = iZmqMgr->Send(requester, recvBuf + headLen, ret_len - headLen, 0);
+	headLen     = sizeof(uint32_) * 2;
+	zmq_ret_len = iZmqMgr->Send(requester, recvBuf + headLen, ret_len - headLen, 0);
 	if(zmq_ret_len != ret_len - headLen)
 	{	
 		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, 
@@ -143,7 +151,6 @@ void* thread_callback(void* vfd)
 	//////////////////////////////////////////////////////////////
 	// Recv Message from ZMQ
 	//////////////////////////////////////////////////////////////
-	int more = 0;
 	while (1) 
 	{
 		GET_OBJECT_RET(ZMessage, iMsg, 0);
@@ -175,10 +182,9 @@ void* thread_callback(void* vfd)
 	//////////////////////////////////////////////////////////////
 	// Tcp Send to Client
 	//////////////////////////////////////////////////////////////
-	uint32_ index = 0;
-	uint8_* sendBuf = (uint8_ *)malloc(sizeof(TS_TCP_SERVER_MSG) + iZMessage->Size());
+	sendBuf = (uint8_ *)malloc(sizeof(TS_TCP_SERVER_MSG) + iZMessage->Size());
 	ASSERT_CHECK_RET(LWDP_PLUGIN_LOG, 0, sendBuf, "TSFrontend thread Malloc Send Buf ERROR");
-	TS_TCP_SERVER_MSG* sendMsgStru = (TS_TCP_SERVER_MSG*)sendBuf;
+	sendMsgStru = (TS_TCP_SERVER_MSG*)sendBuf;
 	sendMsgStru->msgLength = sizeof(TS_TCP_SERVER_MSG) + iZMessage->Size();
 	sendMsgStru->statusCode = 0;
 	memcpy(sendMsgStru->tcpMsgBody, iZMessage->Data(), iZMessage->Size());
@@ -235,7 +241,7 @@ ERR_TCP_TAG:
 #ifdef LWDP_PLATFORM_DEF_WIN32
 	int rc = closesocket(accept_conn);
 #else
-	int rc = ::close (accept_conn);
+	::close (accept_conn);
 #endif
 
 	return NULL;
@@ -270,7 +276,7 @@ void io_callback(LoopHandle loop, CBHandle w, int revents)
 #endif
 
     struct sockaddr_in addr;
-    int addr_size = sizeof(addr);
+    socklen_t addr_size = sizeof(addr);
 	int* accept_conn = (int*)malloc(sizeof(int));
 	while ((*accept_conn = accept(fd, (struct sockaddr *)&addr, &addr_size)) < 0)
 	{

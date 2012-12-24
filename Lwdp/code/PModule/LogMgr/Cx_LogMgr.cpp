@@ -360,11 +360,11 @@ LWRESULT Cx_LogMgr::RegisteAppender(MyAppenderFctory_Ptr appender_fctory)
     #define VSNPRINTF _vsnprintf
 #else
 #ifdef LOG4CPP_HAVE_SNPRINTF
-    #define VSNPRINTF vsnprintf
+    #define VSNPRINTF vsnprintfss
 #else
 /* use alternative snprintf() from http://www.ijs.si/software/snprintf/ */
 
-#define VSNPRINTF Api_snprintf
+#define VSNPRINTF Api_vsnprintf
 
 #endif // LOG4CPP_HAVE_SNPRINTF
 #endif // _MSC_VER
@@ -463,13 +463,15 @@ ERR_TAG:
 
 int32_ Cx_LogMgr::ConsoleLogLevel(COMMAND_LINE& command_line)
 {
+	log4cpp::Category* categoryAll = NULL;
+	log4cpp::Category* category = NULL;
 	COMMAND_LINE::iterator iter = command_line.begin();
 	if(command_line.size() != 3)
 		goto ERR_TAG;
 	++iter;
 	if(iter->empty())
 		goto ERR_TAG;
-	
+
 	if(*iter == "all")
 	{
 		XPropertyTable levelTable;
@@ -480,7 +482,7 @@ int32_ Cx_LogMgr::ConsoleLogLevel(COMMAND_LINE& command_line)
 			goto ERR_TAG;
 		for(uint32_ i=0; levelTable[i].ThereIs; ++i)
 		{ 	
-			log4cpp::Category* categoryAll = log4cpp::Category::exists(levelTable[i][LW_LOGMGR_TABLE_MODULE_NAME_TAG]);	
+			categoryAll = log4cpp::Category::exists(levelTable[i][LW_LOGMGR_TABLE_MODULE_NAME_TAG]);
 			if(categoryAll)
 			{
 				if(*iter == std::string("0"))
@@ -525,7 +527,7 @@ int32_ Cx_LogMgr::ConsoleLogLevel(COMMAND_LINE& command_line)
 		return LWDP_OK;
 	}
 	
-	log4cpp::Category* category = log4cpp::Category::exists(*iter);
+	category = log4cpp::Category::exists(*iter);
 	if(category)
 	{
 		std::cout << "Can't Find Module Name!" << std::endl;

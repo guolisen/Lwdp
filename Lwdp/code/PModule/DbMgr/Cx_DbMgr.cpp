@@ -49,11 +49,10 @@ LWRESULT Cx_DbMgr::Open(const std::string& host, const std::string& user, const 
 	if(NULL == mDb) 
 		goto EXT;
 
-	//Èç¹ûÁ¬½ÓÊ§°Ü£¬·µ»ØNULL¡£¶ÔÓÚ³É¹¦µÄÁ¬½Ó£¬·µ»ØÖµÓëµÚ1¸ö²ÎÊýµÄÖµÏàÍ¬¡£
+
 	if (NULL == mysql_real_connect(mDb, host.c_str(), user.c_str(), passwd.c_str(), db.c_str(), port, NULL, client_flag))
 		goto EXT;
-	//Ñ¡ÔñÖÆ¶¨µÄÊý¾Ý¿âÊ§°Ü
-	//0±íÊ¾³É¹¦£¬·Ç0Öµ±íÊ¾³öÏÖ´íÎó¡£
+
 	if (mysql_select_db(mDb, db.c_str()) != 0) 
 	{
 		mysql_close(mDb);
@@ -63,12 +62,16 @@ LWRESULT Cx_DbMgr::Open(const std::string& host, const std::string& user, const 
 
 	return LWDP_OK;
 EXT:
-	//³õÊ¼»¯mysql½á¹¹Ê§°Ü
+	LWDP_LOG_PRINT("DbMgr", LWDP_LOG_MGR::ERR, 
+					"mysql_real_connect Error(%s)!", mysql_error(mDb));
+
+	//ï¿½ï¿½Ê¼ï¿½ï¿½mysqlï¿½á¹¹Ê§ï¿½ï¿½
 	if (mDb != NULL )
 	{
 		mysql_close( mDb );
 		mDb = NULL;
 	}
+
 	
 	return LWDP_OPEN_DB_ERROR;
 }
@@ -81,14 +84,13 @@ void Cx_DbMgr::Close()
 	}
 }
 
-/* ·µ»Ø¾ä±ú */
+
 DBHandle Cx_DbMgr::GetDbHandle()
 {
 	return (DBHandle)mDb;
 }
 
-/* ´¦Àí·µ»Ø¶àÐÐµÄ²éÑ¯£¬·µ»ØÓ°ÏìµÄÐÐÊý */
-//·µ»ØÒýÓÃÊÇÒòÎªÔÚCppMySQLQueryµÄ¸³Öµ¹¹Ôìº¯ÊýÖÐÒª°Ñ³ÉÔ±±äÁ¿_mysql_resÖÃÎª¿Õ
+
 LWRESULT Cx_DbMgr::QuerySQL(const std::string& sql, Cx_Interface<Ix_DbQuery>& query_out)
 {
 	Cx_Interface<Ix_DbQuery> tmpQuery(CLSID_DbQuery);
@@ -113,31 +115,30 @@ LWRESULT Cx_DbMgr::QuerySQL(const std::string& sql, Cx_Interface<Ix_DbQuery>& qu
 	query->mMysqlRes 	= mysql_store_result(mDb);
 	query->mRow 		= mysql_fetch_row(query->mMysqlRes);
 	query->mRow_count 	= mysql_num_rows(query->mMysqlRes); 
-	//µÃµ½×Ö¶ÎÊýÁ¿
+	//ï¿½Ãµï¿½ï¿½Ö¶ï¿½ï¿½ï¿½ï¿½ï¿½
 	query->mField_count = mysql_num_fields(query->mMysqlRes);
 
 	query_out = tmpQuery;
 	return LWDP_OK;
 }
 
-/* Ö´ÐÐ·Ç·µ»Ø½á¹û²éÑ¯ */
 int32_ Cx_DbMgr::ExecSQL(const std::string& sql)
 {
 	int ret = 0;
 	if((ret = mysql_real_query(mDb, sql.c_str(), sql.size())))
 	{
-		//Ö´ÐÐ²éÑ¯Ê§°Ü
+		//Ö´ï¿½Ð²ï¿½Ñ¯Ê§ï¿½ï¿½
 		LWDP_LOG_PRINT("DbMgr", LWDP_LOG_MGR::ERR, 
 					   "ExecSQL mysql_real_query(%s) ret Error(%x)(%s)", 
 					   sql.c_str(), ret, mysql_error(mDb));
 		return LWDP_ERROR;
 	}
 
-	//µÃµ½ÊÜÓ°ÏìµÄÐÐÊý
+	//ï¿½Ãµï¿½ï¿½ï¿½Ó°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	return (int32_)mysql_affected_rows(mDb) ;
 }
 
-/* ²âÊÔmysql·þÎñÆ÷ÊÇ·ñ´æ»î */
+
 int32_ Cx_DbMgr::Ping()
 {
 	if(mysql_ping(mDb) == 0)
@@ -146,7 +147,7 @@ int32_ Cx_DbMgr::Ping()
 		return LWDP_PING_DB_ERROR; 
 }
 
-/* ¹Ø±Õmysql ·þÎñÆ÷ */
+
 int32_ Cx_DbMgr::ShutDown()
 {
 	if(mysql_shutdown(mDb, SHUTDOWN_DEFAULT) == 0)
@@ -155,7 +156,7 @@ int32_ Cx_DbMgr::ShutDown()
 		return LWDP_SHUTDOWN_DB_ERROR;
 }
 
-/* Ö÷Òª¹¦ÄÜ:ÖØÐÂÆô¶¯mysql ·þÎñÆ÷ */
+
 int32_ Cx_DbMgr::Reboot()
 {
 	if(!mysql_reload(mDb))
@@ -165,15 +166,12 @@ int32_ Cx_DbMgr::Reboot()
 }
 
 
-/*
-* ËµÃ÷:ÊÂÎñÖ§³ÖInnoDB or BDB±íÀàÐÍ
-*/
-/* Ö÷Òª¹¦ÄÜ:¿ªÊ¼ÊÂÎñ */
+
 int32_ Cx_DbMgr::StartTransaction()
 {
 	int ret = 0;
-	if(ret = mysql_real_query(mDb, "START TRANSACTION" ,
-						     (unsigned long)strlen("START TRANSACTION")))
+	if((ret = mysql_real_query(mDb, "START TRANSACTION" ,
+						     (unsigned long)strlen("START TRANSACTION"))))
 	{
 		LWDP_LOG_PRINT("DbMgr", LWDP_LOG_MGR::ERR, 
 					   "mysql_real_query(START TRANSACTION) ret Error(%x: %s)", 
@@ -185,7 +183,7 @@ int32_ Cx_DbMgr::StartTransaction()
 
 }
 
-/* Ö÷Òª¹¦ÄÜ:Ìá½»ÊÂÎñ */
+
 int32_ Cx_DbMgr::Commit()
 {
 	int ret = 0;
@@ -201,7 +199,7 @@ int32_ Cx_DbMgr::Commit()
 	return LWDP_OK;
 }
 
-/* Ö÷Òª¹¦ÄÜ:»Ø¹öÊÂÎñ */
+
 int32_ Cx_DbMgr::Rollback()
 {
 	int ret = 0;
@@ -217,50 +215,50 @@ int32_ Cx_DbMgr::Rollback()
 	return LWDP_OK;
 }
 
-/* µÃµ½¿Í»§ÐÅÏ¢ */
+
 const std::string Cx_DbMgr::GetClientInfo()
 {
 	return static_cast<const std::string>(mysql_get_client_info());
 }
 
-/* Ö÷Òª¹¦ÄÜ:µÃµ½¿Í»§°æ±¾ÐÅÏ¢ */
+
 const long_ Cx_DbMgr::GetClientVersion()
 {
 	return static_cast<const long_>(mysql_get_client_version());
 }
 
-/* Ö÷Òª¹¦ÄÜ:µÃµ½Ö÷»úÐÅÏ¢ */
+
 const std::string Cx_DbMgr::GetHostInfo()
 {
 	return static_cast<const std::string>(mysql_get_host_info(mDb));
 }
 
-/* Ö÷Òª¹¦ÄÜ:µÃµ½·þÎñÆ÷ÐÅÏ¢ */
+
 const std::string Cx_DbMgr::GetServerInfo()
 {
 	return static_cast<const std::string>(mysql_get_server_info(mDb));
 }
 
-/*Ö÷Òª¹¦ÄÜ:µÃµ½·þÎñÆ÷°æ±¾ÐÅÏ¢*/
+
 const long_ Cx_DbMgr::GetServerVersion()
 {
 	return static_cast<const long_>(mysql_get_server_version(mDb));
 }
 
-/*Ö÷Òª¹¦ÄÜ:µÃµ½ µ±Ç°Á¬½ÓµÄÄ¬ÈÏ×Ö·û¼¯*/
+
 const std::string Cx_DbMgr::GetCharacterSetName()
 {
 	return static_cast<const std::string>(mysql_character_set_name(mDb));
 }
 
-/* µÃµ½ÏµÍ³Ê±¼ä */
+
 const std::string Cx_DbMgr::GetSysTime()
 {
 	//return ExecQueryGetSingValue("select now()");
 	return NULL;
 }
 
-/* ½¨Á¢ÐÂÊý¾Ý¿â */
+
 int32_ Cx_DbMgr::CreateDB(const std::string& name)
 {
 	std::string str;
@@ -278,7 +276,7 @@ int32_ Cx_DbMgr::CreateDB(const std::string& name)
 	return LWDP_OK;
 }
 
-/* É¾³ýÖÆ¶¨µÄÊý¾Ý¿â*/
+
 int32_ Cx_DbMgr::DropDB(const std::string& name)
 {
 	std::string str;
@@ -338,12 +336,12 @@ void Cx_DbQuery::freeRes()
 	}
 }
 
-uint32_ Cx_DbQuery::NumRow()//¶àÉÙÐÐ
+uint32_ Cx_DbQuery::NumRow()//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 {
 	return mRow_count;
 }
 
-int32_  Cx_DbQuery::NumFields()//¶àÉÙÁÐ
+int32_  Cx_DbQuery::NumFields()//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 {
 	return mField_count;
 }
@@ -353,19 +351,19 @@ int32_  Cx_DbQuery::FieldIndex(const std::string& szField)
 	if(NULL == mMysqlRes || szField.empty())
 		return -1;
 
-	mysql_field_seek(mMysqlRes, 0);//¶¨Î»µ½µÚ0ÁÐ
+	mysql_field_seek(mMysqlRes, 0);//ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½
 	uint32_ i = 0;
 	while(i < mField_count)
 	{
 		mField = mysql_fetch_field( mMysqlRes );
-		if(mField != NULL && (std::string(mField->name) == szField))//ÕÒµ½
+		if(mField != NULL && (std::string(mField->name) == szField))//ï¿½Òµï¿½
 			return i;
 		i++;
 	}
 	return -1;
 }
 
-//0...n-1ÁÐ
+//0...n-1ï¿½ï¿½
 const std::string Cx_DbQuery::FieldName(int32_ nCol)
 {
 	if(mMysqlRes == NULL)
@@ -437,7 +435,7 @@ double_ Cx_DbQuery::GetFloatField(const std::string& szField, double_ fNullValue
 	return atol(field.c_str());
 }
 
-//0...n-1ÁÐ
+//0...n-1ï¿½ï¿½
 const std::string Cx_DbQuery::GetStringField(int32_ nField, const std::string& szNullValue)
 {
 	if(NULL == mMysqlRes)
@@ -497,4 +495,3 @@ void Cx_DbQuery::Finalize()
 
 
 LWDP_NAMESPACE_END;
-

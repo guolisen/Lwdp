@@ -156,6 +156,16 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>LwApiLib/ComLib/Libev</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>LwApiLib/ComLib/log4cpp</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -226,12 +236,32 @@
 			<locationURI>PARENT-3-PROJECT_LOC/code/h/Config/LwDpConfig.h</locationURI>
 		</link>
 		<link>
+			<name>h/Interface/CommonUtilMgr</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>h/Interface/ConfigMgr</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>h/Interface/ConsoleMgr</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>h/Interface/DbMgr</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>h/Interface/DctMgr</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>h/Interface/EventMgr</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -261,12 +291,27 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>h/Interface/PerfMgr</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>h/Interface/PluginLoader</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>h/Interface/ScriptMgr</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>h/Interface/TimerMgr</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>h/Interface/ZmqMgr</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -359,6 +404,731 @@
 			<name>LwApiLib/ComLib/ConvStr/StringToInt.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/ConvStr/StringToInt.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Libev/ev.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Libev/ev.c</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/Makefile.in</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/Makefile.in</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/address.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/address.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/address.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/address.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/array.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/array.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/atomic_counter.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/atomic_counter.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/atomic_ptr.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/atomic_ptr.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/blob.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/blob.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/clock.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/clock.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/clock.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/clock.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/command.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/command.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/config.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/config.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/ctx.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/ctx.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/ctx.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/ctx.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/dealer.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/dealer.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/dealer.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/dealer.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/decoder.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/decoder.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/decoder.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/decoder.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/devpoll.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/devpoll.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/devpoll.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/devpoll.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/dist.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/dist.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/dist.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/dist.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/encoder.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/encoder.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/encoder.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/encoder.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/epoll.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/epoll.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/epoll.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/epoll.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/err.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/err.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/err.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/err.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/fd.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/fd.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/fq.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/fq.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/fq.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/fq.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/i_decoder.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/i_decoder.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/i_encoder.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/i_encoder.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/i_engine.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/i_engine.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/i_msg_sink.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/i_msg_sink.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/i_msg_source.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/i_msg_source.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/i_poll_events.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/i_poll_events.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/io_object.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/io_object.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/io_object.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/io_object.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/io_thread.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/io_thread.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/io_thread.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/io_thread.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/ip.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/ip.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/ip.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/ip.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/ipc_address.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/ipc_address.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/ipc_address.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/ipc_address.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/ipc_connecter.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/ipc_connecter.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/ipc_connecter.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/ipc_connecter.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/ipc_listener.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/ipc_listener.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/ipc_listener.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/ipc_listener.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/kqueue.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/kqueue.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/kqueue.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/kqueue.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/lb.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/lb.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/lb.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/lb.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/libzmq.pc.in</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/libzmq.pc.in</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/likely.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/likely.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/mailbox.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/mailbox.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/mailbox.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/mailbox.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/msg.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/msg.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/msg.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/msg.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/mtrie.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/mtrie.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/mtrie.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/mtrie.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/mutex.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/mutex.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/object.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/object.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/object.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/object.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/options.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/options.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/options.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/options.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/own.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/own.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/own.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/own.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/pair.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/pair.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/pair.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/pair.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/pgm_receiver.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/pgm_receiver.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/pgm_receiver.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/pgm_receiver.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/pgm_sender.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/pgm_sender.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/pgm_sender.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/pgm_sender.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/pgm_socket.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/pgm_socket.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/pgm_socket.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/pgm_socket.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/pipe.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/pipe.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/pipe.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/pipe.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/platform.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/platform.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/platform.hpp.in</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/platform.hpp.in</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/poll.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/poll.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/poll.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/poll.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/poller.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/poller.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/poller_base.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/poller_base.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/poller_base.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/poller_base.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/precompiled.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/precompiled.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/precompiled.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/precompiled.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/proxy.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/proxy.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/proxy.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/proxy.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/pub.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/pub.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/pub.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/pub.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/pull.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/pull.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/pull.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/pull.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/push.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/push.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/push.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/push.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/random.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/random.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/random.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/random.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/reaper.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/reaper.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/reaper.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/reaper.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/rep.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/rep.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/rep.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/rep.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/req.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/req.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/req.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/req.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/router.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/router.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/router.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/router.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/select.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/select.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/select.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/select.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/session_base.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/session_base.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/session_base.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/session_base.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/signaler.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/signaler.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/signaler.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/signaler.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/socket_base.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/socket_base.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/socket_base.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/socket_base.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/stdint.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/stdint.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/stream_engine.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/stream_engine.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/stream_engine.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/stream_engine.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/sub.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/sub.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/sub.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/sub.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/tcp.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/tcp.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/tcp.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/tcp.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/tcp_address.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/tcp_address.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/tcp_address.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/tcp_address.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/tcp_connecter.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/tcp_connecter.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/tcp_connecter.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/tcp_connecter.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/tcp_listener.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/tcp_listener.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/tcp_listener.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/tcp_listener.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/thread.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/thread.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/thread.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/thread.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/trie.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/trie.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/trie.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/trie.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/v1_decoder.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/v1_decoder.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/v1_decoder.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/v1_decoder.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/v1_encoder.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/v1_encoder.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/v1_encoder.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/v1_encoder.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/v1_protocol.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/v1_protocol.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/windows.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/windows.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/wire.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/wire.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/xpub.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/xpub.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/xpub.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/xpub.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/xsub.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/xsub.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/xsub.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/xsub.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/ypipe.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/ypipe.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/yqueue.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/yqueue.hpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/zmq.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/zmq.cpp</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/Zmq/zmq_utils.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/Zmq/zmq_utils.cpp</locationURI>
 		</link>
 		<link>
 			<name>LwApiLib/ComLib/log4cpp/AbortAppender.cpp</name>
@@ -631,29 +1401,14 @@
 			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/log4cpp/snprintf.c</locationURI>
 		</link>
 		<link>
-			<name>LwApiLib/ComLib/lua/Makefile</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/Makefile</locationURI>
-		</link>
-		<link>
 			<name>LwApiLib/ComLib/lua/lapi.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lapi.c</locationURI>
 		</link>
 		<link>
-			<name>LwApiLib/ComLib/lua/lapi.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lapi.h</locationURI>
-		</link>
-		<link>
 			<name>LwApiLib/ComLib/lua/lauxlib.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lauxlib.c</locationURI>
-		</link>
-		<link>
-			<name>LwApiLib/ComLib/lua/lauxlib.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lauxlib.h</locationURI>
 		</link>
 		<link>
 			<name>LwApiLib/ComLib/lua/lbaselib.c</name>
@@ -666,11 +1421,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lcode.c</locationURI>
 		</link>
 		<link>
-			<name>LwApiLib/ComLib/lua/lcode.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lcode.h</locationURI>
-		</link>
-		<link>
 			<name>LwApiLib/ComLib/lua/ldblib.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/ldblib.c</locationURI>
@@ -681,19 +1431,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/ldebug.c</locationURI>
 		</link>
 		<link>
-			<name>LwApiLib/ComLib/lua/ldebug.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/ldebug.h</locationURI>
-		</link>
-		<link>
 			<name>LwApiLib/ComLib/lua/ldo.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/ldo.c</locationURI>
-		</link>
-		<link>
-			<name>LwApiLib/ComLib/lua/ldo.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/ldo.h</locationURI>
 		</link>
 		<link>
 			<name>LwApiLib/ComLib/lua/ldump.c</name>
@@ -706,19 +1446,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lfunc.c</locationURI>
 		</link>
 		<link>
-			<name>LwApiLib/ComLib/lua/lfunc.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lfunc.h</locationURI>
-		</link>
-		<link>
 			<name>LwApiLib/ComLib/lua/lgc.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lgc.c</locationURI>
-		</link>
-		<link>
-			<name>LwApiLib/ComLib/lua/lgc.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lgc.h</locationURI>
 		</link>
 		<link>
 			<name>LwApiLib/ComLib/lua/linit.c</name>
@@ -736,16 +1466,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/llex.c</locationURI>
 		</link>
 		<link>
-			<name>LwApiLib/ComLib/lua/llex.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/llex.h</locationURI>
-		</link>
-		<link>
-			<name>LwApiLib/ComLib/lua/llimits.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/llimits.h</locationURI>
-		</link>
-		<link>
 			<name>LwApiLib/ComLib/lua/lmathlib.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lmathlib.c</locationURI>
@@ -754,11 +1474,6 @@
 			<name>LwApiLib/ComLib/lua/lmem.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lmem.c</locationURI>
-		</link>
-		<link>
-			<name>LwApiLib/ComLib/lua/lmem.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lmem.h</locationURI>
 		</link>
 		<link>
 			<name>LwApiLib/ComLib/lua/loadlib.c</name>
@@ -771,19 +1486,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lobject.c</locationURI>
 		</link>
 		<link>
-			<name>LwApiLib/ComLib/lua/lobject.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lobject.h</locationURI>
-		</link>
-		<link>
 			<name>LwApiLib/ComLib/lua/lopcodes.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lopcodes.c</locationURI>
-		</link>
-		<link>
-			<name>LwApiLib/ComLib/lua/lopcodes.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lopcodes.h</locationURI>
 		</link>
 		<link>
 			<name>LwApiLib/ComLib/lua/loslib.c</name>
@@ -796,29 +1501,14 @@
 			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lparser.c</locationURI>
 		</link>
 		<link>
-			<name>LwApiLib/ComLib/lua/lparser.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lparser.h</locationURI>
-		</link>
-		<link>
 			<name>LwApiLib/ComLib/lua/lstate.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lstate.c</locationURI>
 		</link>
 		<link>
-			<name>LwApiLib/ComLib/lua/lstate.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lstate.h</locationURI>
-		</link>
-		<link>
 			<name>LwApiLib/ComLib/lua/lstring.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lstring.c</locationURI>
-		</link>
-		<link>
-			<name>LwApiLib/ComLib/lua/lstring.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lstring.h</locationURI>
 		</link>
 		<link>
 			<name>LwApiLib/ComLib/lua/lstrlib.c</name>
@@ -831,11 +1521,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/ltable.c</locationURI>
 		</link>
 		<link>
-			<name>LwApiLib/ComLib/lua/ltable.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/ltable.h</locationURI>
-		</link>
-		<link>
 			<name>LwApiLib/ComLib/lua/ltablib.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/ltablib.c</locationURI>
@@ -846,34 +1531,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/ltm.c</locationURI>
 		</link>
 		<link>
-			<name>LwApiLib/ComLib/lua/ltm.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/ltm.h</locationURI>
-		</link>
-		<link>
-			<name>LwApiLib/ComLib/lua/lua.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lua.h</locationURI>
-		</link>
-		<link>
-			<name>LwApiLib/ComLib/lua/luaconf.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/luaconf.h</locationURI>
-		</link>
-		<link>
-			<name>LwApiLib/ComLib/lua/lualib.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lualib.h</locationURI>
-		</link>
-		<link>
 			<name>LwApiLib/ComLib/lua/lundump.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lundump.c</locationURI>
-		</link>
-		<link>
-			<name>LwApiLib/ComLib/lua/lundump.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lundump.h</locationURI>
 		</link>
 		<link>
 			<name>LwApiLib/ComLib/lua/lvm.c</name>
@@ -881,24 +1541,44 @@
 			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lvm.c</locationURI>
 		</link>
 		<link>
-			<name>LwApiLib/ComLib/lua/lvm.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lvm.h</locationURI>
-		</link>
-		<link>
 			<name>LwApiLib/ComLib/lua/lzio.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lzio.c</locationURI>
 		</link>
 		<link>
-			<name>LwApiLib/ComLib/lua/lzio.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/lzio.h</locationURI>
-		</link>
-		<link>
 			<name>LwApiLib/ComLib/lua/print.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/print.c</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/lua/tolua_event.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/tolua_event.c</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/lua/tolua_event.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/tolua_event.h</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/lua/tolua_is.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/tolua_is.c</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/lua/tolua_map.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/tolua_map.c</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/lua/tolua_push.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/tolua_push.c</locationURI>
+		</link>
+		<link>
+			<name>LwApiLib/ComLib/lua/tolua_to.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/lua/tolua_to.c</locationURI>
 		</link>
 		<link>
 			<name>LwApiLib/ComLib/tinyxpath/action_store.cpp</name>
@@ -1016,6 +1696,16 @@
 			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/LwApi/common/LwApiSys.cpp</locationURI>
 		</link>
 		<link>
+			<name>h/Interface/CommonUtilMgr/Id_CommonUtilMgr.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/Interface/CommonUtilMgr/Id_CommonUtilMgr.h</locationURI>
+		</link>
+		<link>
+			<name>h/Interface/CommonUtilMgr/Ix_CommonUtilMgr.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/Interface/CommonUtilMgr/Ix_CommonUtilMgr.h</locationURI>
+		</link>
+		<link>
 			<name>h/Interface/ConfigMgr/ConfigTagDef.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/code/h/Interface/ConfigMgr/ConfigTagDef.h</locationURI>
@@ -1036,6 +1726,26 @@
 			<locationURI>PARENT-3-PROJECT_LOC/code/h/Interface/ConfigMgr/Ix_XmlMgr.h</locationURI>
 		</link>
 		<link>
+			<name>h/Interface/ConsoleMgr/Id_ConsoleMgr.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/Interface/ConsoleMgr/Id_ConsoleMgr.h</locationURI>
+		</link>
+		<link>
+			<name>h/Interface/ConsoleMgr/Ix_ConsoleMgr.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/Interface/ConsoleMgr/Ix_ConsoleMgr.h</locationURI>
+		</link>
+		<link>
+			<name>h/Interface/DbMgr/Id_DbMgr.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/Interface/DbMgr/Id_DbMgr.h</locationURI>
+		</link>
+		<link>
+			<name>h/Interface/DbMgr/Ix_DbMgr.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/Interface/DbMgr/Ix_DbMgr.h</locationURI>
+		</link>
+		<link>
 			<name>h/Interface/DctMgr/Id_DctMgr.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/code/h/Interface/DctMgr/Id_DctMgr.h</locationURI>
@@ -1044,6 +1754,16 @@
 			<name>h/Interface/DctMgr/Ix_DctMgr.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/code/h/Interface/DctMgr/Ix_DctMgr.h</locationURI>
+		</link>
+		<link>
+			<name>h/Interface/EventMgr/Id_EventMgr.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/Interface/EventMgr/Id_EventMgr.h</locationURI>
+		</link>
+		<link>
+			<name>h/Interface/EventMgr/Ix_EventMgr.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/Interface/EventMgr/Ix_EventMgr.h</locationURI>
 		</link>
 		<link>
 			<name>h/Interface/FwEntry/Id_FwIntf.h</name>
@@ -1074,6 +1794,16 @@
 			<name>h/Interface/LuaMgr/Ix_LuaMgr.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/code/h/Interface/LuaMgr/Ix_LuaMgr.h</locationURI>
+		</link>
+		<link>
+			<name>h/Interface/PerfMgr/Id_PerfMgr.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/Interface/PerfMgr/Id_PerfMgr.h</locationURI>
+		</link>
+		<link>
+			<name>h/Interface/PerfMgr/Ix_PerfMgr.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/Interface/PerfMgr/Ix_PerfMgr.h</locationURI>
 		</link>
 		<link>
 			<name>h/Interface/PluginLoader/Id_PluginLoader.h</name>
@@ -1116,6 +1846,26 @@
 			<locationURI>PARENT-3-PROJECT_LOC/code/h/Interface/ScriptMgr/Ix_ScriptMgr.h</locationURI>
 		</link>
 		<link>
+			<name>h/Interface/TimerMgr/Id_TimerMgr.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/Interface/TimerMgr/Id_TimerMgr.h</locationURI>
+		</link>
+		<link>
+			<name>h/Interface/TimerMgr/Ix_TimerMgr.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/Interface/TimerMgr/Ix_TimerMgr.h</locationURI>
+		</link>
+		<link>
+			<name>h/Interface/ZmqMgr/Id_ZmqMgr.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/Interface/ZmqMgr/Id_ZmqMgr.h</locationURI>
+		</link>
+		<link>
+			<name>h/Interface/ZmqMgr/ix_zmqmgr.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/Interface/ZmqMgr/ix_zmqmgr.h</locationURI>
+		</link>
+		<link>
 			<name>h/LwApiLib/Arch/I86</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -1136,7 +1886,22 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>h/LwApiLib/ComLib/FastDelegat</name>
+			<name>h/LwApiLib/ComLib/FastDelegate</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Libev</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Lua</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Zmq</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -1326,14 +2091,179 @@
 			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/ConvStr/stringconvert.h</locationURI>
 		</link>
 		<link>
-			<name>h/LwApiLib/ComLib/FastDelegat/FastDelegate.h</name>
+			<name>h/LwApiLib/ComLib/FastDelegate/Demo.txt</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/FastDelegat/FastDelegate.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/FastDelegate/Demo.txt</locationURI>
 		</link>
 		<link>
-			<name>h/LwApiLib/ComLib/FastDelegat/FastDelegateBind.h</name>
+			<name>h/LwApiLib/ComLib/FastDelegate/FastDelegate.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/FastDelegat/FastDelegateBind.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/FastDelegate/FastDelegate.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/FastDelegate/FastDelegateBind.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/FastDelegate/FastDelegateBind.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Libev/config.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Libev/config.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Libev/ev++.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Libev/ev++.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Libev/ev.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Libev/ev.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Libev/ev_vars.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Libev/ev_vars.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Libev/ev_wrap.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Libev/ev_wrap.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Libev/event.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Libev/event.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Lua/lapi.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Lua/lapi.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Lua/lauxlib.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Lua/lauxlib.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Lua/lcode.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Lua/lcode.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Lua/ldebug.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Lua/ldebug.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Lua/ldo.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Lua/ldo.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Lua/lfunc.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Lua/lfunc.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Lua/lgc.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Lua/lgc.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Lua/llex.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Lua/llex.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Lua/llimits.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Lua/llimits.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Lua/lmem.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Lua/lmem.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Lua/lobject.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Lua/lobject.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Lua/lopcodes.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Lua/lopcodes.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Lua/lparser.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Lua/lparser.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Lua/lstate.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Lua/lstate.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Lua/lstring.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Lua/lstring.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Lua/ltable.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Lua/ltable.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Lua/ltm.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Lua/ltm.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Lua/lua.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Lua/lua.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Lua/luaconf.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Lua/luaconf.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Lua/lualib.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Lua/lualib.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Lua/lundump.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Lua/lundump.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Lua/lvm.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Lua/lvm.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Lua/lzio.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Lua/lzio.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Lua/tolua++.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Lua/tolua++.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Lua/tolua_event.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Lua/tolua_event.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Zmq/include</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>h/LwApiLib/ComLib/log4cpp/AbortAppender.hh</name>
@@ -2189,6 +3119,26 @@
 			<name>h/LwApiLib/ComLib/Boost/smart_ptr/weak_ptr.hpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Boost/smart_ptr/weak_ptr.hpp</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Zmq/include/zhelpers.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Zmq/include/zhelpers.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Zmq/include/zmq.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Zmq/include/zmq.h</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Zmq/include/zmq.hpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Zmq/include/zmq.hpp</locationURI>
+		</link>
+		<link>
+			<name>h/LwApiLib/ComLib/Zmq/include/zmq_utils.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/h/LwApiLib/ComLib/Zmq/include/zmq_utils.h</locationURI>
 		</link>
 		<link>
 			<name>h/LwApiLib/ComLib/log4cpp/threading/BoostThreads.hh</name>

@@ -119,7 +119,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../code/bin/Plugins/EventMgrSO.so</ModuleDir>
+			<ModuleDir>../../../../code/bin/Plugins/EventMgrSo.so</ModuleDir>
 		</Property>
 		<TableSet>
 		</TableSet>
@@ -130,7 +130,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../code/bin/Plugins/ZmqMgrSO.so</ModuleDir>
+			<ModuleDir>../../../../code/bin/Plugins/ZmqMgrSo.so</ModuleDir>
 		</Property>
 		<TableSet>
 		</TableSet>
@@ -141,7 +141,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../code/bin/Plugins/TimerMgrSO.so</ModuleDir>
+			<ModuleDir>../../../../code/bin/Plugins/TimerMgrSo.so</ModuleDir>
 		</Property>
 		<TableSet>
 		</TableSet>
@@ -152,7 +152,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../code/bin/Plugins/DbMgrSO.so</ModuleDir>
+			<ModuleDir>../../../../code/bin/Plugins/DbMgrSo.so</ModuleDir>
 		</Property>
 		<TableSet>
 		</TableSet>
@@ -165,7 +165,7 @@
 			<Version>1.0</Version>
 			<ModuleDir>../../../../code/bin/Plugins/TSFrontend.so</ModuleDir>
 			<ConnetTarget>tcp://localhost:12136</ConnetTarget>
-			<ServerPort>12135</ServerPort>
+			<ServerPort>12130</ServerPort>
 			<ListenBlock>128</ListenBlock>
 			<RecvBufMaxLen>1024</RecvBufMaxLen>
 			<SendZmqTimeout>5</SendZmqTimeout>
@@ -198,9 +198,9 @@
 		<Property> 
 			<Version>1.0</Version>
 			<ModuleDir>../../../../code/bin/Plugins/TcpServer.so</ModuleDir>
-			<DbIp>127.0.0.1</DbIp>
-			<DbUser>root</DbUser>
-			<DbPassword>lifesgood</DbPassword>
+			<DbIp>192.168.75.1</DbIp>
+			<DbUser>vmware</DbUser>
+			<DbPassword>123456</DbPassword>
 			<DbSelect>test</DbSelect>
 			<DbPort>3306</DbPort>
 		</Property>

@@ -105,6 +105,7 @@ MODULEID LoadLibraryA(const char_* filename)
     MODULEID hdll = dlopen(name.c_str(), RTLD_LAZY);
 
     seterr(dlerror());
+
     if (!hdll)
     {
         char* tmpname = Co_PathFindFileNameA(name.c_str());
@@ -113,6 +114,7 @@ MODULEID LoadLibraryA(const char_* filename)
             name.insert(tmpname - name.c_str(), "lib");
             hdll = dlopen(name.c_str(), RTLD_LAZY);
             seterr(dlerror());
+			PLATFORM_LOG(LWDP_MODULE_LOG, LWDP_LOG_ERR, "LoadLibrary Error(%s)", dlerror());
         }
     }
     if (hdll)

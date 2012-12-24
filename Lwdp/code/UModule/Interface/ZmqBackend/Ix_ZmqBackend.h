@@ -2,7 +2,7 @@
 #define ZMQ_BACKEND_INTERFACE_H
 
 #include <Interface/Ix_Object.h>
-#include "../Interface/ZmqBackend/Id_ZmqBackend.h"
+#include "Id_ZmqBackend.h"
 #include <LwApiLib/ComLib/FastDelegate/FastDelegate.h>
 #include <boost/shared_ptr.hpp>
 

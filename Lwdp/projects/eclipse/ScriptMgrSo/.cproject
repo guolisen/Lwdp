@@ -39,6 +39,7 @@
 									<listOptionValue builtIn="false" value="../../../../code/h"/>
 									<listOptionValue builtIn="false" value="../../../../code/h/LwApiLib/ComLib"/>
 								</option>
+								<option id="gnu.cpp.compiler.option.other.pic.220721835" superClass="gnu.cpp.compiler.option.other.pic" value="true" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1579653198" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.so.debug.225079199" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.so.debug">

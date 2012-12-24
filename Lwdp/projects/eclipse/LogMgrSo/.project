@@ -26,42 +26,67 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>Cx_LogMgr.cpp</name>
+			<name>PModule</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>PModule/LogMgr</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>PModule/LogMgr/Cx_LogMgr.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/LogMgr/Cx_LogMgr.cpp</locationURI>
 		</link>
 		<link>
-			<name>Cx_LogMgr.h</name>
+			<name>PModule/LogMgr/Cx_LogMgr.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/LogMgr/Cx_LogMgr.h</locationURI>
 		</link>
 		<link>
-			<name>LogMgrErrno.h</name>
+			<name>PModule/LogMgr/Ix_LogMgr.pkg</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/LogMgr/Ix_LogMgr.pkg</locationURI>
+		</link>
+		<link>
+			<name>PModule/LogMgr/LogMgrErrno.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/LogMgr/LogMgrErrno.h</locationURI>
 		</link>
 		<link>
-			<name>LogMgrModule.cpp</name>
+			<name>PModule/LogMgr/LogMgrModule.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/LogMgr/LogMgrModule.cpp</locationURI>
 		</link>
 		<link>
-			<name>LogTagDef.h</name>
+			<name>PModule/LogMgr/LogTagDef.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/LogMgr/LogTagDef.h</locationURI>
 		</link>
 		<link>
-			<name>MyAppender.cpp</name>
+			<name>PModule/LogMgr/Lua_Interface_LogMg.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/LogMgr/Lua_Interface_LogMg.h</locationURI>
+		</link>
+		<link>
+			<name>PModule/LogMgr/Lua_LogMgr.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/LogMgr/Lua_LogMgr.cpp</locationURI>
+		</link>
+		<link>
+			<name>PModule/LogMgr/MyAppender.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/LogMgr/MyAppender.cpp</locationURI>
 		</link>
 		<link>
-			<name>MyAppender.h</name>
+			<name>PModule/LogMgr/MyAppender.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/LogMgr/MyAppender.h</locationURI>
 		</link>
 		<link>
-			<name>Plugin.cpp</name>
+			<name>PModule/LogMgr/Plugin.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/LogMgr/Plugin.cpp</locationURI>
 		</link>

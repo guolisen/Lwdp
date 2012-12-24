@@ -34,6 +34,7 @@
 #define Api_fprintf		Lwdp_fprintf
 #define Api_sprintf		Lwdp_sprintf  
 #define Api_snprintf	Lwdp_snprintf 
+#define Api_vsnprintf	Lwdp_vsnprintf
 #define Api_vsprintf	Lwdp_vstprintf    
 #define Api_ltot		Lwdp_ltot        
 #define Api_itot		Lwdp_itot         

@@ -89,18 +89,6 @@ void zmq::select_t::rm_fd (handle_t handle_)
     for (it = fds.begin (); it != fds.end (); ++it)
         if (it->fd == handle_)
             break;
-	
-	if(it == fds.end ())
-	{
-		printf("+++++TEST(%x)+++++\n", handle_);
-	    fd_set_t::iterator iter;
-		for (iter = fds.begin (); iter != fds.end (); ++iter)
-		{
-			
-			printf("%x", iter->fd);
-		}
-	}
-
     zmq_assert (it != fds.end ());
     it->fd = retired_fd;
     retired = true;

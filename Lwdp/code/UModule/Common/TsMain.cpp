@@ -76,9 +76,9 @@ PC_DATA* ConfigSrcImp::LoadConfigData()
     }
 
 	buf = new char[file_len];
-    if ( NULL == buf )  //ÉêÇëÄÚ´æ
+    if ( NULL == buf )  //ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½
     {
-        printf( "FlashUtility::WriteBspFile----malloc(%ld) error!\r\n", file_len);
+        printf( "FlashUtility::WriteBspFile----malloc(%d) error!\r\n", file_len);
         fclose(fp);
         return NULL;
     }
@@ -104,7 +104,11 @@ int32_ main()
 {
 	LWRESULT stat = LWDP_ERROR;
 
+#if defined(LWDP_PLATFORM_DEF_WIN32)
 	ConfigSrcImp csrc("../../../../Code/bin/xml/ConfigExternal.xml");
+#elif defined(LWDP_PLATFORM_DEF_LINUX)
+	ConfigSrcImp csrc("/mnt/hgfs/tmp/workspace/LwdpGit/Lwdp/code/bin/xml/LinuxConfigExternal.xml");
+#endif
 	stat = Fw_Init(&csrc, 1);
 	if(stat != LWDP_OK)
 	{
@@ -133,6 +137,6 @@ int32_ main()
 	GET_OBJECT_RET(ConsoleMgr, iConsoleMgr, 0);
 	iConsoleMgr->RunConsole();
 
-	system("pause");
+	//system("pause");
 	return 0;
 }

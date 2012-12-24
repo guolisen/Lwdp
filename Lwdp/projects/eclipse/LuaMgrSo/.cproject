@@ -37,8 +37,10 @@
 								</option>
 								<option id="gnu.cpp.compiler.option.include.paths.1683936061" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="../../../../code/h"/>
+									<listOptionValue builtIn="false" value="../../../../code/h/LwApiLib/ComLib/Lua"/>
 									<listOptionValue builtIn="false" value="../../../../code/h/LwApiLib/ComLib"/>
 								</option>
+								<option id="gnu.cpp.compiler.option.other.pic.1035805937" superClass="gnu.cpp.compiler.option.other.pic" value="true" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1579653198" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.so.debug.225079199" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.so.debug">

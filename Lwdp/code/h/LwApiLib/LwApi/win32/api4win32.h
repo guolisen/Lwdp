@@ -43,6 +43,7 @@ EXTERN_C_BEGIN;
 #define PLNEXT      __T(".dll")
 #define PLUGINCALL  extern "C" DECLEXPORT
 
+typedef int socklen_t;
 typedef HMODULE MODULEID;
 
 void WIN_IMPL_API(TaskDelay)(ulong_ tick);
@@ -92,6 +93,7 @@ void WIN_IMPL_API(HaltSystem)();
 #define Lwdp_fprintf      fprintf
 #define Lwdp_sprintf      sprintf
 #define Lwdp_snprintf     _snprintf
+#define Lwdp_vsnprintf    _vsnprintf
 #define Lwdp_vstprintf    vsprintf
 
 #define Lwdp_tcscpy       strcpy_s
