@@ -1,4 +1,4 @@
-#include <Lwdp.h>
+#include <LwDp.h>
 #include <PluginInc.h>
 
 #include <Interface/ConfigMgr/Ix_ConfigMgr.h>
@@ -50,22 +50,28 @@ void* worker_task (void *args)
 	}
 
 	iZmqMgr->Connect(responder, strWorkThread.c_str());
-
+	Cx_Interface<Ix_ZMessage> iZMessage;
 	while (1) 
 	{
 		int32_ more = 0;
-		GET_OBJECT_RET(ZMessage, iZMessage, 0);
+		uint32_ more_size = sizeof(more);
+
 		while (1) 
 		{
+			GET_OBJECT_RET(ZMessage, iTmpMsg, 0);
 			// Wait for next request from client
 	        // Process all parts of the message
-	        iZMessage->InitZMessage();
-	        iZmqMgr->Recv(responder, iZMessage, 0);
+			iTmpMsg->InitZMessage();
+	        iZmqMgr->Recv(responder, iTmpMsg, 0);
 			
-			uint32_ more_size = sizeof(more);
+	        LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::DEBUG,
+	       	               "Work Thread Revc(%d)", iTmpMsg->Size());
 			iZmqMgr->Getsockopt(responder, LWDP_RCVMORE, &more, &more_size);
 			if (!more)
+			{
+				iZMessage = iTmpMsg;
 			    break; // Last message part
+			}
 			Api_TaskDelay (1); 
 		}
 
@@ -149,7 +155,8 @@ LWRESULT Cx_ZmqBackend::Init()
 	else
 	{
 		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::WARNING, 
-					   "Can't Find <BackendTarget> In Config File, Default(%s)", strBackend.c_str());
+					   "Can't Find <BackendTarget> In Config File, Default(%s)",
+					   strBackend.c_str());
 	}
 
 	iZmqMgr->Bind(mBackend, strBackend.c_str());
@@ -194,6 +201,7 @@ LWRESULT Cx_ZmqBackend::Init()
 
 LWRESULT Cx_ZmqBackend::RunServer()
 {
+
 	// Initialize poll set
 	LWDP_POLLITEM_T items [] = {
 	    { mFrontend, 0, LWDP_POLLIN, 0 },
@@ -201,23 +209,24 @@ LWRESULT Cx_ZmqBackend::RunServer()
 	};
 
 	GET_OBJECT_RET(ZmqMgr, iZmqMgr, LWDP_GET_OBJECT_ERROR);
-
 	// Switch messages between sockets
+    int more = 0; // Multipart detection
+    uint32_ more_size = sizeof (more);
 	while (1) {
-		
-	    int more = 0; // Multipart detection
-
+		more = 0;
 	    iZmqMgr->Poll(items, 2, -1);
 	    if (items [0].revents & LWDP_POLLIN) 
 		{
 	        while (1) 
 			{
 				GET_OBJECT_RET(ZMessage, iZMessage, LWDP_GET_OBJECT_ERROR);
+
 	            // Process all parts of the message
-	            iZMessage->InitZMessage();
+	        	iZMessage->InitZMessage();
 	            iZmqMgr->Recv(mFrontend, iZMessage, 0);
-	            
-	            uint32_ more_size = sizeof (more);
+
+	            LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::DEBUG,
+	            			   "Revc From Tcp Frontend(%d)", iZMessage->Size());
 				iZmqMgr->Getsockopt(mFrontend, LWDP_RCVMORE, &more, &more_size);
 				iZmqMgr->Send(mBackend, iZMessage, more? LWDP_SNDMORE: 0);
                 if (!more)
@@ -234,7 +243,8 @@ LWRESULT Cx_ZmqBackend::RunServer()
 				iZMessage->InitZMessage();
 	            iZmqMgr->Recv(mBackend, iZMessage, 0);
 
-                size_t more_size = sizeof (more);
+	            LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::DEBUG,
+	            	           "Revc From Zmq Backend(%d)", iZMessage->Size());
 				iZmqMgr->Getsockopt(mBackend, LWDP_RCVMORE, &more, &more_size);
 				iZmqMgr->Send(mFrontend, iZMessage, more? LWDP_SNDMORE: 0);
                 if (!more)
@@ -282,7 +292,6 @@ LWRESULT Cx_ZmqBackend::CallBackZmqMsg(const uint8_* recv_msg, uint32_ recv_msg_
 		return LWDP_PARAMETER_ERROR;
 	}
 	TS_ZMQ_SERVER_MSG* zMsg = (TS_ZMQ_SERVER_MSG*)recv_msg;
-	TS_ZMQ_SERVER_MSG  returnMsg;
 	MSG_DELEGATE_MAP::iterator it= mMsgDelegateMap.find(zMsg->msgCode);
 	if(it != mMsgDelegateMap.end())
 	{

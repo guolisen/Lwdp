@@ -1,6 +1,6 @@
  
 #define LWDP_MODULE_IMPL
-#include <Lwdp.h>
+#include <LwDp.h>
 #include <PluginInc.h>
 
 #include "../Interface/ACDevice/Ix_ACDevice.h"

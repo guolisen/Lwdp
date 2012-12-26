@@ -34,7 +34,7 @@ std::string addressToString(struct sockaddr_in* addr)
 {
     char* ip = inet_ntoa(addr->sin_addr);
 	if(!ip)
-		ip = "NULL";
+		ip = (char*)"NULL";
     char port[32];
     sprintf(port, "%d", ntohs(addr->sin_port));
     std::string r;
@@ -59,17 +59,18 @@ void* thread_callback(void* vfd)
 	free(vfd);
 
 	int more = 0;
+	uint32_ more_size = sizeof(more);
 	uint32_ index = 0;
 	TS_TCP_SERVER_MSG* sendMsgStru = NULL;
 	uint8_* sendBuf = NULL;
 	TS_TCP_SERVER_MSG* clientMsg = NULL;
 	uint32_ headLen = sizeof(uint32_) * 2;
-	int zmq_ret_len = 0;
+	uint32_ zmq_ret_len = 0;
 	SocketHandle requester = NULL;
 	//////////////////////////////////////////////////////////////
 	// Recv Tcp Message from Client
 	//////////////////////////////////////////////////////////////
-    int ret_len = 0;
+    uint32_ ret_len = 0;
     uint32_ recvLen = LW_TSFRONTEND_RECV_BUFFER_LEN;
 	uint8_* recvBuf = (uint8_*)malloc(recvLen * sizeof(uint8_));
 	ASSERT_CHECK_RET(LWDP_PLUGIN_LOG, NULL, recvBuf, "Malloc Recv Buffer Error!");
@@ -108,7 +109,7 @@ void* thread_callback(void* vfd)
 	};
 
 	LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::NOTICE, 
-				   "Recv Client Message: (%s)", recvBuf);	
+				   "Recv Client Message: (%d)", ret_len);
 
 	clientMsg = (TS_TCP_SERVER_MSG*)recvBuf;
 	if(clientMsg->msgLength > ret_len)
@@ -158,7 +159,6 @@ void* thread_callback(void* vfd)
         iMsg->InitZMessage();
         iZmqMgr->Recv(requester, iMsg, 0);
 		
-		uint32_ more_size = sizeof(more);
 		iZmqMgr->Getsockopt(requester, LWDP_RCVMORE, &more, &more_size);
 		if (!more)
 		{
@@ -394,7 +394,7 @@ LWRESULT Cx_TSFrontend::Init()
 	RINOK(createTcpServer(portNum));
 
 	GET_OBJECT_RET(EventMgr, iEventMgr, 0);
-	RINOK(iEventMgr->InitLoop(LWBACKEND_EPOLL));
+	RINOK(iEventMgr->InitLoop(0));
 	mIoWatcher = iEventMgr->CreateWatcher(LWEV::WATCHER_IO, (WATCHER_CALLBACK)io_callback, mServerSocket, LW_READ);
 	if(!mIoWatcher)
 	{

@@ -7,7 +7,7 @@
 #ifndef ID_TSFRONTEND_H
 #define ID_TSFRONTEND_H
 
-#include <Interface/ix_object.h>
+#include <Interface/Ix_Object.h>
 
 LWDP_NAMESPACE_BEGIN;
 CLSID_DEFINE(CLSID_TSFrontend,  __T("F6064095-4F60-4124-B7F8-251AC4949A02"));

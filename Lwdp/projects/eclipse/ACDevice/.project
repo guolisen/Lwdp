@@ -26,39 +26,34 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>UModule</name>
+			<name>ACDevice</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>UModule/ACDevice</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
+			<name>ACDevice/ACDeviceDef.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/code/UModule/ACDevice/ACDeviceDef.h</locationURI>
 		</link>
 		<link>
-			<name>UModule/ACDevice/ACDeviceDef.h</name>
+			<name>ACDevice/ACDeviceErrno.h</name>
 			<type>1</type>
-			<locationURI>PARENT-1-ECLIPSE_HOME/workspace/LwdpGit/Lwdp/code/UModule/ACDevice/ACDeviceDef.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/code/UModule/ACDevice/ACDeviceErrno.h</locationURI>
 		</link>
 		<link>
-			<name>UModule/ACDevice/ACDeviceErrno.h</name>
+			<name>ACDevice/ACDeviceModule.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-1-ECLIPSE_HOME/workspace/LwdpGit/Lwdp/code/UModule/ACDevice/ACDeviceErrno.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/code/UModule/ACDevice/ACDeviceModule.cpp</locationURI>
 		</link>
 		<link>
-			<name>UModule/ACDevice/ACDeviceModule.cpp</name>
+			<name>ACDevice/Cx_ACDevice.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-1-ECLIPSE_HOME/workspace/LwdpGit/Lwdp/code/UModule/ACDevice/ACDeviceModule.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/code/UModule/ACDevice/Cx_ACDevice.cpp</locationURI>
 		</link>
 		<link>
-			<name>UModule/ACDevice/Cx_ACDevice.cpp</name>
+			<name>ACDevice/Cx_ACDevice.h</name>
 			<type>1</type>
-			<locationURI>PARENT-1-ECLIPSE_HOME/workspace/LwdpGit/Lwdp/code/UModule/ACDevice/Cx_ACDevice.cpp</locationURI>
-		</link>
-		<link>
-			<name>UModule/ACDevice/Cx_ACDevice.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-ECLIPSE_HOME/workspace/LwdpGit/Lwdp/code/UModule/ACDevice/Cx_ACDevice.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/code/UModule/ACDevice/Cx_ACDevice.h</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

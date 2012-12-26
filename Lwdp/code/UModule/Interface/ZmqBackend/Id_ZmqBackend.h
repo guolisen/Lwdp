@@ -7,7 +7,7 @@
 #ifndef ID_ZMQ_BACKEND_H
 #define ID_ZMQ_BACKEND_H
 
-#include <Interface/ix_object.h>
+#include <Interface/Ix_Object.h>
 
 LWDP_NAMESPACE_BEGIN;
 CLSID_DEFINE(CLSID_ZmqBackend,  __T("2321E1FC-788E-411a-A2A9-9A541F506F21"));

@@ -29,7 +29,7 @@
 #include "stddef.h"
 #include "stdint.hpp"
 #include "tcp_address.hpp"
-#include "zmq/include/zmq.h"
+#include "Zmq/include/zmq.h"
 
 namespace zmq
 {

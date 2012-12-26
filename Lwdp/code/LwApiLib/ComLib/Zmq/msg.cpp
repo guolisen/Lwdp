@@ -20,7 +20,7 @@
 */
 
 #include "msg.hpp"
-#include "zmq/include/zmq.h"
+#include "Zmq/include/zmq.h"
 
 #include <string.h>
 #include <stdlib.h>

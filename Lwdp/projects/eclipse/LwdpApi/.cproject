@@ -27,23 +27,23 @@
 							<targetPlatform id="cdt.managedbuild.target.gnu.platform.lib.debug.757061677" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.lib.debug"/>
 							<builder buildPath="${workspace_loc:/LwdpApi/Debug}" id="cdt.managedbuild.target.gnu.builder.lib.debug.207577947" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.lib.debug"/>
 							<tool id="cdt.managedbuild.tool.gnu.archiver.lib.debug.1352991633" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.lib.debug">
-								<outputType id="cdt.managedbuild.tool.gnu.archiver.output.894239999" outputPrefix="../../../../code/bin/lib/lib" superClass="cdt.managedbuild.tool.gnu.archiver.output"/>
+								<outputType id="cdt.managedbuild.tool.gnu.archiver.output.894239999" outputPrefix="../../../../code/bin/Lib/lib" superClass="cdt.managedbuild.tool.gnu.archiver.output"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.lib.debug.1959917991" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.lib.debug">
 								<option id="gnu.cpp.compiler.lib.debug.option.optimization.level.1657942540" name="Optimization Level" superClass="gnu.cpp.compiler.lib.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.lib.debug.option.debugging.level.1644684521" name="Debug Level" superClass="gnu.cpp.compiler.lib.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.2008511138" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="../../../../code/h"/>
-									<listOptionValue builtIn="false" value="../../../../code/h/LwApiLib/ComLib/Lua"/>
 									<listOptionValue builtIn="false" value="../../../../code/h/LwApiLib/ComLib "/>
 									<listOptionValue builtIn="false" value="../../../../code/h/LwApiLib/ComLib/log4cpp "/>
 									<listOptionValue builtIn="false" value="../../../../code/h/LwApiLib/ComLib/tinyxpath "/>
+									<listOptionValue builtIn="false" value="../../../../code/h/LwApiLib/ComLib/Lua"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1406459207" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="LWDP_DEBUG_MACRO"/>
 									<listOptionValue builtIn="false" value="__i386__"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.other.other.890492122" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0  -Wno-deprecated" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.other.other.890492122" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0  -Wno-deprecated  " valueType="string"/>
 								<option id="gnu.cpp.compiler.option.other.pic.439168983" name="Position Independent Code (-fPIC)" superClass="gnu.cpp.compiler.option.other.pic" value="true" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1776374522" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -55,6 +55,7 @@
 									<listOptionValue builtIn="false" value="../../../../code/h/LwApiLib/ComLib"/>
 									<listOptionValue builtIn="false" value="../../../../code/h"/>
 								</option>
+								<option id="gnu.c.compiler.option.misc.pic.720259598" name="Position Independent Code (-fPIC)" superClass="gnu.c.compiler.option.misc.pic" value="true" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.495913059" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.base.120667640" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.base"/>

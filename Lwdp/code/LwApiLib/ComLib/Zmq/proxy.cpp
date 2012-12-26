@@ -19,7 +19,7 @@
 */
 
 #include <stddef.h>
-#include "zmq/include/zmq.h"
+#include "Zmq/include/zmq.h"
 #include "platform.hpp"
 #include "proxy.hpp"
 #include "socket_base.hpp"

@@ -1,5 +1,5 @@
 
-#include <Lwdp.h>
+#include <LwDp.h>
 #include <LwApi.h>
 using namespace NLwdp;
 
@@ -107,7 +107,7 @@ int32_ main()
 #if defined(LWDP_PLATFORM_DEF_WIN32)
 	ConfigSrcImp csrc("../../../../Code/bin/xml/ConfigExternal.xml");
 #elif defined(LWDP_PLATFORM_DEF_LINUX)
-	ConfigSrcImp csrc("/mnt/hgfs/tmp/workspace/LwdpGit/Lwdp/code/bin/xml/LinuxConfigExternal.xml");
+	ConfigSrcImp csrc("/home/ptsf/Desktop/tmp/workspace/LwdpGit/Lwdp/code/bin/xml/LinuxConfigExternal.xml");
 #endif
 	stat = Fw_Init(&csrc, 1);
 	if(stat != LWDP_OK)

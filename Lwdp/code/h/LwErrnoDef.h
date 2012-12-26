@@ -35,7 +35,7 @@ enum _ERROR_CAT_NUM
 {
 #undef  ERRNO_DB
 #define ERRNO_DB(x, y, z)		 LWDP_##x = y, 
-    #include <LwMErrnoBase.h>  
+    #include <LwMerrnoBase.h>
     LWDP_ERRNO_NUMCATS
 };
 

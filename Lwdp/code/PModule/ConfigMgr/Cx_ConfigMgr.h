@@ -7,7 +7,7 @@
 #define CX_CONFIG_MANAGER_H
 
 #include <Interface/ConfigMgr/Ix_ConfigMgr.h>
-#include "LwApiLib/ComLib/Tinyxpath/xpath_static.h"
+#include "LwApiLib/ComLib/tinyxpath/xpath_static.h"
 
 
 LWDP_NAMESPACE_BEGIN;

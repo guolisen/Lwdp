@@ -17,7 +17,7 @@
 
 #include <Interface/ZmqMgr/Ix_ZmqMgr.h>
 #include "ZmqTagDef.h"
-#include <ZMQ/include/zmq.h>
+#include <Zmq/include/zmq.h>
 
 
 

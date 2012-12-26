@@ -256,7 +256,7 @@ LWRESULT Cx_ZmqMgr::Setsockopt (SocketHandle socket_v, int32_ option_,
 LWRESULT Cx_ZmqMgr::Getsockopt (SocketHandle socket_v, int32_ option_, 
 					     void* optval_, uint32_* optvallen_)
 {
-    int rc = zmq_getsockopt (socket_v, option_, optval_, optvallen_);
+    int rc = zmq_getsockopt (socket_v, option_, optval_, (size_t*)optvallen_);
     if (rc != 0)
 	{
 		PLATFORM_LOG(LWDP_ZMQ_LOG, LWDP_LOG_ERR, "ZMQ: %s", zmq_strerror (rc));

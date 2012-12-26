@@ -6,11 +6,11 @@
 *  Create Date: 2011-08-11
 ***********************************************************/
 // 2011.08.11: Create By Guolisen
-#include <wchar.h>
+//#include <wchar.h>
 #include <LwDp.h>
 //#include "../Common/func_s.h"
 #include <LwApi.h>
-#include <LwApiLib/Framwork/Lwlog/LwLogMessage.h>
+#include <LwApiLib/Framwork/LwLog/LwLogMessage.h>
 
 LWDP_NAMESPACE_BEGIN;
 EXTERN_C_BEGIN;
@@ -36,7 +36,7 @@ static const tchar_ * logCatNames [] =
 #undef LOG_DB_LAST
 #define LOG_DB(x, y, z) __T(#x),
 #define LOG_DB_LAST(x, y, z) __T(#x)
-#include <lwlogCategories.h>
+#include <LwLogCategories.h>
     };
 
 LWDP_CATEGORY_INFO logcatInfo [] =
@@ -45,7 +45,7 @@ LWDP_CATEGORY_INFO logcatInfo [] =
 #undef LOG_DB_LAST
 #define LOG_DB(x, y, z) {y,  z},
 #define LOG_DB_LAST(x, y, z) {y,  z}
-#include <lwlogCategories.h>
+#include <LwLogCategories.h>
     };
 
 #define CAT_INFO(x) logcatInfo

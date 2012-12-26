@@ -7,7 +7,7 @@
 #ifndef ID_EXAMPLE_H
 #define ID_EXAMPLE_H
 
-#include <Interface/ix_object.h>
+#include <Interface/Ix_Object.h>
 
 LWDP_NAMESPACE_BEGIN;
 CLSID_DEFINE(CLSID_TcpServer, 	__T("38907370-D417-4d03-A10C-737F0B5D54D0"));

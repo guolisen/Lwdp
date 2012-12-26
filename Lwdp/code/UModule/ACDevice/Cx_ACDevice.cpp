@@ -1,4 +1,4 @@
-#include <Lwdp.h>
+#include <LwDp.h>
 #include <PluginInc.h>
 #include <sstream>
 
@@ -585,8 +585,8 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(const uint8_* ret_msg, uint32_ re
 
 	char_ buffer[3072] = {0};
 	Api_snprintf(buffer, 3071, Cx_ACDevice::mCardSql.c_str(),  carIdStr.c_str(), 
+															   std::string((char_*)zmqMsg->deviceId, sizeof(zmqMsg->deviceId)).c_str(),
 				  											   std::string((char_ *)msgBody->sceneryId, sizeof(msgBody->sceneryId)).c_str(),
-				  								               std::string((char_*)zmqMsg->deviceId, sizeof(zmqMsg->deviceId)).c_str(),
 				  								               msgBody->cardType,
 				  								               msgBody->actionId,
 				  								               "2012-12-24 14:53:12");
@@ -603,7 +603,8 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(const uint8_* ret_msg, uint32_ re
 	if((queryRes = iDbMgr->ExecSQL(buffer)) != 1)
 	{
 		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR, 
-				       "Msg(%d) DB Insert(%s) Table Error", zmqMsg->msgCode, buffer);
+				       "Msg(%d) DB Insert(%s) Table Error", 
+				       zmqMsg->msgCode, buffer);
 
 		retCode = TS_SERVER_DB_ERR;
 		retMsg  = "Insert Error";

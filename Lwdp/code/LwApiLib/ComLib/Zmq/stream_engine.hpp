@@ -32,7 +32,7 @@
 #include "i_decoder.hpp"
 #include "options.hpp"
 #include "socket_base.hpp"
-#include "zmq/include/zmq.h"
+#include "Zmq/include/zmq.h"
 
 namespace zmq
 {

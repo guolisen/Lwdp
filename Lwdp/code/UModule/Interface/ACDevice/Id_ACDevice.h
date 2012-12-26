@@ -7,7 +7,7 @@
 #ifndef ID_ACDEVICE_H
 #define ID_ACDEVICE_H
 
-#include <Interface/ix_object.h>
+#include <Interface/Ix_Object.h>
 
 LWDP_NAMESPACE_BEGIN;
 CLSID_DEFINE(CLSID_ACDevice, 	__T("6DDECDF5-3D24-48c2-9545-9B580420CB0E"));

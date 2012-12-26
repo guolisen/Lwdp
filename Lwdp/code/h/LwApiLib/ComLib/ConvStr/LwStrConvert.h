@@ -8,7 +8,7 @@
 #define LW_STR_CONVERT_H_
 
 #include "MyString.h"
-#include "StringConvert.h"
+#include "stringconvert.h"
 
 #endif
 

@@ -164,7 +164,8 @@
 		<Property> 
 			<Version>1.0</Version>
 			<ModuleDir>../../../../code/bin/Plugins/TSFrontend.so</ModuleDir>
-			<ConnetTarget>tcp://localhost:12136</ConnetTarget>
+			<!-- <ConnetTarget>tcp://localhost:12136</ConnetTarget>-->
+			<ConnetTarget>ipc://TcpToZmq</ConnetTarget>
 			<ServerPort>12135</ServerPort>
 			<ListenBlock>128</ListenBlock>
 			<RecvBufMaxLen>1024</RecvBufMaxLen>
@@ -181,10 +182,11 @@
 		<Property> 
 			<Version>1.0</Version>
 			<ModuleDir>../../../../code/bin/Plugins/ZmqBackend.so</ModuleDir>
-			<FrontendTarget>tcp://*:12136</FrontendTarget>
-			<BackendTarget>inproc://work_thread</BackendTarget>
-			<!-- <BackendTarget>tcp://*:12137</BackendTarget> -->
-			<!-- <WorkThreadConnect>tcp://localhost:12137</WorkThreadConnect>  -->
+			<!-- <FrontendTarget>tcp://*:12136</FrontendTarget>-->
+			<FrontendTarget>ipc://TcpToZmq</FrontendTarget>
+			<BackendTarget>inproc://work_thread</BackendTarget> 
+			<!--<BackendTarget>tcp://*:12137</BackendTarget> -->
+			<!--<WorkThreadConnect>tcp://localhost:12137</WorkThreadConnect>  -->
 			<WorkThreadConnect>inproc://work_thread</WorkThreadConnect>
 			<WorkThreadNum>1</WorkThreadNum>
 		</Property>

@@ -8,7 +8,7 @@
 #define LW_ENTRY_FRM_H_
 
 #include <Interface/Ix_Object.h>
-#include <Interface/ConfigMgr/Ix_Configmgr.h>
+#include <Interface/ConfigMgr/Ix_ConfigMgr.h>
  
 #include "FwTagDef.h"
 

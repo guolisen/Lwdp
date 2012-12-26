@@ -24,7 +24,7 @@ typedef enum _LWDP_LOG_CAT_NUM
 #undef LOG_DB_LAST
 #define LOG_DB(x, y, z)		    x##_LOG_NUM,
 #define LOG_DB_LAST(x, y, z)	x##_LOG_NUM,
-#include <lwlogCategories.h>
+#include <LwLogCategories.h>
     LWDP_LOG_NUMCATS
 } LWDP_LOG_CAT_NUM;
 
@@ -34,7 +34,7 @@ typedef enum _LWDP_LOG_CAT
 #undef LOG_DB_LAST
 #define LOG_DB(x, y, z)		x##_LOG = (x##_LOG_NUM << LWDP_CAT_SHIFT),
 #define LOG_DB_LAST(x, y, z)	x##_LOG = (x##_LOG_NUM << LWDP_CAT_SHIFT)
-#include <lwlogCategories.h>
+#include <LwLogCategories.h>
 } LWDP_LOG_CAT;
 
 typedef struct lwdp_categoryInfo
