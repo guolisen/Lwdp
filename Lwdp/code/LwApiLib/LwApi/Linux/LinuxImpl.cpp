@@ -22,8 +22,9 @@ EXTERN_C_BEGIN;
 *  Return:         // �����ֵ��˵��	
 *  Others:         // ����˵��
 *****************************************************************************/
-void LINUX_IMPL_API(TaskDelay)(ulong_ tick)
+void LINUX_IMPL_API(TaskDelay)(uint32_ tick)
 {
+
     sleep(tick);
 }
 

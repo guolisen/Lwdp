@@ -206,7 +206,7 @@
 			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/Framwork/FwEntryModule.cpp</locationURI>
 		</link>
 		<link>
-			<name>LwApiLib/Framwork/Lwlog</name>
+			<name>LwApiLib/Framwork/LwLog</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -384,26 +384,6 @@
 			<name>h/Module/XModuleMacro.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/code/h/Module/XModuleMacro.h</locationURI>
-		</link>
-		<link>
-			<name>LwApiLib/ComLib/ConvStr/IntToString.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/ConvStr/IntToString.cpp</locationURI>
-		</link>
-		<link>
-			<name>LwApiLib/ComLib/ConvStr/MyString.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/ConvStr/MyString.cpp</locationURI>
-		</link>
-		<link>
-			<name>LwApiLib/ComLib/ConvStr/StringConvert.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/ConvStr/StringConvert.cpp</locationURI>
-		</link>
-		<link>
-			<name>LwApiLib/ComLib/ConvStr/StringToInt.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/ComLib/ConvStr/StringToInt.cpp</locationURI>
 		</link>
 		<link>
 			<name>LwApiLib/ComLib/Libev/ev.c</name>
@@ -1671,9 +1651,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/Framwork/FwEntry/FrameworkEntry.cpp</locationURI>
 		</link>
 		<link>
-			<name>LwApiLib/Framwork/Lwlog/LwLogMessage.cpp</name>
+			<name>LwApiLib/Framwork/LwLog/LwLogMessage.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/Framwork/Lwlog/LwLogMessage.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/code/LwApiLib/Framwork/LwLog/LwLogMessage.cpp</locationURI>
 		</link>
 		<link>
 			<name>LwApiLib/Framwork/PluginMgr/PluginManager.cpp</name>

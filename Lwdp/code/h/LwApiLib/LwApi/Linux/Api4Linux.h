@@ -57,7 +57,7 @@ typedef int         (*FUNCPTR) ();       /* ptr to function returning int */
 
 //typedef HMODULE MODULEID;
 
-void LINUX_IMPL_API(TaskDelay)(ulong_ tick);
+void LINUX_IMPL_API(TaskDelay)(uint32_ tick);
 void LINUX_IMPL_API(HaltSystem)();
 int  LINUX_IMPL_API(snprintf)( char *buffer, int num, const char *format, ... );
 
