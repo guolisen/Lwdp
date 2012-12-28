@@ -14,6 +14,8 @@
 //#include <LwApiLib/LwApi/win32/posix/pthread/sched.h>
 //#include <LwApiLib/LwApi/win32/posix/pthread/semaphore.h>
 #include <string.h>
+#include <time.h>
+#include <sys/time.h>
 #include <stdlib.h>
 #include <wchar.h>
 #include <sys/types.h>

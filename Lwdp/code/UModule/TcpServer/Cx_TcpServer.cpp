@@ -122,6 +122,8 @@ LWRESULT Cx_TcpServer::Init()
 				   strDbIp.c_str(), strDbUserName.c_str(), strDbName.c_str(), DbPort);
 	RINOK(iDbMgr->Open(strDbIp.c_str(), strDbUserName.c_str(), strDbPassword.c_str(), strDbName.c_str(), DbPort, 0));
 
+	iDbMgr->ExecSQL("set interactive_timeout=24*3600");
+
 	GET_OBJECT_RET(ACDevice, iACDevice, LWDP_GET_OBJECT_ERROR);
 	RINOK(iACDevice->Init());
 	

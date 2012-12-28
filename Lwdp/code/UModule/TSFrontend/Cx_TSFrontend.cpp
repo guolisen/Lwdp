@@ -19,6 +19,70 @@ uint32_      gMaxNum = LW_TSFRONTEND_RECV_MAX_LEN;
 uint32_ gSendTimeout = LW_TSFRONTEND_SEND_TIMEOUT;
 uint32_ gRecvTimeout = LW_TSFRONTEND_RECV_TIMEOUT;
 std::string gConnStr = std::string(LW_TSFRONTEND_CONNECT_TARGET);
+uint32_ gThreadNum = 0;
+uint32_ gThreadMax = 0;
+
+class CountPercent
+{
+public:
+	CountPercent():mExtFps(0),mFrames(0),mUpdateTime(1000000)
+	{
+		gettimeofday (&mTvLast, NULL);
+	}
+	virtual ~CountPercent()
+	{
+
+	}
+
+	double GetFps()
+	{
+		return mExtFps;
+	}
+
+	void Update()
+	{
+		mFrames++;
+		struct timeval tvNow;
+		gettimeofday (&tvNow, NULL);
+
+		uint32_ diffTime = (tvNow.tv_sec - mTvLast.tv_sec) * 1000000 +
+			               (tvNow.tv_usec - mTvLast.tv_usec);
+
+	    if(diffTime > mUpdateTime)
+	    {
+	    	mExtFps = ((double)mFrames / (double)diffTime) * 1000000.0;
+	        gettimeofday(&mTvLast, NULL);
+	        mFrames = 0;
+	    }
+	}
+
+protected:
+	struct timeval mTvLast;
+	double  mExtFps;
+	uint32_ mFrames;
+	uint32_ mUpdateTime;
+};
+
+CountPercent gThreadPerCreate;
+CountPercent gThreadPerRelease;
+
+class TsThreadNum
+{
+public:
+	TsThreadNum()
+	{
+		++gThreadNum;
+		gThreadPerCreate.Update();
+
+
+	}
+	virtual ~TsThreadNum()
+	{
+		--gThreadNum;
+		gThreadPerRelease.Update();
+	}
+
+};
 
 Cx_TSFrontend::Cx_TSFrontend()
 {
@@ -46,6 +110,7 @@ void* thread_callback(void* vfd)
 {
 	LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::DEBUG, "Thread Callback fd(%x)!", vfd);
 
+	TsThreadNum NumCount;
 	if(!vfd)
 	{
 		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, 
@@ -297,6 +362,7 @@ void io_callback(LoopHandle loop, CBHandle w, int revents)
 	LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::DEBUG, 
 				   "ACCEPT Clinet IP(%s)", r.c_str());
 
+	//Api_TaskDelay(10);
 	pthread_t t;
 	int result;
 
@@ -407,7 +473,26 @@ LWRESULT Cx_TSFrontend::Init()
 	//Start Watcher
 	iEventMgr->WatcherStart(mIoWatcher);
 	
+	Cx_Interface<Ix_ConsoleMgr> iConsoleMgr(CLSID_ConsoleMgr);
+	if(!iConsoleMgr.IsNull())
+	{
+		ConsoleCBDelegate regFun = MakeDelegate(this, &Cx_TSFrontend::ConsoleGetTsInfo);
+		RINOK(iConsoleMgr->RegisteCommand(LW_TSFRONTEND_COMMAND_GET_INFO_NAME, regFun,
+				                          LW_TSFRONTEND_COMMAND_GET_INFO_INFO));
+	}
+
 	return LWDP_OK;
+}
+
+int32_ Cx_TSFrontend::ConsoleGetTsInfo(COMMAND_LINE& command_line)
+{
+	std::cout << "Current Thread Num: " << gThreadNum << std::endl;
+	std::cout << "Create Thread Percent: "
+			  << gThreadPerCreate.GetFps()  << " /s" << std::endl;
+	std::cout << "Release Thread Percent: "
+			  << gThreadPerRelease.GetFps()  << " /s" << std::endl;
+
+	return 0;
 }
 
 LWRESULT Cx_TSFrontend::RunServer()

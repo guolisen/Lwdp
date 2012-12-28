@@ -18,6 +18,19 @@
 
 LWDP_NAMESPACE_BEGIN;
 
+pthread_mutex_t db_mutex = PTHREAD_MUTEX_INITIALIZER;
+class db_mutex_class
+{
+public:
+	db_mutex_class()
+	{
+		pthread_mutex_lock(&db_mutex);
+	};
+	virtual ~db_mutex_class()
+	{
+		pthread_mutex_unlock(&db_mutex);
+	};
+};
 
 Cx_DbMgr::Cx_DbMgr()
 {
@@ -60,6 +73,13 @@ LWRESULT Cx_DbMgr::Open(const std::string& host, const std::string& user, const 
 		goto EXT;
 	}
 
+	mHost = host;
+	mUser = user;
+	mPasswd = passwd;
+	mDbStr  = db;
+	mPort   = port;
+	mClientFlag = client_flag;
+
 	return LWDP_OK;
 EXT:
 	LWDP_LOG_PRINT("DbMgr", LWDP_LOG_MGR::ERR, 
@@ -93,6 +113,7 @@ DBHandle Cx_DbMgr::GetDbHandle()
 
 LWRESULT Cx_DbMgr::QuerySQL(const std::string& sql, Cx_Interface<Ix_DbQuery>& query_out)
 {
+	db_mutex_class db_mutex;
 	Cx_Interface<Ix_DbQuery> tmpQuery(CLSID_DbQuery);
 	if(!tmpQuery)
 	{
@@ -124,6 +145,7 @@ LWRESULT Cx_DbMgr::QuerySQL(const std::string& sql, Cx_Interface<Ix_DbQuery>& qu
 
 int32_ Cx_DbMgr::ExecSQL(const std::string& sql)
 {
+	db_mutex_class db_mutex;
 	int ret = 0;
 	if((ret = mysql_real_query(mDb, sql.c_str(), sql.size())))
 	{
@@ -144,7 +166,14 @@ int32_ Cx_DbMgr::Ping()
 	if(mysql_ping(mDb) == 0)
 		return LWDP_OK;
 	else 
-		return LWDP_PING_DB_ERROR; 
+	{
+		db_mutex_class db_mutex;
+		mysql_close(mDb);
+		if(Open(mHost, mUser, mPasswd, mDbStr, mPort, mClientFlag) != LWDP_OK)
+			return LWDP_PING_DB_ERROR;
+	}
+
+	return LWDP_OK;
 }
 
 

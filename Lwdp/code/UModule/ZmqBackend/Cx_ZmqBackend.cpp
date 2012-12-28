@@ -1,6 +1,10 @@
 #include <LwDp.h>
 #include <PluginInc.h>
 
+#include <stdio.h>
+#include <stdarg.h>
+#include <string.h>
+#include <stdlib.h>
 #include <Interface/ConfigMgr/Ix_ConfigMgr.h>
 #include <Interface/LogMgr/Ix_LogMgr.h>
 #include <Interface/ZmqMgr/Ix_ZmqMgr.h>
@@ -14,6 +18,13 @@
 #include "ZmqBackendErrno.h"
 #include "Cx_ZmqBackend.h"
 
+#if (defined (__WINDOWS__))
+#   define randof(num)  (int) ((float) (num) * rand () / (RAND_MAX + 1.0))
+#else
+#   define randof(num)  (int) ((float) (num) * random () / (RAND_MAX + 1.0))
+#endif
+
+
 ContextHandle Cx_ZmqBackend::mContext;
 
 Cx_ZmqBackend::Cx_ZmqBackend()
@@ -26,12 +37,21 @@ Cx_ZmqBackend::~Cx_ZmqBackend()
 	printf("ZmqBackend Delete!\n");
 }
 
+static void s_set_id (void *socket)
+{
+	GET_OBJECT_VOID(ZmqMgr, iZmqMgr);
+    char identity [10];
+    sprintf (identity, "%04X-%04X", randof (0x10000), randof (0x10000));
+    iZmqMgr->Setsockopt(socket, LWDP_IDENTITY, identity, strlen (identity));
+}
+
 void* worker_task (void *args)
 {
 	GET_OBJECT_RET(ZmqMgr, iZmqMgr, 0);
  
 	ContextHandle  context = (ContextHandle)Cx_ZmqBackend::mContext;
 	SocketHandle responder = iZmqMgr->GetNewSocket(context, LWDP_REP);
+	s_set_id(responder);
 
 	GET_OBJECT_RET(ConfigMgr, iConfigMgr, 0);
 	//backend
@@ -51,11 +71,11 @@ void* worker_task (void *args)
 
 	iZmqMgr->Connect(responder, strWorkThread.c_str());
 	Cx_Interface<Ix_ZMessage> iZMessage;
+	int32_ more = 0;
+	uint32_ more_size = sizeof(more);
 	while (1) 
 	{
-		int32_ more = 0;
-		uint32_ more_size = sizeof(more);
-
+		more = 0;
 		while (1) 
 		{
 			GET_OBJECT_RET(ZMessage, iTmpMsg, 0);
@@ -225,8 +245,8 @@ LWRESULT Cx_ZmqBackend::RunServer()
 	        	iZMessage->InitZMessage();
 	            iZmqMgr->Recv(mFrontend, iZMessage, 0);
 
-	            LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::DEBUG,
-	            			   "Revc From Tcp Frontend(%d)", iZMessage->Size());
+	            //LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::DEBUG,
+	            //			   "Revc From Tcp Frontend(%d)", iZMessage->Size());
 				iZmqMgr->Getsockopt(mFrontend, LWDP_RCVMORE, &more, &more_size);
 				iZmqMgr->Send(mBackend, iZMessage, more? LWDP_SNDMORE: 0);
                 if (!more)
@@ -243,8 +263,8 @@ LWRESULT Cx_ZmqBackend::RunServer()
 				iZMessage->InitZMessage();
 	            iZmqMgr->Recv(mBackend, iZMessage, 0);
 
-	            LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::DEBUG,
-	            	           "Revc From Zmq Backend(%d)", iZMessage->Size());
+	            //LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::DEBUG,
+	            //	           "Revc From Zmq Backend(%d)", iZMessage->Size());
 				iZmqMgr->Getsockopt(mBackend, LWDP_RCVMORE, &more, &more_size);
 				iZmqMgr->Send(mFrontend, iZMessage, more? LWDP_SNDMORE: 0);
                 if (!more)
@@ -305,7 +325,7 @@ LWRESULT Cx_ZmqBackend::CallBackZmqMsg(const uint8_* recv_msg, uint32_ recv_msg_
 	memset(errMsg, 0, sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY));
 	TS_ZMQ_SERVER_MSG* errStru = (TS_ZMQ_SERVER_MSG*)errMsg;
 	memcpy(errStru->deviceId, zMsg->deviceId, sizeof(errStru->deviceId));
-	errStru->msgCode  = TS_SERVER_UNKNOW_MSG;
+	errStru->msgCode  = (uint32_)TS_SERVER_UNKNOW_MSG;
 	TS_SERVER_ERROR_BODY* errBody = (TS_SERVER_ERROR_BODY*)errStru->customMsgBody;
 	errBody->errMsgCode = zMsg->msgCode;
 	memcpy(errBody->errData, "Unknow Msg", 11);

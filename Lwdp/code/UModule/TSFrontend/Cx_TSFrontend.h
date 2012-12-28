@@ -4,6 +4,7 @@
 
 using namespace NLwdp;
 #include <Interface/EventMgr/Ix_EventMgr.h>
+#include <Interface/ConsoleMgr/Ix_ConsoleMgr.h>
 #include "../Interface/TSFrontend/Ix_TSFrontend.h"
 
 
@@ -28,6 +29,8 @@ protected:
     virtual void setAddress(const char* ip, int port, struct sockaddr_in* addr);
     virtual std::string addressToString(struct sockaddr_in* addr);
     virtual LWRESULT createTcpServer(int port);
+
+	virtual int32_ ConsoleGetTsInfo(COMMAND_LINE& command_line);
 
 protected:
 	WatcherHandle mIoWatcher;

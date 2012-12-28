@@ -17,15 +17,15 @@ LWDP_NAMESPACE_BEGIN;
 ////////////////////////////////////////////
 enum TCP_SERVER_RETURN_CODE
 {
-	TS_SERVER_TCP_MSG_LEN_ERROR = 1,  //½á¹¹ÌåÖÐÏûÏ¢³¤¶È×Ö¶ÎÊýÖµ´óÓÚÊµ¼Ê½ÓÊÕÊý¾Ý³¤¶È
+	TS_SERVER_TCP_MSG_LEN_ERROR = 1,  //ï¿½á¹¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½Ö¶ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½Êµï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½
 	TS_SERVER_RECV_TIMEOUT_ERROR
 };
 
 typedef struct stru_tcp_server_msg
 {
-	uint32_ msgLength;  //ÏûÏ¢Ìå³¤¶È  ´Ë³¤¶ÈÎªÕû¸öÏûÏ¢³¤¶È£¬°üÀ¨msgLength±¾ÉíµÄ³¤¶È
-	uint32_ statusCode; //ÏûÏ¢TcpServer´íÎó·µ»ØÂë
-	uint8_  tcpMsgBody[0];  //ÏûÏ¢Ìå
+	uint32_ msgLength;  //ï¿½ï¿½Ï¢ï¿½å³¤ï¿½ï¿½  ï¿½Ë³ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½È£ï¿½ï¿½ï¿½ï¿½ï¿½msgLengthï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½ï¿½
+	uint32_ statusCode; //ï¿½ï¿½Ï¢TcpServerï¿½ï¿½ï¿½ó·µ»ï¿½ï¿½ï¿½
+	uint8_  tcpMsgBody[0];  //ï¿½ï¿½Ï¢ï¿½ï¿½
 }TS_TCP_SERVER_MSG;
 
 
@@ -37,24 +37,24 @@ typedef struct stru_zmq_server_msg
 {
 	char_   deviceId[TS_GATE_ID_STRU_LEN];
 	uint32_ msgCode;
-	uint8_  customMsgBody[0];  //ÏûÏ¢Ìå
+	uint8_  customMsgBody[0];  //ï¿½ï¿½Ï¢ï¿½ï¿½
 }TS_ZMQ_SERVER_MSG;
 
 
 // SERVER ERROR MSG CODE
-#define TS_SYSTEM_MSG_BASE    0x00000000 //Module:0x00 Code0x000000
+#define TS_SYSTEM_MSG_BASE    0x00000000L //Module:0x00 Code0x000000
 enum TS_SYSTEM_MSG_ENUM
 {
 	TS_SERVER_OK = TS_SYSTEM_MSG_BASE,
-	TS_SERVER_UNKNOW_MSG, //¿Í»§¶Ë·¢ËÍµÄÏûÏ¢ÎªÎ´ÖªÄÚÈÝ
-	TS_SERVER_MSG_BODY_ERR, //¿Í»§¶Ë·¢ËÍµÄÏûÏ¢ÎªÎ´ÖªÄÚÈÝ
+	TS_SERVER_UNKNOW_MSG, //ï¿½Í»ï¿½ï¿½Ë·ï¿½ï¿½Íµï¿½ï¿½ï¿½Ï¢ÎªÎ´Öªï¿½ï¿½ï¿½ï¿½
+	TS_SERVER_MSG_BODY_ERR, //ï¿½Í»ï¿½ï¿½Ë·ï¿½ï¿½Íµï¿½ï¿½ï¿½Ï¢ÎªÎ´Öªï¿½ï¿½ï¿½ï¿½
 	
 };
 
 typedef struct stru_server_err_body
 {	
-	uint32_  errMsgCode; //ÏûÏ¢·¢ËÍ½á¹û
-	char_    errData[128];  // ¿ÉÄÜµÄ´íÎóÐÅÏ¢×Ö·û´®
+	uint32_  errMsgCode; //ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½Í½ï¿½ï¿½
+	char_    errData[128];  // ï¿½ï¿½ï¿½ÜµÄ´ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½Ö·ï¿½
 }TS_SERVER_ERROR_BODY;
 
 

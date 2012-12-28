@@ -124,6 +124,12 @@ protected:
 protected:
 	MYSQL* mDb;
 
+	std::string  mHost;
+	std::string  mUser;
+	std::string  mPasswd;
+	std::string  mDbStr;
+	int32_       mPort;
+	long_        mClientFlag;
 	
 };
 

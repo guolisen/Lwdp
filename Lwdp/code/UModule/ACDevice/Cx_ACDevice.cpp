@@ -596,6 +596,7 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(const uint8_* ret_msg, uint32_ re
 	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::DEBUG,
 				   "Select Db Str(%s)", buffer);
 	GET_OBJECT_RET(DbMgr, iDbMgr, LWDP_GET_OBJECT_ERROR);
+	iDbMgr->Ping();
 	Cx_Interface<Ix_DbQuery> gateQuery;
 	int32_ queryRes = 0;
 	uint32_ retCode = 0;

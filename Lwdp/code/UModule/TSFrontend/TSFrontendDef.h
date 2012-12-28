@@ -14,6 +14,8 @@
 #define LW_TSFRONTEND_CONNECT_TARGET  __T("tcp://localhost:5559")
 #define LW_TSFRONTEND_RECV_BUFFER_LEN 4096
 
+#define LW_TSFRONTEND_COMMAND_GET_INFO_NAME  __T("getTsInfo")
+#define LW_TSFRONTEND_COMMAND_GET_INFO_INFO  __T("Get Tcp Server Info")
 
 #define LW_TSFRONTEND_MODULE_NAME  			__T("TSFrontend")
 
