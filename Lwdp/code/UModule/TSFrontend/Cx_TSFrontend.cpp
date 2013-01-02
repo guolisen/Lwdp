@@ -135,7 +135,7 @@ void* thread_callback(void* vfd)
 	//////////////////////////////////////////////////////////////
 	// Recv Tcp Message from Client
 	//////////////////////////////////////////////////////////////
-    uint32_ ret_len = 0;
+    int32_  ret_len = 0;
     uint32_ recvLen = LW_TSFRONTEND_RECV_BUFFER_LEN;
 	uint8_* recvBuf = (uint8_*)malloc(recvLen * sizeof(uint8_));
 	ASSERT_CHECK_RET(LWDP_PLUGIN_LOG, NULL, recvBuf, "Malloc Recv Buffer Error!");
@@ -308,7 +308,7 @@ ERR_TCP_TAG:
 #else
 	::close (accept_conn);
 #endif
-
+	Api_TaskDelay(1);
 	return NULL;
 }
 

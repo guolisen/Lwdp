@@ -47,9 +47,16 @@ Cx_DbMgr::~Cx_DbMgr()
 
 LWRESULT Cx_DbMgr::Init()
 {
-	lw_log_info(LWDP_LUA_LOG, __T("Cx_DbMgr::Init OK!"));
+	if (mysql_library_init(0, NULL, NULL)) 
+	{
+		LWDP_LOG_PRINT("DbMgr", LWDP_LOG_MGR::ERR, 
+					  "Can NOT Initialize MySQL Library(%s)", 
+					  mysql_error(mDb));
 
-
+		return LWDP_DB_LIBRARY_INIT_ERROR;
+	}
+	LWDP_LOG_PRINT("DbMgr", LWDP_LOG_MGR::INFO, 
+				   "Initialize MySQL Library OK!");
 
 	return LWDP_OK;
 }
@@ -58,6 +65,7 @@ LWRESULT Cx_DbMgr::Init()
 LWRESULT Cx_DbMgr::Open(const std::string& host, const std::string& user, const std::string& passwd, const std::string& db,
  					    int32_ port, long_ client_flag)
 {
+	char value = 1;
 	mDb = mysql_init(NULL);
 	if(NULL == mDb) 
 		goto EXT;
@@ -66,6 +74,9 @@ LWRESULT Cx_DbMgr::Open(const std::string& host, const std::string& user, const 
 	if (NULL == mysql_real_connect(mDb, host.c_str(), user.c_str(), passwd.c_str(), db.c_str(), port, NULL, client_flag))
 		goto EXT;
 
+	mysql_options(mDb, MYSQL_OPT_RECONNECT, (char *)&value);
+	mysql_set_character_set(mDb,"gb2312");
+	
 	if (mysql_select_db(mDb, db.c_str()) != 0) 
 	{
 		mysql_close(mDb);
@@ -163,16 +174,22 @@ int32_ Cx_DbMgr::ExecSQL(const std::string& sql)
 
 int32_ Cx_DbMgr::Ping()
 {
-	if(mysql_ping(mDb) == 0)
-		return LWDP_OK;
-	else 
+	db_mutex_class db_mutex;
+	//const char* mySqlState = mysql_stat(mDb);
+	//if(!mySqlState)
 	{
-		db_mutex_class db_mutex;
-		mysql_close(mDb);
-		if(Open(mHost, mUser, mPasswd, mDbStr, mPort, mClientFlag) != LWDP_OK)
-			return LWDP_PING_DB_ERROR;
-	}
+		if(mysql_ping(mDb) == 0)
+			return LWDP_OK;
+		else 
+		{
+			mysql_close(mDb);
+			LWDP_LOG_PRINT("DbMgr", LWDP_LOG_MGR::WARNING, 
+							"Ping Error Reconnect Db!");
 
+			if(Open(mHost, mUser, mPasswd, mDbStr, mPort, mClientFlag) != LWDP_OK)
+				return LWDP_PING_DB_ERROR;
+		}
+	}
 	return LWDP_OK;
 }
 

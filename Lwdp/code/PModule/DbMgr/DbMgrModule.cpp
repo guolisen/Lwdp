@@ -31,8 +31,8 @@ DEF_MODULE_INFO_END(DbMgr);
 DEF_INIT_FUN(DbMgr)
 {
 	printf("DbMgr InitializePlugin\n");
-	//Cx_Interface<Ix_ScriptMgr> iScript(CLSID_ScriptMgr);
-	//iScript->RegisteAction(new APrint);
+	GET_OBJECT_RET(DbMgr, iDbMgr, LWDP_GET_OBJECT_ERROR);
+	RINOK(iDbMgr->Init());
 	
     return LWDP_OK;
 }
@@ -41,6 +41,7 @@ DEF_INIT_FUN(DbMgr)
 DEF_UNINIT_FUN(DbMgr)
 {
 	printf("DbMgr UninitializePlugin\n");
+	//mysql_library_end();
     return LWDP_OK;
 }
 

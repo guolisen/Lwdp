@@ -164,8 +164,8 @@
 		<Property> 
 			<Version>1.0</Version>
 			<ModuleDir>../../../../code/bin/Plugins/TSFrontend.so</ModuleDir>
-			<!-- <ConnetTarget>tcp://localhost:12136</ConnetTarget>-->
-			<ConnetTarget>ipc://TcpToZmq</ConnetTarget>
+			<ConnetTarget>tcp://localhost:12136</ConnetTarget>
+			<!-- <ConnetTarget>ipc://TcpToZmq1</ConnetTarget>-->
 			<ServerPort>12135</ServerPort>
 			<ListenBlock>128</ListenBlock>
 			<RecvBufMaxLen>1024</RecvBufMaxLen>
@@ -182,13 +182,13 @@
 		<Property> 
 			<Version>1.0</Version>
 			<ModuleDir>../../../../code/bin/Plugins/ZmqBackend.so</ModuleDir>
-			<!-- <FrontendTarget>tcp://*:12136</FrontendTarget>-->
-			<FrontendTarget>ipc://TcpToZmq</FrontendTarget>
+			<FrontendTarget>tcp://*:12136</FrontendTarget>
+			<!-- <FrontendTarget>ipc://TcpToZmq1</FrontendTarget> -->
 			<BackendTarget>inproc://work_thread</BackendTarget> 
 			<!--<BackendTarget>tcp://*:12137</BackendTarget> -->
 			<!--<WorkThreadConnect>tcp://localhost:12137</WorkThreadConnect>  -->
 			<WorkThreadConnect>inproc://work_thread</WorkThreadConnect>
-			<WorkThreadNum>1</WorkThreadNum>
+			<WorkThreadNum>20</WorkThreadNum>
 		</Property>
 		<TableSet>
 		</TableSet>
@@ -200,7 +200,7 @@
 		<Property> 
 			<Version>1.0</Version>
 			<ModuleDir>../../../../code/bin/Plugins/TcpServer.so</ModuleDir>
-			<DbIp>10.3.18.27</DbIp>
+			<DbIp>192.168.1.5</DbIp>
 			<DbUser>ptsf</DbUser>
 			<DbPassword>123456</DbPassword>
 			<DbSelect>scenic</DbSelect>

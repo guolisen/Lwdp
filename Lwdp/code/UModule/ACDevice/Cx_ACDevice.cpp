@@ -585,8 +585,8 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(const uint8_* ret_msg, uint32_ re
 
 	char_ buffer[3072] = {0};
 	Api_snprintf(buffer, 3071, Cx_ACDevice::mCardSql.c_str(),  carIdStr.c_str(), 
-															   std::string((char_*)zmqMsg->deviceId, sizeof(zmqMsg->deviceId)).c_str(),
-				  											   std::string((char_ *)msgBody->sceneryId, sizeof(msgBody->sceneryId)).c_str(),
+															   std::string((char_*)zmqMsg->deviceId, sizeof(zmqMsg->deviceId)-1).c_str(),
+				  											   std::string((char_*)msgBody->sceneryId, sizeof(msgBody->sceneryId)-1).c_str(),
 				  								               msgBody->cardType,
 				  								               msgBody->actionId,
 				  								               "2012-12-24 14:53:12");
@@ -803,13 +803,12 @@ LWRESULT Cx_ACDevice::DeviceBulkDataMsgProcess(const uint8_* ret_msg, uint32_ re
 
 LWRESULT Cx_ACDevice::IntArrayToStr(uint32_ int_array[], uint32_ size, std::string& ret_str)
 {
-	std::string tagStr("%x");
 	std::string formatStr("");
 	char_* tmpStrCell = new char_[32];
 	for(uint32_ i = 0; i < size; ++i)
 	{
 		memset(tmpStrCell, 0, 32);
-		Api_snprintf(tmpStrCell, 32, "%x", int_array[i]);
+		Api_snprintf(tmpStrCell, 32, "%d", int_array[i]);
 		if(!int_array[i])
 			break;
 		formatStr += std::string(tmpStrCell);

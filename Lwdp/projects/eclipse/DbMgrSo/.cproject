@@ -38,7 +38,7 @@
 								</option>
 								<option id="gnu.cpp.compiler.option.include.paths.1683936061" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="../../../../code/h"/>
-									<listOptionValue builtIn="false" value="/home/ptsf/mysql-connector-c-6.0.2-linux-glibc2.3-x86-64bit/include"/>
+									<listOptionValue builtIn="false" value="/mnt/hgfs/tmp/mysql-connector-c-6.0.2/include"/>
 									<listOptionValue builtIn="false" value="../../../../code/h/LwApiLib/ComLib"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.other.pic.1916414547" name="Position Independent Code (-fPIC)" superClass="gnu.cpp.compiler.option.other.pic" value="true" valueType="boolean"/>

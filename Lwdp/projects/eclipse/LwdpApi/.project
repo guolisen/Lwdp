@@ -151,11 +151,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/code/h/XComPtr.h</locationURI>
 		</link>
 		<link>
-			<name>LwApiLib/ComLib/ConvStr</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>LwApiLib/ComLib/Libev</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
