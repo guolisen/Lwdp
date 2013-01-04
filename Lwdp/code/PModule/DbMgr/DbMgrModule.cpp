@@ -31,6 +31,16 @@ DEF_MODULE_INFO_END(DbMgr);
 DEF_INIT_FUN(DbMgr)
 {
 	printf("DbMgr InitializePlugin\n");
+#ifdef LWDP_PLATFORM_DEF_WIN32
+	int res = FALSE;
+	res = pthread_win32_process_attach_np(); 
+	if(!res) //if false
+	{
+		lw_log_err(LWDP_MODULE_LOG, "pThread Init Error!");
+		return LWDP_ERROR;
+	}
+	lw_log_info(LWDP_MODULE_LOG, "pThread Init OK!");
+#endif
 	GET_OBJECT_RET(DbMgr, iDbMgr, LWDP_GET_OBJECT_ERROR);
 	RINOK(iDbMgr->Init());
 	

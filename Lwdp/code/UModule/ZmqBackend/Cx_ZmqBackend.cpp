@@ -18,7 +18,7 @@
 #include "ZmqBackendErrno.h"
 #include "Cx_ZmqBackend.h"
 
-#if (defined (__WINDOWS__))
+#if (defined (LWDP_PLATFORM_DEF_WIN32))
 #   define randof(num)  (int) ((float) (num) * rand () / (RAND_MAX + 1.0))
 #else
 #   define randof(num)  (int) ((float) (num) * random () / (RAND_MAX + 1.0))

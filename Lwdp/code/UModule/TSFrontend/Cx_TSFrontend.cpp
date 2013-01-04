@@ -27,7 +27,9 @@ class CountPercent
 public:
 	CountPercent():mExtFps(0),mFrames(0),mUpdateTime(1000000)
 	{
+#ifndef LWDP_PLATFORM_DEF_WIN32
 		gettimeofday (&mTvLast, NULL);
+#endif
 	}
 	virtual ~CountPercent()
 	{
@@ -43,15 +45,18 @@ public:
 	{
 		mFrames++;
 		struct timeval tvNow;
+#ifndef LWDP_PLATFORM_DEF_WIN32
 		gettimeofday (&tvNow, NULL);
-
+#endif
 		uint32_ diffTime = (tvNow.tv_sec - mTvLast.tv_sec) * 1000000 +
 			               (tvNow.tv_usec - mTvLast.tv_usec);
 
 	    if(diffTime > mUpdateTime)
 	    {
 	    	mExtFps = ((double)mFrames / (double)diffTime) * 1000000.0;
+#ifndef LWDP_PLATFORM_DEF_WIN32
 	        gettimeofday(&mTvLast, NULL);
+#endif
 	        mFrames = 0;
 	    }
 	}
@@ -73,8 +78,6 @@ public:
 	{
 		++gThreadNum;
 		gThreadPerCreate.Update();
-
-
 	}
 	virtual ~TsThreadNum()
 	{
