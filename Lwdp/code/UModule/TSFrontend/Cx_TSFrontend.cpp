@@ -235,7 +235,8 @@ void* thread_callback(void* vfd)
 		}
 		Api_TaskDelay (1); 
 	}
-
+	iZmqMgr->CloseSocket(requester);
+	
 	if(!iZMessage->Size())
 	{	
 		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, 
@@ -300,7 +301,7 @@ void* thread_callback(void* vfd)
 
 	free(sendBuf);
 ERR_ZMQ_TAG:
-	iZmqMgr->CloseSocket(requester);
+	//iZmqMgr->CloseSocket(requester);
 	//iZmqMgr->CloseContext(context);
 	
 ERR_TCP_TAG:
@@ -311,7 +312,7 @@ ERR_TCP_TAG:
 #else
 	::close (accept_conn);
 #endif
-	Api_TaskDelay(1);
+	Api_TaskDelay(5);
 	return NULL;
 }
 
