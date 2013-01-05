@@ -6,6 +6,7 @@ using namespace NLwdp;
 #include <boost/shared_ptr.hpp>
 #include <Interface/LogMgr/Ix_LogMgr.h>
 #include <Interface/ZmqMgr/Ix_ZmqMgr.h>
+#include <Interface/ConsoleMgr/Ix_ConsoleMgr.h>
 #include "../Interface/ZmqBackend/Ix_ZmqBackend.h"
 
 typedef std::map<uint32_, MsgDelegate> MSG_DELEGATE_MAP;
@@ -30,13 +31,19 @@ private:
 	virtual LWRESULT RegisteZmqMsg(uint32_ msg_code, MsgDelegate msg_delegate);	
 	virtual LWRESULT CallBackZmqMsg(const uint8_* recv_msg, uint32_ recv_msg_len, 
 										  Data_Ptr& ret_data ,uint32_& ret_data_len);	
+	virtual LWRESULT CallBackCtrl(const char_* command_str, uint32_ str_len);
+
+protected:
+	virtual int32_ ConsoleSendToWorker(COMMAND_LINE& command_line);
 
 public:
 	static ContextHandle mContext;
+	static SocketHandle  mCtrlend;
 protected:
 
 	SocketHandle  mFrontend;
 	SocketHandle  mBackend;
+	
 	MSG_DELEGATE_MAP mMsgDelegateMap;
 };
 

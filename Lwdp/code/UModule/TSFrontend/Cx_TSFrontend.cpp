@@ -43,22 +43,24 @@ public:
 
 	void Update()
 	{
+#ifndef LWDP_PLATFORM_DEF_WIN32
 		mFrames++;
 		struct timeval tvNow;
-#ifndef LWDP_PLATFORM_DEF_WIN32
+
 		gettimeofday (&tvNow, NULL);
-#endif
+
 		uint32_ diffTime = (tvNow.tv_sec - mTvLast.tv_sec) * 1000000 +
 			               (tvNow.tv_usec - mTvLast.tv_usec);
 
 	    if(diffTime > mUpdateTime)
 	    {
 	    	mExtFps = ((double)mFrames / (double)diffTime) * 1000000.0;
-#ifndef LWDP_PLATFORM_DEF_WIN32
+
 	        gettimeofday(&mTvLast, NULL);
-#endif
+
 	        mFrames = 0;
 	    }
+#endif
 	}
 
 protected:

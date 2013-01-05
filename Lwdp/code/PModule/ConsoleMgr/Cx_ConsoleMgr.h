@@ -38,7 +38,8 @@ protected:
 
 protected:
 	virtual LWRESULT CallBackCommand(COMMAND_LINE& command_line);	
-	virtual LWRESULT PraseCommandLine(const std::string& command_str, COMMAND_LINE& command_line);
+	virtual LWRESULT PraseCommandLine(const std::string& command_str, COMMAND_LINE& command_line, 
+		                                     const std::string& div_char);
 
 protected:
 	virtual int32_ ConsoleListCom(COMMAND_LINE& command_line);
