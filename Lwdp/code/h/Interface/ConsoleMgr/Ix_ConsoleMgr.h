@@ -9,7 +9,7 @@ using namespace fastdelegate;
 
 LWDP_NAMESPACE_BEGIN;
 
-typedef std::list<std::string> COMMAND_LINE;
+typedef std::vector<std::string> COMMAND_LINE;
 typedef FastDelegate1<COMMAND_LINE&, int32_> ConsoleCBDelegate; 
 
 typedef struct tag_command_stru 
@@ -39,6 +39,9 @@ INTERFACE_BEGIN(ConsoleMgr)
 
 	virtual LWRESULT RegisteCommand(const std::string& command_str, ConsoleCBDelegate command_fun, 
 							          const std::string& command_info) = 0;
+
+	virtual LWRESULT PraseCommandLine(const std::string& command_str, COMMAND_LINE& command_line, 
+		                                     const std::string& div_char) = 0;
 
 
 INTERFACE_END();

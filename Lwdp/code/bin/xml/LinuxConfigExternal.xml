@@ -188,6 +188,7 @@
 			<!--<BackendTarget>tcp://*:12137</BackendTarget> -->
 			<!--<WorkThreadConnect>tcp://localhost:12137</WorkThreadConnect>  -->
 			<WorkThreadConnect>inproc://work_thread</WorkThreadConnect>
+			<CtrlConnect>inproc://ctrl_to_workthread</CtrlConnect>
 			<WorkThreadNum>20</WorkThreadNum>
 		</Property>
 		<TableSet>

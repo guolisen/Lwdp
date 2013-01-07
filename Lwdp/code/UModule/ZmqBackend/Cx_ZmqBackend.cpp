@@ -26,6 +26,8 @@
 
 
 ContextHandle Cx_ZmqBackend::mContext;
+SocketHandle  Cx_ZmqBackend::mCtrlend;
+
 
 Cx_ZmqBackend::Cx_ZmqBackend()
 {
@@ -48,7 +50,8 @@ static void s_set_id (void *socket)
 void* worker_task (void *args)
 {
 	GET_OBJECT_RET(ZmqMgr, iZmqMgr, 0);
- 
+
+ 	////////////////////////////////////////////////
 	ContextHandle  context = (ContextHandle)Cx_ZmqBackend::mContext;
 	SocketHandle responder = iZmqMgr->GetNewSocket(context, LWDP_REP);
 	s_set_id(responder);
@@ -68,66 +71,132 @@ void* worker_task (void *args)
 		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::WARNING, 
 					   "Can't Find <ConnetTarget> In Config File, Default(%s)", strWorkThread.c_str());
 	}
-
-	iZmqMgr->Connect(responder, strWorkThread.c_str());
-	Cx_Interface<Ix_ZMessage> iZMessage;
-	int32_ more = 0;
-	uint32_ more_size = sizeof(more);
-	while (1) 
+	if(iZmqMgr->Connect(responder, strWorkThread.c_str()) != LWDP_OK)
 	{
-		more = 0;
-		while (1) 
-		{
-			GET_OBJECT_RET(ZMessage, iTmpMsg, 0);
-			// Wait for next request from client
-	        // Process all parts of the message
-			iTmpMsg->InitZMessage();
-	        iZmqMgr->Recv(responder, iTmpMsg, 0);
-			
-	        //LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::DEBUG,
-	       	//               "Work Thread Revc(%d)", iTmpMsg->Size());
-			iZmqMgr->Getsockopt(responder, LWDP_RCVMORE, &more, &more_size);
-			if (!more)
-			{
-				iZMessage = iTmpMsg;
-			    break; // Last message part
-			}
-			Api_TaskDelay (1); 
-		}
-
-		
-		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::NOTICE, 
-					   "ZMQ Server Received request: [%d]", iZMessage->Size());
-
-		// Do some 'work'
-		GET_OBJECT_RET(ZmqBackend, iZmqBackend, 0);
-		Data_Ptr sendData;
-		sendData.reset();
-		uint32_ sendLen = 0;
-		LWRESULT res = iZmqBackend->CallBackZmqMsg((uint8_*)iZMessage->Data(), iZMessage->Size(), sendData, sendLen);
-		if(res != LWDP_OK)
-		{
-			LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::ERR, 
-						   "CallBackZmqMsg ret Error(%x)", res);
-			//continue;
-		}
-
-		if(sendLen < 0)
-		{
-			LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::ERR, 
-						   "Zmq Send Data Length is too Small(%d)", sendLen);
-
-			//continue;
-		}
-		// Send reply back to client
-		GET_OBJECT_RET(ZMessage, iZSMessage, 0);
-		iZSMessage->InitZMessage();
-		iZSMessage->SetValue(sendData.get(), sendLen);
-		iZmqMgr->Send(responder, iZSMessage, 0);
-		
-		Api_TaskDelay(1);
+		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::ERR, 
+					   "Connect to Backend Error(%s)", strWorkThread.c_str());
+		return NULL;
 	}
-	// We never get here but clean up anyhow
+
+	/////////////////////////////////////////////
+	SocketHandle ctrlClient = iZmqMgr->GetNewSocket(context, LWDP_SUB);
+	s_set_id(ctrlClient);
+	//ctrl_client
+	std::string strCtrlClient = std::string(LW_ZMQBACKEND_CTRL_CLIENT_TARGET);
+	XPropertys  propCtrlClient;
+	iConfigMgr->GetModulePropEntry(LW_ZMQBACKEND_MODULE_NAME, LW_ZMQBACKEND_CTRL_CLIENT_NAME, propCtrlClient);
+
+	if(!propCtrlClient[0].propertyText.empty())
+	{
+		strCtrlClient = propCtrlClient[0].propertyText;
+	}
+	else
+	{
+		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::WARNING, 
+					   "Can't Find <CtrlConnect> In Config File, Default(%s)", strCtrlClient.c_str());
+	}
+	
+	if(iZmqMgr->Connect(ctrlClient, strCtrlClient.c_str()) != LWDP_OK)
+	{
+		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::ERR, 
+					   "Connect to Backend Ctrl Error(%s)", strCtrlClient.c_str());
+		return NULL;
+	}
+	iZmqMgr->Setsockopt(ctrlClient, LWDP_SUBSCRIBE, "", 0);
+
+	// Initialize poll set
+	LWDP_POLLITEM_T items [] = {
+	    { responder, 0, LWDP_POLLIN, 0 },
+	    { ctrlClient, 0, LWDP_POLLIN, 0 }
+	};
+
+	// Switch messages between sockets
+	Cx_Interface<Ix_ZMessage> iZMessage;
+    int more = 0; // Multipart detection
+    uint32_ more_size = sizeof (more);
+	while (1) {
+		more = 0;
+	    iZmqMgr->Poll(items, 2, -1);
+	    if (items [0].revents & LWDP_POLLIN) 
+		{
+			while (1) 
+			{
+				GET_OBJECT_RET(ZMessage, iTmpMsg, 0);
+				// Wait for next request from client
+		        // Process all parts of the message
+				iTmpMsg->InitZMessage();
+		        iZmqMgr->Recv(responder, iTmpMsg, 0);
+				
+		        //LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::DEBUG,
+		       	//               "Work Thread Revc(%d)", iTmpMsg->Size());
+				iZmqMgr->Getsockopt(responder, LWDP_RCVMORE, &more, &more_size);
+				if (!more)
+				{
+					iZMessage = iTmpMsg;
+				    break; // Last message part
+				}
+				Api_TaskDelay (1); 
+			}
+
+			
+			LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::NOTICE, 
+						   "ZMQ Server Received request: [%d]", iZMessage->Size());
+
+			// Do some 'work'
+			GET_OBJECT_RET(ZmqBackend, iZmqBackend, 0);
+			Data_Ptr sendData;
+			sendData.reset();
+			uint32_ sendLen = 0;
+			LWRESULT res = iZmqBackend->CallBackZmqMsg((uint8_*)iZMessage->Data(), iZMessage->Size(), sendData, sendLen);
+			if(res != LWDP_OK)
+			{
+				LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::ERR, 
+							   "CallBackZmqMsg ret Error(%x)", res);
+				//continue;
+			}
+
+			if(sendLen < 0)
+			{
+				LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::ERR, 
+							   "Zmq Send Data Length is too Small(%d)", sendLen);
+
+				//continue;
+			}
+			// Send reply back to client
+			GET_OBJECT_RET(ZMessage, iZSMessage, 0);
+			iZSMessage->InitZMessage();
+			iZSMessage->SetValue(sendData.get(), sendLen);
+			iZmqMgr->Send(responder, iZSMessage, 0);
+			
+			Api_TaskDelay(1);
+	    }
+		if (items [1].revents & LWDP_POLLIN) 
+		{
+			while (1) 
+			{
+				GET_OBJECT_RET(ZMessage, iTmpMsg, 0);
+				// Wait for next request from client
+		        // Process all parts of the message
+				iTmpMsg->InitZMessage();
+		        iZmqMgr->Recv(ctrlClient, iTmpMsg, 0);
+				
+		        //LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::DEBUG,
+		       	//               "Work Thread Revc(%d)", iTmpMsg->Size());
+				iZmqMgr->Getsockopt(ctrlClient, LWDP_RCVMORE, &more, &more_size);
+				if (!more)
+				{
+					iZMessage = iTmpMsg;
+				    break; // Last message part
+				}
+				Api_TaskDelay (1); 
+			}
+
+			// Do some 'work'
+			GET_OBJECT_RET(ZmqBackend, iZmqBackend, 0);
+			iZmqBackend->CallBackCtrl((const char_ *)iZMessage->Data(), iZMessage->Size());
+		
+		}
+	}
 
 	iZmqMgr->CloseSocket(responder);
 	iZmqMgr->CloseContext(context);
@@ -180,6 +249,45 @@ LWRESULT Cx_ZmqBackend::Init()
 
 	iZmqMgr->Bind(mBackend, strBackend.c_str());
 
+
+	//Ctrl
+	Cx_ZmqBackend::mCtrlend = iZmqMgr->GetNewSocket(Cx_ZmqBackend::mContext, LWDP_PUB);
+	//ctrl_client
+	std::string strCtrlClient = std::string(LW_ZMQBACKEND_CTRL_CLIENT_TARGET);
+	XPropertys  propCtrlClient;
+	iConfigMgr->GetModulePropEntry(LW_ZMQBACKEND_MODULE_NAME, LW_ZMQBACKEND_CTRL_CLIENT_NAME, propCtrlClient);
+
+	if(!propCtrlClient[0].propertyText.empty())
+	{
+		strCtrlClient = propCtrlClient[0].propertyText;
+	}
+	else
+	{
+		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::WARNING, 
+					   "Can't Find <CtrlConnect> In Config File, Default(%s)", 
+					   strCtrlClient.c_str());
+	}
+	
+	if(iZmqMgr->Bind(Cx_ZmqBackend::mCtrlend, strCtrlClient.c_str()) != LWDP_OK)
+	{
+		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::ERR, 
+					   "Bind Ctrl Error(%s)", 
+					   strCtrlClient.c_str());
+		return NULL;
+	}
+
+
+	Cx_Interface<Ix_ConsoleMgr> iConsoleMgr(CLSID_ConsoleMgr);
+	if(!iConsoleMgr.IsNull())
+	{
+		ConsoleCBDelegate regFun = MakeDelegate(this, &Cx_ZmqBackend::ConsoleSendToWorker);
+		RINOK(iConsoleMgr->RegisteCommand(LW_ZMQBACKEND_COMMAND_SENDTOWORKER_NAME, regFun,
+				                          LW_ZMQBACKEND_COMMAND_SENDTOWORKER_INFO));
+	}
+
+
+	//////////////////////////////////////////////
+	// thread 
 	int32_ workThreadNum = LW_ZMQBACKEND_WORKTHREAD_NUM;
 	XPropertys propWorkThreadNum;
 	iConfigMgr->GetModulePropEntry(LW_ZMQBACKEND_MODULE_NAME, LW_ZMQBACKEND_WORKTHREAD_NUM_NAME, propWorkThreadNum);
@@ -335,4 +443,58 @@ LWRESULT Cx_ZmqBackend::CallBackZmqMsg(const uint8_* recv_msg, uint32_ recv_msg_
 	return LWDP_OK;
 
 }
+
+LWRESULT Cx_ZmqBackend::CallBackCtrl(const char_* command_str, uint32_ str_len)
+{
+	if(!command_str || !str_len)
+	{
+		return LWDP_ERROR;
+	}
+
+	COMMAND_LINE tmpCmdLine;
+	Cx_Interface<Ix_ConsoleMgr> iConsoleMgr(CLSID_ConsoleMgr);
+	if(!iConsoleMgr.IsNull())
+	{
+		RINOK(iConsoleMgr->PraseCommandLine(command_str, tmpCmdLine, "@"));
+	}
+
+	std::string command = tmpCmdLine[1];
+	if(command == "info")
+	{
+		printf("bingo!\n");
+	}
+
+}
+
+int32_ Cx_ZmqBackend::ConsoleSendToWorker(COMMAND_LINE& command_line)
+{
+	GET_OBJECT_RET(ZmqMgr, iZmqMgr, LWDP_GET_OBJECT_ERROR);
+
+	COMMAND_LINE::iterator iter; 
+	std::string sendBuf("");
+	FOREACH_STL(iter, command_line)
+	{
+		sendBuf.append(*iter);
+		sendBuf.append("@");
+	}
+	
+	LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::DEBUG, 
+				   "Command msg(%s) ret(%d)", 
+				   sendBuf.c_str());
+
+	int32_ zmq_ret_len = iZmqMgr->Send(Cx_ZmqBackend::mCtrlend, sendBuf.data(), sendBuf.size(), 0);
+	if(zmq_ret_len != sendBuf.size())
+	{	
+		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, 
+					   "Send Ctrl to WorkThread Timeout or Error msg(%s) ret(%d)", 
+					   sendBuf.c_str(), zmq_ret_len);
+
+		return LWDP_ERROR;		
+	}
+
+	return LWDP_OK;
+}
+
+
+
 

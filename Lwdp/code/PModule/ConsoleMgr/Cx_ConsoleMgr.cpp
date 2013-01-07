@@ -62,7 +62,7 @@ LWRESULT Cx_ConsoleMgr::RunConsole()
 			if(lineStr.empty() || lineStr[0] == '\r' || lineStr[0] == '\n')
 				continue;
 
-			res = PraseCommandLine(lineStr, commandList);
+			res = PraseCommandLine(lineStr, commandList, " ");
 	        if(res != LWDP_OK)
 	    	{
 				std::cout << "Command Line Error" << std::endl;
@@ -132,9 +132,10 @@ LWRESULT Cx_ConsoleMgr::CallBackCommand(COMMAND_LINE& command_line)
 	
 	return LWDP_OK;
 }
-LWRESULT Cx_ConsoleMgr::PraseCommandLine(const std::string& command_str, COMMAND_LINE& command_line)
+LWRESULT Cx_ConsoleMgr::PraseCommandLine(const std::string& command_str, COMMAND_LINE& command_line,
+												const std::string& div_char)
 {
-	std::string match(" ");
+	std::string match(div_char);
 	bool removeEmpty = true;
     std::string::size_type start = 0;           // starting position for searches
     std::string::size_type skip  = 1;            // positions to skip after a match
