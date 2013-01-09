@@ -1,5 +1,5 @@
-/*! \file Cx_TimerMgr.cpp
- *  \brief TimerMgr Module Impl
+/*! \file Cx_CommonUtilMgr.cpp
+ *  \brief CommonUtilMgr Module Impl
  *  \author Guolisen, LwDp
  *  \date   2012.10.17
  */
@@ -11,25 +11,25 @@
 #include <Interface/ConfigMgr/Ix_ConfigMgr.h>
 #include <Interface/LogMgr/Ix_LogMgr.h>
 
-#include "TimerMgrDef.h"
-#include "Cx_TimerMgr.h"
+#include "CommonUtilMgrDef.h"
+#include "Cx_CommonUtilMgr.h"
 
 
 
 LWDP_NAMESPACE_BEGIN;
 
 
-Cx_TimerMgr::Cx_TimerMgr()
+Cx_CommonUtilMgr::Cx_CommonUtilMgr()
 {
 }
 
-Cx_TimerMgr::~Cx_TimerMgr()
+Cx_CommonUtilMgr::~Cx_CommonUtilMgr()
 {
 }
 
-LWRESULT Cx_TimerMgr::Init()
+LWRESULT Cx_CommonUtilMgr::Init()
 {
-	lw_log_info(LWDP_LUA_LOG, __T("Cx_TimerMgr::Init OK!"));
+	lw_log_info(LWDP_LUA_LOG, __T("Cx_CommonUtilMgr::Init OK!"));
 
 
 

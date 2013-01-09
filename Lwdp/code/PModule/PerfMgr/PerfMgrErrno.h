@@ -1,5 +1,5 @@
-/*! \file TimerMgrErrno.h
- *  \brief TimerMgr Module Errno Define
+/*! \file PerfMgrErrno.h
+ *  \brief PerfMgr Module Errno Define
  *  \author Guolisen, LwDp
  *  \date   2012.10.17
  */

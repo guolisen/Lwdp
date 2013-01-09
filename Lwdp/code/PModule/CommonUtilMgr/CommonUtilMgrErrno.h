@@ -1,5 +1,5 @@
-/*! \file TimerMgrErrno.h
- *  \brief TimerMgr Module Errno Define
+/*! \file CommonUtilMgrErrno.h
+ *  \brief CommonUtilMgr Module Errno Define
  *  \author Guolisen, LwDp
  *  \date   2012.10.17
  */

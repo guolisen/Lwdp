@@ -50,6 +50,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleMgrDll", "CondoleMgr
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DbMgrDll", "DbMgrDll\DbMgrDll.vcproj", "{B1B44215-4B0E-4A12-B828-A0FA2B026C48}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CommonUtilMgr", "CommonUtilMgr\CommonUtilMgr.vcproj", "{98F13D9C-BFC2-443F-A8AD-BB076F20E1A4}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PerfMgrDll", "PerfMgrDll\PerfMgrDll.vcproj", "{A1CD81FA-2F6B-4269-B345-0306C1F5510D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -124,6 +128,14 @@ Global
 		{B1B44215-4B0E-4A12-B828-A0FA2B026C48}.Debug|Win32.Build.0 = Debug|Win32
 		{B1B44215-4B0E-4A12-B828-A0FA2B026C48}.Release|Win32.ActiveCfg = Release|Win32
 		{B1B44215-4B0E-4A12-B828-A0FA2B026C48}.Release|Win32.Build.0 = Release|Win32
+		{98F13D9C-BFC2-443F-A8AD-BB076F20E1A4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{98F13D9C-BFC2-443F-A8AD-BB076F20E1A4}.Debug|Win32.Build.0 = Debug|Win32
+		{98F13D9C-BFC2-443F-A8AD-BB076F20E1A4}.Release|Win32.ActiveCfg = Release|Win32
+		{98F13D9C-BFC2-443F-A8AD-BB076F20E1A4}.Release|Win32.Build.0 = Release|Win32
+		{A1CD81FA-2F6B-4269-B345-0306C1F5510D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A1CD81FA-2F6B-4269-B345-0306C1F5510D}.Debug|Win32.Build.0 = Debug|Win32
+		{A1CD81FA-2F6B-4269-B345-0306C1F5510D}.Release|Win32.ActiveCfg = Release|Win32
+		{A1CD81FA-2F6B-4269-B345-0306C1F5510D}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
