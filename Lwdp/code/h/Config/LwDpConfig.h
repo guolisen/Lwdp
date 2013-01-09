@@ -11,15 +11,15 @@
 EXTERN_C_BEGIN
 //Lib Config
 #ifdef LWDP_PLATFORM_DEF_LINUX
-#define CFG_CONFIGMGR_DIR_STR 	 __T("../../../../code/bin/Plugins/ConfigMgrSo.so")
-#define CFG_PLUGINLOADER_DIR_STR __T("../../../../code/bin/Plugins/PluginLoaderSo.so")
+#define CFG_CONFIGMGR_DIR_STR 	 __T("../../../../bin/Plugins/ConfigMgrSo.so")
+#define CFG_PLUGINLOADER_DIR_STR __T("../../../../bin/Plugins/PluginLoaderSo.so")
 
 #define _LWDP_NO_SYSTEM_SIZE_T
 //#define _STDIO_DEFINED
 
 #elif defined(LWDP_PLATFORM_DEF_WIN32)
-#define CFG_CONFIGMGR_DIR_STR 	 __T("../../../../code/bin/Plugins/ConfigMgrDll.dll")
-#define CFG_PLUGINLOADER_DIR_STR __T("../../../../code/bin/Plugins/PluginLoaderDll.dll")
+#define CFG_CONFIGMGR_DIR_STR 	 __T("../../../../bin/Plugins/ConfigMgrDll.dll")
+#define CFG_PLUGINLOADER_DIR_STR __T("../../../../bin/Plugins/PluginLoaderDll.dll")
 #endif
 
 

@@ -206,7 +206,7 @@ int32_ main()
 {
 	LWRESULT stat = LWDP_ERROR;
 
-	ConfigSrcImp csrc("../../../../Code/bin/xml/ConfigExternal.xml");
+	ConfigSrcImp csrc("../../../../bin/xml/ConfigExternal.xml");
 	stat = Fw_Init(&csrc, 1);
 	if(stat != LWDP_OK)
 	{

@@ -42,7 +42,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../code/bin/Plugins/ConsoleMgrDll.dll</ModuleDir>
+			<ModuleDir>../../../../bin/Plugins/ConsoleMgrDll.dll</ModuleDir>
 		</Property>
 		<TableSet>
 		</TableSet>
@@ -53,7 +53,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../code/bin/Plugins/ScriptMgrDll.dll</ModuleDir>
+			<ModuleDir>../../../../bin/Plugins/ScriptMgrDll.dll</ModuleDir>
 		</Property>
 		<TableSet>
 		</TableSet>
@@ -64,7 +64,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../code/bin/Plugins/LogMgrDll.dll</ModuleDir>
+			<ModuleDir>../../../../bin/Plugins/LogMgrDll.dll</ModuleDir>
 			<GlobalLevel>DEBUG</GlobalLevel>
 			<!--<LogPattern>%p: %m %d{%H:%M:%S.%l %d %b %Y}%n</LogPattern>-->
 			<LogPattern>[%p] %m%n</LogPattern>
@@ -94,7 +94,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../code/bin/Plugins/DctMgrDll.dll</ModuleDir>
+			<ModuleDir>../../../../bin/Plugins/DctMgrDll.dll</ModuleDir>
 		</Property>
 		<TableSet>
 		</TableSet>
@@ -105,7 +105,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../code/bin/Plugins/LuaMgrDll.dll</ModuleDir>
+			<ModuleDir>../../../../bin/Plugins/LuaMgrDll.dll</ModuleDir>
 		</Property>
 		<TableSet>
 			<PropertyTable Name = "LibraryTable">
@@ -119,7 +119,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../code/bin/Plugins/EventMgrDll.dll</ModuleDir>
+			<ModuleDir>../../../../bin/Plugins/EventMgrDll.dll</ModuleDir>
 		</Property>
 		<TableSet>
 		</TableSet>
@@ -130,7 +130,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../code/bin/Plugins/ZmqMgrDll.dll</ModuleDir>
+			<ModuleDir>../../../../bin/Plugins/ZmqMgrDll.dll</ModuleDir>
 		</Property>
 		<TableSet>
 		</TableSet>
@@ -141,7 +141,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../code/bin/Plugins/TimerMgrDll.dll</ModuleDir>
+			<ModuleDir>../../../../bin/Plugins/TimerMgrDll.dll</ModuleDir>
 		</Property>
 		<TableSet>
 		</TableSet>
@@ -152,7 +152,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../code/bin/Plugins/DbMgrDll.dll</ModuleDir>
+			<ModuleDir>../../../../bin/Plugins/DbMgrDll.dll</ModuleDir>
 		</Property>
 		<TableSet>
 		</TableSet>
@@ -163,7 +163,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../code/bin/Plugins/TSFrontend.dll</ModuleDir>
+			<ModuleDir>../../../../bin/Plugins/TSFrontend.dll</ModuleDir>
 			<ConnetTarget>tcp://localhost:12136</ConnetTarget>
 			<ServerPort>12135</ServerPort>
 			<ListenBlock>128</ListenBlock>
@@ -180,7 +180,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../code/bin/Plugins/ZmqBackend.dll</ModuleDir>
+			<ModuleDir>../../../../bin/Plugins/ZmqBackend.dll</ModuleDir>
 			<FrontendTarget>tcp://*:12136</FrontendTarget>
 			<BackendTarget>inproc://work_thread</BackendTarget>
 			<!-- <BackendTarget>tcp://*:12137</BackendTarget> -->
@@ -198,7 +198,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../code/bin/Plugins/TcpServer.dll</ModuleDir>
+			<ModuleDir>../../../../bin/Plugins/TcpServer.dll</ModuleDir>
 			<DbIp>192.168.1.5</DbIp>
 			<DbUser>ptsf</DbUser>
 			<DbPassword>123456</DbPassword>
@@ -214,7 +214,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../code/bin/Plugins/ACDevice.dll</ModuleDir>
+			<ModuleDir>../../../../bin/Plugins/ACDevice.dll</ModuleDir>
 			<InitSql>select * from sc_gate where gate_id = '%s'</InitSql>
 			<ConfigSql>select * from sc_gate where gate_id = '%s'</ConfigSql>
 			<CardSql>insert into sc_swiping(card_id, gate_id, scenic_id, ticket_type, action, create_time) 
@@ -241,7 +241,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>3.0</Version>
-			<ModuleDir>../../../../code/bin/Plugins/ExampleDll.dll</ModuleDir>
+			<ModuleDir>../../../../bin/Plugins/ExampleDll.dll</ModuleDir>
 		</Property>
 		<TableSet>
 			<PropertyTable Name = "TestTable">
