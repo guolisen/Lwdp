@@ -38,7 +38,7 @@
 								</option>
 								<option id="gnu.cpp.compiler.option.include.paths.1683936061" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="../../../../code/h"/>
-									<listOptionValue builtIn="false" value="/mnt/hgfs/tmp/mysql-connector-c-6.0.2/include"/>
+									<listOptionValue builtIn="false" value="/home/ptsf/Desktop/mysql-connector-c-6.0.2-linux-glibc2.3-x86-64bit/include"/>
 									<listOptionValue builtIn="false" value="../../../../code/h/LwApiLib/ComLib"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.other.pic.1916414547" name="Position Independent Code (-fPIC)" superClass="gnu.cpp.compiler.option.other.pic" value="true" valueType="boolean"/>
@@ -69,13 +69,13 @@
 									<listOptionValue builtIn="false" value="pthread"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.654012250" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="../../../../code/bin/Lib"/>
+									<listOptionValue builtIn="false" value="../../../../bin/Lib"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1030435107" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
 								</inputType>
-								<outputType id="cdt.managedbuild.tool.gnu.cpp.linker.so.debug.output.380297801" outputPrefix="../../../../code/bin/Plugins/" superClass="cdt.managedbuild.tool.gnu.cpp.linker.so.debug.output"/>
+								<outputType id="cdt.managedbuild.tool.gnu.cpp.linker.so.debug.output.380297801" outputPrefix="../../../../bin/plugins/" superClass="cdt.managedbuild.tool.gnu.cpp.linker.so.debug.output"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.assembler.so.debug.674304091" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.so.debug">
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.2019613218" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>

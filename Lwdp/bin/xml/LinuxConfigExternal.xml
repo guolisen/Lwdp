@@ -12,7 +12,7 @@
 		<PropertyTable Name = "ModuleLoadTable">
 			<ModuleLoad Name = "ConsoleMgr" Modid = "9FC7011E-B2BF-411c-BB09-BC208DEE71DA" />
 			<ModuleLoad Name = "ScriptMgr"  Modid = "CABBCCA4-1160-49cf-8450-F35E897202EA" />
-			<ModuleLoad Name = "LuaMgr" 	Modid = "3FAAA9E8-4CBB-4496-A369-172077A3F5EE" />
+			<!--<ModuleLoad Name = "LuaMgr" 	Modid = "3FAAA9E8-4CBB-4496-A369-172077A3F5EE" />-->
 			
 			<ModuleLoad Name = "LogMgr"     Modid = "8BBC60DD-D652-454b-B522-6D19D5A1B97A" />
 			<!--<ModuleLoad Name = "DctMgr" 	Modid = "A009B569-707F-4618-A089-C09F776ADEC2" /> -->
@@ -42,7 +42,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../bin/Plugins/ConsoleMgrSo.so</ModuleDir>
+			<ModuleDir>plugins/ConsoleMgrSo.so</ModuleDir>
 		</Property>
 		<TableSet>
 		</TableSet>
@@ -53,7 +53,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../bin/Plugins/ScriptMgrSo.so</ModuleDir>
+			<ModuleDir>plugins/ScriptMgrSo.so</ModuleDir>
 		</Property>
 		<TableSet>
 		</TableSet>
@@ -64,7 +64,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../bin/Plugins/LogMgrSo.so</ModuleDir>
+			<ModuleDir>plugins/LogMgrSo.so</ModuleDir>
 			<GlobalLevel>DEBUG</GlobalLevel>
 			<!--<LogPattern>%p: %m %d{%H:%M:%S.%l %d %b %Y}%n</LogPattern>-->
 			<LogPattern>[%p] %m%n</LogPattern>
@@ -94,7 +94,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../bin/Plugins/DctMgrSo.so</ModuleDir>
+			<ModuleDir>plugins/DctMgrSo.so</ModuleDir>
 		</Property>
 		<TableSet>
 		</TableSet>
@@ -105,7 +105,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../bin/Plugins/LuaMgrSo.so</ModuleDir>
+			<ModuleDir>plugins/LuaMgrSo.so</ModuleDir>
 		</Property>
 		<TableSet>
 			<PropertyTable Name = "LibraryTable">
@@ -119,7 +119,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../bin/Plugins/EventMgrSo.so</ModuleDir>
+			<ModuleDir>plugins/EventMgrSo.so</ModuleDir>
 		</Property>
 		<TableSet>
 		</TableSet>
@@ -130,7 +130,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../bin/Plugins/ZmqMgrSo.so</ModuleDir>
+			<ModuleDir>plugins/ZmqMgrSo.so</ModuleDir>
 		</Property>
 		<TableSet>
 		</TableSet>
@@ -141,7 +141,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../bin/Plugins/TimerMgrSo.so</ModuleDir>
+			<ModuleDir>plugins/TimerMgrSo.so</ModuleDir>
 		</Property>
 		<TableSet>
 		</TableSet>
@@ -152,7 +152,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../bin/Plugins/DbMgrSo.so</ModuleDir>
+			<ModuleDir>plugins/DbMgrSo.so</ModuleDir>
 		</Property>
 		<TableSet>
 		</TableSet>
@@ -163,7 +163,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../bin/Plugins/TSFrontend.so</ModuleDir>
+			<ModuleDir>plugins/TSFrontend.so</ModuleDir>
 			<ConnetTarget>tcp://localhost:12136</ConnetTarget>
 			<!-- <ConnetTarget>ipc://TcpToZmq1</ConnetTarget>-->
 			<ServerPort>12135</ServerPort>
@@ -181,7 +181,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../bin/Plugins/ZmqBackend.so</ModuleDir>
+			<ModuleDir>plugins/ZmqBackend.so</ModuleDir>
 			<FrontendTarget>tcp://*:12136</FrontendTarget>
 			<!-- <FrontendTarget>ipc://TcpToZmq1</FrontendTarget> -->
 			<BackendTarget>inproc://work_thread</BackendTarget> 
@@ -189,7 +189,7 @@
 			<!--<WorkThreadConnect>tcp://localhost:12137</WorkThreadConnect>  -->
 			<WorkThreadConnect>inproc://work_thread</WorkThreadConnect>
 			<CtrlConnect>inproc://ctrl_to_workthread</CtrlConnect>
-			<WorkThreadNum>20</WorkThreadNum>
+			<WorkThreadNum>1</WorkThreadNum>
 		</Property>
 		<TableSet>
 		</TableSet>
@@ -200,8 +200,8 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../bin/Plugins/TcpServer.so</ModuleDir>
-			<DbIp>192.168.1.5</DbIp>
+			<ModuleDir>plugins/TcpServer.so</ModuleDir>
+			<DbIp>10.3.18.27</DbIp>
 			<DbUser>ptsf</DbUser>
 			<DbPassword>123456</DbPassword>
 			<DbSelect>scenic</DbSelect>
@@ -216,7 +216,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../bin/Plugins/ACDevice.so</ModuleDir>
+			<ModuleDir>plugins/ACDevice.so</ModuleDir>
 			<InitSql>select * from sc_gate where gate_id = '%s'</InitSql>
 			<ConfigSql>select * from sc_gate where gate_id = '%s'</ConfigSql>
 			<CardSql>insert into sc_swiping(card_id, gate_id, scenic_id, ticket_type, action, create_time) 
@@ -243,7 +243,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>3.0</Version>
-			<ModuleDir>../../../../bin/Plugins/ExampleTestSo.so</ModuleDir>
+			<ModuleDir>plugins/ExampleTestSo.so</ModuleDir>
 		</Property>
 		<TableSet>
 			<PropertyTable Name = "TestTable">

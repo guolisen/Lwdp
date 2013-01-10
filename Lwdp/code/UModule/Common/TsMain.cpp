@@ -99,7 +99,7 @@ PC_DATA* ConfigSrcImp::LoadConfigData()
 
 	return (PC_DATA*)buf;
 }
-
+#include <unistd.h>
 int32_ main()
 {
 	LWRESULT stat = LWDP_ERROR;
@@ -108,7 +108,7 @@ int32_ main()
 	ConfigSrcImp csrc("../../../../Code/bin/xml/ConfigExternal.xml");
 #elif defined(LWDP_PLATFORM_DEF_LINUX)
 	//ConfigSrcImp csrc("/home/ptsf/Desktop/tmp/workspace/LwdpGit/Lwdp/code/bin/xml/LinuxConfigExternal.xml");
-	ConfigSrcImp csrc("/mnt/hgfs/tmp/workspace/LwdpGit/Lwdp/code/bin/xml/LinuxConfigExternal.xml");
+	ConfigSrcImp csrc("../../../bin/xml/LinuxConfigExternal.xml");
 #endif
 	stat = Fw_Init(&csrc, 1);
 	if(stat != LWDP_OK)

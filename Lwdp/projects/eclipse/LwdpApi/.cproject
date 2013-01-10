@@ -27,7 +27,7 @@
 							<targetPlatform id="cdt.managedbuild.target.gnu.platform.lib.debug.757061677" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.lib.debug"/>
 							<builder buildPath="${workspace_loc:/LwdpApi/Debug}" id="cdt.managedbuild.target.gnu.builder.lib.debug.207577947" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.lib.debug"/>
 							<tool id="cdt.managedbuild.tool.gnu.archiver.lib.debug.1352991633" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.lib.debug">
-								<outputType id="cdt.managedbuild.tool.gnu.archiver.output.894239999" outputPrefix="../../../../code/bin/Lib/lib" superClass="cdt.managedbuild.tool.gnu.archiver.output"/>
+								<outputType id="cdt.managedbuild.tool.gnu.archiver.output.894239999" outputPrefix="../../../../bin/Lib/lib" superClass="cdt.managedbuild.tool.gnu.archiver.output"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.lib.debug.1959917991" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.lib.debug">
 								<option id="gnu.cpp.compiler.lib.debug.option.optimization.level.1657942540" name="Optimization Level" superClass="gnu.cpp.compiler.lib.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
