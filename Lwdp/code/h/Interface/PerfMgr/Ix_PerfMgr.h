@@ -5,11 +5,17 @@
 #include "Id_PerfMgr.h"
 
 LWDP_NAMESPACE_BEGIN;
- 
+
+
+INTERFACE_BEGIN(PerfMgr_Cps)
+	virtual double GetCps() = 0;
+	virtual void   Update() = 0;
+	virtual void   Reset() = 0;
+INTERFACE_END();
 
 INTERFACE_BEGIN(PerfMgr)
 	virtual LWRESULT Init() = 0;
-	
+
 INTERFACE_END();
 
 

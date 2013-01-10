@@ -6,6 +6,8 @@
 #include <Interface/LogMgr/Ix_LogMgr.h>
 #include <Interface/ZmqMgr/Ix_ZmqMgr.h>
 #include <Interface/EventMgr/Ix_EventMgr.h>
+#include <Interface/PerfMgr/Ix_PerfMgr.h>
+#include <Interface/CommonUtilMgr/Ix_CommonUtilMgr.h>
 
 #include "../Common/ExternalInterface.h"
 #include "../Interface/TSFrontend/Ix_TSFrontend.h"
@@ -20,75 +22,36 @@ uint32_ gSendTimeout = LW_TSFRONTEND_SEND_TIMEOUT;
 uint32_ gRecvTimeout = LW_TSFRONTEND_RECV_TIMEOUT;
 std::string gConnStr = std::string(LW_TSFRONTEND_CONNECT_TARGET);
 uint32_ gThreadNum = 0;
+pthread_mutex_t gThreadNum_mutex = PTHREAD_MUTEX_INITIALIZER;
 uint32_ gThreadMax = 0;
 
-class CountPercent
+Cx_Interface<Ix_PerfMgr_Cps> gIoPerSecond;
+Cx_Interface<Ix_PerfMgr_Cps> gThreadPerCreate;
+Cx_Interface<Ix_PerfMgr_Cps> gThreadPerRelease;
+
+void createCountThread()
 {
-public:
-	CountPercent():mExtFps(0),mFrames(0),mUpdateTime(1000000)
+	pthread_mutex_lock(&gThreadNum_mutex);
+	++gThreadNum;
+	if(gThreadNum > gThreadMax)
 	{
-#ifndef LWDP_PLATFORM_DEF_WIN32
-		gettimeofday (&mTvLast, NULL);
-#endif
+		gThreadMax = gThreadNum;
 	}
-	virtual ~CountPercent()
-	{
+	pthread_mutex_unlock(&gThreadNum_mutex);
 
-	}
-
-	double GetFps()
-	{
-		return mExtFps;
-	}
-
-	void Update()
-	{
-#ifndef LWDP_PLATFORM_DEF_WIN32
-		mFrames++;
-		struct timeval tvNow;
-
-		gettimeofday (&tvNow, NULL);
-
-		uint32_ diffTime = (tvNow.tv_sec - mTvLast.tv_sec) * 1000000 +
-			               (tvNow.tv_usec - mTvLast.tv_usec);
-
-	    if(diffTime > mUpdateTime)
-	    {
-	    	mExtFps = ((double)mFrames / (double)diffTime) * 1000000.0;
-
-	        gettimeofday(&mTvLast, NULL);
-
-	        mFrames = 0;
-	    }
-#endif
-	}
-
-protected:
-	struct timeval mTvLast;
-	double  mExtFps;
-	uint32_ mFrames;
-	uint32_ mUpdateTime;
-};
-
-CountPercent gThreadPerCreate;
-CountPercent gThreadPerRelease;
-
-class TsThreadNum
+	gThreadPerCreate->Update();
+}
+void destoryCountThread()
 {
-public:
-	TsThreadNum()
-	{
-		++gThreadNum;
-		gThreadPerCreate.Update();
-	}
-	virtual ~TsThreadNum()
-	{
+	pthread_mutex_lock(&gThreadNum_mutex);
+	if(gThreadNum > 0)
 		--gThreadNum;
-		gThreadPerRelease.Update();
-	}
+	pthread_mutex_unlock(&gThreadNum_mutex);
+	gThreadPerRelease->Update();
+}
+CallBackStru cb(createCountThread, destoryCountThread);
 
-};
-
+	
 Cx_TSFrontend::Cx_TSFrontend()
 {
 	printf("TSFrontend Create!\n");
@@ -115,7 +78,7 @@ void* thread_callback(void* vfd)
 {
 	LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::DEBUG, "Thread Callback fd(%x)!", vfd);
 
-	TsThreadNum NumCount;
+	ProcessController NumCount(cb);
 	if(!vfd)
 	{
 		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, 
@@ -321,6 +284,7 @@ ERR_TCP_TAG:
 
 void io_callback(LoopHandle loop, CBHandle w, int revents)
 {
+	gIoPerSecond->Update();
 	LWDP_LOG_PRINT( "TSFRONTEND", LWDP_LOG_MGR::DEBUG, 
 					"Io Callback Watcher(%x)!", w);
 
@@ -391,6 +355,13 @@ void io_callback(LoopHandle loop, CBHandle w, int revents)
 
 LWRESULT Cx_TSFrontend::Init()
 {
+	GET_OBJECT_RET(PerfMgr_Cps, iPerfMgr_Cps_Io, LWDP_GET_OBJECT_ERROR);
+	gIoPerSecond = iPerfMgr_Cps_Io;
+	GET_OBJECT_RET(PerfMgr_Cps, iPerfMgr_Cps_Create, LWDP_GET_OBJECT_ERROR);
+	gThreadPerCreate  = iPerfMgr_Cps_Create;
+	GET_OBJECT_RET(PerfMgr_Cps, iPerfMgr_Cps_Destory, LWDP_GET_OBJECT_ERROR);
+	gThreadPerRelease = iPerfMgr_Cps_Destory;
+
 	GET_OBJECT_RET(ConfigMgr, iConfigMgr, LWDP_GET_OBJECT_ERROR);
 
 	XPropertys propMax;
@@ -493,10 +464,15 @@ LWRESULT Cx_TSFrontend::Init()
 int32_ Cx_TSFrontend::ConsoleGetTsInfo(COMMAND_LINE& command_line)
 {
 	std::cout << "Current Thread Num: " << gThreadNum << std::endl;
+
+	std::cout << "Io Percent: "
+			  << gIoPerSecond->GetCps()  << " /s" << std::endl;		
 	std::cout << "Create Thread Percent: "
-			  << gThreadPerCreate.GetFps()  << " /s" << std::endl;
+			  << gThreadPerCreate->GetCps()  << " /s" << std::endl;
 	std::cout << "Release Thread Percent: "
-			  << gThreadPerRelease.GetFps()  << " /s" << std::endl;
+			  << gThreadPerRelease->GetCps()  << " /s" << std::endl;
+	std::cout << "Max Thread Num: "
+			  << gThreadMax << std::endl;
 
 	return 0;
 }

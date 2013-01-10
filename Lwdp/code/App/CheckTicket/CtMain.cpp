@@ -203,7 +203,7 @@ int32_ main()
 			         strDbUserName.c_str(), 
 			         strDbPassword.c_str(), 
 			         strDbName.c_str(), 
-			         DbPort, 0)) != LWDP_OK)
+			         DbPort, 0) != LWDP_OK)
 	{
 		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::ERR, 
 					   "Open Db Error", DbPort);
@@ -220,7 +220,7 @@ int32_ main()
 	iConfigMgr->GetModulePropEntry(LW_CT_MODULE_NAME, LW_CT_DB_PORT_NAME, propSelectFromCards);
 	if(!propDbPort[0].propertyText.empty())
 	{
-		selectFromCards = ;
+		//selectFromCards = ;
 	}
 	else
 	{
@@ -228,7 +228,7 @@ int32_ main()
 					   "Can't Find <DbPort> In Config File, Default(%d)", DbPort);
 	}	
 	GET_OBJECT_RET(DbQuery, iDbQuery, 0);
-	iDbMgr->QuerySQL(const std::string& sql, iDbQuery) = 0;
+	//iDbMgr->QuerySQL(const std::string& sql, iDbQuery) = 0;
 
 
  

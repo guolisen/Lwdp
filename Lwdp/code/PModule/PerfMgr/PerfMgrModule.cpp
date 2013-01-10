@@ -12,11 +12,13 @@
 #include <Interface/ConfigMgr/Ix_ConfigMgr.h>
 //#include <Interface/ScriptMgr/Ix_ScriptMgr.h>
 #include "Cx_PerfMgr.h"
+#include "Cx_PerfMgr_Cps.h"
 
 LWDP_NAMESPACE_BEGIN;
 
 XBEGIN_DEFINE_CLASS()
-    XDEFINE_CLASSMAP_ENTRY_Singleton(MODID_PerfMgr, CLSID_PerfMgr, Cx_PerfMgr)
+    XDEFINE_CLASSMAP_ENTRY(MODID_PerfMgr, CLSID_PerfMgr, Cx_PerfMgr)
+	XDEFINE_CLASSMAP_ENTRY(MODID_PerfMgr, CLSID_PerfMgr_Cps, Cx_PerfMgr_Cps)
 XEND_DEFINE_CLASS_SYS();
 
 

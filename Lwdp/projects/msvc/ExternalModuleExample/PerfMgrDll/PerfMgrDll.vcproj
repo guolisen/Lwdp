@@ -178,6 +178,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\..\code\PModule\PerfMgr\Cx_PerfMgr_Cps.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\code\PModule\PerfMgr\Cx_PerfMgr_Cps.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\..\code\PModule\PerfMgr\PerfMgrDef.h"
 			>
 		</File>
