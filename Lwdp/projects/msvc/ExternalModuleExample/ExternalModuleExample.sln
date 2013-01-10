@@ -54,6 +54,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CommonUtilMgr", "CommonUtil
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PerfMgrDll", "PerfMgrDll\PerfMgrDll.vcproj", "{A1CD81FA-2F6B-4269-B345-0306C1F5510D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TsMain", "TsMain\TsMain.vcproj", "{1A9686BD-D64F-4322-AD7D-10244C998DBE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CheckTicket", "CheckTicket\CheckTicket.vcproj", "{A2724FEA-222F-4BFB-BE39-6451C6E8185B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -136,6 +140,14 @@ Global
 		{A1CD81FA-2F6B-4269-B345-0306C1F5510D}.Debug|Win32.Build.0 = Debug|Win32
 		{A1CD81FA-2F6B-4269-B345-0306C1F5510D}.Release|Win32.ActiveCfg = Release|Win32
 		{A1CD81FA-2F6B-4269-B345-0306C1F5510D}.Release|Win32.Build.0 = Release|Win32
+		{1A9686BD-D64F-4322-AD7D-10244C998DBE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1A9686BD-D64F-4322-AD7D-10244C998DBE}.Debug|Win32.Build.0 = Debug|Win32
+		{1A9686BD-D64F-4322-AD7D-10244C998DBE}.Release|Win32.ActiveCfg = Release|Win32
+		{1A9686BD-D64F-4322-AD7D-10244C998DBE}.Release|Win32.Build.0 = Release|Win32
+		{A2724FEA-222F-4BFB-BE39-6451C6E8185B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A2724FEA-222F-4BFB-BE39-6451C6E8185B}.Debug|Win32.Build.0 = Debug|Win32
+		{A2724FEA-222F-4BFB-BE39-6451C6E8185B}.Release|Win32.ActiveCfg = Release|Win32
+		{A2724FEA-222F-4BFB-BE39-6451C6E8185B}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

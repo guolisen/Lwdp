@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="GB2312"?>
+<Module Name = "LWDP" Modid = "8A74DBB9-F23A-4a33-83DE-1BACE814BFB6">
+	<Property> 
+		<ProjectName>Example</ProjectName>
+		<Version>1.0</Version>
+	</Property>
+	<Script Name = "GlobalInit">
+	</Script>
+	<Script Name = "GlobalUnInit">
+	</Script>
+	<TableSet>
+		<PropertyTable Name = "ModuleLoadTable">
+			<ModuleLoad Name = "ConsoleMgr" Modid = "9FC7011E-B2BF-411c-BB09-BC208DEE71DA" />
+			<ModuleLoad Name = "ScriptMgr"  Modid = "CABBCCA4-1160-49cf-8450-F35E897202EA" />
+			<!--<ModuleLoad Name = "LuaMgr" 	Modid = "3FAAA9E8-4CBB-4496-A369-172077A3F5EE" />-->
+			
+			<ModuleLoad Name = "LogMgr"     Modid = "8BBC60DD-D652-454b-B522-6D19D5A1B97A" />
+			<!--<ModuleLoad Name = "DctMgr" 	Modid = "A009B569-707F-4618-A089-C09F776ADEC2" /> -->
+			<ModuleLoad Name = "EventMgr" 	Modid = "5D2C4C38-6B59-469a-9AE2-133FF44E3182" />
+			<ModuleLoad Name = "ZmqMgr" 	Modid = "1C8B1ACD-89A4-48ab-8161-538B7E2545BE" />
+			<ModuleLoad Name = "TimerMgr" 	Modid = "212ED676-7B73-43e7-B2F9-190649FD6EC4" />
+			<ModuleLoad Name = "DbMgr"      Modid = "18D1C5FE-2D94-4a9b-B878-E8A51CA9AF67" />
+			
+			
+			<ModuleLoad Name = "TSFrontend" Modid = "6AD26E68-071F-45d5-B5C1-7B3F7EE20D13" />
+			<ModuleLoad Name = "ZmqBackend" Modid = "789D687B-8962-4cae-8C4A-B129B5B8312F" />
+			<ModuleLoad Name = "TcpServer"  Modid = "85FFE433-F268-4728-8086-BD272EB10B66" />
+			<ModuleLoad Name = "ACDevice"   Modid = "7BE77A1D-4430-4903-BFC3-501987FE9E31" />
+		</PropertyTable>
+	</TableSet>
+	<Module Name = "ConfigMgr" Modid = "6FE0F631-1F70-4557-8156-2D30AA017631">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+		</Property>
+		<TableSet>
+		</TableSet>
+		<Script Name = "ConfigMgrInit">
+		</Script>
+	</Module>
+	<Module Name = "ConsoleMgr" Modid = "9FC7011E-B2BF-411c-BB09-BC208DEE71DA">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>plugins/ConsoleMgrSo.so</ModuleDir>
+		</Property>
+		<TableSet>
+		</TableSet>
+		<Script Name = "ConsoleMgrInit">
+		</Script>
+	</Module>		
+	<Module Name = "ScriptMgr" Modid = "CABBCCA4-1160-49cf-8450-F35E897202EA">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>plugins/ScriptMgrSo.so</ModuleDir>
+		</Property>
+		<TableSet>
+		</TableSet>
+		<Script Name = "ScriptMgrInit">
+		</Script>
+	</Module>	
+	<Module Name = "LogMgr" Modid = "8BBC60DD-D652-454b-B522-6D19D5A1B97A">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>plugins/LogMgrSo.so</ModuleDir>
+			<GlobalLevel>DEBUG</GlobalLevel>
+			<!--<LogPattern>%p: %m %d{%H:%M:%S.%l %d %b %Y}%n</LogPattern>-->
+			<LogPattern>[%p] %m%n</LogPattern>
+		</Property>
+		<TableSet>
+			<PropertyTable Name = "LevelTable">
+				<!-- STD直接打印  -->
+				<LevelEntry ModuleName = "Test"  Level = "INFO" Type = "STD"/>
+				<!-- File输出到文件  -->
+				<LevelEntry ModuleName = "Test2" Level = "DEBUG" Type = "FILE" FileName = "Log0203.txt"/>
+				<!-- File输出到Rolling文件  -->
+				<LevelEntry ModuleName = "Test3" Level = "INFO" Type = "ROLFILE" FileName = "RolLog0203.txt" FileSize = ""/>
+				<!-- File输出到DebugTool  -->
+				<LevelEntry ModuleName = "Test4" Level = "DEBUG" Type = "REMOTE" WinId = "2"/>
+				
+				<LevelEntry ModuleName = "DbMgr"       Level = "DEBUG" Type = "STD"/>
+				<LevelEntry ModuleName = "TCPSERVER"   Level = "DEBUG" Type = "STD"/>
+				<LevelEntry ModuleName = "TSFRONTEND"  Level = "DEBUG" Type = "STD"/>
+				<LevelEntry ModuleName = "ZMQBACKEND"  Level = "DEBUG" Type = "STD"/>
+				<LevelEntry ModuleName = "ACDEVICE"    Level = "DEBUG" Type = "STD"/>
+			</PropertyTable>
+		</TableSet>
+		<Script Name = "LogMgrInit">
+		</Script>
+	</Module>	
+	<Module Name = "DctMgr" Modid = "A009B569-707F-4618-A089-C09F776ADEC2">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>plugins/DctMgrSo.so</ModuleDir>
+		</Property>
+		<TableSet>
+		</TableSet>
+		<Script Name = "DctMgrInit">
+		</Script>
+	</Module>	
+	<Module Name = "LuaMgr" Modid = "3FAAA9E8-4CBB-4496-A369-172077A3F5EE">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>plugins/LuaMgrSo.so</ModuleDir>
+		</Property>
+		<TableSet>
+			<PropertyTable Name = "LibraryTable">
+				<LibraryDirEntry>../../../code/bin/Lua/test.lua</LibraryDirEntry>
+			</PropertyTable>
+		</TableSet>
+		<Script Name = "LuaMgrInit">
+		</Script>
+	</Module>	
+	<Module Name = "EventMgr" Modid = "5D2C4C38-6B59-469a-9AE2-133FF44E3182">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>plugins/EventMgrSo.so</ModuleDir>
+		</Property>
+		<TableSet>
+		</TableSet>
+		<Script Name = "EventMgrInit">
+		</Script>
+	</Module>
+	<Module Name = "ZmqMgr" Modid = "1C8B1ACD-89A4-48ab-8161-538B7E2545BE">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>plugins/ZmqMgrSo.so</ModuleDir>
+		</Property>
+		<TableSet>
+		</TableSet>
+		<Script Name = "ZmqMgrInit">
+		</Script>
+	</Module>
+	<Module Name = "TimerMgr" Modid = "212ED676-7B73-43e7-B2F9-190649FD6EC4">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>plugins/TimerMgrSo.so</ModuleDir>
+		</Property>
+		<TableSet>
+		</TableSet>
+		<Script Name = "TimerMgrInit">
+		</Script>
+	</Module>
+	<Module Name = "DbMgr" Modid = "18D1C5FE-2D94-4a9b-B878-E8A51CA9AF67">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>plugins/DbMgrSo.so</ModuleDir>
+		</Property>
+		<TableSet>
+		</TableSet>
+		<Script Name = "DbMgrInit">
+		</Script>
+	</Module>	
+	<Module Name = "TSFrontend" Modid = "6AD26E68-071F-45d5-B5C1-7B3F7EE20D13">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>plugins/TSFrontend.so</ModuleDir>
+			<ConnetTarget>tcp://localhost:12136</ConnetTarget>
+			<!-- <ConnetTarget>ipc://TcpToZmq1</ConnetTarget>-->
+			<ServerPort>12135</ServerPort>
+			<ListenBlock>128</ListenBlock>
+			<RecvBufMaxLen>1024</RecvBufMaxLen>
+			<SendZmqTimeout>5</SendZmqTimeout>
+			<RecvZmqTimeout>5</RecvZmqTimeout>
+		</Property>
+		<TableSet>
+		</TableSet>
+		<Script Name = "TSFrontend">
+		</Script>
+	</Module>
+	<Module Name = "ZmqBackend" Modid = "789D687B-8962-4cae-8C4A-B129B5B8312F">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>plugins/ZmqBackend.so</ModuleDir>
+			<FrontendTarget>tcp://*:12136</FrontendTarget>
+			<!-- <FrontendTarget>ipc://TcpToZmq1</FrontendTarget> -->
+			<BackendTarget>inproc://work_thread</BackendTarget> 
+			<!--<BackendTarget>tcp://*:12137</BackendTarget> -->
+			<!--<WorkThreadConnect>tcp://localhost:12137</WorkThreadConnect>  -->
+			<WorkThreadConnect>inproc://work_thread</WorkThreadConnect>
+			<CtrlConnect>inproc://ctrl_to_workthread</CtrlConnect>
+			<WorkThreadNum>1</WorkThreadNum>
+		</Property>
+		<TableSet>
+		</TableSet>
+		<Script Name = "ZmqBackend">
+		</Script>
+	</Module>
+	<Module Name = "TcpServer" Modid = "85FFE433-F268-4728-8086-BD272EB10B66">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>plugins/TcpServer.so</ModuleDir>
+			<DbIp>10.3.18.27</DbIp>
+			<DbUser>ptsf</DbUser>
+			<DbPassword>123456</DbPassword>
+			<DbSelect>scenic</DbSelect>
+			<DbPort>3306</DbPort>
+		</Property>
+		<TableSet>
+		</TableSet>
+		<Script Name = "TcpServer">
+		</Script>
+	</Module>	
+	<Module Name = "ACDevice" Modid = "7BE77A1D-4430-4903-BFC3-501987FE9E31">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>plugins/ACDevice.so</ModuleDir>
+			<InitSql>select * from sc_gate where gate_id = '%s'</InitSql>
+			<ConfigSql>select * from sc_gate where gate_id = '%s'</ConfigSql>
+			<CardSql>insert into sc_swiping(card_id, gate_id, scenic_id, ticket_type, action, create_time) 
+			                                VALUES (%s, '%s', '%s', %d, %d, '%s')
+			</CardSql>
+			
+		</Property>
+		<TableSet>
+			<PropertyTable Name = "GateInfoCol">
+				<GateIdCol>gate_id</GateIdCol>
+				<SceneryIdCol>scenic_id</SceneryIdCol>
+				<ManufacturerCol>manufacturer</ManufacturerCol>
+				<PositionCol>position</PositionCol>
+				<typeCol>type</typeCol>
+				<statusCol>status</statusCol>
+			</PropertyTable>
+		
+		</TableSet>
+		<Script Name = "ACDevice">
+		</Script>
+	</Module>
+	
+	<Module Name = "ExampleTest" Modid = "86347b32-64e4-490c-b273-ec7e010f244e">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>3.0</Version>
+			<ModuleDir>plugins/ExampleTestSo.so</ModuleDir>
+		</Property>
+		<TableSet>
+			<PropertyTable Name = "TestTable">
+				<Item Name = "Test" ts='t1'>Test1</Item>
+				<Item Name = "Test" ts='t2'>Test2</Item>
+				<Item Name = "Test" ts='t3'>Test3</Item>
+				<Item Name = "Test" ts='t4'>Test4</Item>
+			</PropertyTable>
+		</TableSet>
+		<Script Name = "ExampleTestInit">
+		</Script>
+	</Module>
+</Module>
