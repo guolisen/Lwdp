@@ -214,6 +214,9 @@ int32_ main()
 	iDbMgr->ExecSQL("set wait_timeout=31536000");
 	iDbMgr->ExecSQL("use `scenic`");
 
+	LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::INFO, 
+				   "Connect Db Ok!");
+
 
 	std::string selectFromCards;
 	XPropertys propSelectFromCards;
@@ -227,9 +230,34 @@ int32_ main()
 		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::WARNING, 
 					   "Can't Find <DbPort> In Config File, Default(%d)", DbPort);
 	}	
-	GET_OBJECT_RET(DbQuery, iDbQuery, 0);
-	//iDbMgr->QuerySQL(const std::string& sql, iDbQuery) = 0;
+	
+	
+	char tmpStr[2048] = {0};
+	int pageSize = 100;
+	for(int i = 0; i<10; i++)
+	{
+		GET_OBJECT_RET(DbQuery, iDbQuery, 0);
+		int start = i * pageSize;
+		int end = start + pageSize;
+		_snprintf(tmpStr, 2048, 
+			         "SELECT id,card_no,scenic_id \
+			         FROM sc_swiping \
+			         WHERE create_time >= DATE_FORMAT('2012-12-24','%%Y-%%m-%%d') AND\
+			         	   create_time < DATE_FORMAT('2012-12-25','%%Y-%%m-%%d') \
+			         LIMIT %d,%d", start, end);
+		//LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::INFO, 
+		//			   tmpStr);
+		iDbMgr->QuerySQL(tmpStr, iDbQuery);
 
+		uint32_ inum = iDbQuery->NumRow();
+		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::INFO, 
+			"Num: %d", inum);
+		while(!iDbQuery->Eof())
+		{
+			std::string s = iDbQuery->GetStringField("id", "");
+			printf("%s\n", s.c_str());
+		}
+	}
 
  
 

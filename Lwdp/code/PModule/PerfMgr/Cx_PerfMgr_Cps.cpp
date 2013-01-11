@@ -88,11 +88,11 @@ void Cx_PerfMgr_timer::Start()
 
 double Cx_PerfMgr_timer::Now()
 {
-
+	return 0.0;
 }
 double Cx_PerfMgr_timer::Stop()
 {
-
+	return 0.0;
 }
 	
 

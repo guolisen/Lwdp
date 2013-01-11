@@ -73,7 +73,7 @@ protected:
 	virtual ~Cx_TimerTick();
 
 protected:
-    bool SetOption(const String& strKey, const void* pValue);
+    bool SetOption(const std::string& strKey, const void* pValue);
 
 	/** Resets timer */
 	void Reset();

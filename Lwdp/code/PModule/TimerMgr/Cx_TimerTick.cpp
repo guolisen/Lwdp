@@ -201,7 +201,7 @@ Cx_TimerTick::~Cx_TimerTick()
 {
 }
 
-bool Cx_TimerTick::SetOption(const String& strKey, const void* pValue)
+bool Cx_TimerTick::SetOption(const std::string& strKey, const void* pValue)
 {
 	return true;
 }
