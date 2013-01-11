@@ -13,6 +13,13 @@ INTERFACE_BEGIN(PerfMgr_Cps)
 	virtual void   Reset() = 0;
 INTERFACE_END();
 
+INTERFACE_BEGIN(PerfMgr_timer)
+	virtual void   Start()  = 0;
+	virtual double Now()  = 0;
+	virtual double Stop() = 0;
+INTERFACE_END();
+
+
 INTERFACE_BEGIN(PerfMgr)
 	virtual LWRESULT Init() = 0;
 

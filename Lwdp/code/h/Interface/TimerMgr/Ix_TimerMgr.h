@@ -22,6 +22,25 @@ INTERFACE_BEGIN(TimerMgr)
 	
 INTERFACE_END();
 
+INTERFACE_BEGIN(TimerTick)
+virtual bool SetOption(const std::string& strKey, const void* pValue) = 0;
+
+		/** Resets timer */
+		virtual void Reset() = 0;
+
+		/** Returns milliseconds since initialisation or last reset */
+		virtual uint32_ GetMilliseconds() = 0;
+
+		/** Returns microseconds since initialisation or last reset */
+		virtual uint32_ GetMicroseconds() = 0;
+
+		/** Returns milliseconds since initialisation or last reset, only CPU time measured */
+		virtual uint32_ GetMillisecondsCPU() = 0;
+
+		/** Returns microseconds since initialisation or last reset, only CPU time measured */
+		virtual uint32_ GetMicrosecondsCPU() = 0;
+
+INTERFACE_END();
 
 LWDP_NAMESPACE_END;
 

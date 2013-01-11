@@ -45,6 +45,27 @@ protected:
 };
 
 
+
+class Cx_PerfMgr_timer
+    : public Ix_PerfMgr_timer
+{
+    X3BEGIN_CLASS_DECLARE(Cx_PerfMgr_timer)
+        X3DEFINE_INTERFACE_ENTRY(Ix_PerfMgr_timer)
+    X3END_CLASS_DECLARE()
+protected:
+	Cx_PerfMgr_timer();
+	virtual ~Cx_PerfMgr_timer();
+
+protected:
+	virtual void   Start();
+	virtual double Now();
+	virtual double Stop();
+	
+protected:	
+
+
+};
+
 LWDP_NAMESPACE_END;
 
 #endif

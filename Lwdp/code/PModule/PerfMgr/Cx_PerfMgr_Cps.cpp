@@ -78,7 +78,23 @@ void   Cx_PerfMgr_Cps::Update()
 #endif
 
 }
+/////////////////////////////////////////////////////////
 
+
+void Cx_PerfMgr_timer::Start()
+{
+
+}
+
+double Cx_PerfMgr_timer::Now()
+{
+
+}
+double Cx_PerfMgr_timer::Stop()
+{
+
+}
+	
 
 LWDP_NAMESPACE_END;
 

@@ -235,17 +235,17 @@ int32_ main()
 	}
 
   
-	GET_OBJECT_RET(TcpServer, iTcpServer, 0);
+	//GET_OBJECT_RET(TcpServer, iTcpServer, 0);
 
-	LWRESULT ret = iTcpServer->Init();
+	//LWRESULT ret = iTcpServer->Init();
 
-	LWRESULT ret2 = iTcpServer->RunServer();
+	//LWRESULT ret2 = iTcpServer->RunServer();
 
 
 	
-	GET_OBJECT_RET(ConsoleMgr, iConsoleMgr, 0);
+	//GET_OBJECT_RET(ConsoleMgr, iConsoleMgr, 0);
 
-	iConsoleMgr->RunConsole();
+	//iConsoleMgr->RunConsole();
 
 	//GET_OBJECT_RET(EventMgr, iEventMgr, 0);
 
@@ -257,6 +257,26 @@ int32_ main()
 
 	//ret = iTSFrontend->RunServer();
 #if 0
+
+	GET_OBJECT_RET(TimerTick, iTimerTick, 0);
+
+	uint32_ startMs = iTimerTick->GetMicroseconds();
+	{
+		Sleep(2000);
+
+	}
+	uint32_ endMs = iTimerTick->GetMicroseconds();
+	uint32_ diff1 = endMs - startMs;
+
+	uint32_ startUs = iTimerTick->GetMilliseconds();
+	{
+		Sleep(2000);
+
+	}
+	uint32_ endUs = iTimerTick->GetMilliseconds();
+	uint32_ diff2 = endMs - startMs;
+
+	printf("d1:%d d2:%d\n", diff1, diff2);
 
 
 	GET_OBJECT_RET(TimerMgr, iTimerMgr, 0);
@@ -277,7 +297,6 @@ int32_ main()
 	iTimerMgr->DestoryTimer(timer1);
 	iTimerMgr->DestoryTimer(timer2);
 	iTimerMgr->DestoryTimer(timer3);	
-
 
 
 
