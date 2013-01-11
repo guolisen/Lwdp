@@ -210,7 +210,7 @@
 		<Property> 
 			<Version>1.0</Version>
 			<ModuleDir>../../../../bin/Plugins/TcpServer.dll</ModuleDir>
-			<DbIp>10.3.18.27</DbIp>
+			<DbIp>192.168.1.5</DbIp>
 			<DbUser>ptsf</DbUser>
 			<DbPassword>123456</DbPassword>
 			<DbSelect>scenic</DbSelect>
@@ -226,16 +226,16 @@
 		<Property> 
 			<Version>1.0</Version>
 			<ModuleDir>../../../../bin/Plugins/ACDevice.dll</ModuleDir>
-			<InitSql>select * from sc_gate where gate_id = '%s'</InitSql>
-			<ConfigSql>select * from sc_gate where gate_id = '%s'</ConfigSql>
-			<CardSql>insert into sc_swiping(card_id, gate_id, scenic_id, ticket_type, action, create_time) 
-			                                VALUES (%s, '%s', '%s', %d, %d, '%s')
+			<InitSql>select * from sc_gate where gate_no = '%s'</InitSql>
+			<ConfigSql>select * from sc_gate where gate_no = '%s'</ConfigSql>
+			<CardSql>insert into sc_swiping(card_no, gate_no, scenic_id, ticket_type, action, create_time) 
+			                                VALUES ('%s', '%s', '%s', %d, %d, '%s')
 			</CardSql>
 			
 		</Property>
 		<TableSet>
 			<PropertyTable Name = "GateInfoCol">
-				<GateIdCol>gate_id</GateIdCol>
+				<GateIdCol>gate_no</GateIdCol>
 				<SceneryIdCol>scenic_id</SceneryIdCol>
 				<ManufacturerCol>manufacturer</ManufacturerCol>
 				<PositionCol>position</PositionCol>

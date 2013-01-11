@@ -574,8 +574,8 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(const uint8_* ret_msg, uint32_ re
 	}
 
 	//check
-	std::string carIdStr;
-	IntArrayToStr(msgBody->cardId, TS_CARD_ID_STRU_LEN, carIdStr);
+	std::string carIdStr = std::string((char_*)msgBody->cardId, sizeof(msgBody->cardId));
+	//IntArrayToStr(msgBody->cardId, TS_CARD_ID_STRU_LEN, carIdStr);
 	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::INFO,
 				   "[Received] REQ:%s REQCODE: %x, cardId: %s sceneryId: %s cardType: %x actionId: %x checkinTime: %x", 
 			       std::string((char_*)zmqMsg->deviceId, sizeof(zmqMsg->deviceId)).c_str(), 

@@ -10,7 +10,7 @@
 
 LWDP_NAMESPACE_BEGIN;
 
-#define TS_CARD_ID_STRU_LEN      12
+#define TS_CARD_ID_STRU_LEN      32
 #define TS_SCENERY_ID_STRU_LEN   32
 
 ////////////////////////////////////////////
@@ -115,7 +115,7 @@ typedef struct stru_dev_status_rsp_body
 
 typedef struct stru_dev_card_data_msg
 {
-	uint32_  cardId[TS_CARD_ID_STRU_LEN];  
+	char_    cardId[TS_CARD_ID_STRU_LEN];  
     char_    sceneryId[TS_SCENERY_ID_STRU_LEN];
 	uint32_  cardType;   //卡类型
 	uint32_  actionId;   //行为ID

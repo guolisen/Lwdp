@@ -126,6 +126,8 @@ LWRESULT Cx_TcpServer::Init()
 	iDbMgr->ExecSQL("set wait_timeout=31536000");
 	iDbMgr->ExecSQL("use `scenic`");
 
+	LWDP_LOG_PRINT("TCPSERVER", LWDP_LOG_MGR::INFO, 
+			       "Connect Db Ok!");
 	GET_OBJECT_RET(ACDevice, iACDevice, LWDP_GET_OBJECT_ERROR);
 	RINOK(iACDevice->Init());
 	

@@ -233,18 +233,17 @@ int32_ main()
 	
 	
 	char tmpStr[2048] = {0};
-	int pageSize = 100;
+	int pageSize = 1000;
 	for(int i = 0; i<10; i++)
 	{
 		GET_OBJECT_RET(DbQuery, iDbQuery, 0);
 		int start = i * pageSize;
-		int end = start + pageSize;
-		_snprintf(tmpStr, 2048, 
-			         "SELECT id,card_no,scenic_id \
+		Api_snprintf(tmpStr, 2048, 
+			         "SELECT id,card_id,scenic_id \
 			         FROM sc_swiping \
-			         WHERE create_time >= DATE_FORMAT('2012-12-24','%%Y-%%m-%%d') AND\
+			         WHERE create_time >= DATE_FORMAT('2012-12-24','%%Y-%%m-%%d') AND \
 			         	   create_time < DATE_FORMAT('2012-12-25','%%Y-%%m-%%d') \
-			         LIMIT %d,%d", start, end);
+			         LIMIT %d,%d", start, pageSize);
 		//LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::INFO, 
 		//			   tmpStr);
 		iDbMgr->QuerySQL(tmpStr, iDbQuery);
@@ -254,8 +253,10 @@ int32_ main()
 			"Num: %d", inum);
 		while(!iDbQuery->Eof())
 		{
-			std::string s = iDbQuery->GetStringField("id", "");
-			printf("%s\n", s.c_str());
+			std::string card_no = iDbQuery->GetStringField("card_id", "");
+			std::string s = iDbQuery->GetStringField("card_id", "");
+
+			iDbQuery->NextRow();
 		}
 	}
 

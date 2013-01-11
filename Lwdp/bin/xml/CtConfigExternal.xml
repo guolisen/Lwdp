@@ -3,7 +3,7 @@
 	<Property> 
 		<ProjectName>Example</ProjectName>
 		<Version>1.0</Version>
-		<DbIp>10.3.18.27</DbIp>
+		<DbIp>192.168.1.5</DbIp>
 		<DbUser>ptsf</DbUser>
 		<DbPassword>123456</DbPassword>
 		<DbSelect>scenic</DbSelect>
