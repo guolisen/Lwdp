@@ -732,9 +732,10 @@ LWRESULT Cx_ACDevice::DeviceBulkDataMsgProcess(const uint8_* ret_msg, uint32_ re
 		memset(fakeMsg, 0, newLen);
 		tmpBody = (TS_DEVICE_CARD_DATA_REQ_BODY*)msgBody->cardDataEntry;
 		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::INFO,
-					   "[Received] REQ:%x REQCODE: %x, cardId: %x sceneryId: %s cardType: %x actionId: %x checkinTime: %x", 
+					   "[Received] REQ:%x REQCODE: %x, cardId: %s sceneryId: %s cardType: %x actionId: %x checkinTime: %x", 
 				       std::string((char_*)zmqMsg->deviceId, sizeof(zmqMsg->deviceId)).c_str(), 
-				       zmqMsg->msgCode, tmpBody[i].cardId,
+				       zmqMsg->msgCode, 
+				       std::string((char_*)tmpBody[i].cardId, sizeof(tmpBody[i].cardId)).c_str(),
 						std::string((char_*)tmpBody[i].sceneryId, sizeof(tmpBody[i].sceneryId)).c_str(),
 				       tmpBody[i].cardType, tmpBody[i].actionId, tmpBody[i].checkinTime);
 
