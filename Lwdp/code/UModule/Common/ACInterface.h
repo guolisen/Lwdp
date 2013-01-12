@@ -117,8 +117,8 @@ typedef struct stru_dev_card_data_msg
 {
 	char_    cardId[TS_CARD_ID_STRU_LEN];  
     char_    sceneryId[TS_SCENERY_ID_STRU_LEN];
-	uint32_  cardType;   //卡类型
-	uint32_  actionId;   //行为ID
+	uint16_  cardType;   //卡类型
+	uint16_  actionId;   //行为ID
 	time_t   checkinTime;
 }TS_DEVICE_CARD_DATA_REQ_BODY;
 

@@ -15,8 +15,8 @@ INTERFACE_END();
 
 INTERFACE_BEGIN(PerfMgr_timer)
 	virtual void   Start()  = 0;
-	virtual double Now()  = 0;
-	virtual double Stop() = 0;
+	virtual uint32_ Now()  = 0;
+	virtual uint32_ End() = 0;
 INTERFACE_END();
 
 

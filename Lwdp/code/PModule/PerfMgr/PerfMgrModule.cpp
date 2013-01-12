@@ -19,6 +19,7 @@ LWDP_NAMESPACE_BEGIN;
 XBEGIN_DEFINE_CLASS()
     XDEFINE_CLASSMAP_ENTRY(MODID_PerfMgr, CLSID_PerfMgr, Cx_PerfMgr)
 	XDEFINE_CLASSMAP_ENTRY(MODID_PerfMgr, CLSID_PerfMgr_Cps, Cx_PerfMgr_Cps)
+	XDEFINE_CLASSMAP_ENTRY(MODID_PerfMgr, CLSID_PerfMgr_timer, Cx_PerfMgr_timer)
 XEND_DEFINE_CLASS_SYS();
 
 
@@ -32,8 +33,8 @@ DEF_MODULE_INFO_END(PerfMgr);
 DEF_INIT_FUN(PerfMgr)
 {
 	printf("PerfMgr InitializePlugin\n");
-	//Cx_Interface<Ix_ScriptMgr> iScript(CLSID_ScriptMgr);
-	//iScript->RegisteAction(new APrint);
+	Cx_Interface<Ix_PerfMgr> iPerfMgr(CLSID_PerfMgr);
+	RINOK(iPerfMgr->Init());
 	
     return LWDP_OK;
 }

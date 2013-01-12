@@ -10,6 +10,8 @@
 #include <boost/shared_ptr.hpp>
 #include <list>
 #include <Interface/PerfMgr/Ix_PerfMgr.h>
+#include <Interface/CommonUtilMgr/Ix_CommonUtilMgr.h>
+
 //#include <Interface/ScriptMgr/Ix_ScriptMgr.h>
 #include "PerfMgrDef.h"
 
@@ -33,12 +35,8 @@ protected:
 	virtual void   Update();
 	virtual void   Reset();
 protected:	
-#ifdef LWDP_PLATFORM_DEF_WIN32
-	LARGE_INTEGER mTvLast;
-#else 	
-	struct timeval mTvLast;
-#endif
-
+	uint32_ mTvLast;
+	
 	double  mExtFps;
 	uint32_ mFrames;
 	uint32_ mUpdateTime;
@@ -52,19 +50,21 @@ class Cx_PerfMgr_timer
     X3BEGIN_CLASS_DECLARE(Cx_PerfMgr_timer)
         X3DEFINE_INTERFACE_ENTRY(Ix_PerfMgr_timer)
     X3END_CLASS_DECLARE()
-protected:
+public:
 	Cx_PerfMgr_timer();
 	virtual ~Cx_PerfMgr_timer();
 
 protected:
-	virtual void   Start();
-	virtual double Now();
-	virtual double Stop();
+	virtual void    Start();
+	virtual uint32_ Now();
+	virtual uint32_ End();
+	virtual void    Reset();
 	
 protected:	
-
+	uint32_ mStartTick;
 
 };
+
 
 LWDP_NAMESPACE_END;
 

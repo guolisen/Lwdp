@@ -18,6 +18,8 @@
 
 LWDP_NAMESPACE_BEGIN;
 
+extern uint32_ gPerfSwitch;
+
 class Cx_PerfMgr
     : public Ix_PerfMgr
 {

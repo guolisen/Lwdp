@@ -127,15 +127,15 @@ void* worker_task (void *args)
 				iTmpMsg->InitZMessage();
 		        iZmqMgr->Recv(responder, iTmpMsg, 0);
 				
-		        //LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::DEBUG,
-		       	//               "Work Thread Revc(%d)", iTmpMsg->Size());
+		        LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::DEBUG,
+		       	               "Work Thread Revc(%d)", iTmpMsg->Size());
 				iZmqMgr->Getsockopt(responder, LWDP_RCVMORE, &more, &more_size);
 				if (!more)
 				{
 					iZMessage = iTmpMsg;
 				    break; // Last message part
 				}
-				Api_TaskDelay (1); 
+				//Api_TaskDelay (1); 
 			}
 
 			
@@ -168,7 +168,7 @@ void* worker_task (void *args)
 			iZSMessage->SetValue(sendData.get(), sendLen);
 			iZmqMgr->Send(responder, iZSMessage, 0);
 			
-			Api_TaskDelay(1);
+			//Api_TaskDelay(1);
 	    }
 		if (items [1].revents & LWDP_POLLIN) 
 		{
@@ -188,7 +188,7 @@ void* worker_task (void *args)
 					iZMessage = iTmpMsg;
 				    break; // Last message part
 				}
-				Api_TaskDelay (1); 
+				//Api_TaskDelay (1); 
 			}
 
 			// Do some 'work'
@@ -352,8 +352,8 @@ LWRESULT Cx_ZmqBackend::RunServer()
 	        	iZMessage->InitZMessage();
 	            iZmqMgr->Recv(mFrontend, iZMessage, 0);
 
-	            //LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::DEBUG,
-	            //			   "Revc From Tcp Frontend(%d)", iZMessage->Size());
+	            LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::DEBUG,
+	            			   "Revc From Tcp Frontend(%d)", iZMessage->Size());
 				iZmqMgr->Getsockopt(mFrontend, LWDP_RCVMORE, &more, &more_size);
 				iZmqMgr->Send(mBackend, iZMessage, more? LWDP_SNDMORE: 0);
                 if (!more)

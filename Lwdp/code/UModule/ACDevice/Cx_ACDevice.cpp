@@ -696,8 +696,9 @@ LWRESULT Cx_ACDevice::DeviceBulkDataMsgProcess(const uint8_* ret_msg, uint32_ re
 			       std::string((char_*)zmqMsg->deviceId, sizeof(zmqMsg->deviceId)).c_str(), 
 			       zmqMsg->msgCode, msgBody->cardDataCount);
 
-	uint32_ tmpLen = sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_DEVICE_BULK_DATA_REQ_BODY) +
-				     (sizeof(TS_DEVICE_CARD_DATA_REQ_BODY) * msgBody->cardDataCount);
+	uint32_ tmpLen = sizeof(TS_ZMQ_SERVER_MSG) + 
+		             sizeof(TS_DEVICE_BULK_DATA_REQ_BODY) +
+				     sizeof(TS_DEVICE_CARD_DATA_REQ_BODY) * msgBody->cardDataCount;
 	if(ret_msg_len < tmpLen)
 	{
 		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR,

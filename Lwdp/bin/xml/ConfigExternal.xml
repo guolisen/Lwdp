@@ -164,6 +164,8 @@
 		<Property> 
 			<Version>1.0</Version>
 			<ModuleDir>../../../../bin/Plugins/PerfMgrDll.dll</ModuleDir>
+			<!-- 1-on 0-off -->
+			<PerfSwitch>1</PerfSwitch>  
 		</Property>
 		<TableSet>
 		</TableSet>
@@ -178,7 +180,7 @@
 			<ConnetTarget>tcp://localhost:12136</ConnetTarget>
 			<ServerPort>12135</ServerPort>
 			<ListenBlock>128</ListenBlock>
-			<RecvBufMaxLen>1024</RecvBufMaxLen>
+			<RecvBufMaxLen>1048576</RecvBufMaxLen>
 			<SendZmqTimeout>5</SendZmqTimeout>
 			<RecvZmqTimeout>5</RecvZmqTimeout>
 		</Property>

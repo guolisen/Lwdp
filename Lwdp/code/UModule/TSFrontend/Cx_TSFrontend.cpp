@@ -17,7 +17,7 @@
 #include "TSFrontendDef.h"
 
 
-uint32_      gMaxNum = LW_TSFRONTEND_RECV_MAX_LEN;
+uint32_ gRecvBufMaxLen = LW_TSFRONTEND_RECV_MAX_LEN;
 uint32_ gSendTimeout = LW_TSFRONTEND_SEND_TIMEOUT;
 uint32_ gRecvTimeout = LW_TSFRONTEND_RECV_TIMEOUT;
 std::string gConnStr = std::string(LW_TSFRONTEND_CONNECT_TARGET);
@@ -28,6 +28,7 @@ uint32_ gThreadMax = 0;
 Cx_Interface<Ix_PerfMgr_Cps> gIoPerSecond;
 Cx_Interface<Ix_PerfMgr_Cps> gThreadPerCreate;
 Cx_Interface<Ix_PerfMgr_Cps> gThreadPerRelease;
+StatisticFigures gProcessStatic;
 
 void createCountThread()
 {
@@ -38,7 +39,7 @@ void createCountThread()
 		gThreadMax = gThreadNum;
 	}
 	pthread_mutex_unlock(&gThreadNum_mutex);
-
+	
 	gThreadPerCreate->Update();
 }
 void destoryCountThread()
@@ -51,15 +52,36 @@ void destoryCountThread()
 }
 CallBackStru cb(createCountThread, destoryCountThread);
 
+class TimerProcessController: public ProcessController
+{
+public:
+	TimerProcessController(CallBackStru call_back, 
+		                        StatisticFigures* static_figures): ProcessController(call_back),
+		                                                           mStat(static_figures)
+	{
+		GET_OBJECT_VOID(PerfMgr_timer, iPerfMgr_timer);
+		mPerfMgr_timer = iPerfMgr_timer;
+		mPerfMgr_timer->Start();
+	}
+	virtual ~TimerProcessController()
+	{
+		ASSERT_CHECK_VOID(LWDP_MODULE_LOG, mStat, "StatisticFigures object is NULL");
+		mStat->Update(mPerfMgr_timer->End());
+	}
+
+	StatisticFigures* mStat;
+	Cx_Interface<Ix_PerfMgr_timer> mPerfMgr_timer;
+};
+
 	
 Cx_TSFrontend::Cx_TSFrontend()
 {
-	printf("TSFrontend Create!\n");
+	//printf("TSFrontend Create!\n");
 }
 
 Cx_TSFrontend::~Cx_TSFrontend()
 {
-	printf("TSFrontend Delete!\n");
+	//printf("TSFrontend Delete!\n");
 }
 
 std::string addressToString(struct sockaddr_in* addr)
@@ -78,7 +100,7 @@ void* thread_callback(void* vfd)
 {
 	LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::DEBUG, "Thread Callback fd(%x)!", vfd);
 
-	ProcessController NumCount(cb);
+	TimerProcessController NumCount(cb, &gProcessStatic);
 	if(!vfd)
 	{
 		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, 
@@ -105,7 +127,7 @@ void* thread_callback(void* vfd)
 	// Recv Tcp Message from Client
 	//////////////////////////////////////////////////////////////
     int32_  ret_len = 0;
-    uint32_ totleSize = LW_TSFRONTEND_RECV_BUFFER_LEN;
+    uint32_ totleSize = gRecvBufMaxLen;
 	uint8_* recvBuf = (uint8_*)malloc(totleSize * sizeof(uint8_));
 	ASSERT_CHECK_RET(LWDP_PLUGIN_LOG, NULL, recvBuf, "Malloc Recv Buffer Error!");
 	uint32_ recvCheckPacketLen = 0;
@@ -147,14 +169,14 @@ void* thread_callback(void* vfd)
 			clientMsg = (TS_TCP_SERVER_MSG*)recvBuf;
 			totleSize = clientMsg->msgLength;
 			recvCheckPacketLen++;
-			if(totleSize > LW_TSFRONTEND_RECV_BUFFER_LEN)
+			if(totleSize > gRecvBufMaxLen)
 			{
 				clientMsg->statusCode = TS_SERVER_TCP_MSG_LEN_ERROR;
 				clientMsg->msgLength  = sizeof(TS_TCP_SERVER_MSG);
 				send(accept_conn, (char *)clientMsg, clientMsg->msgLength, 0);
 				LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::WARNING, 
 							   "Tcp Recv Packet is Too Long: recvlen(%d) the Max Packet Length is(%d)", 
-							   totleSize, LW_TSFRONTEND_RECV_BUFFER_LEN);		
+							   totleSize, gRecvBufMaxLen);		
 
 				goto ERR_TCP_TAG;
 			}
@@ -203,11 +225,11 @@ void* thread_callback(void* vfd)
 	//////////////////////////////////////////////////////////////
 
 	headLen     = sizeof(uint32_) * 2;
-	zmq_ret_len = iZmqMgr->Send(requester, recvBuf + headLen, ret_len - headLen, 0);
-	if(zmq_ret_len != ret_len - headLen)
+	zmq_ret_len = iZmqMgr->Send(requester, recvBuf + headLen, totleSize - headLen, 0);
+	if(zmq_ret_len != totleSize - headLen)
 	{	
 		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, 
-					   "Send Message Timeout or Error fd(%x) ret(%d) send(%d)", accept_conn, ret_len, zmq_ret_len);
+					   "Send Message Timeout or Error fd(%x) ret(%d) send(%d)", accept_conn, totleSize, zmq_ret_len);
 
 		goto ERR_ZMQ_TAG;		
 	}
@@ -399,12 +421,12 @@ LWRESULT Cx_TSFrontend::Init()
 
 	if(!propMax[0].propertyText.empty())
 	{
-		gMaxNum = atol(propMax[0].propertyText.c_str());
+		gRecvBufMaxLen = atol(propMax[0].propertyText.c_str());
 	}
 	else
 	{
 		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::WARNING, 
-					   "Can't Find <RecvBufMaxLen> In Config File, Default(%d)", gMaxNum);
+					   "Can't Find <RecvBufMaxLen> In Config File, Default(%d)", gRecvBufMaxLen);
 	}
 
 	//Connect
@@ -503,6 +525,12 @@ int32_ Cx_TSFrontend::ConsoleGetTsInfo(COMMAND_LINE& command_line)
 			  << gThreadPerRelease->GetCps()  << " /s" << std::endl;
 	std::cout << "Max Thread Num: "
 			  << gThreadMax << std::endl;
+
+	std::cout << "Process Time: " << std::endl
+		      << "-----------------------------" << std::endl
+			  << gProcessStatic.GetMax() /1000.0 << "s  |  " 
+			  << gProcessStatic.GetMin() /1000.0 << "s  |  " 
+			  << gProcessStatic.GetAvg() /1000.0 << "s" << std::endl;
 
 	return 0;
 }
