@@ -74,7 +74,7 @@ typedef int32_              bool_;
 #define TRUE   1
 #undef FALSE
 #define FALSE  0
-
+/////////////////////////////////////////////////////////
 #ifdef _SZ_NO_INT_64
 
     /* define _SZ_NO_INT_64, if your compiler doesn't support 64-bit integers.
@@ -86,16 +86,142 @@ typedef int32_              bool_;
 #else
 
 #if defined(_MSC_VER) || defined(__BORLANDC__)
-    typedef __int64 int64_;
-    typedef unsigned __int64 uint64_;
 #define UINT64_CONST(n) n
 #else
-    //typedef long_ long_ int32_ int64_;
-    //typedef unsigned long_ long_ int32_ uint64_;
 #define UINT64_CONST(n) n ## ULL
 #endif
 
+#if defined(_MSC_VER)
+	//
+	// Windows/Visual C++
+	//
+	typedef signed __int64         int64_;
+	typedef unsigned __int64       uint64_;
+	#if defined(_WIN64)
+		#define LWDP_PTR_IS_64_BIT 1
+		typedef signed __int64     intPtr_;
+		typedef unsigned __int64   uintPtr_;
+	#else
+		typedef signed long        intPtr_;
+		typedef unsigned long      uintPtr_;
+	#endif
+	#define LWDP_HAVE_INT64 1
+#elif defined(__GNUC__) || defined(__clang__)
+	//
+	// Unix/GCC
+	//
+	typedef signed long            intPtr_;
+	typedef unsigned long          uintPtr_;
+	#if defined(__LP64__)
+		#define LWDP_PTR_IS_64_BIT 1
+		#define LWDP_LONG_IS_64_BIT 1
+		typedef signed long        int64_;
+		typedef unsigned long      uint64_;
+	#else
+		typedef signed long long   int64_;
+		typedef unsigned long long uint64_;
+	#endif
+	#define LWDP_HAVE_INT64 1
+#elif defined(__DECCXX)
+	//
+	// Compaq C++
+	//
+	typedef signed __int64         int64_;
+	typedef unsigned __int64       uint64_;
+	#if defined(__VMS)
+		#if defined(__32BITS)
+			typedef signed long    intPtr_;
+			typedef unsigned long  uintPtr_;
+		#else
+			typedef int64_          intPtr_;
+			typedef uint64_         uintPtr_;
+			#define LWDP_PTR_IS_64_BIT 1
+		#endif
+	#else
+		typedef signed long        intPtr_;
+		typedef unsigned long      uintPtr_;
+		#define LWDP_PTR_IS_64_BIT 1
+		#define LWDP_LONG_IS_64_BIT 1
+	#endif
+	#define LWDP_HAVE_INT64 1
+#elif defined(__HP_aCC)
+	//
+	// HP Ansi C++
+	//
+	typedef signed long            intPtr_;
+	typedef unsigned long          uintPtr_;
+	#if defined(__LP64__)
+		#define LWDP_PTR_IS_64_BIT 1
+		#define LWDP_LONG_IS_64_BIT 1
+		typedef signed long        int64_;
+		typedef unsigned long      uint64_;
+	#else
+		typedef signed long long   int64_;
+		typedef unsigned long long uint64_;
+	#endif
+	#define LWDP_HAVE_INT64 1
+#elif defined(__SUNPRO_CC)
+	//
+	// SUN Forte C++
+	//
+	typedef signed long            intPtr_;
+	typedef unsigned long          uintPtr_;
+	#if defined(__sparcv9)
+		#define LWDP_PTR_IS_64_BIT 1
+		#define LWDP_LONG_IS_64_BIT 1
+		typedef signed long        int64_;
+		typedef unsigned long      uint64_;
+	#else
+		typedef signed long long   int64_;
+		typedef unsigned long long uint64_;
+	#endif
+	#define LWDP_HAVE_INT64 1
+#elif defined(__IBMCPP__) 
+	//
+	// IBM XL C++
+	//
+	typedef signed long            intPtr_;
+	typedef unsigned long          uintPtr_;
+	#if defined(__64BIT__)
+		#define LWDP_PTR_IS_64_BIT 1
+		#define LWDP_LONG_IS_64_BIT 1
+		typedef signed long        int64_;
+		typedef unsigned long      uint64_;
+	#else
+		typedef signed long long   int64_;
+		typedef unsigned long long uint64_;
+	#endif
+	#define LWDP_HAVE_INT64 1
+#elif defined(__sgi) 
+	//
+	// MIPSpro C++
+	//
+	typedef signed long            intPtr_;
+	typedef unsigned long          uintPtr_;
+	#if _MIPS_SZLONG == 64
+		#define LWDP_PTR_IS_64_BIT 1
+		#define LWDP_LONG_IS_64_BIT 1
+		typedef signed long        int64_;
+		typedef unsigned long      uint64_;
+	#else
+		typedef signed long long   int64_;
+		typedef unsigned long long uint64_;
+	#endif
+	#define LWDP_HAVE_INT64 1
+#elif defined(_DIAB_TOOL)
+	typedef signed long        intPtr_;
+	typedef unsigned long      uintPtr_;
+	typedef signed long long   int64_;
+	typedef unsigned long long uint64_;
+	#define LWDP_HAVE_INT64 1
 #endif
+
+
+#endif
+//////////////////////////////////////////
+
+////////////////////////////////////////////////////////
+
 
 #ifdef _LWDP_NO_SYSTEM_SIZE_T
 typedef L_UINT32    size_t_;
@@ -107,6 +233,7 @@ typedef size_t      size_t_;
 typedef std::wstring tstring;
 typedef wchar_ tchar_;
 #else
+
 typedef std::string  tstring;
 typedef char_  tchar_;
 #endif

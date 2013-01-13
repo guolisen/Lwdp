@@ -16,6 +16,8 @@
 #include "ACDeviceDef.h"
 #include "Cx_ACDevice.h"
 
+#include <time.h>
+
 std::string Cx_ACDevice::mInitSql   = std::string("");
 std::string Cx_ACDevice::mConfigSql = std::string("");
 std::string Cx_ACDevice::mCardSql   = std::string("");
@@ -118,7 +120,7 @@ LWRESULT MsgProcess(const uint8_* ret_msg, uint32_ ret_msg_len,
 /*
 enum TS_INIT_MSG_RESAULT_ENUM
 {	
-	TS_SERVER_CHECK_OK_RECONFIG = 1, //��֤�ɹ��������������
+	TS_SERVER_CHECK_OK_RECONFIG = 1, //��֤�ɹ��������������?
 	TS_SERVER_ID_ERROR,     //�豸IDδ֪����
 	TS_SERVER_TYPE_ERROR,   //�豸���ʹ���
 	TS_SERVER_UNKNOW_ERROR //δ֪���󣬾�������Ϣ
@@ -132,9 +134,9 @@ typedef struct stru_device_init_req_body
 
 typedef struct stru_server_init_rsp_body
 {	
-	uint32_  msgResult; //��Ϣ���ͽ��
+	uint32_  msgResult; //��Ϣ���ͽ��?
 	char_    msgResultData[32];  // ���ܵĴ�����Ϣ�ַ�
-	uint32_  appendDataLength; //������ݳ���
+	uint32_  appendDataLength; //������ݳ���?
 	uint8_*  appendData;
 }TS_SERVER_INIT_RSP_BODY;
 typedef struct stru_zmq_server_msg
@@ -302,7 +304,7 @@ enum TS_SERVER_CONFIG_MSG_RESAULT_ENUM
 
 typedef struct stru_dev_config_body
 {	
-	uint32_  msgResult; //��Ϣ���ͽ��
+	uint32_  msgResult; //��Ϣ���ͽ��?
 	char_    msgResultData[32];  // ���ܵĴ�����Ϣ�ַ�
 	uint32_  deviceId;  //�豸����
 	uint32_  deviceType;  //�豸����
@@ -447,10 +449,10 @@ typedef struct stru_dev_status_req_body
 
 typedef struct stru_dev_status_rsp_body
 {	
-	uint32_  msgResult; //��Ϣ���ͽ��
+	uint32_  msgResult; //��Ϣ���ͽ��?
 	char_    msgResultData[32];  // ���ܵĴ�����Ϣ�ַ�
 	uint32_  oprationCode;  //������
-	uint32_  appendDataLength; //������ݳ���
+	uint32_  appendDataLength; //������ݳ���?
 	uint8_   appendData[1];
 }TS_DEV_STATUS_RSP_BODY;
 
@@ -518,7 +520,7 @@ LWRESULT Cx_ACDevice::DeviceHBMsgProcess(const uint8_* ret_msg, uint32_ ret_msg_
 /*
 enum TS_CARD_DATA_MSG_RESAULT_ENUM
 {	
-	TS_SERVER_WRITE_DATA_ERROR = 1, //д��ݿ�ʧ��
+	TS_SERVER_WRITE_DATA_ERROR = 1, //д��ݿ�ʧ��?
 	TS_SERVER_UNKONW_ERROR,     //�豸IDδ֪����
 };
 
@@ -533,7 +535,7 @@ typedef struct stru_dev_card_data_msg
 
 typedef struct stru_dev_card_data_rsp_msg
 {	
-	uint32_  msgResult; //��Ϣ���ͽ��
+	uint32_  msgResult; //��Ϣ���ͽ��?
 	char_    msgResultData[32];  // ���ܵĴ�����Ϣ�ַ�
 } TS_DEVICE_CARD_DATA_RSP_BODY;
 
@@ -583,14 +585,22 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(const uint8_* ret_msg, uint32_ re
 			       std::string((char_*)msgBody->sceneryId, sizeof(msgBody->sceneryId)).c_str(), 
 			       msgBody->cardType, msgBody->actionId, msgBody->checkinTime);
 
+	time_t timep = msgBody->checkinTime;
+	struct tm checkTime = {0};
+	localtime_r(&timep, &checkTime); 
+	
+	char_ bufTime[1024] = {0};
+	strftime(bufTime, 1024, "%Y-%m-%d %H:%M:%S", &checkTime);
+
 	char_ buffer[3072] = {0};
 	Api_snprintf(buffer, 3071, Cx_ACDevice::mCardSql.c_str(),  carIdStr.c_str(), 
 															   std::string((char_*)zmqMsg->deviceId, sizeof(zmqMsg->deviceId)-1).c_str(),
 				  											   std::string((char_*)msgBody->sceneryId, sizeof(msgBody->sceneryId)-1).c_str(),
 				  								               msgBody->cardType,
 				  								               msgBody->actionId,
-				  								               "2012-12-24 14:53:12");
+				  								               bufTime);
 				  								               //msgBody->checkinTime);
+
 
 
 	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::DEBUG,
@@ -639,19 +649,19 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(const uint8_* ret_msg, uint32_ re
 /*
 enum TS_BULK_DATA_MSG_RESAULT_ENUM
 {	
-	TS_SERVER_BULK_WRITE_DATA_ERROR = 1, //д��ݿ�ʧ��
+	TS_SERVER_BULK_WRITE_DATA_ERROR = 1, //д��ݿ�ʧ��?
 	TS_SERVER_BULK_UNKONW_ERROR,     //�豸IDδ֪����
 };
 
 typedef struct stru_dev_bulk_data_msg
 {  
-	uint32_  cardDataCount;   //�������Ŀ����
+	uint32_  cardDataCount;   //�������Ŀ����?
 	uint8_*  cardDataEntry;   //��ΪID
 }TS_DEVICE_BULK_DATA_REQ_BODY;
 
 typedef struct stru_dev_bulk_data_rsp_msg
 {	
-	uint32_  msgResult; //��Ϣ���ͽ��
+	uint32_  msgResult; //��Ϣ���ͽ��?
 	char_    msgResultData[32];  // ���ܵĴ�����Ϣ�ַ�
 	uint32_  errorEntryNum;
 	uint8_   errCardId[1]; //errorEntryNum * 8

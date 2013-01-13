@@ -108,6 +108,43 @@ PC_DATA* ConfigSrcImp::LoadConfigData()
 	return (PC_DATA*)buf;
 }
 
+
+LWRESULT addBlackList(const std::string& card_no)
+{
+	GET_OBJECT_RET(DbMgr, iDbMgr, 0);
+	GET_OBJECT_RET(DbQuery, iDbQuery, 0);
+	char tmpStr[2048] = {0};
+	Api_snprintf(tmpStr, 2048, 
+		         "UPDATE sc_card \
+		          SET status = 5 \
+		          WHERE card_no = '%s'", card_no.c_str());
+	int32_ affLine = iDbMgr->ExecSQL(tmpStr);
+	if(affLine <= 0)
+	{
+		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::DEBUG, 
+			           "Update sc_card (%s)", 
+			           tmpStr);
+		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::WARNING, 
+			           "Can't Find card_no(%s) From Table sc_card", 
+			           card_no.c_str());
+		Api_snprintf(tmpStr, 2048, 
+			         "insert into sc_card  \
+			          (card_no, card_status)\
+			          values ('%s', 5)", card_no.c_str());
+		int32_ intLine = iDbMgr->ExecSQL(tmpStr);
+		if(intLine != 1)
+		{
+			LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::ERR, 
+				           "Can't Insert card_no(%s) Errno Black Card", 
+				           card_no.c_str());
+			return LWDP_ERROR;
+		}
+	}
+
+	return LWDP_OK;
+}
+
+
 int32_ main()
 {
 	LWRESULT stat = LWDP_ERROR;
@@ -231,7 +268,24 @@ int32_ main()
 					   "Can't Find <DbPort> In Config File, Default(%d)", DbPort);
 	}	
 	
-	
+
+	time_t timep = time(NULL);
+	struct tm checkTime = {0};
+	localtime_r(&timep, &checkTime); 
+
+	//char_ endTime[1024] = {0};
+	//strftime(endTime, 1024, "%Y-%m-%d", &checkTime);
+	//char_ startTime[1024] = {0};
+	//checkTime.tm_mday -= 1;
+	//strftime(startTime, 1024, "%Y-%m-%d", &checkTime);
+
+	checkTime.tm_mday += 1;
+	char_ endTime[1024] = {0};
+	strftime(endTime, 1024, "%Y-%m-%d", &checkTime);
+	char_ startTime[1024] = {0};
+	checkTime.tm_mday -= 1;
+	strftime(startTime, 1024, "%Y-%m-%d", &checkTime);
+
 	char tmpStr[2048] = {0};
 	int pageSize = 1000;
 	for(int i = 0; i<10; i++)
@@ -239,32 +293,60 @@ int32_ main()
 		GET_OBJECT_RET(DbQuery, iDbQuery, 0);
 		int start = i * pageSize;
 		Api_snprintf(tmpStr, 2048, 
-			         "SELECT id,card_id,scenic_id \
+			         "SELECT card_no,scenic_id \
 			         FROM sc_swiping \
-			         WHERE create_time >= DATE_FORMAT('2012-12-24','%%Y-%%m-%%d') AND \
-			         	   create_time < DATE_FORMAT('2012-12-25','%%Y-%%m-%%d') \
+			         WHERE create_time >= DATE_FORMAT('2013-01-13',' %%Y-%%m-%%d ') AND \
+			         	   create_time < DATE_FORMAT('2013-01-14',' %%Y-%%m-%%d ') \
 			         LIMIT %d,%d", start, pageSize);
-		//LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::INFO, 
-		//			   tmpStr);
+		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::DEBUG, 
+					   tmpStr);
 		iDbMgr->QuerySQL(tmpStr, iDbQuery);
 
 		uint32_ inum = iDbQuery->NumRow();
-		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::INFO, 
-			"Num: %d", inum);
+		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::DEBUG, 
+			           "Num: %d", inum);
 		while(!iDbQuery->Eof())
 		{
-			std::string card_no = iDbQuery->GetStringField("card_id", "");
-			std::string s = iDbQuery->GetStringField("card_id", "");
+			std::string dev_card_no = iDbQuery->GetStringField("card_no", "");
+			std::string dev_scenic_id = iDbQuery->GetStringField("scenic_id", "");
 
+			Api_snprintf(tmpStr, 2048, 
+				         "SELECT scenic_id \
+				         FROM sc_card_scenic \
+				         WHERE card_no = '%s'", dev_card_no.c_str());
+			GET_OBJECT_RET(DbQuery, iScDbQuery, 0);
+			iDbMgr->QuerySQL(tmpStr, iScDbQuery);
+			uint32_ iscnum = iScDbQuery->NumRow();
+			if(iscnum >= 1)
+			{
+				while(!iScDbQuery->Eof())
+				{
+					std::string true_scenic_id = iScDbQuery->GetStringField("scenic_id", "");
+					if(true_scenic_id == dev_scenic_id)
+						break;
+				}
+
+				if(iScDbQuery->Eof()) //can't find
+				{
+					addBlackList(dev_card_no);
+				}
+			}
+			else 
+			{
+				addBlackList(dev_card_no);
+			}
+			
 			iDbQuery->NextRow();
 		}
 	}
 
- 
 
-	GET_OBJECT_RET(ConsoleMgr, iConsoleMgr, 0);
-	iConsoleMgr->RunConsole();
+	LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::NOTICE, 
+		           "Check OK!!");
 
-	//system("pause");
+	//GET_OBJECT_RET(ConsoleMgr, iConsoleMgr, 0);
+	//iConsoleMgr->RunConsole();
+
+	system("pause");
 	return 0;
 }

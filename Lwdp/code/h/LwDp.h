@@ -13,7 +13,7 @@
 #include <io.h>
 #endif
 //#include <string.h>
-
+#include <time.h>
 
 #include <iostream>
 #include <string>

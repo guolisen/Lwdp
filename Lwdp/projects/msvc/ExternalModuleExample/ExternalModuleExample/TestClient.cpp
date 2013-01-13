@@ -1,6 +1,13 @@
 
 #include <Lwdp.h>
 #include <LwApi.h>
+
+#include "Poco/DateTime.h"
+#include "Poco/Timestamp.h"
+#include "Poco/Timespan.h"
+#include "Poco/DateTimeFormatter.h"
+#include "Poco/DateTimeFormat.h"
+
 using namespace NLwdp;
 //#include <../UModule/Interface/Example/Ix_example.h>
 
@@ -21,6 +28,7 @@ using namespace NLwdp;
 #include <iostream>
 #include <algorithm>
 #include <boost/shared_ptr.hpp>
+
 
 struct Foo
 { 
@@ -233,6 +241,17 @@ int32_ main()
 		return -1;
 		
 	}
+
+	//DateTime dt(2006, 10, 22, 15, 22, 34);
+	//std::string s(DateTimeFormatter::format(dt, "%e %b %Y %H:%M")); 
+	// "22 Oct 2006 15:22"
+	//Timestamp now;
+	//s = DateTimeFormatter::format(now, DateTimeFormat::SORTABLE_FORMAT);
+	// "2006-10-30 09:27:44"
+	//Timespan span(5, 11, 33, 0, 0);
+	//s = DateTimeFormatter::format(span, "%d days, %H hours, %M minutes");
+	// "5 days, 11 hours,
+
 
   
 	//GET_OBJECT_RET(TcpServer, iTcpServer, 0);
