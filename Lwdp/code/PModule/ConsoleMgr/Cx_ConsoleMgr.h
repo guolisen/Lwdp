@@ -46,6 +46,7 @@ protected:
 	
 protected:
 	COMMAND_MAP	mCommandMap;
+	std::string mLastCommand;
 };
 
 

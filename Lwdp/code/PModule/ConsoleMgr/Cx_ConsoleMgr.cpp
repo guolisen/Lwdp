@@ -22,7 +22,8 @@ namespace CON
 enum CALLBACK_LINE_ERR_ENUM
 {
 	CONSOLE_EXIT = 1,
-	CONSOLE_BREAK
+	CONSOLE_BREAK,
+	CONSOLE_LAST
 };
 };
 Cx_ConsoleMgr::Cx_ConsoleMgr()
@@ -62,12 +63,25 @@ LWRESULT Cx_ConsoleMgr::RunConsole()
 			if(lineStr.empty() || lineStr[0] == '\r' || lineStr[0] == '\n')
 				continue;
 
+			/////////////////
+			std::string::size_type pos = lineStr.find(" ");
+			if(lineStr.substr(0, pos) == "l")
+			{
+				lineStr = mLastCommand;
+	    	}
+			else
+			{
+				mLastCommand = lineStr;
+			}
+
+			//////////////////////////////////
 			res = PraseCommandLine(lineStr, commandList, " ");
 	        if(res != LWDP_OK)
 	    	{
 				std::cout << "Command Line Error" << std::endl;
 				continue;
 	    	}
+
 	        res = CallBackCommand(commandList);          /*处理命令，跳到相应函数*/
 	        if(res != LWDP_OK)
 	    	{
@@ -118,8 +132,18 @@ LWRESULT Cx_ConsoleMgr::CallBackCommand(COMMAND_LINE& command_line)
 	if(*lineIter == "b")
 		return CON::CONSOLE_BREAK;
 
-	if(*lineIter == "q!")
+	if(*lineIter == "q")
 		return CON::CONSOLE_EXIT;
+
+	if(*lineIter == "cls")
+	{
+#ifdef LWDP_PLATFORM_DEF_WIN32
+		system("cls");
+#else
+		system("clear");
+#endif
+		return LWDP_OK;
+	}
 	
 	COMMAND_MAP::iterator iter = mCommandMap.find(*lineIter);
 	if(iter == mCommandMap.end())

@@ -26,6 +26,57 @@ int  tolua_LogMgr_open (lua_State* tolua_S);
 
 LWDP_NAMESPACE_BEGIN;
 
+#if 0
+typedef std::list<std::string> FILTER_STR_LIST;
+
+class LogStrFilterAnd : public log4cpp::Filter {
+public:
+    LogStrFilter() {};
+    virtual ~LogStrFilter() {};
+public:
+	virtual void AddFilterStr(const std::string filter_str)
+	{
+		mFilterStr.push_back(filter_str);
+	}
+
+	virtual void DelFilterStr(const std::string filter_str)
+	{
+		FILTER_STR_LIST::iterator iter;
+		FOREACH_STL(iter, mFilterStr)
+		{
+			if(*iter == filter_str)
+				break;
+		}
+
+		if(iter != mFilterStr.end())
+		{
+			mFilterStr.erase(iter);
+		}
+	}
+
+protected:
+    virtual log4cpp::Filter::Decision _decide(const log4cpp::LoggingEvent& event) 
+	{
+		log4cpp::Filter::Decision decision = log4cpp::Filter::NEUTRAL;
+		
+		FILTER_STR_LIST::iterator iter;
+		FOREACH_STL(iter, mFilterStr)
+		{
+			std::string::size_type pos = event.message.find(*iter);
+			if(pos == 0)
+				return log4cpp::Filter::DENY;
+		}
+
+		return decision;
+    };
+
+protected:
+	FILTER_STR_LIST mFilterStr;
+	std::string mCategoryName;
+};
+
+#endif
+
 int32_ Cx_LogMgr::mLogSwitch = 1;
 
 pthread_mutex_t log_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -54,7 +105,7 @@ public:
 
 LWRESULT SetConsoleColorEnter(int32_ dbLevel)
 {
-#ifdef _WIN32
+#ifdef LWDP_PLATFORM_DEF_WIN32
 	switch(dbLevel)
 	{
 		case log4cpp::Priority::DEBUG:
@@ -82,6 +133,42 @@ LWRESULT SetConsoleColorEnter(int32_ dbLevel)
 			LOGMSG_SET_COLOR(0x5|FOREGROUND_INTENSITY);
 			break;
 	};
+#elif LWDP_PLATFORM_DEF_LINUX
+	switch(dbLevel)
+	{
+		case log4cpp::Priority::DEBUG:
+			//LOGMSG_SET_COLOR(0x8|FOREGROUND_INTENSITY);
+			printf("\033[01;30m");
+			break;
+		case log4cpp::Priority::INFO:
+			//LOGMSG_SET_COLOR(0x7);
+			printf("\033[22;37m");
+			break;
+		case log4cpp::Priority::NOTICE:
+			//LOGMSG_SET_COLOR(0xA|FOREGROUND_INTENSITY);
+			printf("\033[22;32m");
+			break;
+		case log4cpp::Priority::WARN:
+			//LOGMSG_SET_COLOR(0x7|FOREGROUND_INTENSITY);
+			printf("\033[01;37m");
+			break;
+		case log4cpp::Priority::ERROR:
+			//LOGMSG_SET_COLOR(FOREGROUND_RED|FOREGROUND_INTENSITY);
+			printf("\033[01;31m");
+			break;
+		case log4cpp::Priority::CRIT:
+			//LOGMSG_SET_COLOR(0x6|FOREGROUND_INTENSITY);
+			printf("\033[22;36m");
+			break;
+		case log4cpp::Priority::ALERT:
+			//LOGMSG_SET_COLOR(0x3|FOREGROUND_INTENSITY);
+			printf("\033[01;33m");
+			break;
+		case log4cpp::Priority::EMERG:
+			//LOGMSG_SET_COLOR(0x5|FOREGROUND_INTENSITY);
+			printf("\033[22;35m");
+			break;
+	};
 #endif
     return LWDP_OK;
 }
@@ -90,6 +177,8 @@ LWRESULT SetConsoleColorLeave()
 {
 #ifdef _WIN32
     LOGMSG_SET_COLOR(0x7);
+#elif LWDP_PLATFORM_DEF_LINUX
+	printf("\033[49;37m");
 #endif
     return LWDP_OK;
 }

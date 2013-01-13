@@ -196,6 +196,7 @@ LWRESULT Cx_ACDevice::DeviceInitMsgProcess(const uint8_* ret_msg, uint32_ ret_ms
 	GET_OBJECT_RET(DbMgr, iDbMgr, LWDP_GET_OBJECT_ERROR);
 	Cx_Interface<Ix_DbQuery> gateQuery;
 	LWRESULT queryRes = 0;
+	iDbMgr->Ping();
 	if((queryRes = iDbMgr->QuerySQL(buffer, gateQuery)) != LWDP_OK)
 	{
 		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR, 
@@ -345,6 +346,7 @@ LWRESULT Cx_ACDevice::DeviceConfigMsgProcess(const uint8_* ret_msg, uint32_ ret_
 	LWRESULT queryRes = 0;
 	uint32_ retCode = 0;
 	char_*  retMsg  = "NO ERROR!";
+	iDbMgr->Ping();
 	if((queryRes = iDbMgr->QuerySQL(buffer, gateQuery)) != LWDP_OK)
 	{
 		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR, 
@@ -611,6 +613,7 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(const uint8_* ret_msg, uint32_ re
 	int32_ queryRes = 0;
 	uint32_ retCode = 0;
 	char_*  retMsg  = "NO ERROR!";
+	iDbMgr->Ping();
 	if((queryRes = iDbMgr->ExecSQL(buffer)) != 1)
 	{
 		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR, 

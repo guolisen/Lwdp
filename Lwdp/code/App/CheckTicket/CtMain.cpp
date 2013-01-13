@@ -273,6 +273,7 @@ LWRESULT addBlackList(const std::string& card_no)
 	GET_OBJECT_RET(DbQuery, iDbQuery, 0);
 	char tmpStr[2048] = {0};
 	Api_snprintf(tmpStr, 2048, updateCardStatus.c_str(), card_no.c_str());
+	iDbMgr->Ping();
 	int32_ affLine = iDbMgr->ExecSQL(tmpStr);
 	if(affLine <= 0)
 	{
@@ -283,6 +284,7 @@ LWRESULT addBlackList(const std::string& card_no)
 			           "Can't Find card_no(%s) From Table sc_card", 
 			           card_no.c_str());
 		Api_snprintf(tmpStr, 2048, insertCardStatus.c_str(), card_no.c_str());
+		iDbMgr->Ping();
 		int32_ intLine = iDbMgr->ExecSQL(tmpStr);
 		if(intLine != 1)
 		{
@@ -360,6 +362,7 @@ int32_ main()
 		Api_snprintf(tmpStr, 2048, selectFromCards.c_str(), startTime, "<", endTime, start, pageSize);
 		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::DEBUG, 
 					   tmpStr);
+		iDbMgr->Ping();
 		iDbMgr->QuerySQL(tmpStr, iDbQuery);
 
 		uint32_ inum = iDbQuery->NumRow();
@@ -372,6 +375,7 @@ int32_ main()
 
 			Api_snprintf(tmpStr, 2048, selectFromScenic.c_str(), dev_card_no.c_str());
 			GET_OBJECT_RET(DbQuery, iScDbQuery, 0);
+			iDbMgr->Ping();
 			iDbMgr->QuerySQL(tmpStr, iScDbQuery);
 			uint32_ iscnum = iScDbQuery->NumRow();
 			if(iscnum >= 1)
