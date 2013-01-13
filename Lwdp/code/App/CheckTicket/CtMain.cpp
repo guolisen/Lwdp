@@ -108,69 +108,22 @@ PC_DATA* ConfigSrcImp::LoadConfigData()
 	return (PC_DATA*)buf;
 }
 
+std::string strDbIp 		= std::string(LW_CT_DB_IP_DEFAULT);
+std::string strDbUserName 	= std::string(LW_CT_DB_USER_DEFAULT);
+std::string strDbPassword 	= std::string(LW_CT_DB_PASSWORD);
+std::string strDbName 		= std::string(LW_CT_DB_SELECT_DBNAME);
+uint32_     DbPort 		    = LW_CT_DB_PORT_DEFAULT;
+std::string selectFromCards = LW_CT_CARD_SET_DEFAULT;
+std::string selectFromScenic = LW_CT_SCENIC_TABLE_DEFAULT;
+std::string cardIdCol   = LW_CT_CARDID_COL_DEFAULT;
+std::string scenicIdCol = LW_CT_SCENIC_COL_DEFAULT;
 
-LWRESULT addBlackList(const std::string& card_no)
+std::string updateCardStatus = LW_CT_UPDATE_CARD_STATUS_DEFAULT;
+std::string insertCardStatus = LW_CT_INSERT_CARD_STATUS_DEFAULT;
+
+LWRESULT ConfigRead()
 {
-	GET_OBJECT_RET(DbMgr, iDbMgr, 0);
-	GET_OBJECT_RET(DbQuery, iDbQuery, 0);
-	char tmpStr[2048] = {0};
-	Api_snprintf(tmpStr, 2048, 
-		         "UPDATE sc_card \
-		          SET status = 5 \
-		          WHERE card_no = '%s'", card_no.c_str());
-	int32_ affLine = iDbMgr->ExecSQL(tmpStr);
-	if(affLine <= 0)
-	{
-		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::DEBUG, 
-			           "Update sc_card (%s)", 
-			           tmpStr);
-		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::WARNING, 
-			           "Can't Find card_no(%s) From Table sc_card", 
-			           card_no.c_str());
-		Api_snprintf(tmpStr, 2048, 
-			         "insert into sc_card  \
-			          (card_no, card_status)\
-			          values ('%s', 5)", card_no.c_str());
-		int32_ intLine = iDbMgr->ExecSQL(tmpStr);
-		if(intLine != 1)
-		{
-			LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::ERR, 
-				           "Can't Insert card_no(%s) Errno Black Card", 
-				           card_no.c_str());
-			return LWDP_ERROR;
-		}
-	}
-
-	return LWDP_OK;
-}
-
-
-int32_ main()
-{
-	LWRESULT stat = LWDP_ERROR;
-
-#if defined(LWDP_PLATFORM_DEF_WIN32)
-	ConfigSrcImp csrc("../../../../bin/xml/CtConfigExternal.xml");
-#elif defined(LWDP_PLATFORM_DEF_LINUX)
-	//ConfigSrcImp csrc("/home/ptsf/Desktop/tmp/workspace/LwdpGit/Lwdp/code/bin/xml/LinuxConfigExternal.xml");
-	ConfigSrcImp csrc("../../../bin/xml/LinuxConfigExternal.xml");
-#endif
-	stat = Fw_Init(&csrc, 1);
-	if(stat != LWDP_OK)
-	{
-		lw_log_err(LWDP_MODULE_LOG, "Fw_Init Error(0x%x)!", stat);
-		system("pause");
-		return -1;
-		
-	} 
-
 	GET_OBJECT_RET(ConfigMgr, iConfigMgr, 0);
-
-	std::string strDbIp 		= std::string(LW_CT_DB_IP_DEFAULT);
-	std::string strDbUserName 	= std::string(LW_CT_DB_USER_DEFAULT);
-	std::string strDbPassword 	= std::string(LW_CT_DB_PASSWORD);
-	std::string strDbName 		= std::string(LW_CT_DB_SELECT_DBNAME);
-	uint32_     DbPort 		    = LW_CT_DB_PORT_DEFAULT;
 	
 	XPropertys propDbIp;
 	iConfigMgr->GetModulePropEntry(LW_CT_MODULE_NAME, LW_CT_DB_IP_NAME, propDbIp);
@@ -232,6 +185,140 @@ int32_ main()
 					   "Can't Find <DbPort> In Config File, Default(%d)", DbPort);
 	}	
 
+
+	XPropertys propSelectFromCards;
+	iConfigMgr->GetModulePropEntry(LW_CT_MODULE_NAME, LW_CT_CARD_SET_NAME, propSelectFromCards);
+	if(!propSelectFromCards[0].propertyText.empty())
+	{
+		selectFromCards = propSelectFromCards[0].propertyText;
+	}
+	else
+	{
+		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::WARNING, 
+					   "Can't Find <CardSet> In Config File, Default(%s)", 
+					   selectFromCards.c_str());
+	}	
+
+	XPropertys propSelectFromScenic;
+	iConfigMgr->GetModulePropEntry(LW_CT_MODULE_NAME, LW_CT_SCENIC_SET_NAME, propSelectFromScenic);
+	if(!propSelectFromScenic[0].propertyText.empty())
+	{
+		selectFromScenic = propSelectFromScenic[0].propertyText;
+	}
+	else
+	{
+		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::WARNING, 
+					   "Can't Find <ScenicSet> In Config File, Default(%s)", 
+					   selectFromScenic.c_str());
+	}	
+
+	XPropertys propCardIdCol;
+	iConfigMgr->GetModulePropEntry(LW_CT_MODULE_NAME, LW_CT_CARDID_COL_NAME, propCardIdCol);
+	if(!propCardIdCol[0].propertyText.empty())
+	{
+		cardIdCol = propCardIdCol[0].propertyText;
+	}
+	else
+	{
+		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::WARNING, 
+					   "Can't Find <CardIdCol> In Config File, Default(%s)", 
+					   cardIdCol.c_str());
+	}
+	
+	XPropertys propScenicIdCol;
+	iConfigMgr->GetModulePropEntry(LW_CT_MODULE_NAME, LW_CT_SCENIC_SET_NAME, propScenicIdCol);
+	if(!propScenicIdCol[0].propertyText.empty())
+	{
+		scenicIdCol = propScenicIdCol[0].propertyText;
+	}
+	else
+	{
+		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::WARNING, 
+					   "Can't Find <ScenicIdCol> In Config File, Default(%s)", 
+					   scenicIdCol.c_str());
+	}
+
+	XPropertys propUpdateCardStatus;
+	iConfigMgr->GetModulePropEntry(LW_CT_MODULE_NAME, LW_CT_UPDATE_CARD_NAME, propUpdateCardStatus);
+	if(!propUpdateCardStatus[0].propertyText.empty())
+	{
+		updateCardStatus = propUpdateCardStatus[0].propertyText;
+	}
+	else
+	{
+		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::WARNING, 
+					   "Can't Find <UpdateCard> In Config File, Default(%s)", 
+					   updateCardStatus.c_str());
+	}
+
+	XPropertys propInsertCardStatus;
+	iConfigMgr->GetModulePropEntry(LW_CT_MODULE_NAME, LW_CT_INSERT_CARD_NAME, propInsertCardStatus);
+	if(!propInsertCardStatus[0].propertyText.empty())
+	{
+		insertCardStatus = propInsertCardStatus[0].propertyText;
+	}
+	else
+	{
+		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::WARNING, 
+					   "Can't Find <InsertCard> In Config File, Default(%s)", 
+					   insertCardStatus.c_str());
+	}
+
+	return LWDP_OK;
+}
+
+LWRESULT addBlackList(const std::string& card_no)
+{
+	GET_OBJECT_RET(DbMgr, iDbMgr, 0);
+	GET_OBJECT_RET(DbQuery, iDbQuery, 0);
+	char tmpStr[2048] = {0};
+	Api_snprintf(tmpStr, 2048, updateCardStatus.c_str(), card_no.c_str());
+	int32_ affLine = iDbMgr->ExecSQL(tmpStr);
+	if(affLine <= 0)
+	{
+		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::DEBUG, 
+			           "Update sc_card (%s)", 
+			           tmpStr);
+		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::WARNING, 
+			           "Can't Find card_no(%s) From Table sc_card", 
+			           card_no.c_str());
+		Api_snprintf(tmpStr, 2048, insertCardStatus.c_str(), card_no.c_str());
+		int32_ intLine = iDbMgr->ExecSQL(tmpStr);
+		if(intLine != 1)
+		{
+			LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::ERR, 
+				           "Can't Insert card_no(%s) Errno Black Card", 
+				           card_no.c_str());
+			return LWDP_ERROR;
+		}
+	}
+
+	return LWDP_OK;
+}
+
+
+
+int32_ main()
+{
+	LWRESULT stat = LWDP_ERROR;
+
+#if defined(LWDP_PLATFORM_DEF_WIN32)
+	ConfigSrcImp csrc("../../../../bin/xml/CtConfigExternal.xml");
+#elif defined(LWDP_PLATFORM_DEF_LINUX)
+	//ConfigSrcImp csrc("/home/ptsf/Desktop/tmp/workspace/LwdpGit/Lwdp/code/bin/xml/LinuxConfigExternal.xml");
+	ConfigSrcImp csrc("../../../bin/xml/LinuxConfigExternal.xml");
+#endif
+	stat = Fw_Init(&csrc, 1);
+	if(stat != LWDP_OK)
+	{
+		lw_log_err(LWDP_MODULE_LOG, "Fw_Init Error(0x%x)!", stat);
+		system("pause");
+		return -1;
+		
+	} 
+
+	RINOK(ConfigRead());
+	
 	GET_OBJECT_RET(DbMgr, iDbMgr, 0);	
 	LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::INFO, 
 				   "Connect to Db Server Ip:%s User:%s DbName:%s Port:%d", 
@@ -254,32 +341,10 @@ int32_ main()
 	LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::INFO, 
 				   "Connect Db Ok!");
 
-
-	std::string selectFromCards;
-	XPropertys propSelectFromCards;
-	iConfigMgr->GetModulePropEntry(LW_CT_MODULE_NAME, LW_CT_DB_PORT_NAME, propSelectFromCards);
-	if(!propDbPort[0].propertyText.empty())
-	{
-		//selectFromCards = ;
-	}
-	else
-	{
-		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::WARNING, 
-					   "Can't Find <DbPort> In Config File, Default(%d)", DbPort);
-	}	
-	
-
 	time_t timep = time(NULL);
 	struct tm checkTime = {0};
 	localtime_r(&timep, &checkTime); 
 
-	//char_ endTime[1024] = {0};
-	//strftime(endTime, 1024, "%Y-%m-%d", &checkTime);
-	//char_ startTime[1024] = {0};
-	//checkTime.tm_mday -= 1;
-	//strftime(startTime, 1024, "%Y-%m-%d", &checkTime);
-
-	checkTime.tm_mday += 1;
 	char_ endTime[1024] = {0};
 	strftime(endTime, 1024, "%Y-%m-%d", &checkTime);
 	char_ startTime[1024] = {0};
@@ -292,12 +357,7 @@ int32_ main()
 	{
 		GET_OBJECT_RET(DbQuery, iDbQuery, 0);
 		int start = i * pageSize;
-		Api_snprintf(tmpStr, 2048, 
-			         "SELECT card_no,scenic_id \
-			         FROM sc_swiping \
-			         WHERE create_time >= DATE_FORMAT('2013-01-13',' %%Y-%%m-%%d ') AND \
-			         	   create_time < DATE_FORMAT('2013-01-14',' %%Y-%%m-%%d ') \
-			         LIMIT %d,%d", start, pageSize);
+		Api_snprintf(tmpStr, 2048, selectFromCards.c_str(), startTime, "<", endTime, start, pageSize);
 		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::DEBUG, 
 					   tmpStr);
 		iDbMgr->QuerySQL(tmpStr, iDbQuery);
@@ -307,13 +367,10 @@ int32_ main()
 			           "Num: %d", inum);
 		while(!iDbQuery->Eof())
 		{
-			std::string dev_card_no = iDbQuery->GetStringField("card_no", "");
-			std::string dev_scenic_id = iDbQuery->GetStringField("scenic_id", "");
+			std::string dev_card_no = iDbQuery->GetStringField(cardIdCol, "");
+			std::string dev_scenic_id = iDbQuery->GetStringField(scenicIdCol, "");
 
-			Api_snprintf(tmpStr, 2048, 
-				         "SELECT scenic_id \
-				         FROM sc_card_scenic \
-				         WHERE card_no = '%s'", dev_card_no.c_str());
+			Api_snprintf(tmpStr, 2048, selectFromScenic.c_str(), dev_card_no.c_str());
 			GET_OBJECT_RET(DbQuery, iScDbQuery, 0);
 			iDbMgr->QuerySQL(tmpStr, iScDbQuery);
 			uint32_ iscnum = iScDbQuery->NumRow();
@@ -321,7 +378,7 @@ int32_ main()
 			{
 				while(!iScDbQuery->Eof())
 				{
-					std::string true_scenic_id = iScDbQuery->GetStringField("scenic_id", "");
+					std::string true_scenic_id = iScDbQuery->GetStringField(scenicIdCol, "");
 					if(true_scenic_id == dev_scenic_id)
 						break;
 				}

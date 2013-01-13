@@ -1790,50 +1790,6 @@
 					>
 				</File>
 			</Filter>
-			<Filter
-				Name="Poco"
-				>
-				<File
-					RelativePath="..\..\..\..\code\LwApiLib\ComLib\Poco\Ascii.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\..\code\LwApiLib\ComLib\Poco\DateTime.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\..\code\LwApiLib\ComLib\Poco\DateTimeFormat.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\..\code\LwApiLib\ComLib\Poco\DateTimeFormatter.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\..\code\LwApiLib\ComLib\Poco\DateTimeParser.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\..\code\LwApiLib\ComLib\Poco\LocalDateTime.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\..\code\LwApiLib\ComLib\Poco\NumberFormatter.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\..\code\LwApiLib\ComLib\Poco\Timespan.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\..\code\LwApiLib\ComLib\Poco\Timestamp.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\..\code\LwApiLib\ComLib\Poco\Timezone.cpp"
-					>
-				</File>
-			</Filter>
 		</Filter>
 		<File
 			RelativePath=".\ReadMe.txt"

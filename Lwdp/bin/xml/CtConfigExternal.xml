@@ -9,7 +9,30 @@
 		<DbSelect>scenic</DbSelect>
 		<DbPort>3306</DbPort>
 		
-		<CardSet>select * from sc_gate where gate_id = '%s' </CardSet>
+		<CardSet>
+				SELECT card_no,scenic_id 
+				FROM sc_swiping 
+				WHERE create_time >= DATE_FORMAT('%s','%%Y-%%m-%%d') AND 
+				   create_time %s DATE_FORMAT('%s','%%Y-%%m-%%d') 
+				LIMIT %d,%d
+		</CardSet>
+		<ScenicSet>
+				SELECT scenic_id 
+				FROM sc_card_scenic 
+				WHERE card_no = '%s'
+		</ScenicSet>
+		<CardIdCol>card_no</CardIdCol>
+		<ScenicIdCol>scenic_id</ScenicIdCol>
+		<UpdateCard>
+				UPDATE sc_card 
+			    SET card_status = 5 
+			    WHERE card_no = '%s'
+		</UpdateCard>
+		<InsertCard>
+				insert into sc_card  
+				(card_no, card_status)
+				values ('%s', 5)
+		</InsertCard>
 	</Property>  
 	<Script Name = "GlobalInit">
 	</Script>
