@@ -3,7 +3,37 @@
 	<Property> 
 		<ProjectName>Example</ProjectName>
 		<Version>1.0</Version>
-	</Property>
+		<DbIp>192.168.1.5</DbIp>
+		<DbUser>ptsf</DbUser>
+		<DbPassword>123456</DbPassword>
+		<DbSelect>scenic</DbSelect>
+		<DbPort>3306</DbPort>
+		
+		<CardSet>
+				SELECT card_no,scenic_id 
+				FROM sc_swiping 
+				WHERE create_time >= DATE_FORMAT('%s','%%Y-%%m-%%d') AND 
+				   create_time %s DATE_FORMAT('%s','%%Y-%%m-%%d') 
+				LIMIT %d,%d
+		</CardSet>
+		<ScenicSet>
+				SELECT scenic_id 
+				FROM sc_card_scenic 
+				WHERE card_no = '%s'
+		</ScenicSet>
+		<CardIdCol>card_no</CardIdCol>
+		<ScenicIdCol>scenic_id</ScenicIdCol>
+		<UpdateCard>
+				UPDATE sc_card 
+			    SET card_status = 5 
+			    WHERE card_no = '%s'
+		</UpdateCard>
+		<InsertCard>
+				insert into sc_card  
+				(card_no, card_status)
+				values ('%s', 5)
+		</InsertCard>
+	</Property>  
 	<Script Name = "GlobalInit">
 	</Script>
 	<Script Name = "GlobalUnInit">
@@ -81,10 +111,7 @@
 				<LevelEntry ModuleName = "Test4" Level = "DEBUG" Type = "REMOTE" WinId = "2"/>
 				
 				<LevelEntry ModuleName = "DbMgr"       Level = "DEBUG" Type = "STD"/>
-				<LevelEntry ModuleName = "TCPSERVER"   Level = "DEBUG" Type = "STD"/>
-				<LevelEntry ModuleName = "TSFRONTEND"  Level = "DEBUG" Type = "STD"/>
-				<LevelEntry ModuleName = "ZMQBACKEND"  Level = "DEBUG" Type = "STD"/>
-				<LevelEntry ModuleName = "ACDEVICE"    Level = "DEBUG" Type = "STD"/>
+				<LevelEntry ModuleName = "CT"          Level = "DEBUG" Type = "STD"/>
 			</PropertyTable>
 		</TableSet>
 		<Script Name = "LogMgrInit">
