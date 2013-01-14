@@ -28,29 +28,9 @@ using namespace NLwdp;
 
 #include "CtDef.h"
 
-
-
-class TimerCounter
-{
-public:
-	TimerCounter(std::string pos_str)
-	{
-		mPos = pos_str;
-		GET_OBJECT_VOID(PerfMgr_timer, iPerfMgr_timer);
-		mPerfMgr_timer = iPerfMgr_timer;
-		mPerfMgr_timer->Start();
-	}
-	virtual ~TimerCounter()
-	{
-		float_ psecond = mPerfMgr_timer->End() / 1000.0;
-		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::INFO, 
-					   "%s Process Time(%.03f s)", 
-					   mPos.c_str(), psecond);
-	}
-
-	Cx_Interface<Ix_PerfMgr_timer> mPerfMgr_timer;
-	std::string mPos;
-};
+static pthread_mutex_t processMutex = PTHREAD_MUTEX_INITIALIZER;
+static pthread_cond_t  processCond  = PTHREAD_COND_INITIALIZER;
+LwdpProgressBar gProgressBar;
 
 
 class ConfigSrcImp : public Ix_ConfigSrc
@@ -152,6 +132,9 @@ std::string updateCardStatus = LW_CT_UPDATE_CARD_STATUS_DEFAULT;
 std::string selectCardStatus = LW_CT_SELECT_CARD_STATUS_DEFAULT;
 std::string insertCardStatus = LW_CT_INSERT_CARD_STATUS_DEFAULT;
 uint32_     processPageSize  = LW_CT_PAGESIZE_DEFAULT;
+
+uint32_     gThreadCount   = LW_CT_THREAD_NUM_DEFAULT;
+uint32_     gDomainSize  = LW_CT_DOMAIN_SIZE_DEFAULT;
 
 LWRESULT ConfigRead()
 {
@@ -336,7 +319,32 @@ LWRESULT ConfigRead()
 					   cardSetCount.c_str());
 	}
 
+	XPropertys propThreadNum;
+	iConfigMgr->GetModulePropEntry(LW_CT_MODULE_NAME, LW_CT_THREAD_NUM_NAME, propThreadNum);
+	if(!propThreadNum[0].propertyText.empty())
+	{
+		gThreadCount = atol(propThreadNum[0].propertyText.c_str());
+	}
+	else
+	{
+		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::WARNING, 
+					   "Can't Find <ThreadNum> In Config File, Default(%d)", 
+					   gThreadCount);
+	}
 
+	XPropertys propDomainSize;
+	iConfigMgr->GetModulePropEntry(LW_CT_MODULE_NAME, LW_CT_DOMAIN_SIZE_NAME, propDomainSize);
+	if(!propDomainSize[0].propertyText.empty())
+	{
+		gDomainSize = atol(propDomainSize[0].propertyText.c_str());
+	}
+	else
+	{
+		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::WARNING, 
+					   "Can't Find <Domainsize> In Config File, Default(%s)", 
+					   gDomainSize);
+	}
+	
 	return LWDP_OK;
 }
 
@@ -427,9 +435,9 @@ void* work_thread(void* arg)
 
 	LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::NOTICE, 
 	           		"TotleNum: %d reTimes: %d", inum, reTimes);
-
-	LwdpProgressBar pBar(inum);
-	//pBar.start();
+	
+	uint32_ progressCount = 0;
+	
 	for(int i = 0; i<reTimes; i++)
 	{
 		GET_OBJECT_RET(DbQuery, iDbQuery, 0);
@@ -437,10 +445,12 @@ void* work_thread(void* arg)
 		Api_snprintf(tmpStr, 2048, selectFromCards.c_str(), startTime, "<", endTime, start, pageSize);
 		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::DEBUG, 
 					   "%s", tmpStr);
-		iDbMgr->Ping();
-		iDbMgr->QuerySQL(tmpStr, iDbQuery);
+		{
+			//TimerCounter retCount("RetTimes QuerySQL");	
+			iDbMgr->Ping();
+			iDbMgr->QuerySQL(tmpStr, iDbQuery);
+		}
 
-		uint32_ progressCount = 0;
 		while(!iDbQuery->Eof())
 		{	
 			std::string dev_card_no = iDbQuery->GetStringField(cardIdCol, "");
@@ -448,8 +458,11 @@ void* work_thread(void* arg)
 
 			Api_snprintf(tmpStr, 2048, selectFromScenic.c_str(), dev_card_no.c_str());
 			GET_OBJECT_RET(DbQuery, iScDbQuery, 0);
-			iDbMgr->Ping();
-			iDbMgr->QuerySQL(tmpStr, iScDbQuery);
+			{
+				//TimerCounter retCount("Line QuerySQL2");
+				iDbMgr->Ping();
+				iDbMgr->QuerySQL(tmpStr, iScDbQuery);
+			}
 			uint32_ iscnum = iScDbQuery->NumRow();
 			if(iscnum >= 1)
 			{
@@ -473,12 +486,30 @@ void* work_thread(void* arg)
 			iDbQuery->NextRow();
 
 			progressCount++;
-			//if(progressCount >= 200)
-				//pBar += 200;
+			if(progressCount%50 == 0)
+				gProgressBar += 50;
 		}
 	}
 
+	gProgressBar += progressCount % 50;
 
+	if(gProgressBar.cur >= gProgressBar.n)
+	{
+		pthread_mutex_lock(&processMutex);
+
+		gProgressBar.finish();
+		pthread_cond_broadcast(&processCond);
+		pthread_mutex_unlock(&processMutex);
+	}
+	else
+	{
+		pthread_mutex_lock(&processMutex);
+		while(gProgressBar.cur < gProgressBar.n)
+		{
+			pthread_cond_wait(&processCond, &processMutex); 
+		}
+		pthread_mutex_unlock(&processMutex); 
+	}
 	LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::NOTICE, 
 		           "Check OK!!");
 
@@ -526,7 +557,7 @@ int32_ main()
 
 		iDbMgr->ExecSQL("set interactive_timeout=31536000");
 		iDbMgr->ExecSQL("set wait_timeout=31536000");
-		iDbMgr->ExecSQL("use `scenic`");
+		iDbMgr->ExecSQL("set autocommit=1");
 
 		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::INFO, 
 					   "Connect Db Ok!");
@@ -542,7 +573,7 @@ int32_ main()
 		strftime(startTime, 1024, "%Y-%m-%d", &checkTime);
 
 		char tmpStr[2048] = {0};
-		int32_ inum = 0;
+		uint32_ inum = 0;
 		{
 			GET_OBJECT_RET(DbQuery, iCountDbQuery, 0);
 			Api_snprintf(tmpStr, 2048, cardSetCount.c_str(), startTime, "<", endTime);
@@ -561,13 +592,25 @@ int32_ main()
 			}
 		}
 
-		uint32_ thread_num = 15;
-		int32_ domainSize = inum / thread_num + (inum % thread_num);
+		uint32_ thread_num = gThreadCount;
+		uint32_ domainSize = gDomainSize;
+		if(gThreadCount)
+		{
+			thread_num = gThreadCount;
+			domainSize = inum / thread_num + (inum % thread_num);
+		}
+		else
+		{
+			domainSize  = gDomainSize;
+			thread_num  = (inum / domainSize);
+			thread_num += ((inum % domainSize) == 0)?0:1;
+		}
 		
 		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::NOTICE, 
 		           		"TotleNum: %d thread_num: %d domainSize: %d", 
 		           		inum, thread_num, domainSize);
-
+		gProgressBar.n = inum;
+		//gProgressBar.start();
 		std::list<pthread_t> thrList;
 		for(uint32_ num = 0; num < thread_num; ++num)
 		{

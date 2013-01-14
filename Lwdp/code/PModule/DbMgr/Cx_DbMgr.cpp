@@ -10,6 +10,7 @@
 
 #include <Interface/ConfigMgr/Ix_ConfigMgr.h>
 #include <Interface/LogMgr/Ix_LogMgr.h>
+#include <Interface/CommonUtilMgr/Ix_CommonUtilMgr.h>
 
 #include "DbMgrDef.h"
 #include "Cx_DbMgr.h"
@@ -17,20 +18,7 @@
 
 
 LWDP_NAMESPACE_BEGIN;
-
-pthread_mutex_t db_mutex = PTHREAD_MUTEX_INITIALIZER;
-class db_mutex_class
-{
-public:
-	db_mutex_class()
-	{
-		pthread_mutex_lock(&db_mutex);
-	};
-	virtual ~db_mutex_class()
-	{
-		pthread_mutex_unlock(&db_mutex);
-	};
-};
+pthread_mutex_t q_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 Cx_DbMgr::Cx_DbMgr()
 {
@@ -124,7 +112,7 @@ DBHandle Cx_DbMgr::GetDbHandle()
 
 LWRESULT Cx_DbMgr::QuerySQL(const std::string& sql, Cx_Interface<Ix_DbQuery>& query_out)
 {
-	db_mutex_class db_mutex;
+	lw_mutex_class db_mutex(&q_mutex);
 	Cx_Interface<Ix_DbQuery> tmpQuery(CLSID_DbQuery);
 	if(!tmpQuery)
 	{
@@ -156,7 +144,7 @@ LWRESULT Cx_DbMgr::QuerySQL(const std::string& sql, Cx_Interface<Ix_DbQuery>& qu
 
 int32_ Cx_DbMgr::ExecSQL(const std::string& sql)
 {
-	db_mutex_class db_mutex;
+	lw_mutex_class db_mutex(&q_mutex);
 	int ret = 0;
 	if((ret = mysql_real_query(mDb, sql.c_str(), sql.size())))
 	{
@@ -174,7 +162,7 @@ int32_ Cx_DbMgr::ExecSQL(const std::string& sql)
 
 int32_ Cx_DbMgr::Ping()
 {
-	db_mutex_class db_mutex;
+	lw_mutex_class mutex_c(&q_mutex);
 	//const char* mySqlState = mysql_stat(mDb);
 	//if(!mySqlState)
 	{

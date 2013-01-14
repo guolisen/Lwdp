@@ -12,6 +12,9 @@
 #define LW_CT_DB_SELECT_DBNAME  __T("test")
 #define LW_CT_DB_PORT_DEFAULT  	3306
 #define LW_CT_PAGESIZE_DEFAULT  	1000
+#define LW_CT_THREAD_NUM_DEFAULT  	10
+#define LW_CT_DOMAIN_SIZE_DEFAULT  	300
+
 
 #define LW_CT_CARD_SET_COUNT_DEFAULT  __T("SELECT count(*) as setcount \
 								           FROM sc_swiping \
@@ -66,6 +69,9 @@
 #define LW_CT_INSERT_CARD_NAME  __T("InsertCard")
 
 #define LW_CT_PROCESS_PAGE_NAME  __T("ProcessPageSize")
+
+#define LW_CT_THREAD_NUM_NAME  	 __T("ThreadNum")
+#define LW_CT_DOMAIN_SIZE_NAME   __T("DomainSize")
 
 
 #endif // LWDP_CONFIG_TAG_DEFINE_H_

@@ -4,6 +4,8 @@
 #include <Interface/Ix_Object.h>
 #include "Id_CommonUtilMgr.h"
 #include <Interface/PerfMgr/Ix_PerfMgr.h>
+#include <Interface/TimerMgr/Ix_TimerMgr.h>
+#include <Interface/LogMgr/Ix_LogMgr.h>
 
 LWDP_NAMESPACE_BEGIN;
 
@@ -43,6 +45,32 @@ public:
 	}
 
 	CallBackStru mCb;
+};
+
+class TimerCounter
+{
+public:
+	TimerCounter(std::string pos_str)
+	{
+		mPos = pos_str;
+		GET_OBJECT_VOID(PerfMgr_timer, iPerfMgr_timer);
+		mPerfMgr_timer = iPerfMgr_timer;
+		mPerfMgr_timer->Start();
+	}
+	virtual ~TimerCounter()
+	{
+		double_ psecond = (double_)mPerfMgr_timer->End() / 1000.0;
+
+		if(psecond > 0.5)
+		{
+			LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::INFO, 
+						   "%s Process Time(%.03f s)", 
+						   mPos.c_str(), psecond);
+		}
+	}
+
+	Cx_Interface<Ix_PerfMgr_timer> mPerfMgr_timer;
+	std::string mPos;
 };
 
 #ifdef LWDP_PLATFORM_DEF_WIN32
@@ -116,6 +144,24 @@ private:
 };
 #endif
 
+
+class lw_mutex_class
+{
+public:
+	lw_mutex_class(pthread_mutex_t* mutex)
+	{
+		mMutex = mutex;
+		ASSERT_CHECK(mMutex != 0);
+		pthread_mutex_lock(mMutex);
+	};
+	virtual ~lw_mutex_class()
+	{
+		pthread_mutex_unlock(mMutex);
+	};
+
+	pthread_mutex_t* mMutex;
+};
+
 class StatisticFigures
 {
 public:
@@ -188,13 +234,14 @@ public:
 	void finish() { 
 		setPct(1); 
 	}
-
 	unsigned long  operator+=( unsigned long increment )
 	//  Effects: Display appropriate progress tic if needed.
 	{
 		if (cur >= n) return cur;
+		mutex.lock();
 		cur += increment;
 		float step = ((float)cur)/n;
+		mutex.unlock();
 		if(step >= 1.0)
 			return cur;
 		setPct(step);
@@ -204,11 +251,21 @@ public:
 	unsigned long  operator++() { return operator+=( 1 ); }
 
 	// http://stackoverflow.com/questions/3283804/c-get-milliseconds-since-some-date
-	long long osQueryPerfomance() {
+	int64_ osQueryPerfomance() {
 		#ifdef WIN32
+		#if 0
 			LARGE_INTEGER llPerf = {0};
+			HANDLE thread = GetCurrentThread();
+			// Set affinity to the first core
+			DWORD_PTR oldMask = SetThreadAffinityMask(thread, 1);
+
 			QueryPerformanceCounter(&llPerf);
+			SetThreadAffinityMask(thread, oldMask);
 			return llPerf.QuadPart * 1000ll / ( g_llFrequency.QuadPart / 1000ll);
+		#endif
+			GET_OBJECT_RET(TimerTick, iTimerTick, 0);
+			return iTimerTick->GetMilliseconds();
+
 		#elif defined(__VXWORKS__)
 			struct tm newtime;
 			time_t long_time = time(NULL);
@@ -320,7 +377,8 @@ public:
 	unsigned int cur;
 	unsigned short pct; // Stored as 0-1000, so 2.5% is encoded as 25.
 	unsigned char width; // How many chars the entire line can be.
-	long long startTime, endTime;
+	int64_ startTime, endTime;
+	lw_mutex mutex;
 	#ifdef WIN32
 		LARGE_INTEGER g_llFrequency;
 	#endif

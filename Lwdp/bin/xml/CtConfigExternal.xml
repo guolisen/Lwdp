@@ -9,8 +9,10 @@
 		<DbSelect>scenic</DbSelect>
 		<DbPort>3306</DbPort>
 		<ProcessPageSize>1000</ProcessPageSize>
+		<ThreadNum>1</ThreadNum>
+		<DomainSize>120</DomainSize>
 		<CardSetCount>
-				SELECT count(*) as setcount 
+				SELECT count(card_no) as setcount 
 				FROM sc_swiping 
 				WHERE create_time >= DATE_FORMAT('%s','%%Y-%%m-%%d') AND 
 					 create_time %s DATE_FORMAT('%s','%%Y-%%m-%%d')
@@ -31,7 +33,7 @@
 		<ScenicIdCol>scenic_id</ScenicIdCol>
 		<UpdateCard>
 				UPDATE sc_card 
-			    SET card_status = 5 
+			    SET card_status = 5
 			    WHERE card_no = '%s'
 		</UpdateCard>
 		<SelectCard>
