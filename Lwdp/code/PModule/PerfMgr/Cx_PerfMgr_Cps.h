@@ -31,7 +31,7 @@ protected:
 	virtual ~Cx_PerfMgr_Cps();
 
 protected:
-	virtual double GetMbps();
+	virtual double GetKbps();
 	virtual void   Update(uint32_ mbyte);
 	virtual double GetCps();
 	virtual void   Update();
@@ -42,7 +42,7 @@ protected:
 	double  mExtFps;
 	double  mExtMbps;
 	uint32_ mFrames;
-	double  mMb;
+	double  mKb;
 	uint32_ mUpdateTime;
 	lw_mutex mutex;
 };

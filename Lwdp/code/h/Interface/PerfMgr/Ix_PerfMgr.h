@@ -11,7 +11,7 @@ INTERFACE_BEGIN(PerfMgr_Cps)
 	virtual double GetCps() = 0;
 	virtual void   Update() = 0;
 	virtual void   Reset()  = 0;
-	virtual double GetMbps() = 0;
+	virtual double GetKbps() = 0;
 	virtual void   Update(uint32_ mbyte) = 0;
 INTERFACE_END();
 

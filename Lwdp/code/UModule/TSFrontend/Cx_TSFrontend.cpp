@@ -538,7 +538,7 @@ int32_ Cx_TSFrontend::ConsoleGetTsInfo(COMMAND_LINE& command_line)
 			  << gProcessStatic.GetAvg() /1000.0 << "s" << std::endl;
 
 	std::cout << "-----------------------------" << std::endl
-	          << "MBps: " << gThreadMbps->GetMbps() << "MB/s" << std::endl;
+	          << "KBps: " << gThreadMbps->GetKbps() << "KB/s" << std::endl;
 	
 	return 0;
 }

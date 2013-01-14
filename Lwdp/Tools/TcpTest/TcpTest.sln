@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TcpTest", "TcpTest\TcpTest.vcproj", "{28FF5F66-AB4B-4FCC-982C-5A5AD44C1594}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{28FF5F66-AB4B-4FCC-982C-5A5AD44C1594}.Debug|Win32.ActiveCfg = Debug|Win32
+		{28FF5F66-AB4B-4FCC-982C-5A5AD44C1594}.Debug|Win32.Build.0 = Debug|Win32
+		{28FF5F66-AB4B-4FCC-982C-5A5AD44C1594}.Release|Win32.ActiveCfg = Release|Win32
+		{28FF5F66-AB4B-4FCC-982C-5A5AD44C1594}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

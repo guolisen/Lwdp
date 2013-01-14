@@ -22,7 +22,7 @@ LWDP_NAMESPACE_BEGIN;
 
 
 
-Cx_PerfMgr_Cps::Cx_PerfMgr_Cps():mExtFps(0), mMb(0),mFrames(0),mUpdateTime(1000000)
+Cx_PerfMgr_Cps::Cx_PerfMgr_Cps():mExtFps(0), mKb(0),mFrames(0),mUpdateTime(1000000)
 {
 	GET_OBJECT_VOID(TimerTick, iTimerTick);
 	mTvLast = iTimerTick->GetMilliseconds();
@@ -67,13 +67,13 @@ void   Cx_PerfMgr_Cps::Update()
     }
 }
 
-double Cx_PerfMgr_Cps::GetMbps()
+double Cx_PerfMgr_Cps::GetKbps()
 {
 	if(!gPerfSwitch)
 		return 0.0; 
-	return mMb;
+	return mKb;
 }
-void   Cx_PerfMgr_Cps::Update(uint32_ mbyte)
+void   Cx_PerfMgr_Cps::Update(uint32_ byte)
 {
 	if(!gPerfSwitch)
 		return; 
@@ -84,13 +84,13 @@ void   Cx_PerfMgr_Cps::Update(uint32_ mbyte)
 		              
     if(diffTime > mUpdateTime)
     {
-    	mExtMbps = ((double)mMb / (double)diffTime) * 1000000.0;
+    	mExtMbps = ((double)mKb / (double)diffTime) * 1000000.0;
         mTvLast = iTimerTick->GetMilliseconds();
-        mMb = 0;
+        mKb = 0;
     }
 
 	//mutex.lock();
-	mMb += mbyte / 1024.0;
+	mKb += byte / 1024.0;
 	//mutex.unlock();
 }
 /////////////////////////////////////////////////////////
