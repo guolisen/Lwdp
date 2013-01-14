@@ -119,6 +119,7 @@ std::string cardIdCol   = LW_CT_CARDID_COL_DEFAULT;
 std::string scenicIdCol = LW_CT_SCENIC_COL_DEFAULT;
 
 std::string updateCardStatus = LW_CT_UPDATE_CARD_STATUS_DEFAULT;
+std::string selectCardStatus = LW_CT_SELECT_CARD_STATUS_DEFAULT;
 std::string insertCardStatus = LW_CT_INSERT_CARD_STATUS_DEFAULT;
 
 LWRESULT ConfigRead()
@@ -251,6 +252,19 @@ LWRESULT ConfigRead()
 					   updateCardStatus.c_str());
 	}
 
+	XPropertys propSelectCardStatus;
+	iConfigMgr->GetModulePropEntry(LW_CT_MODULE_NAME, LW_CT_INSERT_CARD_NAME, propSelectCardStatus);
+	if(!propSelectCardStatus[0].propertyText.empty())
+	{
+		selectCardStatus = propSelectCardStatus[0].propertyText;
+	}
+	else
+	{
+		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::WARNING, 
+					   "Can't Find <InsertCard> In Config File, Default(%s)", 
+					   selectCardStatus.c_str());
+	}
+	
 	XPropertys propInsertCardStatus;
 	iConfigMgr->GetModulePropEntry(LW_CT_MODULE_NAME, LW_CT_INSERT_CARD_NAME, propInsertCardStatus);
 	if(!propInsertCardStatus[0].propertyText.empty())
@@ -283,43 +297,37 @@ LWRESULT addBlackList(const std::string& card_no)
 		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::WARNING, 
 			           "Can't Find card_no(%s) From Table sc_card", 
 			           card_no.c_str());
-		Api_snprintf(tmpStr, 2048, insertCardStatus.c_str(), card_no.c_str());
+
+		Api_snprintf(tmpStr, 2048, selectCardStatus.c_str(), card_no.c_str());
 		iDbMgr->Ping();
-		int32_ intLine = iDbMgr->ExecSQL(tmpStr);
-		if(intLine != 1)
+		int32_ findLine = iDbMgr->ExecSQL(tmpStr);
+		if(!findLine) //can't find card_no
 		{
-			LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::ERR, 
-				           "Can't Insert card_no(%s) Errno Black Card", 
+			Api_snprintf(tmpStr, 2048, insertCardStatus.c_str(), card_no.c_str());
+			iDbMgr->Ping();
+			int32_ intLine = iDbMgr->ExecSQL(tmpStr);
+			if(intLine != 1)
+			{
+				LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::ERR, 
+					           "Can't Insert card_no(%s) Errno Black Card", 
+					           card_no.c_str());
+				return LWDP_ERROR;
+			}
+		}
+		else
+		{
+			LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::DEBUG, 
+				           "card_no(%s) have exist in table sc_card", 
 				           card_no.c_str());
-			return LWDP_ERROR;
 		}
 	}
 
 	return LWDP_OK;
 }
 
-
-
-int32_ main()
+void* work_thread(void* arg)
 {
-	LWRESULT stat = LWDP_ERROR;
-
-#if defined(LWDP_PLATFORM_DEF_WIN32)
-	ConfigSrcImp csrc("../../../../bin/xml/CtConfigExternal.xml");
-#elif defined(LWDP_PLATFORM_DEF_LINUX)
-	//ConfigSrcImp csrc("/home/ptsf/Desktop/tmp/workspace/LwdpGit/Lwdp/code/bin/xml/LinuxConfigExternal.xml");
-	ConfigSrcImp csrc("../../../bin/xml/LinuxConfigExternal.xml");
-#endif
-	stat = Fw_Init(&csrc, 1);
-	if(stat != LWDP_OK)
-	{
-		lw_log_err(LWDP_MODULE_LOG, "Fw_Init Error(0x%x)!", stat);
-		system("pause");
-		return -1;
-		
-	} 
-
-	RINOK(ConfigRead());
+	RINOKR(ConfigRead(), NULL);
 	
 	GET_OBJECT_RET(DbMgr, iDbMgr, 0);	
 	LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::INFO, 
@@ -404,9 +412,47 @@ int32_ main()
 
 	LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::NOTICE, 
 		           "Check OK!!");
+	return NULL;
+}
 
-	//GET_OBJECT_RET(ConsoleMgr, iConsoleMgr, 0);
-	//iConsoleMgr->RunConsole();
+int32_ main()
+{
+	LWRESULT stat = LWDP_ERROR;
+
+#if defined(LWDP_PLATFORM_DEF_WIN32)
+	ConfigSrcImp csrc("../../../../bin/xml/CtConfigExternal.xml");
+#elif defined(LWDP_PLATFORM_DEF_LINUX)
+	//ConfigSrcImp csrc("/home/ptsf/Desktop/tmp/workspace/LwdpGit/Lwdp/code/bin/xml/LinuxConfigExternal.xml");
+	ConfigSrcImp csrc("../../../bin/xml/LinuxConfigExternal.xml");
+#endif
+	stat = Fw_Init(&csrc, 1);
+	if(stat != LWDP_OK)
+	{
+		lw_log_err(LWDP_MODULE_LOG, "Fw_Init Error(0x%x)!", stat);
+		system("pause");
+		return -1;
+		
+	} 
+
+	pthread_t t;
+	int result;
+
+	result = pthread_create(&t, NULL, work_thread, NULL);
+	if(result != 0){
+		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::ERR, 
+					   "Can't Create Thread Ret: %d\n", result);
+		return 0;
+	}
+
+	result = pthread_detach(t);
+	if(result != 0){
+		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::ERR, 
+					   "Can't Detach Thread Ret: %d\n", result);
+		return 0;
+	}
+
+	GET_OBJECT_RET(ConsoleMgr, iConsoleMgr, 0);
+	iConsoleMgr->RunConsole();
 
 	system("pause");
 	return 0;

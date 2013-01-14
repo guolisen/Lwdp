@@ -25,6 +25,10 @@
 											    SET status = 5 \
 											    WHERE card_no = '%s'")
 
+#define LW_CT_SELECT_CARD_STATUS_DEFAULT  __T("SELECT * \
+                                               FROM sc_card \
+											    WHERE card_no = '%s'")
+
 #define LW_CT_INSERT_CARD_STATUS_DEFAULT  __T("insert into sc_card  \
 												(card_no, card_status) \
 												values ('%s', 5)")
@@ -48,6 +52,7 @@
 #define LW_CT_CARDID_COL_NAME  __T("CardIdCol")
 
 #define LW_CT_UPDATE_CARD_NAME  __T("UpdateCard")
+#define LW_CT_SELECT_CARD_NAME  __T("SelectCard")
 #define LW_CT_INSERT_CARD_NAME  __T("InsertCard")
 
 #endif // LWDP_CONFIG_TAG_DEFINE_H_

@@ -28,10 +28,15 @@
 			    SET card_status = 5 
 			    WHERE card_no = '%s'
 		</UpdateCard>
+		<SelectCard>
+				SELECT * 
+			    FROM sc_card 
+				WHERE card_no = '%s'
+		</SelectCard>
 		<InsertCard>
 				insert into sc_card  
-				(card_no, card_status)
-				values ('%s', 5)
+				(card_no, card_manufacturer, card_status, card_type, ticket_type, create_time, update_time)
+				values ('%s', "PT", 5, 1, 1, '2013-01-12 00:00:00', '2013-01-12 00:00:00')
 		</InsertCard>
 	</Property>  
 	<Script Name = "GlobalInit">
