@@ -8,9 +8,15 @@
 		<DbPassword>123456</DbPassword>
 		<DbSelect>scenic</DbSelect>
 		<DbPort>3306</DbPort>
-		
+		<ProcessPageSize>1000</ProcessPageSize>
+		<CardSetCount>
+				SELECT count(*) as setcount 
+				FROM sc_swiping 
+				WHERE create_time >= DATE_FORMAT('%s','%%Y-%%m-%%d') AND 
+					 create_time %s DATE_FORMAT('%s','%%Y-%%m-%%d')
+		</CardSetCount>
 		<CardSet>
-				SELECT card_no,scenic_id 
+				SELECT card_no,scenic_id
 				FROM sc_swiping 
 				WHERE create_time >= DATE_FORMAT('%s','%%Y-%%m-%%d') AND 
 				   create_time %s DATE_FORMAT('%s','%%Y-%%m-%%d') 
@@ -29,7 +35,7 @@
 			    WHERE card_no = '%s'
 		</UpdateCard>
 		<SelectCard>
-				SELECT * 
+				SELECT card_status 
 			    FROM sc_card 
 				WHERE card_no = '%s'
 		</SelectCard>
@@ -55,7 +61,7 @@
 			<ModuleLoad Name = "ZmqMgr" 	Modid = "1C8B1ACD-89A4-48ab-8161-538B7E2545BE" />
 			<ModuleLoad Name = "TimerMgr" 	Modid = "212ED676-7B73-43e7-B2F9-190649FD6EC4" />
 			<ModuleLoad Name = "DbMgr"      Modid = "18D1C5FE-2D94-4a9b-B878-E8A51CA9AF67" />
-			
+			<ModuleLoad Name = "PerfMgr"    Modid = "9D54BB67-8906-4215-BA95-591FE6F52C03" />
 			
 			<ModuleLoad Name = "TSFrontend" Modid = "6AD26E68-071F-45d5-B5C1-7B3F7EE20D13" />
 			<ModuleLoad Name = "ZmqBackend" Modid = "789D687B-8962-4cae-8C4A-B129B5B8312F" />
@@ -189,6 +195,19 @@
 		<TableSet>
 		</TableSet>
 		<Script Name = "DbMgrInit">
+		</Script>
+	</Module>	
+	<Module Name = "PerfMgr" Modid = "9D54BB67-8906-4215-BA95-591FE6F52C03">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>../../../../bin/Plugins/PerfMgrDll.dll</ModuleDir>
+			<!-- 1-on 0-off -->
+			<PerfSwitch>1</PerfSwitch>  
+		</Property>
+		<TableSet>
+		</TableSet>
+		<Script Name = "PerfMgrInit">
 		</Script>
 	</Module>	
 	<Module Name = "TSFrontend" Modid = "6AD26E68-071F-45d5-B5C1-7B3F7EE20D13">

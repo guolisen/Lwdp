@@ -11,10 +11,18 @@
 #define LW_CT_DB_PASSWORD       __T("lifesgood")
 #define LW_CT_DB_SELECT_DBNAME  __T("test")
 #define LW_CT_DB_PORT_DEFAULT  	3306
+#define LW_CT_PAGESIZE_DEFAULT  	1000
+
+#define LW_CT_CARD_SET_COUNT_DEFAULT  __T("SELECT count(*) as setcount \
+								           FROM sc_swiping \
+								           WHERE create_time >= DATE_FORMAT('%s','%%Y-%%m-%%d') AND \
+								         	     create_time %s DATE_FORMAT('%s','%%Y-%%m-%%d')")
+
+
 #define LW_CT_CARD_SET_DEFAULT  __T("SELECT card_no,scenic_id \
 							         FROM sc_swiping \
 							         WHERE create_time >= DATE_FORMAT('%s','%%Y-%%m-%%d') AND \
-							         	   create_time \x3C DATE_FORMAT('%s','%%Y-%%m-%%d') \
+							         	   create_time %s DATE_FORMAT('%s','%%Y-%%m-%%d') \
 							         LIMIT %d,%d")
 
 #define LW_CT_SCENIC_TABLE_DEFAULT  __T("SELECT scenic_id \
@@ -45,6 +53,8 @@
 #define LW_CT_DB_SELECT_DB_NAME  __T("DbSelect")
 #define LW_CT_DB_PORT_NAME  	__T("DbPort")
 
+
+#define LW_CT_CARD_SET_COUNT_NAME  	__T("CardSetCount")
 #define LW_CT_CARD_SET_NAME  	__T("CardSet")
 #define LW_CT_SCENIC_SET_NAME  	__T("ScenicSet")
 
@@ -54,6 +64,9 @@
 #define LW_CT_UPDATE_CARD_NAME  __T("UpdateCard")
 #define LW_CT_SELECT_CARD_NAME  __T("SelectCard")
 #define LW_CT_INSERT_CARD_NAME  __T("InsertCard")
+
+#define LW_CT_PROCESS_PAGE_NAME  __T("ProcessPageSize")
+
 
 #endif // LWDP_CONFIG_TAG_DEFINE_H_
 

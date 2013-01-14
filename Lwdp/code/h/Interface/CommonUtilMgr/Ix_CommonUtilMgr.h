@@ -174,6 +174,158 @@ protected:
 };
 
 
+class LwdpProgressBar {
+public:
+	LwdpProgressBar(unsigned int _n=0) : n(_n), pct(0), cur(0), width(80) {}
+	void reset() { pct = 0; cur = 0; }
+	void start() { 
+		#ifdef WIN32
+			assert(QueryPerformanceFrequency(&g_llFrequency) != 0);
+		#endif
+		startTime = osQueryPerfomance();
+		setPct(0); 
+	}
+	void finish() { 
+		setPct(1); 
+	}
+
+	unsigned long  operator+=( unsigned long increment )
+	//  Effects: Display appropriate progress tic if needed.
+	{
+		if (cur >= n) return cur;
+		cur += increment;
+		float step = ((float)cur)/n;
+		if(step >= 1.0)
+			return cur;
+		setPct(step);
+		return cur;
+	}
+
+	unsigned long  operator++() { return operator+=( 1 ); }
+
+	// http://stackoverflow.com/questions/3283804/c-get-milliseconds-since-some-date
+	long long osQueryPerfomance() {
+		#ifdef WIN32
+			LARGE_INTEGER llPerf = {0};
+			QueryPerformanceCounter(&llPerf);
+			return llPerf.QuadPart * 1000ll / ( g_llFrequency.QuadPart / 1000ll);
+		#elif defined(__VXWORKS__)
+			struct tm newtime;
+			time_t long_time = time(NULL);
+			localtime_r(&long_time,&newtime);
+			return newtime.tm_sec * 1000000ll + 0;
+		#else
+			struct timeval stTimeVal;
+			gettimeofday(&stTimeVal, NULL);
+			return stTimeVal.tv_sec * 1000000ll + stTimeVal.tv_usec;
+		#endif
+		return 0;
+	}
+
+	std::string secondsToString(long long t) {
+		int days = (int)(t/86400);
+		long long sec = t-days*86400;
+		int hours = (int)sec/3600;
+		sec -= hours*3600;
+		int mins = (int)(sec/60);
+		sec -= mins*60;
+		char tmp[8];
+		std::string out;
+		
+		if (days) {
+			sprintf(tmp, "%dd ", days);
+			out += tmp;
+		}
+		
+		if (hours >= 1) {
+			sprintf(tmp, "%dh ", hours);
+			out += tmp;
+		}
+
+		if (mins >= 1) {
+			sprintf(tmp, "%dm ", mins);
+			out += tmp;
+		}
+		
+		if (sec >= 1) {
+			sprintf(tmp, "%ds", (int)sec);
+			out += tmp;
+		}
+		
+		if (out.empty())
+			out = "0s";
+			
+		return out;
+	}
+	
+	// Set 0.0-1.0, where 1.0 equals 100%.
+	void setPct(float Pct) {
+		endTime = osQueryPerfomance();
+		char pctstr[5];
+		Api_snprintf(pctstr, 5, "%3d%%", (int)(100*Pct));
+		// Compute how many tics we can display.
+		int nticsMax = (width-27);
+		int ntics = (int)(nticsMax*Pct);
+		std::string out(pctstr);
+		out.append(" [");
+		
+		if(Pct < 1.0 && ntics >= 2)
+		{
+			out.append(ntics-2,'=');
+			out.append(">>");	
+		}
+		else
+		{
+			out.append(ntics,'=');
+		}
+		out.append(nticsMax-ntics,' ');
+		out.append("] ");
+		out.append((Pct<1.0) ? "ETA " : "in ");
+		// Seconds.
+		long long dt = (long long)((endTime-startTime)/1000000.0);
+		std::string tstr;
+		if (Pct >= 1.0) {
+			// Print overall time and newline.
+			tstr = secondsToString(dt);
+			out.append(tstr);
+			if (out.size() < width)
+				out.append(width-out.size()-1,' ');
+
+			//out.append("\n");
+			std::cout << out << std::endl;
+			return;
+		} else {
+			float eta=999999.;
+			if (Pct > 0.0)
+				eta = dt*(1.0-Pct)/Pct;
+	
+			if (eta > 604800.0)
+				out.append("> 1 week");
+			else {
+				tstr = secondsToString((long long)eta);
+				out.append(tstr);
+			}
+		}
+
+		// Pad end with spaces to overwrite previous string that may have been longer.
+		if (out.size() < width)
+			out.append(width-out.size()-1,' ');
+			
+		out.append("\r");
+		std::cout << out;
+		std::cout.flush();
+	}
+
+	unsigned int n;
+	unsigned int cur;
+	unsigned short pct; // Stored as 0-1000, so 2.5% is encoded as 25.
+	unsigned char width; // How many chars the entire line can be.
+	long long startTime, endTime;
+	#ifdef WIN32
+		LARGE_INTEGER g_llFrequency;
+	#endif
+};
+
 
 INTERFACE_BEGIN(CommonUtilMgr)
 	virtual LWRESULT Init() = 0;
