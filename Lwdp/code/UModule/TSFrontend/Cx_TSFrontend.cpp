@@ -28,6 +28,7 @@ uint32_ gThreadMax = 0;
 Cx_Interface<Ix_PerfMgr_Cps> gIoPerSecond;
 Cx_Interface<Ix_PerfMgr_Cps> gThreadPerCreate;
 Cx_Interface<Ix_PerfMgr_Cps> gThreadPerRelease;
+Cx_Interface<Ix_PerfMgr_Cps> gThreadMbps;
 StatisticFigures gProcessStatic;
 
 void createCountThread()
@@ -180,6 +181,8 @@ void* thread_callback(void* vfd)
 
 				goto ERR_TCP_TAG;
 			}
+
+			gThreadMbps->Update(totleSize);
 		}
 
 		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::NOTICE, 
@@ -413,6 +416,8 @@ LWRESULT Cx_TSFrontend::Init()
 	gThreadPerCreate  = iPerfMgr_Cps_Create;
 	GET_OBJECT_RET(PerfMgr_Cps, iPerfMgr_Cps_Destory, LWDP_GET_OBJECT_ERROR);
 	gThreadPerRelease = iPerfMgr_Cps_Destory;
+	GET_OBJECT_RET(PerfMgr_Cps, iPerfMgr_Cps_MBPS, LWDP_GET_OBJECT_ERROR);
+	gThreadMbps = iPerfMgr_Cps_MBPS;
 
 	GET_OBJECT_RET(ConfigMgr, iConfigMgr, LWDP_GET_OBJECT_ERROR);
 
@@ -532,6 +537,9 @@ int32_ Cx_TSFrontend::ConsoleGetTsInfo(COMMAND_LINE& command_line)
 			  << gProcessStatic.GetMin() /1000.0 << "s  |  " 
 			  << gProcessStatic.GetAvg() /1000.0 << "s" << std::endl;
 
+	std::cout << "-----------------------------" << std::endl
+	          << "MBps: " << gThreadMbps->GetMbps() << "MB/s" << std::endl;
+	
 	return 0;
 }
 
