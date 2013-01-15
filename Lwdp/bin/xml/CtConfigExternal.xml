@@ -3,7 +3,7 @@
 	<Property> 
 		<ProjectName>Example</ProjectName>
 		<Version>1.0</Version>
-		<DbIp>192.168.1.5</DbIp>
+		<DbIp>10.3.18.27</DbIp>
 		<DbUser>ptsf</DbUser>
 		<DbPassword>123456</DbPassword>
 		<DbSelect>scenic</DbSelect>
@@ -12,7 +12,7 @@
 		<ThreadNum>1</ThreadNum>
 		<DomainSize>120</DomainSize>
 		<CardSetCount>
-				SELECT count(card_no) as setcount 
+				SELECT count(*) as setcount 
 				FROM sc_swiping 
 				WHERE create_time >= DATE_FORMAT('%s','%%Y-%%m-%%d') AND 
 					 create_time %s DATE_FORMAT('%s','%%Y-%%m-%%d')
@@ -27,7 +27,7 @@
 		<ScenicSet>
 				SELECT scenic_id 
 				FROM sc_card_scenic 
-				WHERE card_no = '%s'
+				WHERE card_id = %s
 		</ScenicSet>
 		<CardIdCol>card_no</CardIdCol>
 		<ScenicIdCol>scenic_id</ScenicIdCol>

@@ -241,7 +241,7 @@ LWRESULT ConfigRead()
 	}
 	
 	XPropertys propScenicIdCol;
-	iConfigMgr->GetModulePropEntry(LW_CT_MODULE_NAME, LW_CT_SCENIC_SET_NAME, propScenicIdCol);
+	iConfigMgr->GetModulePropEntry(LW_CT_MODULE_NAME, LW_CT_SCENIC_COL_NAME, propScenicIdCol);
 	if(!propScenicIdCol[0].propertyText.empty())
 	{
 		scenicIdCol = propScenicIdCol[0].propertyText;
@@ -431,7 +431,8 @@ void* work_thread(void* arg)
 	char tmpStr[2048] = {0};
 	int32_ inum = Domain.length;
 	int32_ pageSize = (processPageSize>Domain.length)? Domain.length: processPageSize;
-	int32_ reTimes  = (inum / pageSize) + (inum%pageSize)>0?1:0;
+	int32_ reTimes  = (inum / pageSize);
+		   reTimes += (inum%pageSize)>0?1:0;
 
 	LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::NOTICE, 
 	           		"TotleNum: %d reTimes: %d", inum, reTimes);

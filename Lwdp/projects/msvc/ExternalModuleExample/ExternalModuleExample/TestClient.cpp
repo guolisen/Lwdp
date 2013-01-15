@@ -2,11 +2,7 @@
 #include <Lwdp.h>
 #include <LwApi.h>
 
-#include "Poco/DateTime.h"
-#include "Poco/Timestamp.h"
-#include "Poco/Timespan.h"
-#include "Poco/DateTimeFormatter.h"
-#include "Poco/DateTimeFormat.h"
+
 
 using namespace NLwdp;
 //#include <../UModule/Interface/Example/Ix_example.h>

@@ -212,7 +212,7 @@
 		<Property> 
 			<Version>1.0</Version>
 			<ModuleDir>../../../../bin/Plugins/TcpServer.dll</ModuleDir>
-			<DbIp>192.168.1.5</DbIp>
+			<DbIp>10.3.18.27</DbIp>
 			<DbUser>ptsf</DbUser>
 			<DbPassword>123456</DbPassword>
 			<DbSelect>scenic</DbSelect>
