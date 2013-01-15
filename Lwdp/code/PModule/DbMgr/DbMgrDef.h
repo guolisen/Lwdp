@@ -7,11 +7,6 @@
 #define LWDP_DB_TAG_DEFINE_H_
 
 
-#define LW_LUAMGR_MODULE_NAME  	__T("LuaMgr")
-
-#define LW_LUAMGR_LIBRARY_TABLE_NAME  	__T("LibraryTable")
-#define LW_LUAMGR_LIBRARY_TABLE_ENTRY  	__T("LibraryDirEntry")
-
 
 
 #endif // 

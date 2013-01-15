@@ -31,7 +31,7 @@ LWRESULT Cx_CommonUtilMgr::Init()
 {
 	lw_log_info(LWDP_LUA_LOG, __T("Cx_CommonUtilMgr::Init OK!"));
 
-
+	srand(time(NULL));
 
 	return LWDP_OK;
 }

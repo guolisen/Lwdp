@@ -9,6 +9,13 @@
 
 LWDP_NAMESPACE_BEGIN;
 
+#if (defined (LWDP_PLATFORM_DEF_WIN32))
+#   define randof(num)  (int)((float)(num) * rand () / (RAND_MAX + 1.0))
+#else
+#   define randof(num)  (int)((float)(num) * random () / (RAND_MAX + 1.0))
+#endif
+
+
 typedef void (*PROCESS_FUNC_PAIR)();
  
 struct CallBackStru

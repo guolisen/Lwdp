@@ -8,6 +8,7 @@
 #include <Interface/ConfigMgr/Ix_ConfigMgr.h>
 #include <Interface/LogMgr/Ix_LogMgr.h>
 #include <Interface/ZmqMgr/Ix_ZmqMgr.h>
+#include <Interface/CommonUtilMgr/Ix_CommonUtilMgr.h>
 
 #include "../Interface/ZmqBackend/Ix_ZmqBackend.h"
 
@@ -17,12 +18,6 @@
 #include "ZmqBackendDef.h"
 #include "ZmqBackendErrno.h"
 #include "Cx_ZmqBackend.h"
-
-#if (defined (LWDP_PLATFORM_DEF_WIN32))
-#   define randof(num)  (int) ((float) (num) * rand () / (RAND_MAX + 1.0))
-#else
-#   define randof(num)  (int) ((float) (num) * random () / (RAND_MAX + 1.0))
-#endif
 
 
 ContextHandle Cx_ZmqBackend::mContext;

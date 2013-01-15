@@ -30,8 +30,8 @@ DEF_MODULE_INFO_END(CommonUtilMgr);
 DEF_INIT_FUN(CommonUtilMgr)
 {
 	printf("CommonUtilMgr InitializePlugin\n");
-	//Cx_Interface<Ix_ScriptMgr> iScript(CLSID_ScriptMgr);
-	//iScript->RegisteAction(new APrint);
+	GET_OBJECT_RET(CommonUtilMgr, iCx_CommonUtilMgr, -1)
+	RINOK(iCx_CommonUtilMgr->Init());
 	
     return LWDP_OK;
 }

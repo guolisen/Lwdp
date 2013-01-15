@@ -12,6 +12,7 @@ ERRNO_DB (REBOOT_DB_ERROR,          (M_dbmgr | 4), "Reboot Database Error!")
 ERRNO_DB (GET_QUERY_OBJ_ERROR,      (M_dbmgr | 5), "Get Db_Query Object Error!")
 ERRNO_DB (REAL_QUERY_ERROR,         (M_dbmgr | 6), "Real Query Error!")
 ERRNO_DB (DB_LIBRARY_INIT_ERROR,    (M_dbmgr | 7), "mysql_library_init() Error!")
+ERRNO_DB (GET_POOL_CONNECT_TIMEOUT, (M_dbmgr | 8), "Get Connect From Pool TimeOut")
 
 
 
