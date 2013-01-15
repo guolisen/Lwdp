@@ -50,9 +50,10 @@ public:
 class TimerCounter
 {
 public:
-	TimerCounter(std::string pos_str)
+	TimerCounter(std::string pos_str, double_ top_second)
 	{
 		mPos = pos_str;
+		mUSecond = top_second;
 		GET_OBJECT_VOID(PerfMgr_timer, iPerfMgr_timer);
 		mPerfMgr_timer = iPerfMgr_timer;
 		mPerfMgr_timer->Start();
@@ -61,7 +62,7 @@ public:
 	{
 		double_ psecond = (double_)mPerfMgr_timer->End() / 1000.0;
 
-		if(psecond > 0.5)
+		if(psecond > mUSecond)
 		{
 			LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::INFO, 
 						   "%s Process Time(%.03f s)", 
@@ -71,7 +72,15 @@ public:
 
 	Cx_Interface<Ix_PerfMgr_timer> mPerfMgr_timer;
 	std::string mPos;
+	double_ mUSecond;
 };
+
+#ifdef LWDP_DEBUG_MACRO
+#define DEBUG_TIME_COUNTER(msg, top_second) \
+	TimerCounter(msg, top_second);
+#else
+#define DEBUG_TIME_COUNTER(msg, top_second)
+#endif
 
 #ifdef LWDP_PLATFORM_DEF_WIN32
 class lw_mutex

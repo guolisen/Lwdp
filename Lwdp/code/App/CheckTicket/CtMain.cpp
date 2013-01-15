@@ -407,7 +407,7 @@ void* work_thread(void* arg)
 		return NULL;
 	}
 
-	TimerCounter counter("Work Thread");
+	DEBUG_TIME_COUNTER("Work Thread", 0);
 		
 	ProcessDomain* ptmpDomain = (ProcessDomain*)arg;	
 	ProcessDomain Domain;
@@ -447,7 +447,7 @@ void* work_thread(void* arg)
 		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::DEBUG, 
 					   "%s", tmpStr);
 		{
-			//TimerCounter retCount("RetTimes QuerySQL");	
+			DEBUG_TIME_COUNTER("selectFromCards QuerySQL", 0.5);	
 			iDbMgr->Ping();
 			iDbMgr->QuerySQL(tmpStr, iDbQuery);
 		}
@@ -460,7 +460,7 @@ void* work_thread(void* arg)
 			Api_snprintf(tmpStr, 2048, selectFromScenic.c_str(), dev_card_no.c_str());
 			GET_OBJECT_RET(DbQuery, iScDbQuery, 0);
 			{
-				//TimerCounter retCount("Line QuerySQL2");
+				DEBUG_TIME_COUNTER("selectFromScenic QuerySQL", 0.5);
 				iDbMgr->Ping();
 				iDbMgr->QuerySQL(tmpStr, iScDbQuery);
 			}
@@ -538,7 +538,7 @@ int32_ main()
 	} 
 
 	{
-		TimerCounter counter("Main Thread");
+		DEBUG_TIME_COUNTER("Main Thread", 0);
 		RINOKR(ConfigRead(), NULL);
 
 		GET_OBJECT_RET(DbMgr, iDbMgr, 0);	
@@ -579,9 +579,12 @@ int32_ main()
 			GET_OBJECT_RET(DbQuery, iCountDbQuery, 0);
 			Api_snprintf(tmpStr, 2048, cardSetCount.c_str(), startTime, "<", endTime);
 
+			{
+			DEBUG_TIME_COUNTER("cardSetCount QuerySQL", 0.5);
 			iDbMgr->Ping();
 			iDbMgr->QuerySQL(tmpStr, iCountDbQuery);
-
+			}
+			
 			inum = iCountDbQuery->GetIntField("setcount", -1);
 			if(inum <= 0)
 			{
