@@ -12,6 +12,13 @@
 #define LW_ZMQBACKEND_WORKTHREAD_NUM   		5
 #define LW_ZMQBACKEND_CTRL_CLIENT_TARGET   	__T("inproc://ctrl_to_workthread")
 
+
+#define LW_ZMQBACKEND_DB_IP_DEFAULT 		__T("127.0.0.1")
+#define LW_ZMQBACKEND_DB_USER_DEFAULT   	__T("root")
+#define LW_ZMQBACKEND_DB_PASSWORD        __T("lifesgood")
+#define LW_ZMQBACKEND_DB_SELECT_DBNAME   __T("test")
+#define LW_ZMQBACKEND_DB_PORT_DEFAULT  	3306 
+
  
 #define LW_ZMQBACKEND_MODULE_NAME  			__T("ZmqBackend")
 
@@ -25,6 +32,11 @@
 #define LW_ZMQBACKEND_COMMAND_SENDTOWORKER_NAME __T("sendToWork")
 #define LW_ZMQBACKEND_COMMAND_SENDTOWORKER_INFO __T("Command to Backend WorkThread")
 
+#define LW_ZMQBACKEND_DB_IP_NAME  		__T("DbIp")
+#define LW_ZMQBACKEND_DB_USER_NAME  		__T("DbUser")
+#define LW_ZMQBACKEND_DB_PASSWORD_NAME  	__T("DbPassword")
+#define LW_ZMQBACKEND_DB_SELECT_DB_NAME  __T("DbSelect")
+#define LW_ZMQBACKEND_DB_PORT_NAME  		__T("DbPort")
 #endif // LWDP_CONFIG_TAG_DEFINE_H_
 
 

@@ -201,6 +201,12 @@
 			<WorkThreadConnect>inproc://work_thread</WorkThreadConnect>
 			<CtrlConnect>inproc://ctrl_to_workthread</CtrlConnect>
 			<WorkThreadNum>20</WorkThreadNum>
+			
+			<DbIp>10.3.18.27</DbIp>
+			<DbUser>ptsf</DbUser>
+			<DbPassword>123456</DbPassword>
+			<DbSelect>scenic</DbSelect>
+			<DbPort>3306</DbPort>
 		</Property>
 		<TableSet>
 		</TableSet>
@@ -212,11 +218,6 @@
 		<Property> 
 			<Version>1.0</Version>
 			<ModuleDir>../../../../bin/Plugins/TcpServer.dll</ModuleDir>
-			<DbIp>10.3.18.27</DbIp>
-			<DbUser>ptsf</DbUser>
-			<DbPassword>123456</DbPassword>
-			<DbSelect>scenic</DbSelect>
-			<DbPort>3306</DbPort>
 		</Property>
 		<TableSet>
 		</TableSet>

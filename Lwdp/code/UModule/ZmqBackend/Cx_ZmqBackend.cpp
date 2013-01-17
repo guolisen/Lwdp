@@ -8,9 +8,11 @@
 #include <Interface/ConfigMgr/Ix_ConfigMgr.h>
 #include <Interface/LogMgr/Ix_LogMgr.h>
 #include <Interface/ZmqMgr/Ix_ZmqMgr.h>
+
 #include <Interface/CommonUtilMgr/Ix_CommonUtilMgr.h>
 
 #include "../Interface/ZmqBackend/Ix_ZmqBackend.h"
+#include "../Interface/TcpServer/Ix_TcpServer.h"
 
 #include "../Common/ExternalInterface.h"
 #include "../Common/InternalInterface.h"
@@ -42,8 +44,30 @@ static void s_set_id (void *socket)
     iZmqMgr->Setsockopt(socket, LWDP_IDENTITY, identity, strlen (identity));
 }
 
+std::string strDbIp 		= std::string(LW_ZMQBACKEND_DB_IP_DEFAULT);
+std::string strDbUserName 	= std::string(LW_ZMQBACKEND_DB_USER_DEFAULT);
+std::string strDbPassword 	= std::string(LW_ZMQBACKEND_DB_PASSWORD);
+std::string strDbName 		= std::string(LW_ZMQBACKEND_DB_SELECT_DBNAME);
+uint32_     DbPort 		    = LW_ZMQBACKEND_DB_PORT_DEFAULT;
+
+
 void* worker_task (void *args)
 {
+	GET_OBJECT_RET(DbMgr, iDbMgr, 0);	
+	LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::INFO, 
+				   "Connect to Db Server Ip:%s User:%s DbName:%s Port:%d", 
+				   strDbIp.c_str(), strDbUserName.c_str(), strDbName.c_str(), DbPort);
+	DBHandle dbHandle = iDbMgr->Open(strDbIp.c_str(), 
+		                             strDbUserName.c_str(), 
+		                             strDbPassword.c_str(), 
+		                             strDbName.c_str(), 
+		                             DbPort, 0);
+
+
+	LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::INFO, 
+			       "Worke Thread Connect Db Ok!");
+
+
 	GET_OBJECT_RET(ZmqMgr, iZmqMgr, 0);
 
  	////////////////////////////////////////////////
@@ -142,7 +166,7 @@ void* worker_task (void *args)
 			Data_Ptr sendData;
 			sendData.reset();
 			uint32_ sendLen = 0;
-			LWRESULT res = iZmqBackend->CallBackZmqMsg((uint8_*)iZMessage->Data(), iZMessage->Size(), sendData, sendLen);
+			LWRESULT res = iZmqBackend->CallBackZmqMsg(dbHandle, (uint8_*)iZMessage->Data(), iZMessage->Size(), sendData, sendLen);
 			if(res != LWDP_OK)
 			{
 				LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::ERR, 
@@ -209,6 +233,67 @@ LWRESULT Cx_ZmqBackend::Init()
 	mBackend  = iZmqMgr->GetNewSocket(Cx_ZmqBackend::mContext, LWDP_DEALER);
 
 	GET_OBJECT_RET(ConfigMgr, iConfigMgr, LWDP_GET_OBJECT_ERROR);
+	
+	XPropertys propDbIp;
+	iConfigMgr->GetModulePropEntry(LW_ZMQBACKEND_MODULE_NAME, LW_ZMQBACKEND_DB_IP_NAME, propDbIp);
+	if(!propDbIp[0].propertyText.empty())
+	{
+		strDbIp = propDbIp[0].propertyText;
+	}
+	else
+	{
+		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::WARNING, 
+					   "Can't Find <DbIp> In Config File, Default(%s)", strDbIp.c_str());
+	}
+
+	XPropertys propDbUserName;
+	iConfigMgr->GetModulePropEntry(LW_ZMQBACKEND_MODULE_NAME, LW_ZMQBACKEND_DB_USER_NAME, propDbUserName);
+	if(!propDbUserName[0].propertyText.empty())
+	{
+		strDbUserName = propDbUserName[0].propertyText;
+	}
+	else
+	{
+		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::WARNING, 
+					   "Can't Find <DbUser> In Config File, Default(%s)", strDbUserName.c_str());
+	}
+
+	XPropertys propDbPassword;
+	iConfigMgr->GetModulePropEntry(LW_ZMQBACKEND_MODULE_NAME, LW_ZMQBACKEND_DB_PASSWORD_NAME, propDbPassword);
+	if(!propDbPassword[0].propertyText.empty())
+	{
+		strDbPassword = propDbPassword[0].propertyText;
+	}
+	else
+	{
+		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::WARNING, 
+					   "Can't Find <DbPassword> In Config File, Default(%s)", strDbPassword.c_str());
+	}
+
+	XPropertys propDbName;
+	iConfigMgr->GetModulePropEntry(LW_ZMQBACKEND_MODULE_NAME, LW_ZMQBACKEND_DB_SELECT_DB_NAME, propDbName);
+	if(!propDbName[0].propertyText.empty())
+	{
+		strDbName = propDbName[0].propertyText;
+	}
+	else
+	{
+		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::WARNING, 
+					   "Can't Find <DbName> In Config File, Default(%s)", strDbName.c_str());
+	}
+
+	XPropertys propDbPort;
+	iConfigMgr->GetModulePropEntry(LW_ZMQBACKEND_MODULE_NAME, LW_ZMQBACKEND_DB_PORT_NAME, propDbPort);
+	if(!propDbPort[0].propertyText.empty())
+	{
+		DbPort = atol(propDbPort[0].propertyText.c_str());
+	}
+	else
+	{
+		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::WARNING, 
+					   "Can't Find <DbPort> In Config File, Default(%d)", DbPort);
+	}	
+
 	//frontend
 	std::string strFrontend = std::string(LW_ZMQBACKEND_FRONTEND_TARGET);
 	XPropertys propFrontend;
@@ -404,7 +489,7 @@ LWRESULT Cx_ZmqBackend::RegisteZmqMsg(uint32_ msg_code, MsgDelegate msg_delegate
 	return LWDP_OK;
 }
 
-LWRESULT Cx_ZmqBackend::CallBackZmqMsg(const uint8_* recv_msg, uint32_ recv_msg_len, 
+LWRESULT Cx_ZmqBackend::CallBackZmqMsg(DBHandle dbHandle, const uint8_* recv_msg, uint32_ recv_msg_len, 
 										     Data_Ptr& ret_data ,uint32_& ret_data_len)
 {
 	if(!recv_msg)
@@ -417,7 +502,7 @@ LWRESULT Cx_ZmqBackend::CallBackZmqMsg(const uint8_* recv_msg, uint32_ recv_msg_
 	MSG_DELEGATE_MAP::iterator it= mMsgDelegateMap.find(zMsg->msgCode);
 	if(it != mMsgDelegateMap.end())
 	{
-		return it->second(recv_msg, recv_msg_len, ret_data, ret_data_len);
+		return it->second(dbHandle, recv_msg, recv_msg_len, ret_data, ret_data_len);
 	}
 
 	LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::WARNING, 
@@ -459,6 +544,7 @@ LWRESULT Cx_ZmqBackend::CallBackCtrl(const char_* command_str, uint32_ str_len)
 		printf("bingo!\n");
 	}
 
+	return LWDP_OK;
 }
 
 int32_ Cx_ZmqBackend::ConsoleSendToWorker(COMMAND_LINE& command_line)

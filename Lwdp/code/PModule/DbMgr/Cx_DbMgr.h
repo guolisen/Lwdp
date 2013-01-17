@@ -17,6 +17,51 @@
 
 LWDP_NAMESPACE_BEGIN;
 
+
+struct DBHandleClass
+{
+	MYSQL* mDb;
+
+	std::string  mHost;
+	std::string  mUser;
+	std::string  mPasswd;
+	std::string  mDbStr;
+	int32_       mPort;
+	int32_       mClientFlag;
+
+	DBHandleClass():mHost(""), mDb(0),
+                         mUser(""), 
+                         mPasswd(""),
+                         mDbStr(""),
+                         mPort(0),
+                         mClientFlag(0){};
+
+	DBHandleClass(const DBHandleClass& other)
+	{
+		mDb = other.mDb;
+
+		mHost = other.mHost;
+		mUser = other.mUser;
+		mPasswd = other.mPasswd;
+		mDbStr 	= other.mDbStr;
+		mPort 	= other.mPort;
+		mClientFlag = other.mClientFlag;
+	};
+	DBHandleClass& operator=(const DBHandleClass& right)
+	{
+		mDb = right.mDb;
+
+		mHost = right.mHost;
+		mUser = right.mUser;
+		mPasswd = right.mPasswd;
+		mDbStr 	= right.mDbStr;
+		mPort 	= right.mPort;
+		mClientFlag = right.mClientFlag;
+	};
+
+	
+};
+
 class Cx_DbQuery
     : public Ix_DbQuery
 {
@@ -78,59 +123,49 @@ protected:
 
 protected:
 	virtual LWRESULT Init();
-	virtual LWRESULT Open(const std::string& host, const std::string& user, const std::string& passwd, const std::string& db,
+	virtual DBHandle Open(const std::string& host, const std::string& user, const std::string& passwd, const std::string& db,
 	 					    int32_ port, long_ client_flag);
-	virtual void 	Close();
+	virtual void 	Close(DBHandle db);
 
 	virtual DBHandle 	GetDbHandle();
 
-	virtual LWRESULT QuerySQL(const std::string& sql, Cx_Interface<Ix_DbQuery>& query_out);
+	virtual LWRESULT    QuerySQL(DBHandle db, const std::string& sql, Cx_Interface<Ix_DbQuery>& query_out);
 
-	virtual int32_ 		ExecSQL(const std::string& sql);
+	virtual int32_ 		ExecSQL(DBHandle db, const std::string& sql);
 
-	virtual int32_ 		Ping();
+	virtual int32_ 		Ping(DBHandle db);
 
-	virtual int32_ 		ShutDown();
+	virtual int32_ 		ShutDown(DBHandle db);
 
-	virtual int32_ 		Reboot();
+	virtual int32_ 		Reboot(DBHandle db);
 
-	virtual int32_ 		StartTransaction();
+	virtual int32_ 		StartTransaction(DBHandle db);
 
-	virtual int32_ 		Commit();
+	virtual int32_ 		Commit(DBHandle db);
 
-	virtual int32_ 		Rollback();
+	virtual int32_ 		Rollback(DBHandle db);
 
 	virtual const std::string 	GetClientInfo();
 
 	virtual const long_  GetClientVersion();
 
-	virtual const std::string 	GetHostInfo();
+	virtual const std::string 	GetHostInfo(DBHandle db);
 
-	virtual const std::string 	GetServerInfo();
+	virtual const std::string 	GetServerInfo(DBHandle db);
 
-	virtual const long_  GetServerVersion();
+	virtual const long_  GetServerVersion(DBHandle db);
 
-	virtual const std::string  	GetCharacterSetName();
+	virtual const std::string  	GetCharacterSetName(DBHandle db);
 
-	virtual const std::string 	GetSysTime();
+	virtual const std::string 	GetSysTime(DBHandle db);
 
-	virtual int32_ 	CreateDB(const std::string& name);
+	virtual int32_ 	CreateDB(DBHandle db, const std::string& name);
 
-	virtual int32_ 	DropDB(const std::string& name);
-	virtual bool_ 	TableExists(const std::string& table);
-	virtual uint32_ LastRowId();
-	virtual void 	SetBusyTimeout(int32_ nMillisecs);
+	virtual int32_ 	DropDB(DBHandle db, const std::string& name);
+	virtual bool_ 	TableExists(DBHandle db, const std::string& table);
+	virtual uint32_ LastRowId(DBHandle db);
+	virtual void 	SetBusyTimeout(DBHandle db, int32_ nMillisecs);
 
-protected:
-	MYSQL* mDb;
-
-	std::string  mHost;
-	std::string  mUser;
-	std::string  mPasswd;
-	std::string  mDbStr;
-	int32_       mPort;
-	long_        mClientFlag;
-	
 };
 
 

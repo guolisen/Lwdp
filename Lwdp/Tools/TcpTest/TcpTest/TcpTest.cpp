@@ -286,6 +286,7 @@ int CardData_Send(int socketFd)
 	return 0;
 }
 
+int gCardNo = 0;
 #define CARD_NUM_SEND 1000
 int BulkData_Send(int socketFd)
 {
@@ -316,25 +317,25 @@ int BulkData_Send(int socketFd)
 	timect->tm_mday -= 1;
 	cttick = mktime(timect);
 
-	for(int i = 0; i<CARD_NUM_SEND; )
+	for(int gCardNo = 0; gCardNo<CARD_NUM_SEND; )
 	{
 		char tmpStr[100] = {0};
 		unsigned int counter = within(100000000);
-		_snprintf(tmpStr, 100, "10011%08d", i);
-		memcpy(tmp[i].cardId, tmpStr, strlen(tmpStr));
-		memcpy(tmp[i].sceneryId, "1", 2);
-		tmp[i].cardType = 0x1;
-		tmp[i].actionId = 1;
-		tmp[i].checkinTime = cttick;
+		_snprintf(tmpStr, 100, "10011%08d", gCardNo);
+		memcpy(tmp[gCardNo].cardId, tmpStr, strlen(tmpStr));
+		memcpy(tmp[gCardNo].sceneryId, "1", 2);
+		tmp[gCardNo].cardType = 0x1;
+		tmp[gCardNo].actionId = 1;
+		tmp[gCardNo].checkinTime = cttick;
 
 
 
-		memcpy(tmp[i + 1].cardId, tmpStr, strlen(tmpStr));
-		memcpy(tmp[i + 1].sceneryId, "1", 2);
-		tmp[i + 1].cardType = 0x1;
-		tmp[i + 1].actionId = 0;
-		tmp[i + 1].checkinTime = cttick;
-		i += 2;
+		memcpy(tmp[gCardNo + 1].cardId, tmpStr, strlen(tmpStr));
+		memcpy(tmp[gCardNo + 1].sceneryId, "1", 2);
+		tmp[gCardNo + 1].cardType = 0x1;
+		tmp[gCardNo + 1].actionId = 0;
+		tmp[gCardNo + 1].checkinTime = cttick;
+		gCardNo += 2;
 	}
 
 	if (send(socketFd, (char *)tdata, len, 0) == -1)		
@@ -431,7 +432,7 @@ unsigned int __stdcall threadfun(void* arg)
 		//CardData_Send(sockfd);
 		BulkData_Send(sockfd);
 
-		Sleep(2000000);
+		Sleep(2000);
 		
 	}
 	
@@ -472,7 +473,7 @@ int main()
             printf ("error in _beginthreadex\n");
             return -1;
         }
-		Sleep(100);
+		Sleep(50);
     }
 
 	system("pause");

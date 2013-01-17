@@ -40,53 +40,53 @@ INTERFACE_END();
 
 INTERFACE_BEGIN(DbMgr)
 	virtual LWRESULT Init() = 0;
-	virtual LWRESULT Open(const std::string& host, const std::string& user, const std::string& passwd, const std::string& db,
+	virtual DBHandle Open(const std::string& host, const std::string& user, const std::string& passwd, const std::string& db,
 	 			        int32_ port, long_ client_flag) = 0;
-	virtual void Close() = 0;
+	virtual void Close(DBHandle db) = 0;
 	/* 返回句柄 */
 	virtual DBHandle GetDbHandle() = 0;
 	/* 处理返回多行的查询，返回影响的行数 */
 	//返回引用是因为在CppMySQLQuery的赋值构造函数中要把成员变量_mysql_res置为空
-	virtual LWRESULT QuerySQL(const std::string& sql, Cx_Interface<Ix_DbQuery>& query_out) = 0;
+	virtual LWRESULT QuerySQL(DBHandle db, const std::string& sql, Cx_Interface<Ix_DbQuery>& query_out) = 0;
 	
 	/* 执行非返回结果查询 */
-	virtual int32_ ExecSQL(const std::string& sql) = 0;
+	virtual int32_ ExecSQL(DBHandle db, const std::string& sql) = 0;
 	/* 测试mysql服务器是否存活 */
-	virtual int32_ Ping() = 0;
+	virtual int32_ Ping(DBHandle db) = 0;
 	/* 关闭mysql 服务器 */
-	virtual int32_ ShutDown() = 0;
+	virtual int32_ ShutDown(DBHandle db) = 0;
 	/* 主要功能:重新启动mysql 服务器 */
-	virtual int32_ Reboot() = 0;
+	virtual int32_ Reboot(DBHandle db) = 0;
 	/*
 	* 说明:事务支持InnoDB or BDB表类型
 	*/
 	/* 主要功能:开始事务 */
-	virtual int32_ StartTransaction() = 0;
+	virtual int32_ StartTransaction(DBHandle db) = 0;
 	/* 主要功能:提交事务 */
-	virtual int32_ Commit() = 0;
+	virtual int32_ Commit(DBHandle db) = 0;
 	/* 主要功能:回滚事务 */
-	virtual int32_ Rollback() = 0;
+	virtual int32_ Rollback(DBHandle db) = 0;
 	/* 得到客户信息 */
 	virtual const std::string GetClientInfo() = 0;
 	/* 主要功能:得到客户版本信息 */
 	virtual const long_  GetClientVersion() = 0;
 	/* 主要功能:得到主机信息 */
-	virtual const std::string GetHostInfo() = 0;
+	virtual const std::string GetHostInfo(DBHandle db) = 0;
 	/* 主要功能:得到服务器信息 */
-	virtual const std::string GetServerInfo() = 0;
+	virtual const std::string GetServerInfo(DBHandle db) = 0;
 	/*主要功能:得到服务器版本信息*/
-	virtual const long_  GetServerVersion() = 0;
+	virtual const long_  GetServerVersion(DBHandle db) = 0;
 	/*主要功能:得到 当前连接的默认字符集*/
-	virtual const std::string  GetCharacterSetName() = 0;
+	virtual const std::string  GetCharacterSetName(DBHandle db) = 0;
 	/* 得到系统时间 */
-	virtual const std::string GetSysTime() = 0;
+	virtual const std::string GetSysTime(DBHandle db) = 0;
 	/* 建立新数据库 */
-	virtual int32_ CreateDB(const std::string& name) = 0;
+	virtual int32_ CreateDB(DBHandle db, const std::string& name) = 0;
 	/* 删除制定的数据库*/
-	virtual int32_ DropDB(const std::string& name) = 0;
-	virtual bool_ TableExists(const std::string& table) = 0;
-	virtual uint32_ LastRowId() = 0;
-	virtual void SetBusyTimeout(int32_ nMillisecs)= 0;
+	virtual int32_ DropDB(DBHandle db, const std::string& name) = 0;
+	virtual bool_ TableExists(DBHandle db, const std::string& table) = 0;
+	virtual uint32_ LastRowId(DBHandle db) = 0;
+	virtual void SetBusyTimeout(DBHandle db, int32_ nMillisecs)= 0;
 
 INTERFACE_END();
 

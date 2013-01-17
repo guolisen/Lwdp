@@ -146,7 +146,7 @@ typedef struct stru_zmq_server_msg
 	uint8_  customMsgBody[0];  //��Ϣ��
 }TS_ZMQ_SERVER_MSG;
 */
-LWRESULT Cx_ACDevice::DeviceInitMsgProcess(const uint8_* ret_msg, uint32_ ret_msg_len, 
+LWRESULT Cx_ACDevice::DeviceInitMsgProcess(DBHandle db_handle, const uint8_* ret_msg, uint32_ ret_msg_len, 
 								      Data_Ptr& send_msg, uint32_& send_msg_len)
 {
 	if(!ret_msg)
@@ -196,8 +196,8 @@ LWRESULT Cx_ACDevice::DeviceInitMsgProcess(const uint8_* ret_msg, uint32_ ret_ms
 	GET_OBJECT_RET(DbMgr, iDbMgr, LWDP_GET_OBJECT_ERROR);
 	Cx_Interface<Ix_DbQuery> gateQuery;
 	LWRESULT queryRes = 0;
-	iDbMgr->Ping();
-	if((queryRes = iDbMgr->QuerySQL(buffer, gateQuery)) != LWDP_OK)
+	//iDbMgr->Ping();
+	if((queryRes = iDbMgr->QuerySQL(db_handle, buffer, gateQuery)) != LWDP_OK)
 	{
 		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR, 
 				       "Msg(%d) DB Select Table Error", zmqMsg->msgCode);
@@ -314,7 +314,7 @@ typedef struct stru_dev_config_body
 	uint32_  sceneryPostion;  //ƫ��
 }TS_DEV_CONFIG_BODY;
 */
-LWRESULT Cx_ACDevice::DeviceConfigMsgProcess(const uint8_* ret_msg, uint32_ ret_msg_len, 
+LWRESULT Cx_ACDevice::DeviceConfigMsgProcess(DBHandle db_handle,const uint8_* ret_msg, uint32_ ret_msg_len, 
 								      Data_Ptr& send_msg, uint32_& send_msg_len)
 {
 	if(!ret_msg)
@@ -346,8 +346,8 @@ LWRESULT Cx_ACDevice::DeviceConfigMsgProcess(const uint8_* ret_msg, uint32_ ret_
 	LWRESULT queryRes = 0;
 	uint32_ retCode = 0;
 	char_*  retMsg  = "NO ERROR!";
-	iDbMgr->Ping();
-	if((queryRes = iDbMgr->QuerySQL(buffer, gateQuery)) != LWDP_OK)
+	//iDbMgr->Ping();
+	if((queryRes = iDbMgr->QuerySQL(db_handle, buffer, gateQuery)) != LWDP_OK)
 	{
 		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR, 
 				       "Msg(%d) DB Select(%s) Table Error", 
@@ -459,7 +459,7 @@ typedef struct stru_dev_status_rsp_body
 }TS_DEV_STATUS_RSP_BODY;
 
 */
-LWRESULT Cx_ACDevice::DeviceHBMsgProcess(const uint8_* ret_msg, uint32_ ret_msg_len, 
+LWRESULT Cx_ACDevice::DeviceHBMsgProcess(DBHandle db_handle,const uint8_* ret_msg, uint32_ ret_msg_len, 
 								      Data_Ptr& send_msg, uint32_& send_msg_len)
 {
 	if(!ret_msg)
@@ -544,7 +544,7 @@ typedef struct stru_dev_card_data_rsp_msg
 
 */
 
-LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(const uint8_* ret_msg, uint32_ ret_msg_len, 
+LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(DBHandle db_handle,const uint8_* ret_msg, uint32_ ret_msg_len, 
 								      Data_Ptr& send_msg, uint32_& send_msg_len)
 {
 	if(!ret_msg)
@@ -608,13 +608,13 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(const uint8_* ret_msg, uint32_ re
 	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::DEBUG,
 				   "Select Db Str(%s)", buffer);
 	GET_OBJECT_RET(DbMgr, iDbMgr, LWDP_GET_OBJECT_ERROR);
-	iDbMgr->Ping();
+	//iDbMgr->Ping();
 	Cx_Interface<Ix_DbQuery> gateQuery;
 	int32_ queryRes = 0;
 	uint32_ retCode = 0;
 	char_*  retMsg  = "NO ERROR!";
-	iDbMgr->Ping();
-	if((queryRes = iDbMgr->ExecSQL(buffer)) != 1)
+	//iDbMgr->Ping();
+	if((queryRes = iDbMgr->ExecSQL(db_handle, buffer)) != 1)
 	{
 		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR, 
 				       "Msg(%d) DB Insert(%s) Table Error", 
@@ -671,7 +671,7 @@ typedef struct stru_dev_bulk_data_rsp_msg
 } TS_DEVICE_BULK_DATA_RSP_BODY;
 */
 
-LWRESULT Cx_ACDevice::DeviceBulkDataMsgProcess(const uint8_* ret_msg, uint32_ ret_msg_len, 
+LWRESULT Cx_ACDevice::DeviceBulkDataMsgProcess(DBHandle db_handle,const uint8_* ret_msg, uint32_ ret_msg_len, 
 								      Data_Ptr& send_msg, uint32_& send_msg_len)
 {
 	if(!ret_msg)
@@ -762,7 +762,7 @@ LWRESULT Cx_ACDevice::DeviceBulkDataMsgProcess(const uint8_* ret_msg, uint32_ re
 		Data_Ptr tmpData;
 		tmpData.reset();
 		uint32_  len = 0;
-		if(DeviceCardDataMsgProcess(fakeMsg, sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_DEVICE_CARD_DATA_REQ_BODY)
+		if(DeviceCardDataMsgProcess(db_handle, fakeMsg, sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_DEVICE_CARD_DATA_REQ_BODY)
 							        , tmpData, len) != LWDP_OK)
 		{
 			errList.push_back(std::string((char_*)tmpBody[i].cardId, sizeof(tmpBody[i].cardId)));

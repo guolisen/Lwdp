@@ -17,19 +17,19 @@ protected:
 	Cx_ACDevice();
 	virtual ~Cx_ACDevice();
 public:
-	virtual LWRESULT DeviceInitMsgProcess(const uint8_* ret_msg, uint32_ ret_msg_len, 
+	virtual LWRESULT DeviceInitMsgProcess(DBHandle db_handle, const uint8_* ret_msg, uint32_ ret_msg_len, 
 									      Data_Ptr& send_msg, uint32_& send_msg_len);
 
-	virtual LWRESULT DeviceConfigMsgProcess(const uint8_* ret_msg, uint32_ ret_msg_len, 
+	virtual LWRESULT DeviceConfigMsgProcess(DBHandle db_handle,const uint8_* ret_msg, uint32_ ret_msg_len, 
 									      Data_Ptr& send_msg, uint32_& send_msg_len);
 
-	virtual LWRESULT DeviceHBMsgProcess(const uint8_* ret_msg, uint32_ ret_msg_len, 
+	virtual LWRESULT DeviceHBMsgProcess(DBHandle db_handle,const uint8_* ret_msg, uint32_ ret_msg_len, 
 									      Data_Ptr& send_msg, uint32_& send_msg_len);
 
-	virtual LWRESULT DeviceCardDataMsgProcess(const uint8_* ret_msg, uint32_ ret_msg_len, 
+	virtual LWRESULT DeviceCardDataMsgProcess(DBHandle db_handle,const uint8_* ret_msg, uint32_ ret_msg_len, 
 									      Data_Ptr& send_msg, uint32_& send_msg_len);
 
-	virtual LWRESULT DeviceBulkDataMsgProcess(const uint8_* ret_msg, uint32_ ret_msg_len, 
+	virtual LWRESULT DeviceBulkDataMsgProcess(DBHandle db_handle,const uint8_* ret_msg, uint32_ ret_msg_len, 
 									      Data_Ptr& send_msg, uint32_& send_msg_len);
 
 public:

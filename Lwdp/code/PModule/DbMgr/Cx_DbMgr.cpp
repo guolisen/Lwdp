@@ -22,15 +22,12 @@ pthread_mutex_t q_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 Cx_DbMgr::Cx_DbMgr()
 {
-	mDb = NULL;
+
 }
 
 Cx_DbMgr::~Cx_DbMgr()
 {
-	if ( mDb != NULL )
-	{
-		Close();
-	}
+
 }
 
 LWRESULT Cx_DbMgr::Init()
@@ -38,8 +35,8 @@ LWRESULT Cx_DbMgr::Init()
 	if (mysql_library_init(0, NULL, NULL)) 
 	{
 		LWDP_LOG_PRINT("DbMgr", LWDP_LOG_MGR::ERR, 
-					  "Can NOT Initialize MySQL Library(%s)", 
-					  mysql_error(mDb));
+					  "Can NOT Initialize MySQL Library", 
+					  mysql_error(NULL));
 
 		return LWDP_DB_LIBRARY_INIT_ERROR;
 	}
@@ -50,69 +47,82 @@ LWRESULT Cx_DbMgr::Init()
 }
 
 
-LWRESULT Cx_DbMgr::Open(const std::string& host, const std::string& user, const std::string& passwd, const std::string& db,
- 					    int32_ port, long_ client_flag)
+DBHandle Cx_DbMgr::Open(const std::string& host, const std::string& user, const std::string& passwd, const std::string& db,
+ 					      int32_ port, long_ client_flag)
 {
 	char value = 1;
-	mDb = mysql_init(NULL);
-	if(NULL == mDb) 
+	DBHandleClass* dbclass = new DBHandleClass;
+	ASSERT_CHECK(dbclass != 0);
+	dbclass->mDb = mysql_init(NULL);
+	if(NULL == dbclass->mDb) 
 		goto EXT;
 
-
-	if (NULL == mysql_real_connect(mDb, host.c_str(), user.c_str(), passwd.c_str(), db.c_str(), port, NULL, client_flag))
+	if (NULL == mysql_real_connect(dbclass->mDb, host.c_str(), user.c_str(), passwd.c_str(), db.c_str(), port, NULL, client_flag))
 		goto EXT;
 
-	mysql_options(mDb, MYSQL_OPT_RECONNECT, (char *)&value);
-	mysql_set_character_set(mDb,"gb2312");
+	char timeOut = 5;
+	mysql_options(dbclass->mDb, MYSQL_OPT_CONNECT_TIMEOUT, (char*)(&timeOut));
+	mysql_options(dbclass->mDb, MYSQL_OPT_RECONNECT, (char *)&value);
+	mysql_set_character_set(dbclass->mDb,"gb2312");
+
+	ExecSQL((DBHandle)dbclass, "set interactive_timeout=31536000");
+	ExecSQL((DBHandle)dbclass, "set wait_timeout=31536000");
+	ExecSQL((DBHandle)dbclass, "set autocommit=1");
 	
-	if (mysql_select_db(mDb, db.c_str()) != 0) 
+	if (mysql_select_db(dbclass->mDb, db.c_str()) != 0) 
 	{
-		mysql_close(mDb);
-		mDb = NULL;
+		mysql_close(dbclass->mDb);
+		dbclass->mDb = NULL;
 		goto EXT;
 	}
 
-	mHost = host;
-	mUser = user;
-	mPasswd = passwd;
-	mDbStr  = db;
-	mPort   = port;
-	mClientFlag = client_flag;
+	dbclass->mHost = host;
+	dbclass->mUser = user;
+	dbclass->mPasswd = passwd;
+	dbclass->mDbStr  = db;
+	dbclass->mPort   = port;
+	dbclass->mClientFlag = client_flag;
 
-	return LWDP_OK;
+	return (DBHandle)dbclass;
+	
 EXT:
 	LWDP_LOG_PRINT("DbMgr", LWDP_LOG_MGR::ERR, 
-					"mysql_real_connect Error(%s)!", mysql_error(mDb));
+					"mysql_real_connect Error(%s)!", mysql_error(dbclass->mDb));
 
 	//��ʼ��mysql�ṹʧ��
-	if (mDb != NULL )
+	if (dbclass->mDb != NULL )
 	{
-		mysql_close( mDb );
-		mDb = NULL;
+		mysql_close( dbclass->mDb );
+		dbclass->mDb = NULL;
 	}
+	DELETE_SINGLE(dbclass);
 
-	
-	return LWDP_OPEN_DB_ERROR;
+	return NULL;
 }
-void Cx_DbMgr::Close()
+void Cx_DbMgr::Close(DBHandle db)
 {
-	if (mDb != NULL)
+	ASSERT_CHECK(db != 0);
+	DBHandleClass* dbclass = (DBHandleClass*)db;
+	if (dbclass->mDb != NULL)
 	{
-		mysql_close(mDb);
-		mDb = NULL;
+		mysql_close(dbclass->mDb);
+		dbclass->mDb = NULL;
 	}
+	DELETE_SINGLE(dbclass);
 }
 
 
 DBHandle Cx_DbMgr::GetDbHandle()
 {
-	return (DBHandle)mDb;
+	return (DBHandle)NULL;
 }
 
 
-LWRESULT Cx_DbMgr::QuerySQL(const std::string& sql, Cx_Interface<Ix_DbQuery>& query_out)
+LWRESULT Cx_DbMgr::QuerySQL(DBHandle db, const std::string& sql, Cx_Interface<Ix_DbQuery>& query_out)
 {
-	lw_mutex_class db_mutex(&q_mutex);
+	ASSERT_CHECK(db != 0);
+	//lw_mutex_class db_mutex(&q_mutex);
+	DBHandleClass* dbclass = (DBHandleClass*)db;
 	Cx_Interface<Ix_DbQuery> tmpQuery(CLSID_DbQuery);
 	if(!tmpQuery)
 	{
@@ -120,11 +130,20 @@ LWRESULT Cx_DbMgr::QuerySQL(const std::string& sql, Cx_Interface<Ix_DbQuery>& qu
 					   "Get DbQuery Object Error!");
 		return LWDP_GET_QUERY_OBJ_ERROR;
 	}
+
+    int32_ ret = Ping(db);
+	if(ret != LWDP_OK)
+	{
+		//ִ�в�ѯʧ��
+		LWDP_LOG_PRINT("DbMgr", LWDP_LOG_MGR::ERR, 
+					   "MySql Connect is Lost");
+		return LWDP_ERROR;
+	}
 	
-	if(mysql_real_query(mDb, sql.c_str(), sql.size()) != 0)
+	if(mysql_real_query(dbclass->mDb, sql.c_str(), sql.size()) != 0)
 	{
 		LWDP_LOG_PRINT("DbMgr", LWDP_LOG_MGR::ERR, 
-					   "mysql_real_query Error(%s)!", mysql_error(mDb));
+					   "mysql_real_query Error(%s)!", mysql_error(dbclass->mDb));
 		return LWDP_REAL_QUERY_ERROR;
 	}
 	
@@ -132,7 +151,7 @@ LWRESULT Cx_DbMgr::QuerySQL(const std::string& sql, Cx_Interface<Ix_DbQuery>& qu
 	ASSERT_CHECK_RET(LWDP_DB_LOG, LWDP_GET_OBJECT_ERROR, query, 
 					 "Cx_DbMgr::QuerySQL Get Cx_DbQuery error, there is not a Cx_DbQuery obj");
 
-	query->mMysqlRes 	= mysql_store_result(mDb);
+	query->mMysqlRes 	= mysql_store_result(dbclass->mDb);
 	query->mRow 		= mysql_fetch_row(query->mMysqlRes);
 	query->mRow_count 	= mysql_num_rows(query->mMysqlRes); 
 	//�õ��ֶ�����
@@ -142,58 +161,85 @@ LWRESULT Cx_DbMgr::QuerySQL(const std::string& sql, Cx_Interface<Ix_DbQuery>& qu
 	return LWDP_OK;
 }
 
-int32_ Cx_DbMgr::ExecSQL(const std::string& sql)
+int32_ Cx_DbMgr::ExecSQL(DBHandle db, const std::string& sql)
 {
-	lw_mutex_class db_mutex(&q_mutex);
+	ASSERT_CHECK(db != 0);
+	//lw_mutex_class db_mutex(&q_mutex);
+	DBHandleClass* dbclass = (DBHandleClass*)db;
 	int ret = 0;
-	if((ret = mysql_real_query(mDb, sql.c_str(), sql.size())))
+	ret = Ping(db);
+	if(ret != LWDP_OK)
+	{
+		//ִ�в�ѯʧ��
+		LWDP_LOG_PRINT("DbMgr", LWDP_LOG_MGR::ERR, 
+					   "MySql Connect is Lost");
+		return LWDP_ERROR;
+	}
+	if((ret = mysql_real_query(dbclass->mDb, sql.c_str(), sql.size())))
 	{
 		//ִ�в�ѯʧ��
 		LWDP_LOG_PRINT("DbMgr", LWDP_LOG_MGR::ERR, 
 					   "ExecSQL mysql_real_query(%s) ret Error(%x)(%s)", 
-					   sql.c_str(), ret, mysql_error(mDb));
+					   sql.c_str(), ret, mysql_error(dbclass->mDb));
 		return LWDP_ERROR;
 	}
 
 	//�õ���Ӱ�������
-	return (int32_)mysql_affected_rows(mDb) ;
+	return (int32_)mysql_affected_rows(dbclass->mDb) ;
 }
 
 
-int32_ Cx_DbMgr::Ping()
+int32_ Cx_DbMgr::Ping(DBHandle db)
 {
-	lw_mutex_class mutex_c(&q_mutex);
+	ASSERT_CHECK(db != 0);
+	DBHandleClass* dbclass = (DBHandleClass*)db;
+	//lw_mutex_class mutex_c(&q_mutex);
 	//const char* mySqlState = mysql_stat(mDb);
 	//if(!mySqlState)
 	{
-		if(mysql_ping(mDb) == 0)
+		if(mysql_ping(dbclass->mDb) == 0)
 			return LWDP_OK;
 		else 
 		{
-			mysql_close(mDb);
+			mysql_close(dbclass->mDb);
 			LWDP_LOG_PRINT("DbMgr", LWDP_LOG_MGR::WARNING, 
 							"Ping Error Reconnect Db!");
 
-			if(Open(mHost, mUser, mPasswd, mDbStr, mPort, mClientFlag) != LWDP_OK)
+			DBHandle reconndb = NULL;
+			reconndb = Open(dbclass->mHost, 
+							dbclass->mUser, 
+							dbclass->mPasswd, 
+							dbclass->mDbStr, 
+							dbclass->mPort, 
+							dbclass->mClientFlag);
+			if(!reconndb)
 				return LWDP_PING_DB_ERROR;
+
+			DBHandleClass* reconnDbClass = (DBHandleClass*)reconndb;
+			dbclass->mDb = reconnDbClass->mDb;
+			delete reconndb;
 		}
 	}
 	return LWDP_OK;
 }
 
 
-int32_ Cx_DbMgr::ShutDown()
+int32_ Cx_DbMgr::ShutDown(DBHandle db)
 {
-	if(mysql_shutdown(mDb, SHUTDOWN_DEFAULT) == 0)
+	ASSERT_CHECK(db != 0);
+	DBHandleClass* dbclass = (DBHandleClass*)db;
+	if(mysql_shutdown(dbclass->mDb, SHUTDOWN_DEFAULT) == 0)
 		return LWDP_OK;
 	else 
 		return LWDP_SHUTDOWN_DB_ERROR;
 }
 
 
-int32_ Cx_DbMgr::Reboot()
+int32_ Cx_DbMgr::Reboot(DBHandle db)
 {
-	if(!mysql_reload(mDb))
+	ASSERT_CHECK(db != 0);
+	DBHandleClass* dbclass = (DBHandleClass*)db;
+	if(!mysql_reload(dbclass->mDb))
 		return LWDP_OK;
 	else
 		return LWDP_REBOOT_DB_ERROR;
@@ -201,15 +247,17 @@ int32_ Cx_DbMgr::Reboot()
 
 
 
-int32_ Cx_DbMgr::StartTransaction()
+int32_ Cx_DbMgr::StartTransaction(DBHandle db)
 {
+	ASSERT_CHECK(db != 0);
 	int ret = 0;
-	if((ret = mysql_real_query(mDb, "START TRANSACTION" ,
+	DBHandleClass* dbclass = (DBHandleClass*)db;
+	if((ret = mysql_real_query(dbclass->mDb, "START TRANSACTION" ,
 						     (unsigned long)strlen("START TRANSACTION"))))
 	{
 		LWDP_LOG_PRINT("DbMgr", LWDP_LOG_MGR::ERR, 
 					   "mysql_real_query(START TRANSACTION) ret Error(%x: %s)", 
-					   ret, mysql_error(mDb));
+					   ret, mysql_error(dbclass->mDb));
 		return ret;
 	}
 
@@ -218,15 +266,17 @@ int32_ Cx_DbMgr::StartTransaction()
 }
 
 
-int32_ Cx_DbMgr::Commit()
+int32_ Cx_DbMgr::Commit(DBHandle db)
 {
+	ASSERT_CHECK(db != 0);
 	int ret = 0;
-	if(ret = mysql_real_query(mDb, "COMMIT" ,
+	DBHandleClass* dbclass = (DBHandleClass*)db;
+	if(ret = mysql_real_query(dbclass->mDb, "COMMIT" ,
 						     (unsigned long)strlen("COMMIT")))
 	{
 		LWDP_LOG_PRINT("DbMgr", LWDP_LOG_MGR::ERR, 
 					   "mysql_real_query(COMMIT) ret Error(%x: %s)", 
-					   ret, mysql_error(mDb));
+					   ret, mysql_error(dbclass->mDb));
 		return ret;
 	}
 
@@ -234,15 +284,17 @@ int32_ Cx_DbMgr::Commit()
 }
 
 
-int32_ Cx_DbMgr::Rollback()
+int32_ Cx_DbMgr::Rollback(DBHandle db)
 {
+	ASSERT_CHECK(db != 0);
 	int ret = 0;
-	if(ret = mysql_real_query(mDb, "ROLLBACK" ,
+	DBHandleClass* dbclass = (DBHandleClass*)db;
+	if(ret = mysql_real_query(dbclass->mDb, "ROLLBACK" ,
 						     (unsigned long)strlen("ROLLBACK")))
 	{
 		LWDP_LOG_PRINT("DbMgr", LWDP_LOG_MGR::ERR, 
 					   "mysql_real_query(ROLLBACK) ret Error(%x: %s)", 
-					   ret, mysql_error(mDb));
+					   ret, mysql_error(dbclass->mDb));
 		return ret;
 	}
 
@@ -262,48 +314,60 @@ const long_ Cx_DbMgr::GetClientVersion()
 }
 
 
-const std::string Cx_DbMgr::GetHostInfo()
+const std::string Cx_DbMgr::GetHostInfo(DBHandle db)
 {
-	return static_cast<const std::string>(mysql_get_host_info(mDb));
+	ASSERT_CHECK(db != 0);
+	DBHandleClass* dbclass = (DBHandleClass*)db;
+	return static_cast<const std::string>(mysql_get_host_info(dbclass->mDb));
 }
 
 
-const std::string Cx_DbMgr::GetServerInfo()
+const std::string Cx_DbMgr::GetServerInfo(DBHandle db)
 {
-	return static_cast<const std::string>(mysql_get_server_info(mDb));
+	ASSERT_CHECK(db != 0);
+	DBHandleClass* dbclass = (DBHandleClass*)db;
+	return static_cast<const std::string>(mysql_get_server_info(dbclass->mDb));
 }
 
 
-const long_ Cx_DbMgr::GetServerVersion()
+const long_ Cx_DbMgr::GetServerVersion(DBHandle db)
 {
-	return static_cast<const long_>(mysql_get_server_version(mDb));
+	ASSERT_CHECK(db != 0);
+	DBHandleClass* dbclass = (DBHandleClass*)db;
+	return static_cast<const long_>(mysql_get_server_version(dbclass->mDb));
 }
 
 
-const std::string Cx_DbMgr::GetCharacterSetName()
+const std::string Cx_DbMgr::GetCharacterSetName(DBHandle db)
 {
-	return static_cast<const std::string>(mysql_character_set_name(mDb));
+	ASSERT_CHECK(db != 0);
+	DBHandleClass* dbclass = (DBHandleClass*)db;
+	return static_cast<const std::string>(mysql_character_set_name(dbclass->mDb));
 }
 
 
-const std::string Cx_DbMgr::GetSysTime()
+const std::string Cx_DbMgr::GetSysTime(DBHandle db)
 {
+	ASSERT_CHECK(db != 0);
+	DBHandleClass* dbclass = (DBHandleClass*)db;
 	//return ExecQueryGetSingValue("select now()");
 	return NULL;
 }
 
 
-int32_ Cx_DbMgr::CreateDB(const std::string& name)
+int32_ Cx_DbMgr::CreateDB(DBHandle db, const std::string& name)
 {
+	ASSERT_CHECK(db != 0);
 	std::string str;
+	DBHandleClass* dbclass = (DBHandleClass*)db;
 	str = std::string("CREATE DATABASE ") + name;
 	int ret = 0;
-	if(ret = mysql_real_query(mDb, str.c_str(),
+	if(ret = mysql_real_query(dbclass->mDb, str.c_str(),
 						     (unsigned long)str.size()))
 	{
 		LWDP_LOG_PRINT("DbMgr", LWDP_LOG_MGR::ERR, 
 					   "mysql_real_query(%s) ret Error(%x: %s)", 
-					   str.c_str(), ret, mysql_error(mDb));
+					   str.c_str(), ret, mysql_error(dbclass->mDb));
 		return ret;
 	}
 
@@ -311,36 +375,40 @@ int32_ Cx_DbMgr::CreateDB(const std::string& name)
 }
 
 
-int32_ Cx_DbMgr::DropDB(const std::string& name)
+int32_ Cx_DbMgr::DropDB(DBHandle db, const std::string& name)
 {
+	ASSERT_CHECK(db != 0);
 	std::string str;
+	DBHandleClass* dbclass = (DBHandleClass*)db;
 	str = std::string("DROP DATABASE ") + name;
 	int ret = 0;
-	if(ret = mysql_real_query(mDb, str.c_str(),
+	if(ret = mysql_real_query(dbclass->mDb, str.c_str(),
 						     (unsigned long)str.size()))
 	{
 		LWDP_LOG_PRINT("DbMgr", LWDP_LOG_MGR::ERR, 
 					   "mysql_real_query(%s) ret Error(%x: %s)", 
-					   str.c_str(), ret, mysql_error(mDb));
+					   str.c_str(), ret, mysql_error(dbclass->mDb));
 		return ret;
 	}
 
 	return LWDP_OK;
 }
 
-bool_ Cx_DbMgr::TableExists(const std::string& table)
+bool_ Cx_DbMgr::TableExists(DBHandle db, const std::string& table)
 {
+	ASSERT_CHECK(db != 0);
 	return false;
 }
 
-uint32_ Cx_DbMgr::LastRowId()
+uint32_ Cx_DbMgr::LastRowId(DBHandle db)
 {
+	ASSERT_CHECK(db != 0);
 	return LWDP_OK;
 }
 
-void Cx_DbMgr::SetBusyTimeout(int32_ nMillisecs)
+void Cx_DbMgr::SetBusyTimeout(DBHandle db, int32_ nMillisecs)
 {
-
+	ASSERT_CHECK(db != 0);
 
 }
 

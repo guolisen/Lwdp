@@ -9,7 +9,7 @@
 		<DbSelect>scenic</DbSelect>
 		<DbPort>3306</DbPort>
 		<ProcessPageSize>1000</ProcessPageSize>
-		<ThreadNum>1</ThreadNum>
+		<ThreadNum>10</ThreadNum>
 		<DomainSize>120</DomainSize>
 		<CardSetCount>
 				SELECT count(*) as setcount 

@@ -84,7 +84,7 @@ public:
 
 #ifdef LWDP_DEBUG_MACRO
 #define DEBUG_TIME_COUNTER(msg, top_second) \
-	TimerCounter(msg, top_second);
+	TimerCounter __TC_counter(msg, top_second);
 #else
 #define DEBUG_TIME_COUNTER(msg, top_second)
 #endif

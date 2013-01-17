@@ -348,7 +348,7 @@ LWRESULT ConfigRead()
 	return LWDP_OK;
 }
 
-LWRESULT addBlackList(const std::string& card_no)
+LWRESULT addBlackList(DBHandle dbHandle, const std::string& card_no)
 {
 	GET_OBJECT_RET(DbMgr, iDbMgr, 0);
 	
@@ -357,15 +357,15 @@ LWRESULT addBlackList(const std::string& card_no)
 	{
 		GET_OBJECT_RET(DbQuery, iDbQuery, 0);
 		Api_snprintf(tmpStr, 2048, selectCardStatus.c_str(), card_no.c_str());
-		iDbMgr->Ping();
-		iDbMgr->QuerySQL(tmpStr, iDbQuery);
+		//iDbMgr->Ping();
+		iDbMgr->QuerySQL(dbHandle, tmpStr, iDbQuery);
 		findLine = iDbQuery->NumRow();
 	}
 	if(findLine) 
 	{
 		Api_snprintf(tmpStr, 2048, updateCardStatus.c_str(), card_no.c_str());
-		iDbMgr->Ping();
-		int32_ affLine = iDbMgr->ExecSQL(tmpStr);
+		//iDbMgr->Ping();
+		int32_ affLine = iDbMgr->ExecSQL(dbHandle, tmpStr);
 		//LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::DEBUG, 
 		//			   "Update sc_card (%s)", 
 		//			   tmpStr);
@@ -381,8 +381,8 @@ LWRESULT addBlackList(const std::string& card_no)
 	else
 	{
 		Api_snprintf(tmpStr, 2048, insertCardStatus.c_str(), card_no.c_str());
-		iDbMgr->Ping();
-		int32_ intLine = iDbMgr->ExecSQL(tmpStr);
+		//iDbMgr->Ping();
+		int32_ intLine = iDbMgr->ExecSQL(dbHandle, tmpStr);
 		if(intLine != 1)
 		{
 			LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::ERR, 
@@ -407,8 +407,21 @@ void* work_thread(void* arg)
 		return NULL;
 	}
 
-	DEBUG_TIME_COUNTER("Work Thread", 0);
-		
+	DEBUG_TIME_COUNTER("Work Thread", 0.0);
+
+	GET_OBJECT_RET(DbMgr, iDbMgr, 0);	
+	LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::INFO, 
+				   "Connect to Db Server Ip:%s User:%s DbName:%s Port:%d", 
+				   strDbIp.c_str(), strDbUserName.c_str(), strDbName.c_str(), DbPort);
+	DBHandle dbHandle = iDbMgr->Open(strDbIp.c_str(), 
+		                             strDbUserName.c_str(), 
+		                             strDbPassword.c_str(), 
+		                             strDbName.c_str(), 
+		                             DbPort, 0);
+
+	LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::INFO, 
+			       "Worke Thread Connect Db Ok!");
+	
 	ProcessDomain* ptmpDomain = (ProcessDomain*)arg;	
 	ProcessDomain Domain;
 	Domain.startPos = ptmpDomain->startPos;
@@ -416,7 +429,6 @@ void* work_thread(void* arg)
 	free(arg);
 	ptmpDomain = NULL;
 	
-	GET_OBJECT_RET(DbMgr, iDbMgr, 0);	
 
 	time_t timep = time(NULL);
 	struct tm checkTime = {0};
@@ -448,8 +460,8 @@ void* work_thread(void* arg)
 					   "%s", tmpStr);
 		{
 			DEBUG_TIME_COUNTER("selectFromCards QuerySQL", 0.5);	
-			iDbMgr->Ping();
-			iDbMgr->QuerySQL(tmpStr, iDbQuery);
+			//iDbMgr->Ping();
+			iDbMgr->QuerySQL(dbHandle, tmpStr, iDbQuery);
 		}
 
 		while(!iDbQuery->Eof())
@@ -461,8 +473,8 @@ void* work_thread(void* arg)
 			GET_OBJECT_RET(DbQuery, iScDbQuery, 0);
 			{
 				DEBUG_TIME_COUNTER("selectFromScenic QuerySQL", 0.5);
-				iDbMgr->Ping();
-				iDbMgr->QuerySQL(tmpStr, iScDbQuery);
+				//iDbMgr->Ping();
+				iDbMgr->QuerySQL(dbHandle, tmpStr, iScDbQuery);
 			}
 			uint32_ iscnum = iScDbQuery->NumRow();
 			if(iscnum >= 1)
@@ -476,12 +488,12 @@ void* work_thread(void* arg)
 
 				if(iScDbQuery->Eof()) //can't find
 				{
-					addBlackList(dev_card_no);
+					addBlackList(dbHandle, dev_card_no);
 				}
 			}
 			else 
 			{
-				addBlackList(dev_card_no);
+				addBlackList(dbHandle, dev_card_no);
 			}
 			
 			iDbQuery->NextRow();
@@ -492,6 +504,7 @@ void* work_thread(void* arg)
 		}
 	}
 
+	iDbMgr->Close(dbHandle);
 	gProgressBar += progressCount % 50;
 
 	if(gProgressBar.cur >= gProgressBar.n)
@@ -538,27 +551,26 @@ int32_ main()
 	} 
 
 	{
-		DEBUG_TIME_COUNTER("Main Thread", 0);
+		DEBUG_TIME_COUNTER("Main Thread", 0.0);
+
 		RINOKR(ConfigRead(), NULL);
 
 		GET_OBJECT_RET(DbMgr, iDbMgr, 0);	
 		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::INFO, 
 					   "Connect to Db Server Ip:%s User:%s DbName:%s Port:%d", 
 					   strDbIp.c_str(), strDbUserName.c_str(), strDbName.c_str(), DbPort);
-		if(iDbMgr->Open( strDbIp.c_str(), 
-				         strDbUserName.c_str(), 
-				         strDbPassword.c_str(), 
-				         strDbName.c_str(), 
-				         DbPort, 0) != LWDP_OK)
+		DBHandle dbHandle = iDbMgr->Open(strDbIp.c_str(), 
+								         strDbUserName.c_str(), 
+								         strDbPassword.c_str(), 
+								         strDbName.c_str(), 
+								         DbPort, 0);
+		if(!dbHandle)
 		{
 			LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::ERR, 
 						   "Open Db Error", DbPort);
 			return 0;
 		}
 
-		iDbMgr->ExecSQL("set interactive_timeout=31536000");
-		iDbMgr->ExecSQL("set wait_timeout=31536000");
-		iDbMgr->ExecSQL("set autocommit=1");
 
 		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::INFO, 
 					   "Connect Db Ok!");
@@ -581,8 +593,8 @@ int32_ main()
 
 			{
 			DEBUG_TIME_COUNTER("cardSetCount QuerySQL", 0.5);
-			iDbMgr->Ping();
-			iDbMgr->QuerySQL(tmpStr, iCountDbQuery);
+			//iDbMgr->Ping();
+			iDbMgr->QuerySQL(dbHandle, tmpStr, iCountDbQuery);
 			}
 			
 			inum = iCountDbQuery->GetIntField("setcount", -1);
@@ -591,7 +603,7 @@ int32_ main()
 				LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::NOTICE, 
 				           		"%s Card Set is Null All Process Have Finished", 
 				           		startTime);
-				iDbMgr->Close();
+				iDbMgr->Close(dbHandle);
 				return 0;
 			}
 		}
@@ -628,7 +640,7 @@ int32_ main()
 			if(result != 0){
 				LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::ERR, 
 							   "Can't Create Thread Ret: %d\n", result);
-				iDbMgr->Close();
+				iDbMgr->Close(dbHandle);
 				return 0;
 			}
 
@@ -645,7 +657,7 @@ int32_ main()
 			ASSERT_CHECK(rc == 0);
 		}
 
-		iDbMgr->Close();
+		iDbMgr->Close(dbHandle);
 	}
 	
 	system("pause");
