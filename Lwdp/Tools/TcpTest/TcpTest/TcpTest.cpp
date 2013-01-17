@@ -287,7 +287,7 @@ int CardData_Send(int socketFd)
 }
 
 int gCardNo = 0;
-#define CARD_NUM_SEND 1000
+#define CARD_NUM_SEND 500
 int BulkData_Send(int socketFd)
 {
 	printf("### BulkData_Send ###\n");
@@ -311,28 +311,34 @@ int BulkData_Send(int socketFd)
 	
 	TS_DEVICE_CARD_DATA_REQ_BODY* tmp = (TS_DEVICE_CARD_DATA_REQ_BODY*)body->cardDataEntry;
 
-	struct tm* timect;
-	time_t cttick = time(NULL);
-	timect = localtime(&cttick);
-	timect->tm_mday -= 1;
-	cttick = mktime(timect);
+
 
 	for(int gCardNo = 0; gCardNo<CARD_NUM_SEND; )
 	{
+		int cardtype = within(2);
+		struct tm* timect;
+		time_t cttick = time(NULL);
+		timect = localtime(&cttick);
+		timect->tm_mday -= 1;
+		timect->tm_min += within(10);
+		cttick = mktime(timect);
+
 		char tmpStr[100] = {0};
 		unsigned int counter = within(100000000);
 		_snprintf(tmpStr, 100, "10011%08d", gCardNo);
 		memcpy(tmp[gCardNo].cardId, tmpStr, strlen(tmpStr));
 		memcpy(tmp[gCardNo].sceneryId, "1", 2);
-		tmp[gCardNo].cardType = 0x1;
+		tmp[gCardNo].cardType = cardtype;
 		tmp[gCardNo].actionId = 1;
 		tmp[gCardNo].checkinTime = cttick;
 
-
+		timect = localtime(&cttick);
+		timect->tm_min += 5 + within(30);
+		cttick = mktime(timect);
 
 		memcpy(tmp[gCardNo + 1].cardId, tmpStr, strlen(tmpStr));
 		memcpy(tmp[gCardNo + 1].sceneryId, "1", 2);
-		tmp[gCardNo + 1].cardType = 0x1;
+		tmp[gCardNo + 1].cardType = cardtype;
 		tmp[gCardNo + 1].actionId = 0;
 		tmp[gCardNo + 1].checkinTime = cttick;
 		gCardNo += 2;
@@ -403,7 +409,8 @@ unsigned int __stdcall threadfun(void* arg)
 
 
 
-	while (1)
+	//while (1)
+	for(int i = 0; i<20; i++)
 	{
 		if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1){ 
 			perror("socket´´½¨³ö´í£¡");

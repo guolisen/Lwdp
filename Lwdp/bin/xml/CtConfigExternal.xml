@@ -65,10 +65,6 @@
 			<ModuleLoad Name = "DbMgr"      Modid = "18D1C5FE-2D94-4a9b-B878-E8A51CA9AF67" />
 			<ModuleLoad Name = "PerfMgr"    Modid = "9D54BB67-8906-4215-BA95-591FE6F52C03" />
 			
-			<ModuleLoad Name = "TSFrontend" Modid = "6AD26E68-071F-45d5-B5C1-7B3F7EE20D13" />
-			<ModuleLoad Name = "ZmqBackend" Modid = "789D687B-8962-4cae-8C4A-B129B5B8312F" />
-			<ModuleLoad Name = "TcpServer"  Modid = "85FFE433-F268-4728-8086-BD272EB10B66" />
-			<ModuleLoad Name = "ACDevice"   Modid = "7BE77A1D-4430-4903-BFC3-501987FE9E31" />
 		</PropertyTable>
 	</TableSet>
 	<Module Name = "ConfigMgr" Modid = "6FE0F631-1F70-4557-8156-2D30AA017631">
@@ -212,99 +208,4 @@
 		<Script Name = "PerfMgrInit">
 		</Script>
 	</Module>	
-	<Module Name = "TSFrontend" Modid = "6AD26E68-071F-45d5-B5C1-7B3F7EE20D13">
-		<!--属性名不可重复-->
-		<Property> 
-			<Version>1.0</Version>
-			<ModuleDir>../../../../bin/Plugins/TSFrontend.dll</ModuleDir>
-			<ConnetTarget>tcp://localhost:12136</ConnetTarget>
-			<ServerPort>12135</ServerPort>
-			<ListenBlock>128</ListenBlock>
-			<RecvBufMaxLen>1024</RecvBufMaxLen>
-			<SendZmqTimeout>5</SendZmqTimeout>
-			<RecvZmqTimeout>5</RecvZmqTimeout>
-		</Property>
-		<TableSet>
-		</TableSet>
-		<Script Name = "TSFrontend">
-		</Script>
-	</Module>
-	<Module Name = "ZmqBackend" Modid = "789D687B-8962-4cae-8C4A-B129B5B8312F">
-		<!--属性名不可重复-->
-		<Property> 
-			<Version>1.0</Version>
-			<ModuleDir>../../../../bin/Plugins/ZmqBackend.dll</ModuleDir>
-			<FrontendTarget>tcp://*:12136</FrontendTarget>
-			<BackendTarget>inproc://work_thread</BackendTarget>
-			<!-- <BackendTarget>tcp://*:12137</BackendTarget> -->
-			<!-- <WorkThreadConnect>tcp://localhost:12137</WorkThreadConnect>  -->
-			<WorkThreadConnect>inproc://work_thread</WorkThreadConnect>
-			<CtrlConnect>inproc://ctrl_to_workthread</CtrlConnect>
-			<WorkThreadNum>20</WorkThreadNum>
-		</Property>
-		<TableSet>
-		</TableSet>
-		<Script Name = "ZmqBackend">
-		</Script>
-	</Module>
-	<Module Name = "TcpServer" Modid = "85FFE433-F268-4728-8086-BD272EB10B66">
-		<!--属性名不可重复-->
-		<Property> 
-			<Version>1.0</Version>
-			<ModuleDir>../../../../bin/Plugins/TcpServer.dll</ModuleDir>
-			<DbIp>192.168.1.5</DbIp>
-			<DbUser>ptsf</DbUser>
-			<DbPassword>123456</DbPassword>
-			<DbSelect>scenic</DbSelect>
-			<DbPort>3306</DbPort>
-		</Property>
-		<TableSet>
-		</TableSet>
-		<Script Name = "TcpServer">
-		</Script>
-	</Module>	
-	<Module Name = "ACDevice" Modid = "7BE77A1D-4430-4903-BFC3-501987FE9E31">
-		<!--属性名不可重复-->
-		<Property> 
-			<Version>1.0</Version>
-			<ModuleDir>../../../../bin/Plugins/ACDevice.dll</ModuleDir>
-			<InitSql>select * from sc_gate where gate_id = '%s'</InitSql>
-			<ConfigSql>select * from sc_gate where gate_id = '%s'</ConfigSql>
-			<CardSql>insert into sc_swiping(card_id, gate_id, scenic_id, ticket_type, action, create_time) 
-			                                VALUES (%s, '%s', '%s', %d, %d, '%s')
-			</CardSql>
-			
-		</Property>
-		<TableSet>
-			<PropertyTable Name = "GateInfoCol">
-				<GateIdCol>gate_id</GateIdCol>
-				<SceneryIdCol>scenic_id</SceneryIdCol>
-				<ManufacturerCol>manufacturer</ManufacturerCol>
-				<PositionCol>position</PositionCol>
-				<typeCol>type</typeCol>
-				<statusCol>status</statusCol>
-			</PropertyTable>
-		
-		</TableSet>
-		<Script Name = "ACDevice">
-		</Script>
-	</Module>
-	
-	<Module Name = "ExampleTest" Modid = "86347b32-64e4-490c-b273-ec7e010f244e">
-		<!--属性名不可重复-->
-		<Property> 
-			<Version>3.0</Version>
-			<ModuleDir>../../../../bin/Plugins/ExampleDll.dll</ModuleDir>
-		</Property>
-		<TableSet>
-			<PropertyTable Name = "TestTable">
-				<Item Name = "Test" ts='t1'>Test1</Item>
-				<Item Name = "Test" ts='t2'>Test2</Item>
-				<Item Name = "Test" ts='t3'>Test3</Item>
-				<Item Name = "Test" ts='t4'>Test4</Item>
-			</PropertyTable>
-		</TableSet>
-		<Script Name = "ExampleTestInit">
-		</Script>
-	</Module>
 </Module>
