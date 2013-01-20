@@ -202,7 +202,7 @@
 			<CtrlConnect>inproc://ctrl_to_workthread</CtrlConnect>
 			<WorkThreadNum>20</WorkThreadNum>
 			
-			<DbIp>10.3.18.27</DbIp>
+			<DbIp>192.168.1.5</DbIp>
 			<DbUser>ptsf</DbUser>
 			<DbPassword>123456</DbPassword>
 			<DbSelect>scenic</DbSelect>
@@ -234,7 +234,8 @@
 			<CardSql>insert into sc_swiping(card_no, gate_no, scenic_id, ticket_type, action, create_time) 
 			                                VALUES ('%s', '%s', '%s', %d, %d, '%s')
 			</CardSql>
-			
+			<BulkThreadNum>5</BulkThreadNum>
+			<BulkPageSize>200</BulkPageSize>
 		</Property>
 		<TableSet>
 			<PropertyTable Name = "GateInfoCol">

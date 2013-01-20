@@ -99,6 +99,16 @@ EXT:
 
 	return NULL;
 }
+
+DBHandle Cx_DbMgr::OpenCopy(DBHandle otherHandle)
+{
+	ASSERT_CHECK(otherHandle != 0);
+	DBHandleClass* dbclass = (DBHandleClass*)otherHandle;
+	return Open(dbclass->mHost, dbclass->mUser, dbclass->mPasswd, dbclass->mDbStr,
+ 				dbclass->mPort, dbclass->mClientFlag);
+}
+
+
 void Cx_DbMgr::Close(DBHandle db)
 {
 	ASSERT_CHECK(db != 0);

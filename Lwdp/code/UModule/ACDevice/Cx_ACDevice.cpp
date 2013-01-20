@@ -22,8 +22,123 @@ std::string Cx_ACDevice::mInitSql   = std::string("");
 std::string Cx_ACDevice::mConfigSql = std::string("");
 std::string Cx_ACDevice::mCardSql   = std::string("");
 
-
 XPropertyTable Cx_ACDevice::gateInfoTable;
+
+uint32_     processPageSize  = LW_ACDEVICE_BULK_PAGESIZE_DEFAULT;
+uint32_     gThreadCount     = LW_ACDEVICE_THREAD_NUM_DEFAULT;
+
+
+typedef std::vector<std::string> RET_LIST;
+
+struct WORKTHREAD_PARAM
+{
+	uint32_ startPos;
+	uint32_ length;
+	TS_ZMQ_SERVER_MSG* msg;
+	Cx_ACDevice* object;
+	DBHandle dbHandle;
+};
+
+void* work_thread(void* arg)
+{	
+	if(!arg)
+	{
+		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR, 
+		           	   "ACD Work Thread Parameter is NULL");
+		return NULL;
+	}
+
+	WORKTHREAD_PARAM* ptmpDomain = (WORKTHREAD_PARAM*)arg;	
+	WORKTHREAD_PARAM Domain;
+	Domain.startPos = ptmpDomain->startPos;
+	Domain.length   = ptmpDomain->length;
+	Domain.msg      = ptmpDomain->msg;
+	ASSERT_CHECK(Domain.msg != 0);
+	Domain.object   = ptmpDomain->object;
+	ASSERT_CHECK(Domain.object != 0);
+	Domain.dbHandle = ptmpDomain->dbHandle;
+	DBHandle workDbHandle = Domain.dbHandle;
+	ASSERT_CHECK(workDbHandle != 0);
+	free(arg);
+	ptmpDomain = NULL;
+
+
+	TS_ZMQ_SERVER_MSG* zmqMsg = (TS_ZMQ_SERVER_MSG*)Domain.msg;
+	TS_DEVICE_BULK_DATA_REQ_BODY* msgBody = (TS_DEVICE_BULK_DATA_REQ_BODY*)zmqMsg->customMsgBody;
+	Cx_ACDevice* acdObj = Domain.object;
+
+	int32_ inum = Domain.length;
+	int32_ pageSize = (processPageSize > Domain.length)? Domain.length: processPageSize;
+	int32_ reTimes  = (inum / pageSize);
+		   reTimes += (inum%pageSize)>0?1:0;
+
+	uint32_ blockNum  = 0;
+	RET_LIST* errList = new RET_LIST;
+	ASSERT_CHECK(errList != 0);
+	uint32_ newLen = sizeof(TS_ZMQ_SERVER_MSG) + 
+					 sizeof(TS_DEVICE_CARD_DATA_REQ_BODY);
+	uint8_* fakeMsg = new uint8_[newLen];
+	ASSERT_CHECK(fakeMsg != 0);
+	memset(fakeMsg, 0, newLen);
+	TS_DEVICE_CARD_DATA_REQ_BODY* tmpBody = NULL;
+	tmpBody = (TS_DEVICE_CARD_DATA_REQ_BODY*)msgBody->cardDataEntry;
+
+	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::NOTICE, 
+					"Worker TotleNum: %d reTimes: %d pageSize:%d start: %d", inum, reTimes, pageSize, Domain.startPos);
+	uint32_ nowSize = inum;
+	for(blockNum = 0; blockNum<reTimes; blockNum++)
+	{
+		int32_ start = blockNum * pageSize + Domain.startPos;
+
+		if(nowSize < pageSize)
+			pageSize = nowSize;
+		
+		for(uint32_ i=start; i<start+pageSize; ++i)
+		{
+			memset(fakeMsg, 0, newLen);
+			LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::INFO,
+						   "[Received] REQ:%x REQCODE: %x, cardId: %s sceneryId: %s cardType: %x actionId: %x checkinTime: %x", 
+					       std::string((char_*)zmqMsg->deviceId, sizeof(zmqMsg->deviceId)).c_str(), 
+					       zmqMsg->msgCode, 
+					       std::string((char_*)tmpBody[i].cardId, sizeof(tmpBody[i].cardId)).c_str(),
+						   std::string((char_*)tmpBody[i].sceneryId, sizeof(tmpBody[i].sceneryId)).c_str(),
+					       tmpBody[i].cardType, tmpBody[i].actionId, tmpBody[i].checkinTime);
+
+			TS_ZMQ_SERVER_MSG* fakeCardMsg = (TS_ZMQ_SERVER_MSG*)fakeMsg;
+			memcpy(fakeCardMsg->deviceId, zmqMsg->deviceId, sizeof(fakeCardMsg->deviceId));
+			fakeCardMsg->msgCode  = zmqMsg->msgCode;
+			memcpy(fakeCardMsg->customMsgBody, &tmpBody[i], sizeof(TS_DEVICE_CARD_DATA_REQ_BODY));
+
+			Data_Ptr tmpData;
+			tmpData.reset();
+			uint32_  len = 0;
+			if(acdObj->DeviceCardDataMsgProcess(workDbHandle, fakeMsg, sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_DEVICE_CARD_DATA_REQ_BODY),
+										        tmpData, len) != LWDP_OK)
+			{
+				errList->push_back(std::string((char_*)tmpBody[i].cardId, sizeof(tmpBody[i].cardId)));
+			}
+	
+		}
+
+		nowSize -= pageSize;
+	}
+
+	DELETE_MULTIPLE(fakeMsg);
+	GET_OBJECT_RET(DbMgr, iDbMgr, NULL);
+	iDbMgr->Close(workDbHandle);
+
+	if(errList->empty())
+	{
+		DELETE_SINGLE(errList);
+		return NULL;
+	}
+	else
+	{
+		return errList;
+	}
+
+	return NULL;
+}
 
 Cx_ACDevice::Cx_ACDevice()
 {
@@ -82,6 +197,32 @@ LWRESULT Cx_ACDevice::Init()
 					   "Can't Find <CardSql> In Config File, Default(%s)", 
 					   Cx_ACDevice::mCardSql.c_str());
 	}
+	
+	XPropertys propThreadNum;
+	iConfigMgr->GetModulePropEntry(LW_ACDEVICE_MODULE_NAME, LW_ACDEVICE_BULK_THREAD_NUM_NAME, propThreadNum);
+	if(!propThreadNum[0].propertyText.empty())
+	{
+		gThreadCount = atol(propThreadNum[0].propertyText.c_str());
+	}
+	else
+	{
+		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::WARNING, 
+					   "Can't Find <BulkThreadNum> In Config File, Default(%d)", 
+					   gThreadCount);
+	}	
+	
+	XPropertys propDomainSize;
+	iConfigMgr->GetModulePropEntry(LW_ACDEVICE_MODULE_NAME, LW_ACDEVICE_BULK_PAGESIZE_NAME, propDomainSize);
+	if(!propDomainSize[0].propertyText.empty())
+	{
+		processPageSize = atol(propDomainSize[0].propertyText.c_str());
+	}
+	else
+	{
+		LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::WARNING, 
+					   "Can't Find <BulkPageSize> In Config File, Default(%s)", 
+					   processPageSize);
+	}	
 
 	GET_OBJECT_RET(ZmqBackend, iZmqBackend, LWDP_GET_OBJECT_ERROR);
 	MsgDelegate regFun = MakeDelegate(this, &Cx_ACDevice::DeviceInitMsgProcess);
@@ -116,6 +257,7 @@ LWRESULT MsgProcess(const uint8_* ret_msg, uint32_ ret_msg_len,
 
 	return LWDP_OK;
 }
+
 
 /*
 enum TS_INIT_MSG_RESAULT_ENUM
@@ -704,7 +846,7 @@ LWRESULT Cx_ACDevice::DeviceBulkDataMsgProcess(DBHandle db_handle,const uint8_* 
 	}
 
 	//check	
-	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::INFO,
+	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::NOTICE,
 				   "[Received] REQ:%x REQCODE: %x, cardDataCount: %x", 
 			       std::string((char_*)zmqMsg->deviceId, sizeof(zmqMsg->deviceId)).c_str(), 
 			       zmqMsg->msgCode, msgBody->cardDataCount);
@@ -733,47 +875,86 @@ LWRESULT Cx_ACDevice::DeviceBulkDataMsgProcess(DBHandle db_handle,const uint8_* 
 		
 		return LWDP_OK;
 	}
-	
-	uint32_ i = 0;
-	std::vector<std::string> errList;
-	TS_DEVICE_CARD_DATA_REQ_BODY* tmpBody = NULL;
-	uint32_ newLen = sizeof(TS_ZMQ_SERVER_MSG) + 
-					 sizeof(TS_DEVICE_CARD_DATA_REQ_BODY);
-	uint8_* fakeMsg = new uint8_[newLen];
 
-	for(i=0; i<msgBody->cardDataCount; ++i)
+	uint32_ retResult    = TS_SERVER_OK;
+	char_*  retResultStr = "Check OK!";
+	uint32_ retSize      = 0;
+	RET_LIST errList;
+	std::list<pthread_t>::iterator iter;
+
+	uint32_ thread_num = gThreadCount;
+	uint32_ domainSize = 0;
+	uint32_ inum = msgBody->cardDataCount;
+	domainSize = inum / thread_num;
+	thread_num += (inum % thread_num)>0?1:0;
+		
+	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::NOTICE, 
+	           		"TotleNum: %d thread_num: %d domainSize: %d", 
+	           		inum, thread_num, domainSize);
+
+	std::list<pthread_t> thrList;
+	GET_OBJECT_RET(DbMgr, iDbMgr, NULL);
+	uint32_ nowSize = inum;
+	for(uint32_ num = 0; num < thread_num; ++num)
 	{
-		memset(fakeMsg, 0, newLen);
-		tmpBody = (TS_DEVICE_CARD_DATA_REQ_BODY*)msgBody->cardDataEntry;
-		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::INFO,
-					   "[Received] REQ:%x REQCODE: %x, cardId: %s sceneryId: %s cardType: %x actionId: %x checkinTime: %x", 
-				       std::string((char_*)zmqMsg->deviceId, sizeof(zmqMsg->deviceId)).c_str(), 
-				       zmqMsg->msgCode, 
-				       std::string((char_*)tmpBody[i].cardId, sizeof(tmpBody[i].cardId)).c_str(),
-						std::string((char_*)tmpBody[i].sceneryId, sizeof(tmpBody[i].sceneryId)).c_str(),
-				       tmpBody[i].cardType, tmpBody[i].actionId, tmpBody[i].checkinTime);
+		pthread_t t;
+		int result = 0;
 
-
-		TS_ZMQ_SERVER_MSG* fakeCardMsg = (TS_ZMQ_SERVER_MSG*)fakeMsg;
-		memcpy(fakeCardMsg->deviceId, zmqMsg->deviceId, sizeof(fakeCardMsg->deviceId));
-		fakeCardMsg->msgCode  = zmqMsg->msgCode;
-		memcpy(fakeCardMsg->customMsgBody, &tmpBody[i], sizeof(TS_DEVICE_CARD_DATA_REQ_BODY));
-
-		Data_Ptr tmpData;
-		tmpData.reset();
-		uint32_  len = 0;
-		if(DeviceCardDataMsgProcess(db_handle, fakeMsg, sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_DEVICE_CARD_DATA_REQ_BODY)
-							        , tmpData, len) != LWDP_OK)
+		DBHandle workDbHandle = iDbMgr->OpenCopy(db_handle);
+		if(!workDbHandle)
 		{
-			errList.push_back(std::string((char_*)tmpBody[i].cardId, sizeof(tmpBody[i].cardId)));
+			LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR, 
+			           	   "ACD Thread Connect Mysql Error");
+			uint32_ retResult    = TS_SERVER_DB_ERR;
+			char_*  retResultStr = "Connect DB Error";
+			goto RET_TAG;
+		}
+	
+		WORKTHREAD_PARAM* domain = (WORKTHREAD_PARAM*)malloc(sizeof(WORKTHREAD_PARAM));
+		domain->startPos 	= (num * domainSize);
+		domain->length 		= domainSize;
+		if(nowSize < domainSize)
+		{
+			domain->length = nowSize;
+		}	
+		nowSize -= domainSize;
+		domain->dbHandle 	= workDbHandle;
+		domain->msg 		= zmqMsg;
+		domain->object 		= this;
+		result = pthread_create(&t, NULL, work_thread, domain);
+		if(result != 0){
+			LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::ERR, 
+						   "Can't Create Thread Ret: %d\n", result);
+
+			retResult = TS_SERVER_BULK_THREAD_ERR;
+			retResultStr = "Bulk Can't Create Thread";
+			goto RET_TAG;
 		}
 
-		
+		thrList.push_back(t);			
 	}
 
-	DELETE_MULTIPLE(fakeMsg);
-	uint8_* returnMsg = NULL;
-	uint32_ retSize = 0;
+	FOREACH_STL(iter, thrList)
+	{
+		RET_LIST* work_ret_list;
+		int rc = pthread_join(*iter, (void**)&work_ret_list);
+		ASSERT_CHECK(rc == 0);
+		if(work_ret_list)
+		{
+			RET_LIST::iterator erriter;
+			FOREACH_STL(erriter, (*work_ret_list))
+			{
+				errList.push_back(*erriter);
+			}
+	
+			DELETE_SINGLE(work_ret_list);
+		}
+	}
+
+RET_TAG:
+	TS_DEVICE_CARD_DATA_REQ_BODY* tmpBody = NULL;
+	tmpBody = (TS_DEVICE_CARD_DATA_REQ_BODY*)msgBody->cardDataEntry;
+
 	if(!errList.empty())
 	{
 		retSize = sizeof(TS_ZMQ_SERVER_MSG) + 
@@ -786,6 +967,7 @@ LWRESULT Cx_ACDevice::DeviceBulkDataMsgProcess(DBHandle db_handle,const uint8_* 
 				  sizeof(TS_DEVICE_BULK_DATA_RSP_BODY);
 	}
 	
+	uint8_* returnMsg = NULL;
 	returnMsg = new uint8_[retSize];
 	memset(returnMsg, 0, retSize);
 	ASSERT_CHECK_RET(LWDP_PLUGIN_LOG, LWDP_MALLOC_MEMORY_ERROR, returnMsg, "Malloc Error");
@@ -794,8 +976,8 @@ LWRESULT Cx_ACDevice::DeviceBulkDataMsgProcess(DBHandle db_handle,const uint8_* 
 	memcpy(retStru->deviceId, zmqMsg->deviceId, sizeof(retStru->deviceId));
 	retStru->msgCode  = TS_SERVER_BULK_DATA_RSP_MSG; //
 	TS_DEVICE_BULK_DATA_RSP_BODY* retBody = (TS_DEVICE_BULK_DATA_RSP_BODY*)retStru->customMsgBody;
-	retBody->msgResult = TS_SERVER_OK;
-	memcpy(retBody->msgResultData, "Check OK!", 10);
+	retBody->msgResult = retResult;
+	memcpy(retBody->msgResultData, retResultStr, strlen(retResultStr));
 
 	if(!errList.empty())
 	{
@@ -803,7 +985,7 @@ LWRESULT Cx_ACDevice::DeviceBulkDataMsgProcess(DBHandle db_handle,const uint8_* 
 		memcpy(retBody->msgResultData, "Have Error!", 12);
 
 		retBody->errorEntryNum = errList.size();
-		for(int i = 0; i < retBody->errorEntryNum; ++i)
+		for(uint32_ i = 0; i < retBody->errorEntryNum; ++i)
 		{
 			memcpy(retBody->errCardId + (sizeof(tmpBody->cardId) * i), errList[i].data(), sizeof(tmpBody->cardId));
 		}

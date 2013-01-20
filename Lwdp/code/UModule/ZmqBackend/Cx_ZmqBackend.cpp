@@ -62,8 +62,14 @@ void* worker_task (void *args)
 		                             strDbPassword.c_str(), 
 		                             strDbName.c_str(), 
 		                             DbPort, 0);
-
-
+	
+	if(!dbHandle)
+	{
+		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::INFO, 
+				       "Worke Thread Connect Db Error!");
+		return NULL;
+	}
+	
 	LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::INFO, 
 			       "Worke Thread Connect Db Ok!");
 

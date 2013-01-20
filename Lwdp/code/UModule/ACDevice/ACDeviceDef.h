@@ -3,7 +3,9 @@
 #define _AC_DEVICE_DEF_H
 
 
-	
+#define LW_ACDEVICE_BULK_PAGESIZE_DEFAULT    100
+#define LW_ACDEVICE_THREAD_NUM_DEFAULT       5
+#define LW_ACDEVICE_SELECT_DEVICE_DEFAULT  __T("select * from gate_info where gate_id =")
 
 #define LW_ACDEVICE_SELECT_DEVICE_DEFAULT  __T("select * from gate_info where gate_id =")
 #define LW_ACDEVICE_CONFIG_DEVICE_DEFAULT  __T("select * from gate_info where gate_id =")
@@ -28,6 +30,8 @@
 #define LW_ACDEVICE_GATE_INFO_POSITION_COL        __T("PositionCol")
 #define LW_ACDEVICE_GATE_INFO_TYPE_COL            __T("typeCol")
 
+#define LW_ACDEVICE_BULK_THREAD_NUM_NAME          __T("BulkThreadNum")
+#define LW_ACDEVICE_BULK_PAGESIZE_NAME            __T("BulkPageSize")
 
 #endif
 

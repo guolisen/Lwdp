@@ -42,6 +42,7 @@ INTERFACE_BEGIN(DbMgr)
 	virtual LWRESULT Init() = 0;
 	virtual DBHandle Open(const std::string& host, const std::string& user, const std::string& passwd, const std::string& db,
 	 			        int32_ port, long_ client_flag) = 0;
+	virtual DBHandle OpenCopy(DBHandle otherHandle) = 0;
 	virtual void Close(DBHandle db) = 0;
 	/* ·µ»Ø¾ä±ú */
 	virtual DBHandle GetDbHandle() = 0;

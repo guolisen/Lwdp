@@ -287,11 +287,11 @@ int CardData_Send(int socketFd)
 }
 
 int gCardNo = 0;
-#define CARD_NUM_SEND 500
+#define CARD_NUM_SEND 1000
 int BulkData_Send(int socketFd)
 {
 	printf("### BulkData_Send ###\n");
-	char buf[MAXDATASIZE];
+
 	int len = sizeof(TS_TCP_SERVER_MSG) + 
 		      sizeof(TS_ZMQ_SERVER_MSG) +
 		      sizeof(TS_DEVICE_BULK_DATA_REQ_BODY) + 
@@ -368,12 +368,38 @@ int BulkData_Send(int socketFd)
 
 	free(tdata);
 	int recvbytes = 0;
-	if ((recvbytes=recv(socketFd, buf, MAXDATASIZE, 0)) !=-1)
-	{ 
-		TS_TCP_SERVER_MSG* retTcpMsg = (TS_TCP_SERVER_MSG*)buf;
+
+	uint32_ indexRecv = 0;
+    uint32_ totleSize = 1024*1024;
+	uint8_* recvBuf = (uint8_*)malloc(totleSize * sizeof(uint8_));
+
+	while(1)
+	{
+		if ((recvbytes=recv(socketFd, (char *)recvBuf+indexRecv, totleSize-indexRecv, 0)) == -1)
+		{ 
+			printf("Connect Interrupt!\n");
+			break;
+		}
+		else if(!recvbytes)
+		{
+			printf("Recv End!\n");
+            break;
+		}
+
+		if(recvbytes)
+		{
+			indexRecv += recvbytes;
+			continue;
+		}
+		break;
+	}
+
+	if(indexRecv || recvbytes > 0)
+	{
+		TS_TCP_SERVER_MSG* retTcpMsg = (TS_TCP_SERVER_MSG*)recvBuf;
 		if(retTcpMsg->statusCode)
 		{
-			printf("Recv TCP Error Message code (%d)", retTcpMsg->statusCode);
+			printf("Recv TCP Error Message code (%d)\n", retTcpMsg->statusCode);
 			return 0;
 		}
 		TS_ZMQ_SERVER_MSG* retMsg = (TS_ZMQ_SERVER_MSG*)retTcpMsg->tcpMsgBody;
@@ -388,12 +414,14 @@ int BulkData_Send(int socketFd)
 			char* errCardPtr = (char*)(retBody->errCardId);
 			for(int i = 0; i < retBody->errorEntryNum; ++i)
 			{
-				std::string tmps((char*)(errCardPtr + 8*i), 8);
+				std::string tmps((char*)(errCardPtr + 32*i), 32);
 				printf( "[Error] %s\n", tmps.c_str());
 			}
 		}
+
 	}
 
+	free(recvBuf);
 	return 0;
 }
 
@@ -409,8 +437,8 @@ unsigned int __stdcall threadfun(void* arg)
 
 
 
-	//while (1)
-	for(int i = 0; i<20; i++)
+	while (1)
+	//for(int i = 0; i<20; i++)
 	{
 		if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1){ 
 			perror("socket´´½¨³ö´í£¡");

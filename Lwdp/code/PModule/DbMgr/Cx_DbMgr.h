@@ -125,6 +125,8 @@ protected:
 	virtual LWRESULT Init();
 	virtual DBHandle Open(const std::string& host, const std::string& user, const std::string& passwd, const std::string& db,
 	 					    int32_ port, long_ client_flag);
+	virtual DBHandle OpenCopy(DBHandle otherHandle);
+	
 	virtual void 	Close(DBHandle db);
 
 	virtual DBHandle 	GetDbHandle();
