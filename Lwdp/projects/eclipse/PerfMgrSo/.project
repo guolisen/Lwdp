@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>TimerMgrSo</name>
+	<name>PerfMgrSo</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -31,44 +31,44 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>PModule/TimerMgr</name>
+			<name>PModule/PerfMgr</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>PModule/TimerMgr/Cx_TimerMgr.cpp</name>
+			<name>PModule/PerfMgr/Cx_PerfMgr.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/TimerMgr/Cx_TimerMgr.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/PerfMgr/Cx_PerfMgr.cpp</locationURI>
 		</link>
 		<link>
-			<name>PModule/TimerMgr/Cx_TimerMgr.h</name>
+			<name>PModule/PerfMgr/Cx_PerfMgr.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/TimerMgr/Cx_TimerMgr.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/PerfMgr/Cx_PerfMgr.h</locationURI>
 		</link>
 		<link>
-			<name>PModule/TimerMgr/Cx_TimerTick.cpp</name>
+			<name>PModule/PerfMgr/Cx_PerfMgr_Cps.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/TimerMgr/Cx_TimerTick.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/PerfMgr/Cx_PerfMgr_Cps.cpp</locationURI>
 		</link>
 		<link>
-			<name>PModule/TimerMgr/Cx_TimerTick.h</name>
+			<name>PModule/PerfMgr/Cx_PerfMgr_Cps.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/TimerMgr/Cx_TimerTick.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/PerfMgr/Cx_PerfMgr_Cps.h</locationURI>
 		</link>
 		<link>
-			<name>PModule/TimerMgr/TimerMgrDef.h</name>
+			<name>PModule/PerfMgr/PerfMgrDef.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/TimerMgr/TimerMgrDef.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/PerfMgr/PerfMgrDef.h</locationURI>
 		</link>
 		<link>
-			<name>PModule/TimerMgr/TimerMgrErrno.h</name>
+			<name>PModule/PerfMgr/PerfMgrErrno.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/TimerMgr/TimerMgrErrno.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/PerfMgr/PerfMgrErrno.h</locationURI>
 		</link>
 		<link>
-			<name>PModule/TimerMgr/TimerMgrModule.cpp</name>
+			<name>PModule/PerfMgr/PerfMgrModule.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/TimerMgr/TimerMgrModule.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/PerfMgr/PerfMgrModule.cpp</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

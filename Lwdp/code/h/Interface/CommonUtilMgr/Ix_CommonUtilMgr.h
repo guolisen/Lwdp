@@ -129,25 +129,25 @@ public:
     inline lw_mutex ()
     {
         int rc = pthread_mutex_init (&mutex, NULL);
-        ASSERT_CHECK_HALT(LWDP_MODULE_LOG, (rc), "lw_mutex init Error");
+        ASSERT_CHECK_HALT(LWDP_MODULE_LOG, (rc == 0), "lw_mutex init Error");
     }
 
     inline ~lw_mutex ()
     {
         int rc = pthread_mutex_destroy (&mutex);
-        ASSERT_CHECK_HALT(LWDP_MODULE_LOG, (rc), "lw_mutex destory Error");
+        ASSERT_CHECK_HALT(LWDP_MODULE_LOG, (rc == 0), "lw_mutex destory Error");
     }
 
     inline void lock ()
     {
         int rc = pthread_mutex_lock (&mutex);
-        ASSERT_CHECK_HALT(LWDP_MODULE_LOG, (rc), "lw_mutex lock Error");
+        ASSERT_CHECK_HALT(LWDP_MODULE_LOG, (rc == 0), "lw_mutex lock Error");
     }
 
     inline void unlock ()
     {
         int rc = pthread_mutex_unlock (&mutex);
-        ASSERT_CHECK_HALT(LWDP_MODULE_LOG, (rc), "lw_mutex unlock Error");
+        ASSERT_CHECK_HALT(LWDP_MODULE_LOG, (rc == 0), "lw_mutex unlock Error");
     }
 
 private:

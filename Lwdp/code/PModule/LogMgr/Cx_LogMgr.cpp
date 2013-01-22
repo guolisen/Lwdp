@@ -133,7 +133,7 @@ LWRESULT SetConsoleColorEnter(int32_ dbLevel)
 			LOGMSG_SET_COLOR(0x5|FOREGROUND_INTENSITY);
 			break;
 	};
-#elif LWDP_PLATFORM_DEF_LINUX
+#elif defined(LWDP_PLATFORM_DEF_LINUX)
 	switch(dbLevel)
 	{
 		case log4cpp::Priority::DEBUG:
@@ -177,7 +177,7 @@ LWRESULT SetConsoleColorLeave()
 {
 #ifdef _WIN32
     LOGMSG_SET_COLOR(0x7);
-#elif LWDP_PLATFORM_DEF_LINUX
+#elif defined(LWDP_PLATFORM_DEF_LINUX)
 	printf("\033[49;37m");
 #endif
     return LWDP_OK;

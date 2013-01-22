@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>TimerMgrSo</name>
+	<name>CommonUtilMgr</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -31,44 +31,34 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>PModule/TimerMgr</name>
+			<name>PModule/CommonUtilMgr</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>PModule/TimerMgr/Cx_TimerMgr.cpp</name>
+			<name>PModule/CommonUtilMgr/CommonUtilMgrDef.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/TimerMgr/Cx_TimerMgr.cpp</locationURI>
+			<locationURI>PARENT-1-ECLIPSE_HOME/LwdpGit/Lwdp/Lwdp/code/PModule/CommonUtilMgr/CommonUtilMgrDef.h</locationURI>
 		</link>
 		<link>
-			<name>PModule/TimerMgr/Cx_TimerMgr.h</name>
+			<name>PModule/CommonUtilMgr/CommonUtilMgrErrno.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/TimerMgr/Cx_TimerMgr.h</locationURI>
+			<locationURI>PARENT-1-ECLIPSE_HOME/LwdpGit/Lwdp/Lwdp/code/PModule/CommonUtilMgr/CommonUtilMgrErrno.h</locationURI>
 		</link>
 		<link>
-			<name>PModule/TimerMgr/Cx_TimerTick.cpp</name>
+			<name>PModule/CommonUtilMgr/CommonUtilMgrModule.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/TimerMgr/Cx_TimerTick.cpp</locationURI>
+			<locationURI>PARENT-1-ECLIPSE_HOME/LwdpGit/Lwdp/Lwdp/code/PModule/CommonUtilMgr/CommonUtilMgrModule.cpp</locationURI>
 		</link>
 		<link>
-			<name>PModule/TimerMgr/Cx_TimerTick.h</name>
+			<name>PModule/CommonUtilMgr/Cx_CommonUtilMgr.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/TimerMgr/Cx_TimerTick.h</locationURI>
+			<locationURI>PARENT-1-ECLIPSE_HOME/LwdpGit/Lwdp/Lwdp/code/PModule/CommonUtilMgr/Cx_CommonUtilMgr.cpp</locationURI>
 		</link>
 		<link>
-			<name>PModule/TimerMgr/TimerMgrDef.h</name>
+			<name>PModule/CommonUtilMgr/Cx_CommonUtilMgr.h</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/TimerMgr/TimerMgrDef.h</locationURI>
-		</link>
-		<link>
-			<name>PModule/TimerMgr/TimerMgrErrno.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/TimerMgr/TimerMgrErrno.h</locationURI>
-		</link>
-		<link>
-			<name>PModule/TimerMgr/TimerMgrModule.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/code/PModule/TimerMgr/TimerMgrModule.cpp</locationURI>
+			<locationURI>PARENT-1-ECLIPSE_HOME/LwdpGit/Lwdp/Lwdp/code/PModule/CommonUtilMgr/Cx_CommonUtilMgr.h</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

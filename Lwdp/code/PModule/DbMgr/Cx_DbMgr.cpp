@@ -18,7 +18,6 @@
 
 
 LWDP_NAMESPACE_BEGIN;
-pthread_mutex_t q_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 Cx_DbMgr::Cx_DbMgr()
 {
@@ -51,6 +50,7 @@ DBHandle Cx_DbMgr::Open(const std::string& host, const std::string& user, const 
  					      int32_ port, long_ client_flag)
 {
 	char value = 1;
+	char timeOut = 5;
 	DBHandleClass* dbclass = new DBHandleClass;
 	ASSERT_CHECK(dbclass != 0);
 	dbclass->mDb = mysql_init(NULL);
@@ -60,7 +60,7 @@ DBHandle Cx_DbMgr::Open(const std::string& host, const std::string& user, const 
 	if (NULL == mysql_real_connect(dbclass->mDb, host.c_str(), user.c_str(), passwd.c_str(), db.c_str(), port, NULL, client_flag))
 		goto EXT;
 
-	char timeOut = 5;
+
 	mysql_options(dbclass->mDb, MYSQL_OPT_CONNECT_TIMEOUT, (char*)(&timeOut));
 	mysql_options(dbclass->mDb, MYSQL_OPT_RECONNECT, (char *)&value);
 	mysql_set_character_set(dbclass->mDb,"gb2312");

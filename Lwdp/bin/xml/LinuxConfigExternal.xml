@@ -163,7 +163,7 @@
 		<!--属性名不可重复-->
 		<Property> 
 			<Version>1.0</Version>
-			<ModuleDir>../../../../bin/Plugins/PerfMgrDll.dll</ModuleDir>
+			<ModuleDir>plugins/PerfMgrSo.so</ModuleDir>
 			<!-- 1-on 0-off -->
 			<PerfSwitch>1</PerfSwitch>  
 		</Property>
@@ -202,7 +202,13 @@
 			<!--<WorkThreadConnect>tcp://localhost:12137</WorkThreadConnect>  -->
 			<WorkThreadConnect>inproc://work_thread</WorkThreadConnect>
 			<CtrlConnect>inproc://ctrl_to_workthread</CtrlConnect>
-			<WorkThreadNum>1</WorkThreadNum>
+			<WorkThreadNum>20</WorkThreadNum>
+			
+			<DbIp>192.168.1.5</DbIp>
+			<DbUser>ptsf</DbUser>
+			<DbPassword>123456</DbPassword>
+			<DbSelect>scenic</DbSelect>
+			<DbPort>3306</DbPort>
 		</Property>
 		<TableSet>
 		</TableSet>
@@ -214,11 +220,6 @@
 		<Property> 
 			<Version>1.0</Version>
 			<ModuleDir>plugins/TcpServer.so</ModuleDir>
-			<DbIp>10.3.18.27</DbIp>
-			<DbUser>ptsf</DbUser>
-			<DbPassword>123456</DbPassword>
-			<DbSelect>scenic</DbSelect>
-			<DbPort>3306</DbPort>
 		</Property>
 		<TableSet>
 		</TableSet>
@@ -235,7 +236,8 @@
 			<CardSql>insert into sc_swiping(card_no, gate_no, scenic_id, ticket_type, action, create_time) 
 			                                VALUES ('%s', '%s', '%s', %d, %d, '%s')
 			</CardSql>
-			
+			<BulkThreadNum>5</BulkThreadNum>
+			<BulkPageSize>200</BulkPageSize>
 		</Property>
 		<TableSet>
 			<PropertyTable Name = "GateInfoCol">
