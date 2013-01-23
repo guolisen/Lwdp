@@ -37,8 +37,8 @@ protected:
 	virtual int32_ ConsoleSendToWorker(COMMAND_LINE& command_line);
 
 public:
-	static ContextHandle mContext;
-	static SocketHandle  mCtrlend;
+	ContextHandle mContext;
+	SocketHandle  mCtrlend;
 protected:
 
 	SocketHandle  mFrontend;

@@ -23,7 +23,8 @@ enum CALLBACK_LINE_ERR_ENUM
 {
 	CONSOLE_EXIT = 1,
 	CONSOLE_BREAK,
-	CONSOLE_LAST
+	CONSOLE_LAST,
+	CONSOLE_UNKNOW
 };
 };
 Cx_ConsoleMgr::Cx_ConsoleMgr()
@@ -93,6 +94,11 @@ LWRESULT Cx_ConsoleMgr::RunConsole()
 				{
 					goto GOOD_BYE;
 				}
+				if(CON::CONSOLE_UNKNOW == res)
+				{
+					system(lineStr.c_str());
+				}
+				
 	    	}
 		}
 
@@ -148,8 +154,8 @@ LWRESULT Cx_ConsoleMgr::CallBackCommand(COMMAND_LINE& command_line)
 	COMMAND_MAP::iterator iter = mCommandMap.find(*lineIter);
 	if(iter == mCommandMap.end())
 	{
-		std::cout << "Unknow Command!" << std::endl;
-		return LWDP_OK;
+		//std::cout << "Unknow Command!" << std::endl;
+		return CON::CONSOLE_UNKNOW;
 	}
 
 	iter->second.commandFun(command_line);

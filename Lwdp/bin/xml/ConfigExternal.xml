@@ -195,10 +195,10 @@
 			<Version>1.0</Version>
 			<ModuleDir>../../../../bin/Plugins/ZmqBackend.dll</ModuleDir>
 			<FrontendTarget>tcp://*:12136</FrontendTarget>
-			<BackendTarget>inproc://work_thread</BackendTarget>
-			<!-- <BackendTarget>tcp://*:12137</BackendTarget> -->
-			<!-- <WorkThreadConnect>tcp://localhost:12137</WorkThreadConnect>  -->
-			<WorkThreadConnect>inproc://work_thread</WorkThreadConnect>
+			<!-- <BackendTarget>inproc://work_thread</BackendTarget>-->
+			<BackendTarget>tcp://*:12137</BackendTarget> 
+			<WorkThreadConnect>tcp://localhost:12137</WorkThreadConnect>  
+			<!-- <WorkThreadConnect>inproc://work_thread</WorkThreadConnect>-->
 			<CtrlConnect>inproc://ctrl_to_workthread</CtrlConnect>
 			<WorkThreadNum>20</WorkThreadNum>
 			

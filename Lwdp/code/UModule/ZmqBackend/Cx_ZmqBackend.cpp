@@ -21,10 +21,7 @@
 #include "ZmqBackendErrno.h"
 #include "Cx_ZmqBackend.h"
 
-
-ContextHandle Cx_ZmqBackend::mContext;
-SocketHandle  Cx_ZmqBackend::mCtrlend;
-
+ContextHandle gCtrlContext = NULL;
 
 Cx_ZmqBackend::Cx_ZmqBackend()
 {
@@ -77,7 +74,7 @@ void* worker_task (void *args)
 	GET_OBJECT_RET(ZmqMgr, iZmqMgr, 0);
 
  	////////////////////////////////////////////////
-	ContextHandle  context = (ContextHandle)Cx_ZmqBackend::mContext;
+	ContextHandle  context = (ContextHandle)iZmqMgr->GetNewContext();
 	SocketHandle responder = iZmqMgr->GetNewSocket(context, LWDP_REP);
 	s_set_id(responder);
 
@@ -104,7 +101,7 @@ void* worker_task (void *args)
 	}
 
 	/////////////////////////////////////////////
-	SocketHandle ctrlClient = iZmqMgr->GetNewSocket(context, LWDP_SUB);
+	SocketHandle ctrlClient = iZmqMgr->GetNewSocket(gCtrlContext, LWDP_SUB);
 	s_set_id(ctrlClient);
 	//ctrl_client
 	std::string strCtrlClient = std::string(LW_ZMQBACKEND_CTRL_CLIENT_TARGET);
@@ -234,7 +231,7 @@ LWRESULT Cx_ZmqBackend::Init()
 	mMsgDelegateMap.clear();
 	GET_OBJECT_RET(ZmqMgr, iZmqMgr, LWDP_GET_OBJECT_ERROR);
 	
-	Cx_ZmqBackend::mContext  = iZmqMgr->GetNewContext();
+	mContext  = iZmqMgr->GetNewContext();
 	mFrontend = iZmqMgr->GetNewSocket(Cx_ZmqBackend::mContext, LWDP_ROUTER);
 	mBackend  = iZmqMgr->GetNewSocket(Cx_ZmqBackend::mContext, LWDP_DEALER);
 
@@ -337,7 +334,8 @@ LWRESULT Cx_ZmqBackend::Init()
 
 
 	//Ctrl
-	Cx_ZmqBackend::mCtrlend = iZmqMgr->GetNewSocket(Cx_ZmqBackend::mContext, LWDP_PUB);
+	gCtrlContext = iZmqMgr->GetNewContext();
+	mCtrlend = iZmqMgr->GetNewSocket(gCtrlContext, LWDP_PUB);
 	//ctrl_client
 	std::string strCtrlClient = std::string(LW_ZMQBACKEND_CTRL_CLIENT_TARGET);
 	XPropertys  propCtrlClient;
@@ -549,6 +547,10 @@ LWRESULT Cx_ZmqBackend::CallBackCtrl(const char_* command_str, uint32_ str_len)
 	{
 		printf("bingo!\n");
 	}
+	else
+	{
+		printf("Unknow Backend Ctrl!\n");
+	}
 
 	return LWDP_OK;
 }
@@ -569,7 +571,7 @@ int32_ Cx_ZmqBackend::ConsoleSendToWorker(COMMAND_LINE& command_line)
 				   "Command msg(%s) ret(%d)", 
 				   sendBuf.c_str());
 
-	int32_ zmq_ret_len = iZmqMgr->Send(Cx_ZmqBackend::mCtrlend, sendBuf.data(), sendBuf.size(), 0);
+	int32_ zmq_ret_len = iZmqMgr->Send(mCtrlend, sendBuf.data(), sendBuf.size(), 0);
 	if(zmq_ret_len != sendBuf.size())
 	{	
 		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, 
