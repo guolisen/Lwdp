@@ -100,16 +100,25 @@ PC_DATA* ConfigSrcImp::LoadConfigData()
 	return (PC_DATA*)buf;
 }
 
-int32_ main()
+const char* HelpStr = "Format:\nTcpMain [config file directory]";
+
+int32_ main(int argc, char* argv[])
 {
 	LWRESULT stat = LWDP_ERROR;
-
+	
 #if defined(LWDP_PLATFORM_DEF_WIN32)
-	ConfigSrcImp csrc("../../../../bin/xml/ConfigExternal.xml");
+	char* configDir = "../../../../bin/xml/ConfigExternal.xml";
 #elif defined(LWDP_PLATFORM_DEF_LINUX)
-	ConfigSrcImp csrc("xml/LinuxConfigExternal.xml");
-	//ConfigSrcImp csrc("../../../bin/xml/LinuxConfigExternal.xml");
+	char* configDir = "xml/LinuxConfigExternal.xml";
 #endif
+
+	if(argc > 1)
+	{
+		configDir = argv[1];
+	}
+
+	ConfigSrcImp csrc(configDir);
+
 	stat = Fw_Init(&csrc, 1);
 	if(stat != LWDP_OK)
 	{
@@ -117,7 +126,7 @@ int32_ main()
 		system("pause");
 		return -1;
 		
-	} 
+	}
   
 	GET_OBJECT_RET(TcpServer, iTcpServer, 0);
 	LWRESULT ret  = iTcpServer->Init();

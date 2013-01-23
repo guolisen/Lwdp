@@ -202,7 +202,7 @@
 			<!--<WorkThreadConnect>tcp://localhost:12137</WorkThreadConnect>  -->
 			<WorkThreadConnect>inproc://work_thread</WorkThreadConnect>
 			<CtrlConnect>inproc://ctrl_to_workthread</CtrlConnect>
-			<WorkThreadNum>20</WorkThreadNum>
+			<WorkThreadNum>1</WorkThreadNum>
 			
 			<DbIp>192.168.1.5</DbIp>
 			<DbUser>ptsf</DbUser>

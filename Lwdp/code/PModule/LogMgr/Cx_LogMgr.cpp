@@ -138,35 +138,35 @@ LWRESULT SetConsoleColorEnter(int32_ dbLevel)
 	{
 		case log4cpp::Priority::DEBUG:
 			//LOGMSG_SET_COLOR(0x8|FOREGROUND_INTENSITY);
-			printf("\033[01;30m");
+			printf("\033[40;37m");
 			break;
 		case log4cpp::Priority::INFO:
 			//LOGMSG_SET_COLOR(0x7);
-			printf("\033[22;37m");
+			printf("\033[40;37;22m");
 			break;
 		case log4cpp::Priority::NOTICE:
 			//LOGMSG_SET_COLOR(0xA|FOREGROUND_INTENSITY);
-			printf("\033[22;32m");
+			printf("\033[40;32;1m");
 			break;
 		case log4cpp::Priority::WARN:
 			//LOGMSG_SET_COLOR(0x7|FOREGROUND_INTENSITY);
-			printf("\033[01;37m");
+			printf("\033[40;37;1m");
 			break;
 		case log4cpp::Priority::ERROR:
 			//LOGMSG_SET_COLOR(FOREGROUND_RED|FOREGROUND_INTENSITY);
-			printf("\033[01;31m");
+			printf("\033[40;31;1m");
 			break;
 		case log4cpp::Priority::CRIT:
 			//LOGMSG_SET_COLOR(0x6|FOREGROUND_INTENSITY);
-			printf("\033[22;36m");
+			printf("\033[40;36m");
 			break;
 		case log4cpp::Priority::ALERT:
 			//LOGMSG_SET_COLOR(0x3|FOREGROUND_INTENSITY);
-			printf("\033[01;33m");
+			printf("\033[40;33m");
 			break;
 		case log4cpp::Priority::EMERG:
 			//LOGMSG_SET_COLOR(0x5|FOREGROUND_INTENSITY);
-			printf("\033[22;35m");
+			printf("\033[40;35m");
 			break;
 	};
 #endif
@@ -178,7 +178,7 @@ LWRESULT SetConsoleColorLeave()
 #ifdef _WIN32
     LOGMSG_SET_COLOR(0x7);
 #elif defined(LWDP_PLATFORM_DEF_LINUX)
-	printf("\033[49;37m");
+	printf("\033[40;37m");
 #endif
     return LWDP_OK;
 }
