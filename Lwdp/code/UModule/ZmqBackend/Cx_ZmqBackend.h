@@ -39,6 +39,7 @@ protected:
 public:
 	ContextHandle mContext;
 	SocketHandle  mCtrlend;
+
 protected:
 
 	SocketHandle  mFrontend;

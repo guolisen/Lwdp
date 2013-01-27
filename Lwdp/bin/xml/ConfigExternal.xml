@@ -234,7 +234,7 @@
 			<CardSql>insert into sc_swiping(card_no, gate_no, scenic_id, ticket_type, action, create_time) 
 			                                VALUES ('%s', '%s', '%s', %d, %d, '%s')
 			</CardSql>
-			<BulkThreadNum>5</BulkThreadNum>
+			<BulkThreadNum>1</BulkThreadNum>
 			<BulkPageSize>200</BulkPageSize>
 		</Property>
 		<TableSet>

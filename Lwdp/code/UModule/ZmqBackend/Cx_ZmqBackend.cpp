@@ -8,6 +8,7 @@
 #include <Interface/ConfigMgr/Ix_ConfigMgr.h>
 #include <Interface/LogMgr/Ix_LogMgr.h>
 #include <Interface/ZmqMgr/Ix_ZmqMgr.h>
+#include <Interface/PerfMgr/Ix_PerfMgr.h>
 
 #include <Interface/CommonUtilMgr/Ix_CommonUtilMgr.h>
 
@@ -22,6 +23,7 @@
 #include "Cx_ZmqBackend.h"
 
 ContextHandle gCtrlContext = NULL;
+pthread_mutex_t gWorker_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 Cx_ZmqBackend::Cx_ZmqBackend()
 {
@@ -125,6 +127,7 @@ void* worker_task (void *args)
 		return NULL;
 	}
 	iZmqMgr->Setsockopt(ctrlClient, LWDP_SUBSCRIBE, "", 0);
+	GET_OBJECT_RET(PerfMgr_Cps, iPerfMgr_Cps_KBPS, NULL);
 
 	// Initialize poll set
 	LWDP_POLLITEM_T items [] = {
@@ -165,6 +168,7 @@ void* worker_task (void *args)
 						   "ZMQ Server Received request: [%d]", iZMessage->Size());
 
 			// Do some 'work'
+			iPerfMgr_Cps_KBPS->Update(iZMessage->Size());
 			GET_OBJECT_RET(ZmqBackend, iZmqBackend, 0);
 			Data_Ptr sendData;
 			sendData.reset();
@@ -214,9 +218,29 @@ void* worker_task (void *args)
 			}
 
 			// Do some 'work'
-			GET_OBJECT_RET(ZmqBackend, iZmqBackend, 0);
-			iZmqBackend->CallBackCtrl((const char_ *)iZMessage->Data(), iZMessage->Size());
-		
+			//GET_OBJECT_RET(ZmqBackend, iZmqBackend, 0);
+			//iZmqBackend->CallBackCtrl((const char_ *)iZMessage->Data(), iZMessage->Size());
+			COMMAND_LINE tmpCmdLine;
+			Cx_Interface<Ix_ConsoleMgr> iConsoleMgr(CLSID_ConsoleMgr);
+			if(!iConsoleMgr.IsNull())
+			{
+				RINOKR(iConsoleMgr->PraseCommandLine((const char_ *)iZMessage->Data(), tmpCmdLine, "@"), NULL);
+			}
+
+			std::string command = tmpCmdLine[1];
+			if(command == "info")
+			{
+				pthread_mutex_lock (&gWorker_mutex);
+				char_ tmpStr[1024] = {0};
+				double kbps = iPerfMgr_Cps_KBPS->GetKbps();
+				Api_snprintf(tmpStr, 1024, "ThreadId: %x Kbps: ", pthread_self());
+				//printf("ThreadId: %x Kbpm: %lf Kbps\n", pthread_self(), kbps);
+				std::cout << tmpStr << kbps << std::endl;
+				pthread_mutex_unlock (&gWorker_mutex);
+				continue;
+			}
+
+			printf("Unknow Backend Ctrl!\n");
 		}
 	}
 
@@ -227,7 +251,7 @@ void* worker_task (void *args)
 }
 
 LWRESULT Cx_ZmqBackend::Init()
-{
+{	
 	mMsgDelegateMap.clear();
 	GET_OBJECT_RET(ZmqMgr, iZmqMgr, LWDP_GET_OBJECT_ERROR);
 	
@@ -442,7 +466,7 @@ LWRESULT Cx_ZmqBackend::RunServer()
 				iZmqMgr->Send(mBackend, iZMessage, more? LWDP_SNDMORE: 0);
                 if (!more)
                     break; // Last message part
-                Api_TaskDelay (1); 
+                //Api_TaskDelay (1); 
 	         }
 	    }
         if (items [1].revents & LWDP_POLLIN) 
@@ -460,10 +484,10 @@ LWRESULT Cx_ZmqBackend::RunServer()
 				iZmqMgr->Send(mFrontend, iZMessage, more? LWDP_SNDMORE: 0);
                 if (!more)
                     break; // Last message part
-                Api_TaskDelay (1);    
+                //Api_TaskDelay (1);    
             }
          }
-		 Api_TaskDelay (1);
+		 //Api_TaskDelay (1);
 	}
 
 	return LWDP_OK;
@@ -545,13 +569,14 @@ LWRESULT Cx_ZmqBackend::CallBackCtrl(const char_* command_str, uint32_ str_len)
 	std::string command = tmpCmdLine[1];
 	if(command == "info")
 	{
-		printf("bingo!\n");
-	}
-	else
-	{
-		printf("Unknow Backend Ctrl!\n");
+		char_ tmpStr[1024] = {0};
+		//Api_snprintf(tmpStr, 1024, "ThreadId: %x Kbpm: %fKB/s", pthread_self(), iPerfMgr_Cps_KBPS->GetKbps());
+		printf("%s\n", tmpStr);
+
+		return LWDP_OK;
 	}
 
+	printf("Unknow Backend Ctrl!\n");
 	return LWDP_OK;
 }
 

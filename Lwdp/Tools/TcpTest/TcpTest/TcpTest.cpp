@@ -468,10 +468,10 @@ unsigned int __stdcall threadfun(void* arg)
 		BulkData_Send(sockfd);
 
 		Sleep(2000);
-		
+		closesocket(sockfd); 
 	}
 	
-	closesocket(sockfd); 
+
  
 	return 0;
 }

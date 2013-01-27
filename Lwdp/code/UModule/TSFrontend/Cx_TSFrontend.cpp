@@ -152,7 +152,7 @@ void* thread_callback(void* vfd)
 			if (errno == EAGAIN || errno == EWOULDBLOCK) 
 #endif	
 			{
-				Api_TaskDelay(10);
+				Api_TaskDelay(1);
 				continue;
 			}
 			else
@@ -190,7 +190,7 @@ void* thread_callback(void* vfd)
 		if((ret_len + indexRecv) < totleSize)
 		{
 			indexRecv += ret_len;
-			Api_TaskDelay(1);
+			//Api_TaskDelay(1);
 			continue;
 		}
 		break;
@@ -312,7 +312,7 @@ void* thread_callback(void* vfd)
 		if(ret_len + indexSend < iZMessage->Size())
 		{
 			indexSend += ret_len;
-			Api_TaskDelay(1);
+			//Api_TaskDelay(1);
 			continue;
 		}
 			
@@ -332,7 +332,7 @@ ERR_TCP_TAG:
 #else
 	::close (accept_conn);
 #endif
-	Api_TaskDelay(5);
+	Api_TaskDelay(1);
 	return NULL;
 }
 
