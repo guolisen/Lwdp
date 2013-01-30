@@ -41,7 +41,7 @@ public:
 protected:
 	LWRESULT IntArrayToStr(uint32_ int_array[], uint32_ size, std::string& ret_str);
 	
-private:
+protected:
     // From Ix_ACDevice
     virtual LWRESULT Init();
 

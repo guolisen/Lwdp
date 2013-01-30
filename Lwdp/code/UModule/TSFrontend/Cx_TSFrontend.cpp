@@ -85,7 +85,7 @@ Cx_TSFrontend::~Cx_TSFrontend()
 	//printf("TSFrontend Delete!\n");
 }
 
-std::string addressToString(struct sockaddr_in* addr)
+std::string addressToString(const struct sockaddr_in* addr)
 {
     char* ip = inet_ntoa(addr->sin_addr);
 	if(!ip)
@@ -111,7 +111,7 @@ void* thread_callback(void* vfd)
 
 	GET_OBJECT_RET(ZmqMgr, iZmqMgr, NULL);
 	Cx_Interface<Ix_ZMessage> iZMessage;
-	int accept_conn = *(int*)vfd;
+	unsigned int accept_conn = *(unsigned int*)vfd;
 	free(vfd);
 
 	int more = 0;
@@ -187,7 +187,7 @@ void* thread_callback(void* vfd)
 
 		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::NOTICE, 
 					   "Tcp Recv Packet Size: (%d)", ret_len);		
-		if((ret_len + indexRecv) < totleSize)
+		if(((uint32_)ret_len + indexRecv) < totleSize)
 		{
 			indexRecv += ret_len;
 			//Api_TaskDelay(1);
@@ -309,7 +309,7 @@ void* thread_callback(void* vfd)
 			}
 		}
 
-		if(ret_len + indexSend < iZMessage->Size())
+		if(((uint32_)ret_len + indexSend) < iZMessage->Size())
 		{
 			indexSend += ret_len;
 			//Api_TaskDelay(1);
@@ -512,7 +512,7 @@ LWRESULT Cx_TSFrontend::Init()
 	{
 		ConsoleCBDelegate regFun = MakeDelegate(this, &Cx_TSFrontend::ConsoleGetTsInfo);
 		RINOK(iConsoleMgr->RegisteCommand(LW_TSFRONTEND_COMMAND_GET_INFO_NAME, regFun,
-				                          LW_TSFRONTEND_COMMAND_GET_INFO_INFO));
+				                          LW_TSFRONTEND_COMMAND_GET_MSG));
 	}
 
 	return LWDP_OK;

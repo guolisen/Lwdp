@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="GB2312"?>
 <Module Name = "LWDP" Modid = "8A74DBB9-F23A-4a33-83DE-1BACE814BFB6">
 	<Property> 
-		<ProjectName>Example</ProjectName>
+		<ProjectName>TicketTcpServer</ProjectName>
 		<Version>1.0</Version>
 	</Property>  
 	<Script Name = "GlobalInit">
@@ -202,7 +202,7 @@
 			<CtrlConnect>inproc://ctrl_to_workthread</CtrlConnect>
 			<WorkThreadNum>20</WorkThreadNum>
 			
-			<DbIp>192.168.1.5</DbIp>
+			<DbIp>10.3.18.56</DbIp>
 			<DbUser>ptsf</DbUser>
 			<DbPassword>123456</DbPassword>
 			<DbSelect>scenic</DbSelect>

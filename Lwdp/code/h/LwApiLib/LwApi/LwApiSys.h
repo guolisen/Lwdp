@@ -192,12 +192,14 @@ inline int32_ _co_makepath_s(char_ *path, size_t,
 
 
 #ifdef _INC_TIME        // time.h
+#if 0
 inline void localtime_s(struct tm *tmOut, const time_t *timer)
 {
     struct tm * p = localtime(timer);
     if (tmOut != NULL && p != NULL)
         *tmOut = *p;
 }
+#endif
 #endif // _INC_TIME
 
 #define _sopen_s(fileHandler, filename, oflag, pmode, rw)   \

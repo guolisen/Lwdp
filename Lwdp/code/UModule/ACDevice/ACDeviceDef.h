@@ -7,7 +7,6 @@
 #define LW_ACDEVICE_THREAD_NUM_DEFAULT       5
 #define LW_ACDEVICE_SELECT_DEVICE_DEFAULT  __T("select * from gate_info where gate_id =")
 
-#define LW_ACDEVICE_SELECT_DEVICE_DEFAULT  __T("select * from gate_info where gate_id =")
 #define LW_ACDEVICE_CONFIG_DEVICE_DEFAULT  __T("select * from gate_info where gate_id =")
 #define LW_ACDEVICE_INSERT_CARD_DATA_DEFAULT  __T("insert into card_swipecard(card_id,  \
 													                          scenery_id,  \
@@ -24,9 +23,9 @@
 
 #define LW_ACDEVICE_GATE_INFO_TABLE     __T("GateInfoCol")
 
-#define LW_ACDEVICE_GATE_INFO_GATE_ID_COL         __T("GateIdCol")
+//#define LW_ACDEVICE_GATE_INFO_GATE_ID_COL         __T("GateIdCol")
 #define LW_ACDEVICE_GATE_INFO_SCENERY_ID_COL	  __T("SceneryIdCol")	
-#define LW_ACDEVICE_GATE_INFO_MANUFACTURER_COL    __T("ManufacturerCol")
+//#define LW_ACDEVICE_GATE_INFO_MANUFACTURER_COL    __T("ManufacturerCol")
 #define LW_ACDEVICE_GATE_INFO_POSITION_COL        __T("PositionCol")
 #define LW_ACDEVICE_GATE_INFO_TYPE_COL            __T("typeCol")
 

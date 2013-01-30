@@ -47,7 +47,7 @@ enum TS_SYSTEM_MSG_ENUM
 {
 	TS_SERVER_OK = TS_SYSTEM_MSG_BASE,
 	TS_SERVER_UNKNOW_MSG, //�ͻ��˷��͵���ϢΪδ֪����
-	TS_SERVER_MSG_BODY_ERR, //�ͻ��˷��͵���ϢΪδ֪����
+	TS_SERVER_MSG_BODY_ERR //�ͻ��˷��͵���ϢΪδ֪����
 	
 };
 

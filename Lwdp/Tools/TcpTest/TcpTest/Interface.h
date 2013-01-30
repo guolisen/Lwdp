@@ -4,25 +4,27 @@
  *  \date   2012.12.14
  */
  
-#ifndef __EXTERNAL_INTERFACE_H
-#define __EXTERNAL_INTERFACE_H
+#ifndef AA_EXTERNAL_INTERFACE_H_AA
+#define AA_EXTERNAL_INTERFACE_H_AA
+
+
 
 #define TS_GATE_ID_STRU_LEN      32
 
-////////////////////////////////////////////
-// Tcp Msg Body
-////////////////////////////////////////////
+//////////////////////////////////////////////
+//  Tcp Msg Body
+//////////////////////////////////////////////
 enum TCP_SERVER_RETURN_CODE
 {
-	TS_SERVER_TCP_MSG_LEN_ERROR = 1,  //�ṹ������Ϣ�����ֶ���ֵ����ʵ�ʽ�����ݳ���?
+	TS_SERVER_TCP_MSG_LEN_ERROR = 1,
 	TS_SERVER_RECV_TIMEOUT_ERROR
 };
 
-typedef struct stru_tcp_server_msg
+typedef struct tag_tcp_server_msg
 {
-	uint32_ msgLength;  //��Ϣ�峤��  �˳���Ϊ�����Ϣ���ȣ�����msgLength����ĳ���?
-	uint32_ statusCode; //��ϢTcpServer���󷵻���
-	uint8_  tcpMsgBody[0];  //��Ϣ��
+	uint32_ msgLength;
+	uint32_ statusCode;
+	uint8_  tcpMsgBody[0];
 }TS_TCP_SERVER_MSG;
 
 

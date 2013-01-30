@@ -59,7 +59,7 @@ void* work_thread(void* arg)
 	Domain.dbHandle = ptmpDomain->dbHandle;
 	DBHandle workDbHandle = Domain.dbHandle;
 	ASSERT_CHECK(workDbHandle != 0);
-	free(arg);
+	free(ptmpDomain);
 	ptmpDomain = NULL;
 
 
@@ -67,10 +67,10 @@ void* work_thread(void* arg)
 	TS_DEVICE_BULK_DATA_REQ_BODY* msgBody = (TS_DEVICE_BULK_DATA_REQ_BODY*)zmqMsg->customMsgBody;
 	Cx_ACDevice* acdObj = Domain.object;
 
-	int32_ inum = Domain.length;
-	int32_ pageSize = (processPageSize > Domain.length)? Domain.length: processPageSize;
-	int32_ reTimes  = (inum / pageSize);
-		   reTimes += (inum%pageSize)>0?1:0;
+	uint32_ inum = Domain.length;
+	uint32_ pageSize = (processPageSize > Domain.length)? Domain.length: processPageSize;
+	uint32_ reTimes  = (inum / pageSize);
+		    reTimes += (inum%pageSize)>0?1:0;
 
 	uint32_ blockNum  = 0;
 	RET_LIST* errList = new RET_LIST;
@@ -79,23 +79,22 @@ void* work_thread(void* arg)
 					 sizeof(TS_DEVICE_CARD_DATA_REQ_BODY);
 	uint8_* fakeMsg = new uint8_[newLen];
 	ASSERT_CHECK(fakeMsg != 0);
-	memset(fakeMsg, 0, newLen);
-	TS_DEVICE_CARD_DATA_REQ_BODY* tmpBody = NULL;
-	tmpBody = (TS_DEVICE_CARD_DATA_REQ_BODY*)msgBody->cardDataEntry;
+	memset(fakeMsg, 0, newLen * sizeof(uint8_));
+	TS_DEVICE_CARD_DATA_REQ_BODY* tmpBody = (TS_DEVICE_CARD_DATA_REQ_BODY*)msgBody->cardDataEntry;
 
 	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::NOTICE, 
 					"Worker TotleNum: %d reTimes: %d pageSize:%d start: %d", inum, reTimes, pageSize, Domain.startPos);
 	uint32_ nowSize = inum;
 	for(blockNum = 0; blockNum<reTimes; blockNum++)
 	{
-		int32_ start = blockNum * pageSize + Domain.startPos;
+		uint32_ start = blockNum * pageSize + Domain.startPos;
 
 		if(nowSize < pageSize)
 			pageSize = nowSize;
 		
 		for(uint32_ i=start; i<start+pageSize; ++i)
 		{
-			memset(fakeMsg, 0, newLen);
+			memset(fakeMsg, 0, newLen * sizeof(uint8_));
 			LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::INFO,
 						   "[Received] REQ:%x REQCODE: %x, cardId: %s sceneryId: %s cardType: %x actionId: %x checkinTime: %x", 
 					       std::string((char_*)zmqMsg->deviceId, sizeof(zmqMsg->deviceId)).c_str(), 
@@ -132,12 +131,8 @@ void* work_thread(void* arg)
 		DELETE_SINGLE(errList);
 		return NULL;
 	}
-	else
-	{
-		return errList;
-	}
 
-	return NULL;
+	return errList;
 }
 
 Cx_ACDevice::Cx_ACDevice()
@@ -243,6 +238,7 @@ LWRESULT Cx_ACDevice::Init()
 	return LWDP_OK;
 }
 
+#if 0
 LWRESULT MsgProcess(const uint8_* ret_msg, uint32_ ret_msg_len, 
 					                 Data_Ptr& send_msg, uint32_& send_msg_len)
 {
@@ -257,7 +253,7 @@ LWRESULT MsgProcess(const uint8_* ret_msg, uint32_ ret_msg_len,
 
 	return LWDP_OK;
 }
-
+#endif
 
 /*
 enum TS_INIT_MSG_RESAULT_ENUM
@@ -905,12 +901,13 @@ LWRESULT Cx_ACDevice::DeviceBulkDataMsgProcess(DBHandle db_handle,const uint8_* 
 		{
 			LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR, 
 			           	   "ACD Thread Connect Mysql Error");
-			uint32_ retResult    = TS_SERVER_DB_ERR;
-			char_*  retResultStr = "Connect DB Error";
+			retResult    = TS_SERVER_DB_ERR;
+			retResultStr = "Connect DB Error";
 			goto RET_TAG;
 		}
 	
 		WORKTHREAD_PARAM* domain = (WORKTHREAD_PARAM*)malloc(sizeof(WORKTHREAD_PARAM));
+		ASSERT_CHECK(domain != 0);
 		domain->startPos 	= (num * domainSize);
 		domain->length 		= domainSize;
 		if(nowSize < domainSize)
@@ -952,14 +949,14 @@ LWRESULT Cx_ACDevice::DeviceBulkDataMsgProcess(DBHandle db_handle,const uint8_* 
 	}
 
 RET_TAG:
-	TS_DEVICE_CARD_DATA_REQ_BODY* tmpBody = NULL;
-	tmpBody = (TS_DEVICE_CARD_DATA_REQ_BODY*)msgBody->cardDataEntry;
+	TS_DEVICE_CARD_DATA_REQ_BODY* retTmpBody = NULL;
+	retTmpBody = (TS_DEVICE_CARD_DATA_REQ_BODY*)msgBody->cardDataEntry;
 
 	if(!errList.empty())
 	{
 		retSize = sizeof(TS_ZMQ_SERVER_MSG) + 
 			      sizeof(TS_DEVICE_BULK_DATA_RSP_BODY) +
-			      sizeof(tmpBody->cardId) * errList.size();
+			      sizeof(retTmpBody->cardId) * errList.size();
 	}
 	else
 	{
@@ -987,7 +984,7 @@ RET_TAG:
 		retBody->errorEntryNum = errList.size();
 		for(uint32_ i = 0; i < retBody->errorEntryNum; ++i)
 		{
-			memcpy(retBody->errCardId + (sizeof(tmpBody->cardId) * i), errList[i].data(), sizeof(tmpBody->cardId));
+			memcpy(retBody->errCardId + (sizeof(retTmpBody->cardId) * i), errList[i].data(), sizeof(retTmpBody->cardId));
 		}
 	}
 
@@ -1000,6 +997,7 @@ RET_TAG:
 
 LWRESULT Cx_ACDevice::IntArrayToStr(uint32_ int_array[], uint32_ size, std::string& ret_str)
 {
+#if 0
 	std::string formatStr("");
 	char_* tmpStrCell = new char_[32];
 	for(uint32_ i = 0; i < size; ++i)
@@ -1013,6 +1011,7 @@ LWRESULT Cx_ACDevice::IntArrayToStr(uint32_ int_array[], uint32_ size, std::stri
 
 	ret_str = formatStr;
 	DELETE_MULTIPLE(tmpStrCell);
+#endif
 	return LWDP_OK;
 }
 

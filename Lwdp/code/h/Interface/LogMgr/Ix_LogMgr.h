@@ -66,7 +66,7 @@ INTERFACE_END();
 		Cx_Interface<Ix_LogMgr> iLogMgr(CLSID_LogMgr); \
 		if (iLogMgr.IsNotNull()) \
 		{ \
-		    iLogMgr->LogPrint(moudel_name, level, __FILE__, __LINE__, __VA_ARGS__); \
+		    iLogMgr->LogPrint(moudel_name, level, __FILE__, (long)__LINE__, __VA_ARGS__); \
 		} \
 	} while (0);
 #else
@@ -81,7 +81,7 @@ INTERFACE_END();
 		Cx_Interface<Ix_LogMgr> iLogMgr(CLSID_LogMgr); \
 		if (iLogMgr.IsNotNull()) \
 		{ \
-		    iLogMgr->LogPrint(moudel_name, level, __FILE__, __LINE__, fmt); \
+		    iLogMgr->LogPrint(moudel_name, level, __FILE__, (long)__LINE__, fmt); \
 		} \
 	} while (0);
 #else

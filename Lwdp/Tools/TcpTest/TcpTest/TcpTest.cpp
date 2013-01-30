@@ -16,6 +16,7 @@
 
 using namespace std;
 #define SERVPORT 12135 /*·þÎñÆ÷¼àÌý¶Ë¿ÚºÅ*/
+//#define DEST_IP  "10.3.18.53"
 #define DEST_IP  "127.0.0.1"
 #define MAXDATASIZE 1024
 
@@ -464,8 +465,8 @@ unsigned int __stdcall threadfun(void* arg)
 		//Init_Send(sockfd);
 		//Config_Send(sockfd);
 		//Status_Send(sockfd);
-		//CardData_Send(sockfd);
-		BulkData_Send(sockfd);
+		CardData_Send(sockfd);
+		//BulkData_Send(sockfd);
 
 		Sleep(2000);
 		closesocket(sockfd); 
@@ -500,7 +501,7 @@ int main()
 	}
 
     int client_nbr;
-    for (client_nbr = 0; client_nbr < 1; client_nbr++) {
+    for (client_nbr = 0; client_nbr < 50; client_nbr++) {
         HANDLE client;
         client = (HANDLE) _beginthreadex (NULL, 0,
         threadfun, 0, 0 , NULL);

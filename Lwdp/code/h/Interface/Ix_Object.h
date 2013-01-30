@@ -141,7 +141,7 @@ typedef LWCLSID MODID;
 #define DEFINE_IID(_Interface) \
 	_Interface(){} \
     virtual ~_Interface() {}     \
-    static X3IID GetIID() { static X3IID id = x3::hashkey(__T(#_Interface)); return id; }
+    static X3IID GetIID() { static const X3IID id = x3::hashkey(__T(#_Interface)); return id; }
 
 /*! \interface Ix_Object
  *  \ingroup _GROUP_PLUGIN_CORE2_
