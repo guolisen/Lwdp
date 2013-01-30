@@ -207,15 +207,21 @@ int32_ Cx_DbMgr::Ping(DBHandle db)
 	//const char* mySqlState = mysql_stat(mDb);
 	//if(!mySqlState)
 	{
-		if((mysql_ping(dbclass->mDb) == 0) && dbclass->mDb)
-			return LWDP_OK;
-		else 
+		if(dbclass->mDb)
 		{
-			if(dbclass->mDb)
+			if(mysql_ping(dbclass->mDb) == 0)
+			{
+				return LWDP_OK;
+			}
+			else
 			{
 				mysql_close(dbclass->mDb);
 				dbclass->mDb = NULL;
 			}
+		}
+		
+		if(!dbclass->mDb) 
+		{
 			LWDP_LOG_PRINT("DbMgr", LWDP_LOG_MGR::WARNING, 
 							"Ping Error Reconnect Db!");
 

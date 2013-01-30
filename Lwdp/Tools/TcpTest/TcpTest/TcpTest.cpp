@@ -501,7 +501,7 @@ int main()
 	}
 
     int client_nbr;
-    for (client_nbr = 0; client_nbr < 50; client_nbr++) {
+    for (client_nbr = 0; client_nbr < 20; client_nbr++) {
         HANDLE client;
         client = (HANDLE) _beginthreadex (NULL, 0,
         threadfun, 0, 0 , NULL);
