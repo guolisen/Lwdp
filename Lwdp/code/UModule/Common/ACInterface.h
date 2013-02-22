@@ -120,7 +120,7 @@ typedef struct stru_dev_card_data_msg
     char_    sceneryId[TS_SCENERY_ID_STRU_LEN];
 	uint16_  cardType;   //卡类型
 	uint16_  actionId;   //行为ID
-	time_t   checkinTime;
+	uint32_  checkinTime;
 }TS_DEVICE_CARD_DATA_REQ_BODY;
 
 typedef struct stru_dev_card_data_rsp_msg

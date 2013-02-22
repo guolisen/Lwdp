@@ -704,9 +704,9 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(DBHandle db_handle,const uint8_* 
 		memset(errMsg, 0, sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY));
 		TS_ZMQ_SERVER_MSG* errStru = (TS_ZMQ_SERVER_MSG*)errMsg;
 		memcpy(errStru->deviceId, zmqMsg->deviceId, sizeof(errStru->deviceId));
-		errStru->msgCode  = TS_SERVER_MSG_BODY_ERR;
+		errStru->msgCode  = htonl(TS_SERVER_MSG_BODY_ERR);
 		TS_SERVER_ERROR_BODY* errBody = (TS_SERVER_ERROR_BODY*)errStru->customMsgBody;
-		errBody->errMsgCode = zmqMsg->msgCode;
+		errBody->errMsgCode = (zmqMsg->msgCode);
 		memcpy(errBody->errData, "Body Empty", 11);
 
 		Data_Ptr tmpData(errMsg);
@@ -721,11 +721,11 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(DBHandle db_handle,const uint8_* 
 	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::INFO,
 				   "[Received] REQ:%s REQCODE: %x, cardId: %s sceneryId: %s cardType: %x actionId: %x checkinTime: %x", 
 			       std::string((char_*)zmqMsg->deviceId, sizeof(zmqMsg->deviceId)).c_str(), 
-			       zmqMsg->msgCode, carIdStr.c_str(), 
+			       ntohl(zmqMsg->msgCode), carIdStr.c_str(), 
 			       std::string((char_*)msgBody->sceneryId, sizeof(msgBody->sceneryId)).c_str(), 
-			       msgBody->cardType, msgBody->actionId, msgBody->checkinTime);
+			       ntohs(msgBody->cardType), ntohs(msgBody->actionId), ntohl(msgBody->checkinTime));
 
-	time_t timep = msgBody->checkinTime;
+	time_t timep = time(NULL);//ntohl(msgBody->checkinTime);
 	struct tm checkTime = {0};
 	localtime_r(&timep, &checkTime); 
 	
@@ -736,8 +736,8 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(DBHandle db_handle,const uint8_* 
 	Api_snprintf(buffer, 3071, Cx_ACDevice::mCardSql.c_str(),  carIdStr.c_str(), 
 															   std::string((char_*)zmqMsg->deviceId, sizeof(zmqMsg->deviceId)-1).c_str(),
 				  											   std::string((char_*)msgBody->sceneryId, sizeof(msgBody->sceneryId)-1).c_str(),
-				  								               msgBody->cardType,
-				  								               msgBody->actionId,
+				  								               ntohs(msgBody->cardType),
+				  								               ntohs(msgBody->actionId),
 				  								               bufTime);
 				  								               //msgBody->checkinTime);
 
@@ -756,7 +756,7 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(DBHandle db_handle,const uint8_* 
 	{
 		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR, 
 				       "Msg(%d) DB Insert(%s) Table Error", 
-				       zmqMsg->msgCode, buffer);
+				       ntohl(zmqMsg->msgCode), buffer);
 
 		retCode = TS_SERVER_DB_ERR;
 		retMsg  = "Insert Error";
@@ -772,9 +772,9 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(DBHandle db_handle,const uint8_* 
 						 sizeof(TS_DEVICE_CARD_DATA_RSP_BODY));
 	TS_ZMQ_SERVER_MSG* retStru = (TS_ZMQ_SERVER_MSG*)returnMsg;
 	memcpy(retStru->deviceId, zmqMsg->deviceId, sizeof(retStru->deviceId));
-	retStru->msgCode  = TS_SERVER_CARD_DATA_RSP_MSG; //
+	retStru->msgCode  = htonl(TS_SERVER_CARD_DATA_RSP_MSG); //
 	TS_DEVICE_CARD_DATA_RSP_BODY* retBody = (TS_DEVICE_CARD_DATA_RSP_BODY*)retStru->customMsgBody;
-	retBody->msgResult = retCode;
+	retBody->msgResult = htonl(retCode);
 	memcpy(retBody->msgResultData, retMsg, strlen(retMsg));
 
 	Data_Ptr tmpData(returnMsg);

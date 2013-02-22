@@ -527,7 +527,7 @@ LWRESULT Cx_ZmqBackend::CallBackZmqMsg(DBHandle dbHandle, const uint8_* recv_msg
 		return LWDP_PARAMETER_ERROR;
 	}
 	TS_ZMQ_SERVER_MSG* zMsg = (TS_ZMQ_SERVER_MSG*)recv_msg;
-	MSG_DELEGATE_MAP::iterator it= mMsgDelegateMap.find(zMsg->msgCode);
+	MSG_DELEGATE_MAP::iterator it= mMsgDelegateMap.find(ntohl(zMsg->msgCode));
 	if(it != mMsgDelegateMap.end())
 	{
 		return it->second(dbHandle, recv_msg, recv_msg_len, ret_data, ret_data_len);
@@ -540,7 +540,7 @@ LWRESULT Cx_ZmqBackend::CallBackZmqMsg(DBHandle dbHandle, const uint8_* recv_msg
 	memset(errMsg, 0, sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY));
 	TS_ZMQ_SERVER_MSG* errStru = (TS_ZMQ_SERVER_MSG*)errMsg;
 	memcpy(errStru->deviceId, zMsg->deviceId, sizeof(errStru->deviceId));
-	errStru->msgCode  = (uint32_)TS_SERVER_UNKNOW_MSG;
+	errStru->msgCode  = htonl((uint32_)TS_SERVER_UNKNOW_MSG);
 	TS_SERVER_ERROR_BODY* errBody = (TS_SERVER_ERROR_BODY*)errStru->customMsgBody;
 	errBody->errMsgCode = zMsg->msgCode;
 	memcpy(errBody->errData, "Unknow Msg", 11);

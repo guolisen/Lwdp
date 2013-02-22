@@ -107,7 +107,7 @@ int32_ main(int argc, char* argv[])
 	LWRESULT stat = LWDP_ERROR;
 	
 #if defined(LWDP_PLATFORM_DEF_WIN32)
-	char* configDir = "../../../../bin/xml/ConfigExternal.xml";
+		char* configDir = "../../../../bin/xml/ConfigExternal.xml";
 #elif defined(LWDP_PLATFORM_DEF_LINUX)
 	char* configDir = "xml/LinuxConfigExternal.xml";
 #endif

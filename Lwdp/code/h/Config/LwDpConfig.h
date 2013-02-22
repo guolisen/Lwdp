@@ -18,8 +18,10 @@ EXTERN_C_BEGIN
 //#define _STDIO_DEFINED
 
 #elif defined(LWDP_PLATFORM_DEF_WIN32)
-#define CFG_CONFIGMGR_DIR_STR 	 __T("../../../../bin/plugins/ConfigMgrDll.dll")
-#define CFG_PLUGINLOADER_DIR_STR __T("../../../../bin/plugins/PluginLoaderDll.dll")
+//#define CFG_CONFIGMGR_DIR_STR 	 __T("../../../../bin/plugins/ConfigMgrDll.dll")
+//#define CFG_PLUGINLOADER_DIR_STR __T("../../../../bin/plugins/PluginLoaderDll.dll")
+#define CFG_CONFIGMGR_DIR_STR 	 __T("plugins/ConfigMgrDll.dll")
+#define CFG_PLUGINLOADER_DIR_STR __T("plugins/PluginLoaderDll.dll")
 #endif
 
 

@@ -168,12 +168,12 @@ void* thread_callback(void* vfd)
 		if(!recvCheckPacketLen)
 		{
 			clientMsg = (TS_TCP_SERVER_MSG*)recvBuf;
-			totleSize = clientMsg->msgLength;
+			totleSize = ntohl(clientMsg->msgLength);
 			recvCheckPacketLen++;
 			if(totleSize > gRecvBufMaxLen)
 			{
-				clientMsg->statusCode = TS_SERVER_TCP_MSG_LEN_ERROR;
-				clientMsg->msgLength  = sizeof(TS_TCP_SERVER_MSG);
+				clientMsg->statusCode = htonl(TS_SERVER_TCP_MSG_LEN_ERROR);
+				clientMsg->msgLength  = htonl(sizeof(TS_TCP_SERVER_MSG));
 				send(accept_conn, (char *)clientMsg, clientMsg->msgLength, 0);
 				LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::WARNING, 
 							   "Tcp Recv Packet is Too Long: recvlen(%d) the Max Packet Length is(%d)", 
@@ -197,7 +197,7 @@ void* thread_callback(void* vfd)
 	};
 
 	LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::NOTICE, 
-				   "Recv Client Message: (%d)", clientMsg->msgLength);
+				   "Recv Client Message: (%d)", ntohl(clientMsg->msgLength));
 
 	
 	//if(clientMsg->msgLength > ret_len)
@@ -274,17 +274,18 @@ void* thread_callback(void* vfd)
 	sendBuf = (uint8_ *)malloc(sizeof(TS_TCP_SERVER_MSG) + iZMessage->Size());
 	ASSERT_CHECK_RET(LWDP_PLUGIN_LOG, 0, sendBuf, "TSFrontend thread Malloc Send Buf ERROR");
 	sendMsgStru = (TS_TCP_SERVER_MSG*)sendBuf;
-	sendMsgStru->msgLength = sizeof(TS_TCP_SERVER_MSG) + iZMessage->Size();
+	uint32_ sendLength = sizeof(TS_TCP_SERVER_MSG) + iZMessage->Size();
+	sendMsgStru->msgLength = htonl(sendLength);
 	sendMsgStru->statusCode = 0;
 	memcpy(sendMsgStru->tcpMsgBody, iZMessage->Data(), iZMessage->Size());
 	while(1)
 	{
 		//Send Data Length
-		ret_len = send(accept_conn, (char *)sendMsgStru + indexSend, sendMsgStru->msgLength - indexSend, 0);
+		ret_len = send(accept_conn, (char *)sendMsgStru + indexSend, sendLength - indexSend, 0);
 		if(ret_len == 0)
 		{
 			LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::WARNING, 
-						   "Remote Socket Closed fd(%x)", accept_conn);
+						   "send err Remote Socket Closed fd(%x)", accept_conn);
 			free(sendBuf);
 			goto ERR_ZMQ_TAG;
 		}
@@ -303,7 +304,7 @@ void* thread_callback(void* vfd)
 			else
 			{
 				LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::WARNING, 
-							   "Remote Socket Closed fd(%x)", accept_conn);
+							   "send Remote Socket Closed fd(%x)", accept_conn);
 				free(sendBuf);
 				goto ERR_ZMQ_TAG;
 			}
