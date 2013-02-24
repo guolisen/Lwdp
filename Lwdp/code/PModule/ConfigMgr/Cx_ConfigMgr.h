@@ -31,6 +31,8 @@ protected:
     Cx_ConfigMgr(){mConfigDataList.clear();};
     virtual ~Cx_ConfigMgr(){}
 
+	virtual LWRESULT RegisteToLua();
+
 	virtual LWRESULT AddConfigSrc(Ix_ConfigSrc* config_src);
 
 	virtual LWRESULT DelConfigSrc(const tstring& config_src_name);

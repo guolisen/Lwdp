@@ -7,6 +7,7 @@
 #ifndef CX_LUA_MANAGER_H
 #define CX_LUA_MANAGER_H
 
+
 #include <boost/shared_ptr.hpp>
 #include <list>
 #include <Interface/LuaMgr/Ix_LuaMgr.h>
@@ -15,14 +16,17 @@
 
 #include <iostream>
 
-extern "C" 
-{
-	#include <lua.h>
-	#include <lualib.h>
-	#include <lauxlib.h>
-};
+
 
 LWDP_NAMESPACE_BEGIN;
+
+
+typedef int  (*TOLUA_OPEN) (lua_State* tolua_S);
+
+
+typedef std::list<TOLUA_OPEN>  LIB_REGISTE_FUNC_LIST;
+
+
 
 class Cx_LuaMgr
     : public Ix_LuaMgr
@@ -36,7 +40,8 @@ protected:
 
 protected:
 	LWRESULT Init();
-
+	LWRESULT Destory();
+	
 	LWRESULT DoFile(const tstring& file_name);
 	LWRESULT LoadFile(const tstring& file_name);
 	LWRESULT LoadLuaLibrary(const tstring& file_name);
@@ -45,18 +50,17 @@ protected:
 	LWRESULT LoadBuffer(const char* buf){return LWDP_OK;};
 	LWRESULT LoadLibraryBuffer(const char* buf){return LWDP_OK;};
 
-
 	LWRESULT RegisteFuction(void* func);
+	LWRESULT ResetStack();
+	LWRESULT LoadAllLib();
+
+
 	LWRESULT Call(){return LWDP_OK;};
 
-	LWRESULT ResetStack(){return LWDP_OK;};
-	
 protected:
-
-
-protected:
-	lua_State* mL;
-	int        mStackLibPos;
+	LuaStateOwner* mState;
+	//int        mStackLibPos;
+	LIB_REGISTE_FUNC_LIST mRegisteFuncList;
 
 };
 

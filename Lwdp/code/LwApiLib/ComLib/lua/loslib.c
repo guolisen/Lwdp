@@ -19,6 +19,7 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
+NAMESPACE_LUA_BEGIN
 
 static int os_pushresult (lua_State *L, int i, const char *filename) {
   int en = errno;  /* calls to Lua API may change this value */
@@ -36,7 +37,11 @@ static int os_pushresult (lua_State *L, int i, const char *filename) {
 
 
 static int os_execute (lua_State *L) {
+#if defined(_XBOX)  ||  defined(_XBOX_VER)  ||  defined(__CELLOS_LV2__)
+  lua_pushinteger(L, -1);
+#else
   lua_pushinteger(L, system(luaL_optstring(L, 1, NULL)));
+#endif
   return 1;
 }
 
@@ -55,6 +60,7 @@ static int os_rename (lua_State *L) {
 
 
 static int os_tmpname (lua_State *L) {
+#if !defined(__CELLOS_LV2__)
   char buff[LUA_TMPNAMBUFSIZE];
   int err;
   lua_tmpnam(buff, err);
@@ -62,11 +68,18 @@ static int os_tmpname (lua_State *L) {
     return luaL_error(L, "unable to generate a unique filename");
   lua_pushstring(L, buff);
   return 1;
+#else
+  return 0;
+#endif
 }
 
 
 static int os_getenv (lua_State *L) {
+#if !defined(_XBOX)  &&  !defined(_XBOX_VER)  &&  !defined(__CELLOS_LV2__)
   lua_pushstring(L, getenv(luaL_checkstring(L, 1)));  /* if NULL push nil */
+#else
+  lua_pushnil(L);
+#endif
   return 1;
 }
 
@@ -215,6 +228,7 @@ static int os_setlocale (lua_State *L) {
 
 static int os_exit (lua_State *L) {
   exit(luaL_optint(L, 1, EXIT_SUCCESS));
+  return 0;  /* to avoid warnings */
 }
 
 static const luaL_Reg syslib[] = {
@@ -241,3 +255,4 @@ LUALIB_API int luaopen_os (lua_State *L) {
   return 1;
 }
 
+NAMESPACE_LUA_END

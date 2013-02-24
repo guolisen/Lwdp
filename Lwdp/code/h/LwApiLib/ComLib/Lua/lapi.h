@@ -10,7 +10,10 @@
 
 #include "lobject.h"
 
+NAMESPACE_LUA_BEGIN
 
 LUAI_FUNC void luaA_pushobject (lua_State *L, const TValue *o);
+
+NAMESPACE_LUA_END
 
 #endif

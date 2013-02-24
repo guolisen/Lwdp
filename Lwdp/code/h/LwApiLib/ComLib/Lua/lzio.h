@@ -12,6 +12,7 @@
 
 #include "lmem.h"
 
+NAMESPACE_LUA_BEGIN
 
 #define EOZ	(-1)			/* end of stream */
 
@@ -36,9 +37,13 @@ typedef struct Mbuffer {
 #define luaZ_resetbuffer(buff) ((buff)->n = 0)
 
 
+#if LUA_MEMORY_STATS
+LUAI_FUNC void luaZ_resizebuffer (lua_State *L, Mbuffer *buff, size_t size);
+#else
 #define luaZ_resizebuffer(L, buff, size) \
 	(luaM_reallocvector(L, (buff)->buffer, (buff)->buffsize, size, char), \
 	(buff)->buffsize = size)
+#endif /* LUA_MEMORY_STATS */
 
 #define luaZ_freebuffer(L, buff)	luaZ_resizebuffer(L, buff, 0)
 
@@ -48,6 +53,9 @@ LUAI_FUNC void luaZ_init (lua_State *L, ZIO *z, lua_Reader reader,
                                         void *data);
 LUAI_FUNC size_t luaZ_read (ZIO* z, void* b, size_t n);	/* read next n bytes */
 LUAI_FUNC int luaZ_lookahead (ZIO *z);
+#if LUA_WIDESTRING
+LUAI_FUNC int luaZ_lookahead_2 (ZIO *z);
+#endif /* LUA_WIDESTRING */
 
 
 
@@ -59,9 +67,14 @@ struct Zio {
   lua_Reader reader;
   void* data;			/* additional data */
   lua_State *L;			/* Lua state (for reader) */
+#if LUA_WIDESTRING
+  int isWide;       /* wide character stream */
+#endif /* LUA_WIDESTRING */
 };
 
 
 LUAI_FUNC int luaZ_fill (ZIO *z);
+
+NAMESPACE_LUA_END
 
 #endif

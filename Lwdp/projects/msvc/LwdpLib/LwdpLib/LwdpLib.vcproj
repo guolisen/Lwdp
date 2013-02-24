@@ -1201,6 +1201,50 @@
 					RelativePath="..\..\..\..\code\LwApiLib\ComLib\lua\tolua_to.c"
 					>
 				</File>
+				<Filter
+					Name="luaplus"
+					>
+					<File
+						RelativePath="..\..\..\..\code\LwApiLib\ComLib\lua\LuaPlus\LuaObject.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\..\code\LwApiLib\ComLib\lua\LuaPlus\LuaPlus.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\..\code\LwApiLib\ComLib\lua\LuaPlus\LuaPlus_Libs.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\..\code\LwApiLib\ComLib\lua\LuaPlus\LuaPlusAddons.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\..\code\LwApiLib\ComLib\lua\LuaPlus\LuaState.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\..\code\LwApiLib\ComLib\lua\LuaPlus\LuaState_DumpObject.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\..\code\LwApiLib\ComLib\lua\LuaPlus\LuaStateOutFile.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\..\code\LwApiLib\ComLib\lua\LuaPlus\LuaTableIterator.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\..\code\LwApiLib\ComLib\lua\LuaPlus\lwstrlib.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\..\code\LwApiLib\ComLib\lua\LuaPlus\popen.c"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="Zmq"

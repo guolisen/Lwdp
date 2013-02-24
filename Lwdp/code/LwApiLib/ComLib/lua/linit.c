@@ -13,6 +13,7 @@
 #include "lualib.h"
 #include "lauxlib.h"
 
+NAMESPACE_LUA_BEGIN
 
 static const luaL_Reg lualibs[] = {
   {"", luaopen_base},
@@ -23,9 +24,11 @@ static const luaL_Reg lualibs[] = {
   {LUA_STRLIBNAME, luaopen_string},
   {LUA_MATHLIBNAME, luaopen_math},
   {LUA_DBLIBNAME, luaopen_debug},
+#if LUA_WIDESTRING
+  {LUA_WSTRLIBNAME, luaopen_wstring},
+#endif /* LUA_WIDESTRING */
   {NULL, NULL}
 };
-
 
 LUALIB_API void luaL_openlibs (lua_State *L) {
   const luaL_Reg *lib = lualibs;
@@ -36,3 +39,4 @@ LUALIB_API void luaL_openlibs (lua_State *L) {
   }
 }
 
+NAMESPACE_LUA_END

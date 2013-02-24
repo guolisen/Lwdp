@@ -37,6 +37,9 @@ typedef Xml_Ptr  		Script_Ptr;
 
 INTERFACE_BEGIN(ConfigMgr)
 	//
+	
+	virtual LWRESULT RegisteToLua() = 0;
+
     virtual LWRESULT AddConfigSrc(Ix_ConfigSrc* config_src) = 0;
 
 	virtual LWRESULT DelConfigSrc(const tstring& config_src_name) = 0;

@@ -10,6 +10,7 @@
 
 #include "lobject.h"
 
+NAMESPACE_LUA_BEGIN
 
 /*
 ** Possible states of the Garbage Collector
@@ -106,5 +107,6 @@ LUAI_FUNC void luaC_linkupval (lua_State *L, UpVal *uv);
 LUAI_FUNC void luaC_barrierf (lua_State *L, GCObject *o, GCObject *v);
 LUAI_FUNC void luaC_barrierback (lua_State *L, Table *t);
 
+NAMESPACE_LUA_END
 
 #endif

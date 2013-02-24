@@ -6,11 +6,23 @@
 
 #include <Interface/ConfigMgr/Ix_XmlMgr.h>
 #include <Interface/ConfigMgr/Ix_ConfigMgr.h>
+#include <Interface/LuaMgr/Ix_LuaMgr.h>
 #include "Cx_ConfigMgr.h"
 
+#include "tolua++.h"
+
+int  tolua_ConfigMgr_open (lua_State* tolua_S);
 
 LWDP_NAMESPACE_BEGIN;
 EXTERN_C_BEGIN;
+
+LWRESULT Cx_ConfigMgr::RegisteToLua()
+{
+	GET_OBJECT_RET(LuaMgr, iLuaMgr, LWDP_GET_OBJECT_ERROR);
+	RINOK(iLuaMgr->RegisteFuction((void*)tolua_ConfigMgr_open));
+
+	return LWDP_OK;
+}
 
 
 LWRESULT Cx_ConfigMgr::AddConfigSrc(Ix_ConfigSrc* config_src)

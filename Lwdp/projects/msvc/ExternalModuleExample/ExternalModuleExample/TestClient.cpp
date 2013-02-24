@@ -401,7 +401,8 @@ int32_ main()
 
 
 	GET_OBJECT_RET(LuaMgr, iLuaMgr, 0);
-	iLuaMgr->DoFile("../../../../code/bin/Lua/Test2.lua");
+	RINOK(iLuaMgr->Init());
+	iLuaMgr->DoFile("../../../../bin/Lua/Test2.lua");
 
 //	long_ val1 = 100;
 //	GET_OBJECT_RET(Example, iExample, 0);

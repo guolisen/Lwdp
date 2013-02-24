@@ -1,2 +1,2 @@
-..\..\..\Tools\ToLua++\bin\tolua++.exe -n ConfigMgr -o LuaConfigMgr.cpp Ix_ConfigMgr.pkg
+..\..\..\Tools\ToLua++\bin\tolua++.exe -n ConfigMgr -o Lua_ConfigMgr.cpp Ix_ConfigMgr.pkg
 pause

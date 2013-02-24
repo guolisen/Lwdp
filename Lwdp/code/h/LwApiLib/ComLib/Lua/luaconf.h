@@ -11,6 +11,85 @@
 #include <limits.h>
 #include <stddef.h>
 
+#ifndef LUA_TILDE_DEBUGGER
+#if defined(_MSC_VER)
+#define LUA_TILDE_DEBUGGER 1
+#endif
+#endif /* LUA_TILDE_DEBUGGER */
+
+#ifndef LUA_FASTREF_SUPPORT
+#define LUA_FASTREF_SUPPORT 1
+#endif /* LUA_FASTREF_SUPPORT */
+
+#ifndef LUA_WIDESTRING
+#define LUA_WIDESTRING 1
+#endif /* LUA_WIDESTRING */
+
+#ifndef LUA_WIDESTRING_FILE
+#define LUA_WIDESTRING_FILE 1
+#endif /* LUA_WIDESTRING_FILE */
+
+#ifndef LUA_BITFIELD_OPS
+#define LUA_BITFIELD_OPS 1
+#endif /* LUA_BITFIELD_OPS */
+
+#ifndef LUA_MUTATION_OPERATORS
+#define LUA_MUTATION_OPERATORS 0
+#endif /* LUA_MUTATION_OPERATORS */
+
+#ifndef LUA_EXT_HEXADECIMAL
+#define LUA_EXT_HEXADECIMAL 1
+#endif /* LUA_EXT_HEXADECIMAL */
+
+#ifndef LUA_ENDIAN_SUPPORT
+#define LUA_ENDIAN_SUPPORT 1
+#endif /* LUA_ENDIAN_SUPPORT */
+
+#ifndef LUA_MEMORY_STATS
+#define LUA_MEMORY_STATS 1
+#endif /* LUA_MEMORY_STATS */
+
+#ifndef LUA_AUTO_INCLUDE_STRING_PACK_LIBRARY
+#define LUA_AUTO_INCLUDE_STRING_PACK_LIBRARY 1
+#endif /* LUA_AUTO_INCLUDE_STRING_PACK_LIBRARY */
+
+#ifndef LUA_STRING_FORMAT_EXTENSIONS
+#define	LUA_STRING_FORMAT_EXTENSIONS 1
+#endif /* LUA_STRING_FORMAT_EXTENSIONS */
+
+#ifndef LUA_PT_POPEN
+#define LUA_PT_POPEN 1
+#endif /* LUA_PT_POPEN */
+
+#ifndef LUAPLUS_EXTENSIONS
+#define LUAPLUS_EXTENSIONS 1
+#endif /* LUAPLUS_EXTENSIONS */
+
+#ifndef LUAPLUS_DUMPOBJECT
+#define LUAPLUS_DUMPOBJECT 1
+#endif /* LUAPLUS_DUMPOBJECT */
+
+#ifndef LUA_EXT_CONTINUE
+#define LUA_EXT_CONTINUE 1
+#endif /* LUA_EXT_CONTINUE */
+
+#ifndef LUA_EXT_RESUMABLEVM
+#define LUA_EXT_RESUMABLEVM 0
+#endif /* LUA_EXT_RESUMABLEVM */
+
+/* Still has bugs... */
+#ifndef LUA_REFCOUNT
+#define LUA_REFCOUNT 0
+#endif /* LUA_REFCOUNT */
+
+#ifndef LUAPLUS_EXCEPTIONS
+#define LUAPLUS_EXCEPTIONS 0
+#endif // LUAPLUS_EXCEPTIONS
+
+#if LUA_WIDESTRING
+#define lua_wstr2number(s,p)    triow_to_double((s), (p))
+#endif /* LUA_WIDESTRING */
+
 
 /*
 ** ==================================================================
@@ -29,7 +108,7 @@
 #endif
 
 
-#if !defined(LUA_ANSI) && defined(_WIN32)
+#if !defined(LUA_ANSI) && defined(_WIN32) && !defined(_XBOX) && !defined(_XBOX_VER)  
 #define LUA_WIN
 #endif
 
@@ -80,11 +159,34 @@
 ** hierarchy or if you want to install your libraries in
 ** non-conventional directories.
 */
+#if defined(WIN32)
+#define LUA_CSUFFIX_PLATFORM ".dll"
+#elif defined(macintosh)  ||  defined(__APPLE__)
+#define LUA_CSUFFIX_PLATFORM ".dylib"
+#else
+#define LUA_CSUFFIX_PLATFORM ".so"
+#endif
+
+#ifdef _DEBUG
+#define LUA_CSUFFIX ".debug" LUA_CSUFFIX_PLATFORM
+#else
+#define LUA_CSUFFIX LUA_CSUFFIX_PLATFORM
+#endif
+
 #if defined(_WIN32)
 /*
 ** In Windows, any exclamation mark ('!') in the path is replaced by the
 ** path of the directory of the executable file of the current process.
 */
+#if LUAPLUS_EXTENSIONS
+#define LUA_LDIR	"!\\lua\\"
+#define LUA_CDIR	"!\\modules\\"
+#define LUA_PATH_DEFAULT  \
+        "./?.lua;"  LUA_LDIR"?.lua;"  LUA_LDIR"?/init.lua;" \
+                     LUA_CDIR"?.lua;"  LUA_CDIR"?/init.lua"
+#define LUA_CPATH_DEFAULT \
+    "./?" LUA_CSUFFIX ";"  LUA_CDIR"?" LUA_CSUFFIX ";" LUA_CDIR"loadall" LUA_CSUFFIX
+#else
 #define LUA_LDIR	"!\\lua\\"
 #define LUA_CDIR	"!\\"
 #define LUA_PATH_DEFAULT  \
@@ -92,7 +194,21 @@
 		             LUA_CDIR"?.lua;"  LUA_CDIR"?\\init.lua"
 #define LUA_CPATH_DEFAULT \
 	".\\?.dll;"  LUA_CDIR"?.dll;" LUA_CDIR"loadall.dll"
+#endif
 
+#else
+#if LUAPLUS_EXTENSIONS
+#define LUA_ROOT	"/usr/local/"
+#define LUA_LDIR	"!/share/lua/5.1/"
+#define LUA_CDIR	"!/lib/lua/5.1/"
+#define LUA_PATH_DEFAULT  \
+        "./?.lua;"  LUA_LDIR"?.lua;"  LUA_LDIR"?/init.lua;" \
+                    LUA_CDIR"?.lua;"  LUA_CDIR"?/init.lua"
+#define LUA_PATH_DEFAULT  \
+        "./?.lua;"  LUA_LDIR"?.lua;"  LUA_LDIR"?/init.lua;" \
+                     LUA_CDIR"?.lua;"  LUA_CDIR"?/init.lua"
+#define LUA_CPATH_DEFAULT \
+    "./?" LUA_CSUFFIX ";"  LUA_CDIR"?" LUA_CSUFFIX ";" LUA_CDIR"loadall" LUA_CSUFFIX
 #else
 #define LUA_ROOT	"/usr/local/"
 #define LUA_LDIR	LUA_ROOT "share/lua/5.1/"
@@ -102,6 +218,7 @@
 		            LUA_CDIR"?.lua;"  LUA_CDIR"?/init.lua"
 #define LUA_CPATH_DEFAULT \
 	"./?.so;"  LUA_CDIR"?.so;" LUA_CDIR"loadall.so"
+#endif
 #endif
 
 
@@ -151,6 +268,7 @@
 ** the libraries, you may want to use the following definition (define
 ** LUA_BUILD_AS_DLL to get it).
 */
+#ifndef LUA_API
 #if defined(LUA_BUILD_AS_DLL)
 
 #if defined(LUA_CORE) || defined(LUA_LIB)
@@ -161,8 +279,11 @@
 
 #else
 
+#ifndef LUA_API
 #define LUA_API		extern
+#endif
 
+#endif
 #endif
 
 /* more often than not the libs go together with the core */
@@ -374,9 +495,11 @@
 ** a bit, but may be quite useful when debugging C code that interfaces
 ** with Lua. A useful redefinition is to use assert.h.
 */
+#define LUA_USE_APICHECK
 #if defined(LUA_USE_APICHECK)
 #include <assert.h>
 #define luai_apicheck(L,o)	{ (void)L; assert(o); }
+#define lua_assert(o)	assert(o)
 #else
 #define luai_apicheck(L,o)	{ (void)L; }
 #endif
@@ -560,7 +683,11 @@
 /* On a Microsoft compiler, use assembler */
 #if defined(_MSC_VER)
 
+#if LUAPLUS_EXTENSIONS
+#define lua_number2int(i,d)   i = (int)d;
+#else
 #define lua_number2int(i,d)   __asm fld d   __asm fistp i
+#endif /* LUAPLUS_EXTENSIONS */
 #define lua_number2integer(i,n)		lua_number2int(i, n)
 
 /* the next trick should work on any Pentium, but sometimes clashes
@@ -603,11 +730,16 @@ union luai_Cast { double l_d; long l_l; };
 ** compiling as C++ code, with _longjmp/_setjmp when asked to use them,
 ** and with longjmp/setjmp otherwise.
 */
-#if defined(__cplusplus)
+#if !defined(LUA_FORCE_USE_LONGJMP)  &&  defined(__cplusplus)
 /* C++ exceptions */
 #define LUAI_THROW(L,c)	throw(c)
+#if LUA_EXT_RESUMABLEVM
+#define LUAI_TRY(L,c,a)	try { a } catch(...) \
+    { if ((c)->status == 0) (c)->status = LUA_ERREXC; }
+#else
 #define LUAI_TRY(L,c,a)	try { a } catch(...) \
 	{ if ((c)->status == 0) (c)->status = -1; }
+#endif /* LUA_EXT_RESUMABLEVM */
 #define luai_jmpbuf	int  /* dummy variable */
 
 #elif defined(LUA_USE_ULONGJMP)
@@ -670,10 +802,15 @@ union luai_Cast { double l_d; long l_l; };
 #define lua_popen(L,c,m)	((void)L, fflush(NULL), popen(c,m))
 #define lua_pclose(L,file)	((void)L, (pclose(file) != -1))
 
-#elif defined(LUA_WIN)
+#elif defined(LUA_WIN) && !defined(_XBOX) && !defined(_XBOX_VER) && !defined(PLATFORM_PS3)
 
+#if LUA_PT_POPEN
+#define lua_popen(L,c,m) ((void)L, pt_popen(c,m))
+#define lua_pclose(L,file) ((void)L, (pt_pclose(file) != -1))
+#else
 #define lua_popen(L,c,m)	((void)L, _popen(c,m))
 #define lua_pclose(L,file)	((void)L, (_pclose(file) != -1))
+#endif /* LUA_PT_POPEN */
 
 #else
 
@@ -720,7 +857,11 @@ union luai_Cast { double l_d; long l_l; };
 ** CHANGE them if you defined LUAI_EXTRASPACE and need to do something
 ** extra when a thread is created/deleted/resumed/yielded.
 */
+#if LUAPLUS_EXTENSIONS
+#define luai_userstateopen(L)		LuaState_UserStateOpen(L)
+#else
 #define luai_userstateopen(L)		((void)L)
+#endif /* LUAPLUS_EXTENSIONS */
 #define luai_userstateclose(L)		((void)L)
 #define luai_userstatethread(L,L1)	((void)L)
 #define luai_userstatefree(L)		((void)L)
@@ -756,8 +897,6 @@ union luai_Cast { double l_d; long l_l; };
 ** Local configuration. You can use this space to add your redefinitions
 ** without modifying the main part of the file.
 */
-
-
 
 #endif
 

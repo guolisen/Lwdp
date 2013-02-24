@@ -10,14 +10,24 @@
 #include "lobject.h"
 #include "lzio.h"
 
+NAMESPACE_LUA_BEGIN
+
 /* load one chunk; from lundump.c */
 LUAI_FUNC Proto* luaU_undump (lua_State* L, ZIO* Z, Mbuffer* buff, const char* name);
 
+#if LUA_ENDIAN_SUPPORT
+/* make header; from lundump.c */
+LUAI_FUNC void luaU_header (char* h, char endian);
+
+/* dump one chunk; from ldump.c */
+LUAI_FUNC int luaU_dump (lua_State* L, const Proto* f, lua_Writer w, void* data, int strip, char endian);
+#else
 /* make header; from lundump.c */
 LUAI_FUNC void luaU_header (char* h);
 
 /* dump one chunk; from ldump.c */
 LUAI_FUNC int luaU_dump (lua_State* L, const Proto* f, lua_Writer w, void* data, int strip);
+#endif /* LUA_ENDIAN_SUPPORT */
 
 #ifdef luac_c
 /* print one chunk; from print.c */
@@ -32,5 +42,7 @@ LUAI_FUNC void luaU_print (const Proto* f, int full);
 
 /* size of header of binary files */
 #define LUAC_HEADERSIZE		12
+
+NAMESPACE_LUA_END
 
 #endif

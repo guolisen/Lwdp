@@ -12,9 +12,13 @@
 #include <stdarg.h>
 #include <stddef.h>
 
+#include "LuaLink.h"
 
 #include "luaconf.h"
 
+NAMESPACE_LUA_BEGIN
+
+LUA_EXTERN_C_BEGIN
 
 #define LUA_VERSION	"Lua 5.1"
 #define LUA_RELEASE	"Lua 5.1.5"
@@ -45,12 +49,19 @@
 #define LUA_ERRSYNTAX	3
 #define LUA_ERRMEM	4
 #define LUA_ERRERR	5
-
+#if LUA_EXT_RESUMABLEVM
+#define LUA_ERREXC	6
+#define LUA_ERRFORCECO  7
+#endif /* LUA_EXT_RESUMABLEVM */
 
 typedef struct lua_State lua_State;
 
 typedef int (*lua_CFunction) (lua_State *L);
 
+#if LUA_WIDESTRING
+/* type of lex characters in Lua */
+typedef unsigned short lua_WChar;
+#endif /* LUA_WIDESTRING */
 
 /*
 ** functions that read/write blocks when loading/dumping Lua chunks
@@ -63,7 +74,11 @@ typedef int (*lua_Writer) (lua_State *L, const void* p, size_t sz, void* ud);
 /*
 ** prototype for memory-allocation functions
 */
+#if LUAPLUS_EXTENSIONS
+typedef void * (*lua_Alloc) (void *ud, void *ptr, size_t osize, size_t nsize, const char* name, unsigned int alloc_flags);
+#else
 typedef void * (*lua_Alloc) (void *ud, void *ptr, size_t osize, size_t nsize);
+#endif /* LUAPLUS_EXTENSIONS */
 
 
 /*
@@ -80,6 +95,9 @@ typedef void * (*lua_Alloc) (void *ud, void *ptr, size_t osize, size_t nsize);
 #define LUA_TFUNCTION		6
 #define LUA_TUSERDATA		7
 #define LUA_TTHREAD		8
+#if LUA_WIDESTRING
+#define LUA_TWSTRING            9
+#endif /* LUA_WIDESTRING */
 
 
 
@@ -93,6 +111,10 @@ typedef void * (*lua_Alloc) (void *ud, void *ptr, size_t osize, size_t nsize);
 #if defined(LUA_USER_H)
 #include LUA_USER_H
 #endif
+
+#if LUA_FASTREF_SUPPORT
+#define LUA_RIDX_FASTREF_FREELIST	1
+#endif /* LUA_FASTREF_SUPPORT */
 
 
 /* type of numbers in Lua */
@@ -198,21 +220,53 @@ LUA_API int   (lua_setfenv) (lua_State *L, int idx);
 /*
 ** `load' and `call' functions (load and run Lua code)
 */
+#if LUA_EXT_RESUMABLEVM
+LUA_API void  (lua_vcall) (lua_State *L, int nargs, int nresults, void *ctx);
+LUA_API int   (lua_vpcall) (lua_State *L, int nargs, int nresults,
+                            int errfunc, void *ctx);
+#else
 LUA_API void  (lua_call) (lua_State *L, int nargs, int nresults);
 LUA_API int   (lua_pcall) (lua_State *L, int nargs, int nresults, int errfunc);
+#endif /* LUA_EXT_RESUMABLEVM */
 LUA_API int   (lua_cpcall) (lua_State *L, lua_CFunction func, void *ud);
 LUA_API int   (lua_load) (lua_State *L, lua_Reader reader, void *dt,
                                         const char *chunkname);
+#if LUA_WIDESTRING
+LUA_API int   (lua_wload) (lua_State *L, lua_Reader reader, void *data,
+                      const char *chunkname);
+#endif /* LUA_WIDESTRING */
 
 LUA_API int (lua_dump) (lua_State *L, lua_Writer writer, void *data);
+
+#if LUA_EXT_RESUMABLEVM
+LUA_API void *lua_vcontext (lua_State *L);
+
+#define lua_icontext(L)		((int)(ptrdiff_t)lua_vcontext(L))
+#define lua_call(L, na, nr)	lua_vcall(L, (na), (nr), NULL)
+#define lua_icall(L, na, nr, i) \
+	lua_vcall(L, (na), (nr), (void *)(ptrdiff_t)(i))
+#define lua_pcall(L, na, nr, ef)	lua_vpcall(L, (na), (nr), (ef), NULL)
+#define lua_ipcall(L, na, nr, ef, i) \
+	lua_vpcall(L, (na), (nr), (ef), (void *)(ptrdiff_t)(i))
+#endif /* LUA_EXT_RESUMABLEVM */
 
 
 /*
 ** coroutine functions
 */
+#if LUA_EXT_RESUMABLEVM
+LUA_API int  (lua_vyield) (lua_State *L, int nresults, void *ctx);
+#else
 LUA_API int  (lua_yield) (lua_State *L, int nresults);
+#endif /* LUA_EXT_RESUMABLEVM */
 LUA_API int  (lua_resume) (lua_State *L, int narg);
 LUA_API int  (lua_status) (lua_State *L);
+
+#if LUA_EXT_RESUMABLEVM
+#define lua_yield(L, nr)	lua_vyield(L, (nr), NULL)
+#define lua_iyield(L, nr, i)	lua_vyield(L, (nr), (void *)(ptrdiff_t)(i))
+#endif /* LUA_EXT_RESUMABLEVM */
+
 
 /*
 ** garbage-collection function and options
@@ -313,6 +367,9 @@ LUA_API void lua_setlevel	(lua_State *from, lua_State *to);
 #define LUA_HOOKLINE	2
 #define LUA_HOOKCOUNT	3
 #define LUA_HOOKTAILRET 4
+#if LUA_TILDE_DEBUGGER
+#define LUA_HOOKERROR	5
+#endif /* LUA_TILDE_DEBUGGER */
 
 
 /*
@@ -322,6 +379,9 @@ LUA_API void lua_setlevel	(lua_State *from, lua_State *to);
 #define LUA_MASKRET	(1 << LUA_HOOKRET)
 #define LUA_MASKLINE	(1 << LUA_HOOKLINE)
 #define LUA_MASKCOUNT	(1 << LUA_HOOKCOUNT)
+#if LUA_TILDE_DEBUGGER
+#define LUA_MASKERROR	(1 << LUA_HOOKERROR)
+#endif /* LUA_TILDE_DEBUGGER */
 
 typedef struct lua_Debug lua_Debug;  /* activation record */
 
@@ -336,6 +396,9 @@ LUA_API const char *lua_getlocal (lua_State *L, const lua_Debug *ar, int n);
 LUA_API const char *lua_setlocal (lua_State *L, const lua_Debug *ar, int n);
 LUA_API const char *lua_getupvalue (lua_State *L, int funcindex, int n);
 LUA_API const char *lua_setupvalue (lua_State *L, int funcindex, int n);
+#if LUA_TILDE_DEBUGGER
+LUA_API int lua_getvararg (lua_State *L, const lua_Debug *ar, int n);
+#endif /* LUA_TILDE_DEBUGGER */
 
 LUA_API int lua_sethook (lua_State *L, lua_Hook func, int mask, int count);
 LUA_API lua_Hook lua_gethook (lua_State *L);
@@ -358,8 +421,20 @@ struct lua_Debug {
   int i_ci;  /* active function */
 };
 
-/* }====================================================================== */
+#if LUA_FASTREF_SUPPORT
 
+#define LUA_FASTREFNIL	(-1999999)
+
+LUA_API int lua_fastref (lua_State *L);
+LUA_API int lua_fastrefindex (lua_State *L, int idx);
+LUA_API void lua_fastunref (lua_State *L, int ref);
+LUA_API void lua_getfastref (lua_State *L, int ref);
+
+#endif /* LUA_FASTREF_SUPPORT */
+
+LUA_EXTERN_C_END
+
+/* }====================================================================== */
 
 /******************************************************************************
 * Copyright (C) 1994-2012 Lua.org, PUC-Rio.  All rights reserved.
@@ -384,5 +459,71 @@ struct lua_Debug {
 * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ******************************************************************************/
 
+#if LUA_WIDESTRING
+
+LUA_EXTERN_C_BEGIN
+
+/* formats for Lua numbers */
+#ifndef LUA_NUMBER_WSCAN
+#define LUA_NUMBER_WSCAN	L"%lf"
+#endif
+
+#ifndef LUA_NUMBER_WFMT
+#define LUA_NUMBER_WFMT_LOCAL const lua_WChar LUA_NUMBER_WFMT[] = { '%', '.', '1', '6', 'g', 0 }
+#endif
+
+LUA_API int             lua_iswstring (lua_State *L, int index);
+LUA_API const lua_WChar  *lua_towstring (lua_State *L, int index);
+LUA_API void  lua_pushlwstring (lua_State *L, const lua_WChar *s, size_t len);
+LUA_API void  lua_pushwstring (lua_State *L, const lua_WChar *s);
+
+LUA_API size_t lp_wcslen(const lua_WChar* str);
+LUA_API int lp_wcscmp(const lua_WChar* str1, const lua_WChar* str2);
+
+#define lua_pushwliteral(L, s)	\
+	lua_pushlwstring(L, (const lua_WChar*)(L"" s), (sizeof(s)/sizeof(lua_WChar))-1)
+
+#define LUA_WSTRLIBNAME	"wstring"
+LUALIB_API int luaopen_wstring (lua_State *L);
+
+LUALIB_API int luaL_loadwbuffer (lua_State *L, const lua_WChar *buff, size_t size, const char *name);
+
+LUA_API const lua_WChar     *(lua_tolwstring) (lua_State *L, int idx, size_t *len);
+
+size_t lua_WChar_len(const lua_WChar* str);
+
+LUA_EXTERN_C_END
+
+#endif /* LUA_WIDESTRING */
+
+#if LUAPLUS_EXTENSIONS
+
+LUA_EXTERN_C_BEGIN
+
+#define LUA_ALLOC_TEMP 1
+LUA_API void lua_getdefaultallocfunction(lua_Alloc* allocFunc, void** ud);
+LUA_API void lua_setdefaultallocfunction(lua_Alloc reallocFunc, void* ud);
+
+LUA_API void lua_setloadnotifyfunction(lua_State *L, void (*loadNotifyFunction)(lua_State *L, const char *));
+LUA_API void lua_setusergcfunction(lua_State *L, void (*userGCFunction)(void*));
+
+# define lua_boxpointer(L,u) \
+        (*(void **)(lua_newuserdata(L, sizeof(void *))) = (u))
+
+#define lua_unboxpointer(L,i)   (*(void **)(lua_touserdata(L, i)))
+
+LUA_EXTERN_C_END
+
+#endif /* LUAPLUS_EXTENSIONS */
+
+LUA_EXTERN_C_BEGIN
+
+#if LUA_ENDIAN_SUPPORT
+LUA_API int (lua_dumpendian) (lua_State *L, lua_Writer writer, void *data, int strip, char endian);
+#endif /* LUA_ENDIAN_SUPPORT */
+
+LUA_EXTERN_C_END
+
+NAMESPACE_LUA_END
 
 #endif

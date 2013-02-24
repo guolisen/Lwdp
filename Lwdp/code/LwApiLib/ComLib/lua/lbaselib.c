@@ -19,8 +19,11 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
+#if LUA_EXT_RESUMABLEVM
+#include "lstate.h"
+#endif /* LUA_EXT_RESUMABLEVM */
 
-
+NAMESPACE_LUA_BEGIN
 
 /*
 ** If your system does not support `stdout', you can just remove this function.
@@ -28,15 +31,96 @@
 ** model but changing `fputs' to put the strings at a proper place
 ** (a console window or a log file, for instance).
 */
+#if LUA_WIDESTRING
 static int luaB_print (lua_State *L) {
   int n = lua_gettop(L);  /* number of arguments */
+#if LUA_EXT_RESUMABLEVM
+  int i = lua_icontext(L);
+  if (i) {
+    n -= 3;  /* compensate for tostring function and result */
+    goto resume;
+  }
+#else
   int i;
+#endif /* LUA_EXT_RESUMABLEVM */
+  lua_getglobal(L, "towstring");
+  lua_getglobal(L, "tostring");
+  for (i=1; i<=n; i++) {
+    const char *s = NULL;
+    const lua_WChar *ws = NULL;
+    if (lua_type(L, i) != LUA_TWSTRING) {
+      lua_pushvalue(L, -1);  /* function to be called */
+      lua_pushvalue(L, i);   /* value to print */
+#if LUA_EXT_RESUMABLEVM
+      lua_icall(L, 1, 1, i);
+resume:
+#else
+      lua_call(L, 1, 1);
+#endif /* LUA_EXT_RESUMABLEVM */
+      s = lua_tostring(L, -1);  /* get result */
+      if (s == NULL)
+        return luaL_error(L, LUA_QL("tostring") " must return a string to "
+                             LUA_QL("print"));
+    } else {
+      lua_pushvalue(L, -2);  /* function to be called */
+      lua_pushvalue(L, i);   /* value to print */
+#if LUA_EXT_RESUMABLEVM
+      lua_icall(L, 1, 1, i);
+#else
+      lua_call(L, 1, 1);
+#endif /* LUA_EXT_RESUMABLEVM */
+      ws = lua_towstring(L, -1);  /* get result */
+      if (ws == NULL)
+        return luaL_error(L, LUA_QL("towstring") " must return a wstring to "
+                             LUA_QL("print"));
+    }
+    if (i>1) fputs("\t", stdout);
+    if (s)
+      fputs(s, stdout);
+    else {
+      wchar_t out[512];
+      wchar_t* outEnd = out + (sizeof(out) - 1) - sizeof(lua_WChar);
+      while (*ws) {
+        wchar_t* outPos = out;
+        while (*ws && outPos != outEnd) {
+          *outPos++ = *ws++;
+        }
+        *outPos++ = 0;
+#if !defined(__CELLOS_LV2__)  &&  !defined(PLATFORM_WII)
+#ifdef WIN32
+        fputws(out, stdout);
+#endif
+#endif /* PLATFORM_PS3 */
+      }
+    }
+    lua_pop(L, 1);  /* pop result */
+  }
+  fputs("\n", stdout);
+  return 0;
+}
+#else
+static int luaB_print (lua_State *L) {
+  int n = lua_gettop(L);  /* number of arguments */
+#if LUA_EXT_RESUMABLEVM
+  int i = lua_icontext(L);
+  if (i) {
+    n -= 2;  /* compensate for tostring function and result */
+    goto resume;
+  }
+#else
+  int i;
+#endif /* LUA_EXT_RESUMABLEVM */
   lua_getglobal(L, "tostring");
   for (i=1; i<=n; i++) {
     const char *s;
     lua_pushvalue(L, -1);  /* function to be called */
     lua_pushvalue(L, i);   /* value to print */
+#if LUA_EXT_RESUMABLEVM
+    lua_icall(L, 1, 1, i);
+resume:
+#else
     lua_call(L, 1, 1);
+#endif /* LUA_EXT_RESUMABLEVM */
     s = lua_tostring(L, -1);  /* get result */
     if (s == NULL)
       return luaL_error(L, LUA_QL("tostring") " must return a string to "
@@ -48,7 +132,7 @@ static int luaB_print (lua_State *L) {
   fputs("\n", stdout);
   return 0;
 }
-
+#endif /* LUA_WIDESTRING */
 
 static int luaB_tonumber (lua_State *L) {
   int base = luaL_optint(L, 2, 10);
@@ -323,11 +407,20 @@ static int luaB_load (lua_State *L) {
 
 
 static int luaB_dofile (lua_State *L) {
+#if LUA_EXT_RESUMABLEVM
+  if (lua_icontext(L)) goto resume;
+  lua_settop(L, 1);
+  if (luaL_loadfile(L, luaL_optstring(L, 1, NULL)) != 0) lua_error(L);
+  lua_icall(L, 0, LUA_MULTRET, 1);
+resume:
+  return lua_gettop(L) - 1;
+#else
   const char *fname = luaL_optstring(L, 1, NULL);
   int n = lua_gettop(L);
   if (luaL_loadfile(L, fname) != 0) lua_error(L);
   lua_call(L, 0, LUA_MULTRET);
   return lua_gettop(L) - n;
+#endif /* LUA_EXT_RESUMABLEVM */
 }
 
 
@@ -371,6 +464,48 @@ static int luaB_select (lua_State *L) {
 }
 
 
+#if LUA_EXT_RESUMABLEVM
+
+static int aux_pcall (lua_State *L, int ef) {
+  int status = lua_icontext(L);
+  if (status) goto resume;
+  luaL_checkany(L, ef+1);
+  status = lua_ipcall(L, lua_gettop(L) - ef - 1, LUA_MULTRET, ef, -1);
+resume:
+  if (status > 0) {  /* error */
+    lua_pushboolean(L, 0);
+    lua_insert(L, -2);  /* args may be left on stack with vpcall/ipcall */
+    return 2;  /* return status + error */
+  }
+  else {  /* ok */
+    lua_pushboolean(L, 1);
+    lua_insert(L, ef+1);
+    return lua_gettop(L) - ef;  /* return status + all results */
+  }
+}
+
+
+static int luaB_pcall (lua_State *L) {
+  return aux_pcall(L, 0);
+}
+
+
+static int luaB_epcall (lua_State *L) {
+  return aux_pcall(L, 1);
+}
+
+
+static int luaB_xpcall (lua_State *L) {  /* for compatibility only */
+  if (lua_icontext(L) == 0) {
+    luaL_checkany(L, 2);
+    lua_settop(L, 2);
+    lua_insert(L, 1);  /* put error function under function to be called */
+  }
+  return aux_pcall(L, 1);
+ }
+
+#else
+
 static int luaB_pcall (lua_State *L) {
   int status;
   luaL_checkany(L, 1);
@@ -392,11 +527,28 @@ static int luaB_xpcall (lua_State *L) {
   return lua_gettop(L);  /* return status + all results */
 }
 
+#endif /* LUA_EXT_RESUMABLEVM */
+
+#if LUAPLUS_DUMPOBJECT
+LUA_EXTERN_C void luaplus_dumptable(lua_State* L, int index);
+#endif
+
 
 static int luaB_tostring (lua_State *L) {
+#if LUA_EXT_RESUMABLEVM
+  if (lua_icontext(L)) return 1;
+#endif /* LUA_EXT_RESUMABLEVM */
   luaL_checkany(L, 1);
+#if LUA_EXT_RESUMABLEVM
+  if (luaL_getmetafield(L, 1, "__tostring")) {
+    lua_pushvalue(L, 1);
+    lua_icall(L, 1, 1, 1);  /* call metamethod */
+    return 1;
+  }
+#else
   if (luaL_callmeta(L, 1, "__tostring"))  /* is there a metafield? */
     return 1;  /* use its value */
+#endif /* LUA_EXT_RESUMABLEVM */
   switch (lua_type(L, 1)) {
     case LUA_TNUMBER:
       lua_pushstring(L, lua_tostring(L, 1));
@@ -404,6 +556,27 @@ static int luaB_tostring (lua_State *L) {
     case LUA_TSTRING:
       lua_pushvalue(L, 1);
       break;
+#if LUA_WIDESTRING
+    case LUA_TWSTRING: {
+      luaL_Buffer b;
+      size_t l;
+      size_t i;
+      const lua_WChar *s = lua_towstring(L, 1);
+      l = lua_strlen(L, 1);
+      if (l == 0)
+      {
+        lua_pushstring(L, "");
+      }
+      else
+      {
+        luaL_buffinit(L, &b);
+        for (i=0; i<l; i++)
+          luaL_putchar(&b, (unsigned char)(s[i]));
+        luaL_pushresult(&b);
+      }
+      return 1;
+    }
+#endif /* LUA_WIDESTRING */
     case LUA_TBOOLEAN:
       lua_pushstring(L, (lua_toboolean(L, 1) ? "true" : "false"));
       break;
@@ -412,11 +585,76 @@ static int luaB_tostring (lua_State *L) {
       break;
     default:
       lua_pushfstring(L, "%s: %p", luaL_typename(L, 1), lua_topointer(L, 1));
+#if LUAPLUS_DUMPOBJECT
+      if (lua_type(L, 1) == LUA_TTABLE) {
+        luaplus_dumptable(L, 1);
+        lua_concat(L, 2);
+      }
+#endif
       break;
   }
   return 1;
 }
 
+#if LUA_WIDESTRING
+static int luaB_towstring (lua_State *L) {
+  char buff[64];
+  luaL_checkany(L, 1);
+  if (luaL_callmeta(L, 1, "__towstring"))  /* is there a metafield? */
+    return 1;  /* use its value */
+  switch (lua_type(L, 1)) {
+    case LUA_TNUMBER:
+      lua_pushwstring(L, lua_towstring(L, 1));
+      break;
+    case LUA_TSTRING: {
+      luaL_Buffer b;
+      size_t l;
+      size_t i;
+      const char *s = lua_tostring(L, 1);
+      l = lua_strlen(L, 1);
+      if (l == 0)
+      {
+        lua_WChar str[] = { '\0' };
+        lua_pushwstring(L, (const lua_WChar*)str);
+      }
+      else
+      {
+        luaL_wbuffinit(L, &b);
+        for (i=0; i<l; i++)
+          luaL_addwchar(&b, (lua_WChar)(unsigned char)s[i]);
+        luaL_pushresult(&b);
+      }
+      return 1;
+    }
+    case LUA_TWSTRING:
+      lua_pushvalue(L, 1);
+      return 1;
+    case LUA_TBOOLEAN:
+      strcpy(buff, (lua_toboolean(L, 1) ? "true" : "false"));
+      break;
+    case LUA_TNIL:
+      strcpy(buff, "nil");
+      break;
+    default:
+      sprintf(buff, "%s: %p", luaL_typename(L, 1), lua_topointer(L, 1));
+      break;
+  }
+
+  {
+    luaL_Buffer b;
+    size_t l;
+    size_t i;
+    const lua_WChar *s = lua_towstring(L, 1);
+    l = lua_strlen(L, 1);
+    luaL_wbuffinit(L, &b);
+    for (i=0; i<l; i++)
+      luaL_addwchar(&b, (lua_WChar)(s[i]));
+    luaL_pushresult(&b);
+  }
+
+  return 1;
+}
+#endif /* LUA_WIDESTRING */
 
 static int luaB_newproxy (lua_State *L) {
   lua_settop(L, 1);
@@ -443,10 +681,29 @@ static int luaB_newproxy (lua_State *L) {
   return 1;
 }
 
+#if LUAPLUS_EXTENSIONS
+
+static int luaB_createtable (lua_State *L) {
+  lua_createtable(L, (int)luaL_optinteger(L, 1, 0), (int)luaL_optinteger(L, 2, 0));
+  return 1;
+}
+
+#endif /* LUAPLUS_EXTENSIONS */
+
+#if LUAPLUS_DUMPOBJECT
+
+int LS_LuaDumpObject( lua_State* L );
+int LS_LuaDumpFile( lua_State* L );
+int LS_LuaDumpGlobals(lua_State* L );
+
+#endif /* LUAPLUS_DUMPOBJECT */
 
 static const luaL_Reg base_funcs[] = {
   {"assert", luaB_assert},
   {"collectgarbage", luaB_collectgarbage},
+#if LUAPLUS_EXTENSIONS
+  {"createtable", luaB_createtable},
+#endif /* LUAPLUS_EXTENSIONS */
   {"dofile", luaB_dofile},
   {"error", luaB_error},
   {"gcinfo", luaB_gcinfo},
@@ -466,9 +723,23 @@ static const luaL_Reg base_funcs[] = {
   {"setmetatable", luaB_setmetatable},
   {"tonumber", luaB_tonumber},
   {"tostring", luaB_tostring},
+#if LUA_WIDESTRING
+  {"towstring", luaB_towstring},
+#endif /* LUA_WIDESTRING */
   {"type", luaB_type},
   {"unpack", luaB_unpack},
+#if LUA_EXT_RESUMABLEVM
+  {"epcall", luaB_epcall},
+#endif /* LUA_EXT_RESUMABLEVM */
   {"xpcall", luaB_xpcall},
+#if LUAPLUS_DUMPOBJECT
+  {"LuaDumpObject", LS_LuaDumpObject},
+  {"LuaDumpFile", LS_LuaDumpFile},
+  {"LuaDumpGlobals", LS_LuaDumpGlobals},
+  {"dumpobject", LS_LuaDumpObject},
+  {"dumpfile", LS_LuaDumpFile},
+  {"dumpglobals", LS_LuaDumpGlobals},
+#endif /* LUAPLUS_DUMPOBJECT */
   {NULL, NULL}
 };
 
@@ -490,6 +761,9 @@ static const char *const statnames[] =
 static int costatus (lua_State *L, lua_State *co) {
   if (L == co) return CO_RUN;
   switch (lua_status(co)) {
+#if LUA_EXT_RESUMABLEVM
+    case LUA_ERRFORCECO:
+#endif /* LUA_EXT_RESUMABLEVM */
     case LUA_YIELD:
       return CO_SUS;
     case 0: {
@@ -520,6 +794,9 @@ static int auxresume (lua_State *L, lua_State *co, int narg) {
   if (!lua_checkstack(co, narg))
     luaL_error(L, "too many arguments to resume");
   if (status != CO_SUS) {
+#if LUA_EXT_RESUMABLEVM
+    lua_pushboolean(L, 0);
+#endif /* LUA_EXT_RESUMABLEVM */
     lua_pushfstring(L, "cannot resume %s coroutine", statnames[status]);
     return -1;  /* error flag */
   }
@@ -530,11 +807,18 @@ static int auxresume (lua_State *L, lua_State *co, int narg) {
     int nres = lua_gettop(co);
     if (!lua_checkstack(L, nres + 1))
       luaL_error(L, "too many results to resume");
+#if LUA_EXT_RESUMABLEVM
+    lua_pushboolean(L, 1);
+#endif /* LUA_EXT_RESUMABLEVM */
     lua_xmove(co, L, nres);  /* move yielded values */
     return nres;
   }
   else {
     lua_xmove(co, L, 1);  /* move error message */
+#if LUA_EXT_RESUMABLEVM
+    lua_pushboolean(L, 0);  /* must do it this way for the L == co case */
+    lua_insert(L, -2);
+#endif /* LUA_EXT_RESUMABLEVM */
     return -1;  /* error flag */
   }
 }
@@ -545,6 +829,12 @@ static int luaB_coresume (lua_State *L) {
   int r;
   luaL_argcheck(L, co, 1, "coroutine expected");
   r = auxresume(L, co, lua_gettop(L) - 1);
+#if LUA_EXT_RESUMABLEVM
+  if (r < 0)
+    return 2;  /* return false + error message */
+  else
+    return r + 1;  /* return true + `resume' returns */
+#else
   if (r < 0) {
     lua_pushboolean(L, 0);
     lua_insert(L, -2);
@@ -555,7 +845,21 @@ static int luaB_coresume (lua_State *L) {
     lua_insert(L, -(r + 1));
     return r + 1;  /* return true + `resume' returns */
   }
+#endif /* LUA_EXT_RESUMABLEVM */
 }
+
+
+#if LUA_EXT_RESUMABLEVM
+
+static int luaB_coerror (lua_State *L) {
+  lua_State *co = lua_tothread(L, 1);
+  luaL_argcheck(L, co, 1, "coroutine expected");
+  co->status = LUA_ERRFORCECO;
+  luaB_coresume(L);
+  return 0;
+}
+
+#endif /* LUA_EXT_RESUMABLEVM */
 
 
 static int luaB_auxwrap (lua_State *L) {
@@ -575,8 +879,12 @@ static int luaB_auxwrap (lua_State *L) {
 
 static int luaB_cocreate (lua_State *L) {
   lua_State *NL = lua_newthread(L);
+#if LUA_EXT_RESUMABLEVM
+  luaL_checkany(L, 1);  /* any callable is ok */
+#else
   luaL_argcheck(L, lua_isfunction(L, 1) && !lua_iscfunction(L, 1), 1,
     "Lua function expected");
+#endif /* LUA_EXT_RESUMABLEVM */
   lua_pushvalue(L, 1);  /* move function to top */
   lua_xmove(L, NL, 1);  /* move function from L to NL */
   return 1;
@@ -604,6 +912,9 @@ static int luaB_corunning (lua_State *L) {
 
 static const luaL_Reg co_funcs[] = {
   {"create", luaB_cocreate},
+#if LUA_EXT_RESUMABLEVM
+  {"error", luaB_coerror},
+#endif /* LUA_EXT_RESUMABLEVM */
   {"resume", luaB_coresume},
   {"running", luaB_corunning},
   {"status", luaB_costatus},
@@ -651,3 +962,4 @@ LUALIB_API int luaopen_base (lua_State *L) {
   return 2;
 }
 
+NAMESPACE_LUA_END

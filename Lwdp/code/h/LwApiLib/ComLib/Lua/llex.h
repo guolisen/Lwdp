@@ -10,6 +10,7 @@
 #include "lobject.h"
 #include "lzio.h"
 
+NAMESPACE_LUA_BEGIN
 
 #define FIRST_RESERVED	257
 
@@ -23,13 +24,31 @@
 */
 enum RESERVED {
   /* terminal symbols denoted by reserved words */
+#if LUA_EXT_CONTINUE
+  TK_AND = FIRST_RESERVED, TK_BREAK, TK_CONTINUE,
+#else
   TK_AND = FIRST_RESERVED, TK_BREAK,
+#endif /* LUA_EXT_CONTINUE */
   TK_DO, TK_ELSE, TK_ELSEIF, TK_END, TK_FALSE, TK_FOR, TK_FUNCTION,
   TK_IF, TK_IN, TK_LOCAL, TK_NIL, TK_NOT, TK_OR, TK_REPEAT,
   TK_RETURN, TK_THEN, TK_TRUE, TK_UNTIL, TK_WHILE,
   /* other terminal symbols */
   TK_CONCAT, TK_DOTS, TK_EQ, TK_GE, TK_LE, TK_NE, TK_NUMBER,
+#if LUA_BITFIELD_OPS || LUA_WIDESTRING
+  TK_NAME, TK_STRING,
+#if LUA_WIDESTRING
+  TK_WSTRING,
+#endif /* LUA_WIDESTRING */
+#if LUA_BITFIELD_OPS
+  TK_SHL, TK_SHR, TK_XOR,
+#endif /* LUA_BITFIELD_OPS */
+  TK_EOS
+#else
   TK_NAME, TK_STRING, TK_EOS
+#endif /* LUA_BITFIELD_OPS || LUA_WIDESTRING */
+#if LUA_MUTATION_OPERATORS
+  , TK_ADD_EQ, TK_SUB_EQ, TK_MUL_EQ, TK_DIV_EQ, TK_MOD_EQ, TK_POW_EQ,
+#endif /* LUA_MUTATION_OPERATORS */
 };
 
 /* number of reserved words */
@@ -77,5 +96,6 @@ LUAI_FUNC void luaX_lexerror (LexState *ls, const char *msg, int token);
 LUAI_FUNC void luaX_syntaxerror (LexState *ls, const char *s);
 LUAI_FUNC const char *luaX_token2str (LexState *ls, int token);
 
+NAMESPACE_LUA_END
 
 #endif
