@@ -24,6 +24,24 @@
 
 ContextHandle gCtrlContext = NULL;
 pthread_mutex_t gWorker_mutex = PTHREAD_MUTEX_INITIALIZER;
+uint32_ gCurrentWorkerNum = 0;
+
+class WorkerConter
+{
+public:
+	WorkerConter()
+	{
+		pthread_mutex_lock (&gWorker_mutex);
+		gCurrentWorkerNum++;
+		pthread_mutex_unlock (&gWorker_mutex);
+	}
+	~WorkerConter()
+	{
+		pthread_mutex_lock (&gWorker_mutex);
+		gCurrentWorkerNum--;
+		pthread_mutex_unlock (&gWorker_mutex);
+	}
+};
 
 Cx_ZmqBackend::Cx_ZmqBackend()
 {
@@ -52,6 +70,7 @@ uint32_     DbPort 		    = LW_ZMQBACKEND_DB_PORT_DEFAULT;
 
 void* worker_task (void *args)
 {
+	WorkerConter wconter;
 	GET_OBJECT_RET(DbMgr, iDbMgr, 0);	
 	LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::INFO, 
 				   "Connect to Db Server Ip:%s User:%s DbName:%s Port:%d", 
@@ -71,7 +90,6 @@ void* worker_task (void *args)
 	
 	LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::INFO, 
 			       "Worke Thread Connect Db Ok!");
-
 
 	GET_OBJECT_RET(ZmqMgr, iZmqMgr, 0);
 
@@ -526,7 +544,7 @@ LWRESULT Cx_ZmqBackend::CallBackZmqMsg(DBHandle dbHandle, const uint8_* recv_msg
 					   "Cx_ZmqBackend::CallBackZmqMsg Param <recv_msg> is NULL");
 		return LWDP_PARAMETER_ERROR;
 	}
-	TS_ZMQ_SERVER_MSG* zMsg = (TS_ZMQ_SERVER_MSG*)recv_msg;
+	TS_REQ_SERVER_MSG* zMsg = (TS_REQ_SERVER_MSG*)recv_msg;
 	MSG_DELEGATE_MAP::iterator it= mMsgDelegateMap.find(ntohl(zMsg->msgCode));
 	if(it != mMsgDelegateMap.end())
 	{
@@ -536,18 +554,16 @@ LWRESULT Cx_ZmqBackend::CallBackZmqMsg(DBHandle dbHandle, const uint8_* recv_msg
 	LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::WARNING, 
 			       "Unknow Request Msg(%x)", zMsg->msgCode);
 	
-	uint8_* errMsg = new uint8_[sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY)] ;
-	memset(errMsg, 0, sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY));
-	TS_ZMQ_SERVER_MSG* errStru = (TS_ZMQ_SERVER_MSG*)errMsg;
-	memcpy(errStru->deviceId, zMsg->deviceId, sizeof(errStru->deviceId));
-	errStru->msgCode  = htonl((uint32_)TS_SERVER_UNKNOW_MSG);
-	TS_SERVER_ERROR_BODY* errBody = (TS_SERVER_ERROR_BODY*)errStru->customMsgBody;
-	errBody->errMsgCode = zMsg->msgCode;
-	memcpy(errBody->errData, "Unknow Msg", 11);
+	uint8_* errMsg = new uint8_[sizeof(TS_RSP_SERVER_MSG)] ;
+	memset(errMsg, 0, sizeof(TS_RSP_SERVER_MSG));
+	TS_RSP_SERVER_MSG* errStru = (TS_RSP_SERVER_MSG*)errMsg;
+	errStru->msgLength = htonl(sizeof(TS_RSP_SERVER_MSG));	
+	errStru->rspCode   = htonl(TS_SERVER_UNKNOW_MSG);
+	memcpy(errStru->rspMsg, "Unknow Msg", 11);
 
 	Data_Ptr tmpData(errMsg);
 	ret_data     = tmpData;
-	ret_data_len = sizeof(TS_ZMQ_SERVER_MSG) + sizeof(TS_SERVER_ERROR_BODY);
+	ret_data_len = sizeof(TS_RSP_SERVER_MSG);
 	return LWDP_OK;
 
 }

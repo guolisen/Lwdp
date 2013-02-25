@@ -114,22 +114,24 @@ void* thread_callback(void* vfd)
 	unsigned int accept_conn = *(unsigned int*)vfd;
 	free(vfd);
 
-	int more = 0;
-	uint32_ more_size = sizeof(more);
-	uint32_ indexSend = 0;
-	uint32_ indexRecv = 0;
-	TS_TCP_SERVER_MSG* sendMsgStru = NULL;
-	uint8_* sendBuf = NULL;
-	TS_TCP_SERVER_MSG* clientMsg = NULL;
-	uint32_ headLen = sizeof(uint32_) * 2;
+	int     more 		= 0;
+	uint32_ errRetCode 	= 0;
+	char_*  errRetMsgStr  = ""; 
+	uint32_ more_size 	= sizeof(more);
+	uint32_ indexSend 	= 0;
+	uint32_ indexRecv 	= 0;
+	uint8_* sendBuf 	= NULL;
+	uint32_ headLen     = 0;  
+	uint32_ sendLength 	= 0;
+	TS_REQ_SERVER_MSG* clientMsg = NULL;
 	uint32_ zmq_ret_len = 0;
 	SocketHandle requester = NULL;
 	//////////////////////////////////////////////////////////////
 	// Recv Tcp Message from Client
 	//////////////////////////////////////////////////////////////
-    int32_  ret_len = 0;
-    uint32_ totleSize = gRecvBufMaxLen;
-	uint8_* recvBuf = (uint8_*)malloc(totleSize * sizeof(uint8_));
+    int32_  ret_len 	= 0;
+    uint32_ totleSize 	= gRecvBufMaxLen;
+	uint8_* recvBuf 	= (uint8_*)malloc(totleSize * sizeof(uint8_));
 	ASSERT_CHECK_RET(LWDP_PLUGIN_LOG, NULL, recvBuf, "Malloc Recv Buffer Error!");
 	uint32_ recvCheckPacketLen = 0;
 	
@@ -167,19 +169,18 @@ void* thread_callback(void* vfd)
 		//first read
 		if(!recvCheckPacketLen)
 		{
-			clientMsg = (TS_TCP_SERVER_MSG*)recvBuf;
+			clientMsg = (TS_REQ_SERVER_MSG*)recvBuf;
 			totleSize = ntohl(clientMsg->msgLength);
 			recvCheckPacketLen++;
 			if(totleSize > gRecvBufMaxLen)
 			{
-				clientMsg->statusCode = htonl(TS_SERVER_TCP_MSG_LEN_ERROR);
-				clientMsg->msgLength  = htonl(sizeof(TS_TCP_SERVER_MSG));
-				send(accept_conn, (char *)clientMsg, clientMsg->msgLength, 0);
+				errRetCode   = TS_SERVER_TCP_MSG_LEN_ERROR;
+				errRetMsgStr = "Msg Too Long";
 				LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::WARNING, 
 							   "Tcp Recv Packet is Too Long: recvlen(%d) the Max Packet Length is(%d)", 
 							   totleSize, gRecvBufMaxLen);		
 
-				goto ERR_TCP_TAG;
+				goto ERR_RET_MSG_TAG;
 			}
 
 			gThreadMbps->Update(totleSize);
@@ -199,15 +200,6 @@ void* thread_callback(void* vfd)
 	LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::NOTICE, 
 				   "Recv Client Message: (%d)", ntohl(clientMsg->msgLength));
 
-	
-	//if(clientMsg->msgLength > ret_len)
-	//{
-	//	clientMsg->statusCode = TS_SERVER_TCP_MSG_LEN_ERROR;
-	//	clientMsg->msgLength = sizeof(TS_TCP_SERVER_MSG);
-	//	send(accept_conn, (char *)clientMsg, clientMsg->msgLength, 0);
-
-	//	goto ERR_TCP_TAG;
-	//}
 
 	requester = iZmqMgr->GetNewSocket(gContextHandle, LWDP_REQ);
 	RINOKR(iZmqMgr->Connect(requester, gConnStr.c_str()), NULL);
@@ -227,14 +219,17 @@ void* thread_callback(void* vfd)
 	// Send Message to ZMQ
 	//////////////////////////////////////////////////////////////
 
-	headLen     = sizeof(uint32_) * 2;
+	headLen = 0;
 	zmq_ret_len = iZmqMgr->Send(requester, recvBuf + headLen, totleSize - headLen, 0);
 	if(zmq_ret_len != totleSize - headLen)
 	{	
 		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, 
 					   "Send Message Timeout or Error fd(%x) ret(%d) send(%d)", accept_conn, totleSize, zmq_ret_len);
 
-		goto ERR_ZMQ_TAG;		
+		errRetCode   = TS_SERVER_TCP2ZMQ_SEND_ERROR;
+		errRetMsgStr = "Tcp Zmq Send Error";
+
+		goto ERR_RET_MSG_TAG;	
 	}
 
 	//////////////////////////////////////////////////////////////
@@ -262,7 +257,10 @@ void* thread_callback(void* vfd)
 		LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::ERR, 
 					   "Recv ZMQ Message Timeout or Error fd(%x) ret(%d)", accept_conn, ret_len);
 
-		goto ERR_ZMQ_TAG;		
+		errRetCode   = TS_SERVER_ZMQ2TCP_RECV_TIMEOUT;
+		errRetMsgStr = "Tcp Zmq Recv Error";
+
+		goto ERR_RET_MSG_TAG;	
 	}
 
 	LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::NOTICE, 
@@ -271,22 +269,16 @@ void* thread_callback(void* vfd)
 	//////////////////////////////////////////////////////////////
 	// Tcp Send to Client
 	//////////////////////////////////////////////////////////////
-	sendBuf = (uint8_ *)malloc(sizeof(TS_TCP_SERVER_MSG) + iZMessage->Size());
-	ASSERT_CHECK_RET(LWDP_PLUGIN_LOG, 0, sendBuf, "TSFrontend thread Malloc Send Buf ERROR");
-	sendMsgStru = (TS_TCP_SERVER_MSG*)sendBuf;
-	uint32_ sendLength = sizeof(TS_TCP_SERVER_MSG) + iZMessage->Size();
-	sendMsgStru->msgLength = htonl(sendLength);
-	sendMsgStru->statusCode = 0;
-	memcpy(sendMsgStru->tcpMsgBody, iZMessage->Data(), iZMessage->Size());
+	sendBuf    = (uint8_ *)iZMessage->Data();
+	sendLength = iZMessage->Size();
 	while(1)
 	{
 		//Send Data Length
-		ret_len = send(accept_conn, (char *)sendMsgStru + indexSend, sendLength - indexSend, 0);
+		ret_len = send(accept_conn, (char *)sendBuf + indexSend, sendLength - indexSend, 0);
 		if(ret_len == 0)
 		{
 			LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::WARNING, 
-						   "send err Remote Socket Closed fd(%x)", accept_conn);
-			free(sendBuf);
+						   "send err Remote Socket Closed ret(%x)", ret_len);
 			goto ERR_ZMQ_TAG;
 		}
 		else if(ret_len < 0)
@@ -304,8 +296,7 @@ void* thread_callback(void* vfd)
 			else
 			{
 				LWDP_LOG_PRINT("TSFRONTEND", LWDP_LOG_MGR::WARNING, 
-							   "send Remote Socket Closed fd(%x)", accept_conn);
-				free(sendBuf);
+							   "send Remote Socket Closed ret(%x)", ret_len);
 				goto ERR_ZMQ_TAG;
 			}
 		}
@@ -320,7 +311,16 @@ void* thread_callback(void* vfd)
 		break;
 	};
 
-	free(sendBuf);
+
+ERR_RET_MSG_TAG:
+	TS_RSP_SERVER_MSG errRetMsg;
+	memset(&errRetMsg, 0, sizeof(errRetMsg));
+	errRetMsg.msgLength = htonl(sizeof(TS_RSP_SERVER_MSG));
+	errRetMsg.rspCode   = htonl(errRetCode);
+	memcpy(errRetMsg.rspMsg, errRetMsgStr, TS_RET_MSG_LEN);    
+
+	send(accept_conn, (char *)&errRetMsg, sizeof(TS_RSP_SERVER_MSG), 0);
+
 ERR_ZMQ_TAG:
 	//iZmqMgr->CloseSocket(requester);
 	//iZmqMgr->CloseContext(context);
@@ -328,11 +328,15 @@ ERR_ZMQ_TAG:
 ERR_TCP_TAG:
 	free(recvBuf);
 
+	if(accept_conn)
+	{
 #ifdef LWDP_PLATFORM_DEF_WIN32
-	int rc = closesocket(accept_conn);
+		int rc = closesocket(accept_conn);
 #else
-	::close (accept_conn);
+		::close (accept_conn);
 #endif
+	}
+	
 	Api_TaskDelay(1);
 	return NULL;
 }
