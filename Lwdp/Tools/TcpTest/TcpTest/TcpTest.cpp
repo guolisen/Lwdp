@@ -37,6 +37,7 @@ char* deviceIdSet[] = {"1001100000001", "1001100000002", "1001100000003", "10011
 int uIndex = 0;
 int Init_Send(int socketFd)
 {
+#if 0
 	printf("### Init_Send ###\n");
 	char buf[MAXDATASIZE];
 	int len = sizeof(TS_TCP_SERVER_MSG) + 
@@ -96,13 +97,14 @@ int Init_Send(int socketFd)
 		printf( "[Received] LEN: %d REQ:%x REQCODE: %x, res: %x Status Str: %s\n", retTcpMsg->msgLength,
 				retMsg->deviceId, retMsg->msgCode, retBody->msgResult, retBody->msgResultData);
 	}
-
+#endif
 	return 0;
 }
 
 
 int Config_Send(int socketFd)
 {
+#if 0
 	printf("### Config_Send ###\n");
 	char buf[MAXDATASIZE];
 	int len = sizeof(TS_TCP_SERVER_MSG) + 
@@ -159,12 +161,13 @@ int Config_Send(int socketFd)
 		printf( "[Received] sceneryPostion: %x\n", retBody->sceneryPostion);
 
 	}
-
+#endif
 	return 0;
 }
 #include <time.h>
 int Status_Send(int socketFd)
 {
+#if 0
 	printf("### Status_Send ###\n");
 	char buf[MAXDATASIZE];
 	int len = sizeof(TS_TCP_SERVER_MSG) + 
@@ -216,7 +219,7 @@ int Status_Send(int socketFd)
 		printf( "[Received] LEN: %d REQ:%x REQCODE: %x\n", retTcpMsg->msgLength,
 				retMsg->deviceId, retMsg->msgCode);
 	}
-
+#endif
 	return 0;
 }
 
@@ -224,29 +227,26 @@ int CardData_Send(int socketFd)
 {
 	printf("### CardData_Send ###\n");
 	char buf[MAXDATASIZE];
-	int len = sizeof(TS_TCP_SERVER_MSG) + 
-		      sizeof(TS_ZMQ_SERVER_MSG) + 
+	int len = sizeof(TS_REQ_SERVER_MSG) + 
 			  sizeof(TS_DEVICE_CARD_DATA_REQ_BODY);
-	TS_TCP_SERVER_MSG* tdata = (TS_TCP_SERVER_MSG*)malloc(len);
+	TS_REQ_SERVER_MSG* tdata = (TS_REQ_SERVER_MSG*)malloc(len);
 	memset(tdata, 0, len);
-	tdata->msgLength = len;
-	tdata->statusCode = 0;
-	TS_ZMQ_SERVER_MSG* data = (TS_ZMQ_SERVER_MSG*)tdata->tcpMsgBody;
-
+	tdata->msgLength = htonl(len);
+	tdata->msgCode   = htonl(TS_DEVICE_CARD_DATA_REQ_MSG+200);
+	
 	int devIdx = within(5);
-	memcpy(data->deviceId, deviceIdSet[devIdx], strlen(deviceIdSet[devIdx]));
-	data->msgCode = TS_DEVICE_CARD_DATA_REQ_MSG;
+	memcpy(tdata->deviceId, deviceIdSet[devIdx], strlen(deviceIdSet[devIdx]));
 
-	TS_DEVICE_CARD_DATA_REQ_BODY* body = (TS_DEVICE_CARD_DATA_REQ_BODY*)data->customMsgBody;
+	TS_DEVICE_CARD_DATA_REQ_BODY* body = (TS_DEVICE_CARD_DATA_REQ_BODY*)tdata->customMsgBody;
 
 	char tmpStr[100] = {0};
 	unsigned int counter = within(100000000);
 	_snprintf(tmpStr, 100, "10011%08d", counter);
 	memcpy(body->cardId, tmpStr, strlen(tmpStr));
 	memcpy(body->sceneryId, "12345678", 8);
-	body->cardType = 0x12;
-	body->actionId = within(2);
-	body->checkinTime = time(&body->checkinTime);
+	body->cardType = htons(0x12);
+	body->actionId = htons(within(2));
+	body->checkinTime = 0;
 
 
 	if (send(socketFd, (char *)tdata, len, 0) == -1)		
@@ -275,12 +275,10 @@ int CardData_Send(int socketFd)
 	int recvbytes = 0;
 	if ((recvbytes=recv(socketFd, buf, MAXDATASIZE, 0)) !=-1)
 	{ 
-		TS_TCP_SERVER_MSG* retTcpMsg = (TS_TCP_SERVER_MSG*)buf;
-		TS_ZMQ_SERVER_MSG* retMsg = (TS_ZMQ_SERVER_MSG*)retTcpMsg->tcpMsgBody;
-		TS_DEVICE_CARD_DATA_RSP_BODY*  retBody = (TS_DEVICE_CARD_DATA_RSP_BODY*)retMsg->customMsgBody;
+		TS_RSP_SERVER_MSG* retTcpMsg = (TS_RSP_SERVER_MSG*)buf;
 
-		printf( "[Received] LEN: %d REQ:%x REQCODE: %x msgResult: %x msgResultData: %s\n", retTcpMsg->msgLength,
-				retMsg->deviceId, retMsg->msgCode, retBody->msgResult, retBody->msgResultData);
+		printf( "[Received] LEN: %d RSPCODE: %x msgResultData: %s\n", ntohl(retTcpMsg->msgLength),
+				ntohl(retTcpMsg->rspCode), retTcpMsg->rspMsg);
 
 	}
 
@@ -291,6 +289,7 @@ int gCardNo = 0;
 #define CARD_NUM_SEND 1000
 int BulkData_Send(int socketFd)
 {
+#if 0
 	printf("### BulkData_Send ###\n");
 
 	int len = sizeof(TS_TCP_SERVER_MSG) + 
@@ -423,6 +422,7 @@ int BulkData_Send(int socketFd)
 	}
 
 	free(recvBuf);
+#endif	
 	return 0;
 }
 
@@ -501,7 +501,7 @@ int main()
 	}
 
     int client_nbr;
-    for (client_nbr = 0; client_nbr < 20; client_nbr++) {
+    for (client_nbr = 0; client_nbr < 1; client_nbr++) {
         HANDLE client;
         client = (HANDLE) _beginthreadex (NULL, 0,
         threadfun, 0, 0 , NULL);
