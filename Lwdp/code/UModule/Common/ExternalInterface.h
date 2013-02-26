@@ -13,7 +13,6 @@ LWDP_NAMESPACE_BEGIN;
 #define TS_GATE_ID_STRU_LEN      32
 #define TS_RET_MSG_LEN           128
 
-//-------------------------------------------------------
 //Module Define
 
 #define TS_SYSTEM_MODULE   0
@@ -26,7 +25,7 @@ LWDP_NAMESPACE_BEGIN;
 // Req Msg Head
 typedef struct stru_req_server_msg
 {
-	uint32_ msgLength;  //��Ϣ�峤��  �˳���Ϊ�����Ϣ���ȣ�����msgLength����ĳ���
+	uint32_ msgLength;  
 	char_   deviceId[TS_GATE_ID_STRU_LEN];
 	uint32_ msgCode;
 	uint8_  customMsgBody[0];
@@ -39,7 +38,7 @@ typedef struct stru_req_server_msg
 
 typedef struct stru_rsp_server_msg
 {
-	uint32_ msgLength;  //��Ϣ�峤��  �˳���Ϊ�����Ϣ���ȣ�����msgLength����ĳ���
+	uint32_ msgLength;  
 	uint32_ rspCode;
 	char_   rspMsg[TS_RET_MSG_LEN]; 
 	uint8_  customMsgBody[0];
@@ -55,15 +54,9 @@ enum TS_SYSTEM_MSG_ENUM
 	TS_SERVER_TCP_MSG_LEN_ERROR,
 	TS_SERVER_TCP2ZMQ_SEND_ERROR,
 	TS_SERVER_ZMQ2TCP_RECV_TIMEOUT,
-	TS_SERVER_UNKNOW_MSG, //�ͻ��˷��͵���ϢΪδ֪����
-	TS_SERVER_MSG_BODY_ERR, //�ͻ��˷��͵���ϢΪδ֪����
+	TS_SERVER_UNKNOW_MSG,
+	TS_SERVER_MSG_BODY_ERR, 
 };
-
-//-------------------------------------------------------
-
-
-
-
 
 
 

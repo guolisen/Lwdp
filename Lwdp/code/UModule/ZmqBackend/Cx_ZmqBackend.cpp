@@ -447,6 +447,15 @@ LWRESULT Cx_ZmqBackend::Init()
 		}
 	}
 
+	Api_TaskDelay(1000);
+
+	if(gCurrentWorkerNum != workThreadNum)
+	{
+		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::ERR, 
+					   "Create Worker Thread Error (Now: %d, Should: %d)", 
+					   gCurrentWorkerNum, workThreadNum);
+		return ZMQBACKEND::LWDP_CREATE_WORK_THREAD_ERR;
+	}
 	return LWDP_OK;
 }
 

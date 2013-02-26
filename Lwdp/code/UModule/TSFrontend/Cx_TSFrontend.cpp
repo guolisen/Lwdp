@@ -312,15 +312,6 @@ void* thread_callback(void* vfd)
 	};
 
 
-ERR_RET_MSG_TAG:
-	TS_RSP_SERVER_MSG errRetMsg;
-	memset(&errRetMsg, 0, sizeof(errRetMsg));
-	errRetMsg.msgLength = htonl(sizeof(TS_RSP_SERVER_MSG));
-	errRetMsg.rspCode   = htonl(errRetCode);
-	memcpy(errRetMsg.rspMsg, errRetMsgStr, TS_RET_MSG_LEN);    
-
-	send(accept_conn, (char *)&errRetMsg, sizeof(TS_RSP_SERVER_MSG), 0);
-
 ERR_ZMQ_TAG:
 	//iZmqMgr->CloseSocket(requester);
 	//iZmqMgr->CloseContext(context);
@@ -339,6 +330,29 @@ ERR_TCP_TAG:
 	
 	Api_TaskDelay(1);
 	return NULL;
+
+ERR_RET_MSG_TAG:
+	TS_RSP_SERVER_MSG errRetMsg;
+	memset(&errRetMsg, 0, sizeof(errRetMsg));
+	errRetMsg.msgLength = htonl(sizeof(TS_RSP_SERVER_MSG));
+	errRetMsg.rspCode   = htonl(errRetCode);
+	memcpy(errRetMsg.rspMsg, errRetMsgStr, TS_RET_MSG_LEN);    
+
+	send(accept_conn, (char *)&errRetMsg, sizeof(TS_RSP_SERVER_MSG), 0);
+	free(recvBuf);
+
+	if(accept_conn)
+	{
+#ifdef LWDP_PLATFORM_DEF_WIN32
+		int rc = closesocket(accept_conn);
+#else
+		::close (accept_conn);
+#endif
+	}
+	
+	Api_TaskDelay(1);
+	return NULL;
+
 }
 
 

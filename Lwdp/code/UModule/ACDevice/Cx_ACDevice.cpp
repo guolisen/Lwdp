@@ -255,35 +255,7 @@ LWRESULT MsgProcess(const uint8_* ret_msg, uint32_ ret_msg_len,
 }
 #endif
 
-/*
-enum TS_INIT_MSG_RESAULT_ENUM
-{	
-	TS_SERVER_CHECK_OK_RECONFIG = 1, //��֤�ɹ��������������?
-	TS_SERVER_ID_ERROR,     //�豸IDδ֪����
-	TS_SERVER_TYPE_ERROR,   //�豸���ʹ���
-	TS_SERVER_UNKNOW_ERROR //δ֪���󣬾�������Ϣ
-};
-typedef struct stru_device_init_req_body
-{	
-	uint32_ deviceType;  //�豸����
-	uint8_  sceneryId[8];  //����ID
-	uint32_ checkResult; //�豸�Լ���
-}TS_DEVICE_INIT_REQ_BODY;
 
-typedef struct stru_server_init_rsp_body
-{	
-	uint32_  msgResult; //��Ϣ���ͽ��?
-	char_    msgResultData[32];  // ���ܵĴ�����Ϣ�ַ�
-	uint32_  appendDataLength; //������ݳ���?
-	uint8_*  appendData;
-}TS_SERVER_INIT_RSP_BODY;
-typedef struct stru_zmq_server_msg
-{
-	uint32_ deviceId;
-	uint32_ msgCode;
-	uint8_  customMsgBody[0];  //��Ϣ��
-}TS_ZMQ_SERVER_MSG;
-*/
 LWRESULT Cx_ACDevice::DeviceInitMsgProcess(DBHandle db_handle, const uint8_* ret_msg, uint32_ ret_msg_len, 
 								      Data_Ptr& send_msg, uint32_& send_msg_len)
 {
@@ -808,18 +780,18 @@ LWRESULT Cx_ACDevice::DeviceBulkDataMsgProcess(DBHandle db_handle,const uint8_* 
 
 	//check	
 	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::NOTICE,
-				   "[Received] REQ:%x REQCODE: %x, cardDataCount: %x", 
+				   "[Received] DEVICEID:%s REQCODE: %x, cardDataCount: %x", 
 			       std::string((char_*)zmqMsg->deviceId, sizeof(zmqMsg->deviceId)).c_str(), 
-			       ntohl(zmqMsg->msgCode), msgBody->cardDataCount);
+			       ntohl(zmqMsg->msgCode), ntohl(msgBody->cardDataCount));
 
-	uint32_ tmpLen = sizeof(TS_RSP_SERVER_MSG) + 
+	uint32_ tmpLen = sizeof(TS_REQ_SERVER_MSG) + 
 		             sizeof(TS_DEVICE_BULK_DATA_REQ_BODY) +
-				     sizeof(TS_DEVICE_CARD_DATA_REQ_BODY) * msgBody->cardDataCount;
+				     sizeof(TS_DEVICE_CARD_DATA_REQ_BODY) * ntohl(msgBody->cardDataCount);
 	if(ret_msg_len < tmpLen)
 	{
 		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR,
 					   "Request Data is too Small,ret_msg_len(%d) Should(%d) cardDataCount(%d)", 
-					   ret_msg_len, tmpLen, msgBody->cardDataCount);
+					   ret_msg_len, tmpLen, ntohl(msgBody->cardDataCount));
 		
 		uint8_* errMsg = new uint8_[sizeof(TS_RSP_SERVER_MSG)] ;
 		memset(errMsg, 0, sizeof(TS_RSP_SERVER_MSG));
@@ -843,7 +815,7 @@ LWRESULT Cx_ACDevice::DeviceBulkDataMsgProcess(DBHandle db_handle,const uint8_* 
 
 	uint32_ thread_num = gThreadCount;
 	uint32_ domainSize = 0;
-	uint32_ inum = msgBody->cardDataCount;
+	uint32_ inum = ntohl(msgBody->cardDataCount);
 	domainSize = inum / thread_num;
 	thread_num += (inum % thread_num)>0?1:0;
 		
