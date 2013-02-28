@@ -39,7 +39,13 @@ public:
 	static XPropertyTable gateInfoTable;
 
 protected:
-	LWRESULT IntArrayToStr(uint32_ int_array[], uint32_ size, std::string& ret_str);
+	virtual LWRESULT cardCheck(DBHandle db_handle,
+								  const std::string& carIdStr, 
+	                              const std::string& sceneryIdStr,
+							      int32_& statusCode,
+							      char_** retMsg);
+
+	virtual LWRESULT intArrayToStr(uint32_ int_array[], uint32_ size, std::string& ret_str);
 	
 protected:
     // From Ix_ACDevice

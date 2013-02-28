@@ -202,7 +202,7 @@
 			<CtrlConnect>inproc://ctrl_to_workthread</CtrlConnect>
 			<WorkThreadNum>20</WorkThreadNum>
 			
-			<DbIp>10.0.0.1</DbIp>
+			<DbIp>127.0.0.1</DbIp>
 			<DbUser>ptsf</DbUser>
 			<DbPassword>123456</DbPassword>
 			<DbSelect>scenic</DbSelect>

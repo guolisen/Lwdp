@@ -638,6 +638,14 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(DBHandle db_handle,const uint8_* 
 		return LWDP_PARAMETER_ERROR;
 	}
 
+	uint32_ retCode  = 0;
+	char_*  retMsg   = "Sucess!";
+	time_t timep = time(NULL);//ntohl(msgBody->checkinTime);
+	struct tm checkTime = {0};
+	GET_OBJECT_RET(DbMgr, iDbMgr, LWDP_GET_OBJECT_ERROR);
+	std::string carIdStr = "";
+	std::string scenicIdStr = "";
+
 	LWRESULT funStatus = 0;
 	TS_REQ_SERVER_MSG* zmqMsg = (TS_REQ_SERVER_MSG*)ret_msg;
 	TS_DEVICE_CARD_DATA_REQ_BODY* msgBody = (TS_DEVICE_CARD_DATA_REQ_BODY*)zmqMsg->customMsgBody;
@@ -646,37 +654,65 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(DBHandle db_handle,const uint8_* 
 		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::WARNING, 
 				       "Msg(%d) Body Error", ntohl(zmqMsg->msgCode));
 		
-		uint8_* errMsg = new uint8_[sizeof(TS_RSP_SERVER_MSG)] ;
-		memset(errMsg, 0, sizeof(TS_RSP_SERVER_MSG));
-		TS_RSP_SERVER_MSG* errStru = (TS_RSP_SERVER_MSG*)errMsg;
-		errStru->msgLength = htonl(sizeof(TS_RSP_SERVER_MSG));
-		errStru->rspCode   = htonl(TS_SERVER_MSG_BODY_ERR);
-		memcpy(errStru->rspMsg, "Body Empty", 11);
-
-		Data_Ptr tmpData(errMsg);
-		send_msg = tmpData;
-		send_msg_len = sizeof(TS_RSP_SERVER_MSG);
-		return LWDP_ERROR;
+		retCode   = TS_SERVER_MSG_BODY_ERR;
+		retMsg    = "Body Empty";
+		funStatus = LWDP_ERROR;
+		goto RET_TAG;
 	}
 
 	//check
-	std::string carIdStr = std::string((char_*)msgBody->cardId, sizeof(msgBody->cardId));
-	//IntArrayToStr(msgBody->cardId, TS_CARD_ID_STRU_LEN, carIdStr);
+	carIdStr    = std::string((char_*)msgBody->cardId, sizeof(msgBody->cardId));
+	scenicIdStr = std::string((char_*)msgBody->sceneryId, sizeof(msgBody->sceneryId));
 	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::INFO,
 				   "[Received] REQ:%s REQCODE: %x, cardId: %s sceneryId: %s cardType: %x actionId: %x checkinTime: %x", 
 			       std::string((char_*)zmqMsg->deviceId, sizeof(zmqMsg->deviceId)).c_str(), 
-			       ntohl(zmqMsg->msgCode), carIdStr.c_str(), 
-			       std::string((char_*)msgBody->sceneryId, sizeof(msgBody->sceneryId)).c_str(), 
+			       ntohl(zmqMsg->msgCode), 
+				   carIdStr.c_str(), 
+			       scenicIdStr.c_str(), 
 			       ntohs(msgBody->cardType), ntohs(msgBody->actionId), ntohl(msgBody->checkinTime));
 
-	time_t timep = time(NULL);//ntohl(msgBody->checkinTime);
-	struct tm checkTime = {0};
+	char_ buffer[3072] = {0};
+	int32_ cardStatus = -1;
+	char_* cardMsg = "Sucess!";
+	if((funStatus=cardCheck(db_handle, carIdStr, scenicIdStr, cardStatus, &cardMsg)) != LWDP_OK)
+	{
+		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::WARNING, 
+				       "Check Card Info Error", ntohl(zmqMsg->msgCode));
+		
+		retCode   = funStatus;
+		retMsg    = cardMsg;
+		goto RET_TAG;
+	}
+
+	//Update Card Status
+	Api_snprintf(buffer, 3071, "UPDATE sc_sale_scenic \
+	                            SET status = 1 \
+	                            WHERE card_no = '%s' and scenic_id = %s",  
+	                            carIdStr.c_str(), 
+							    scenicIdStr.c_str());
+				  					
+	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::DEBUG,
+				   "Update Card Status(Checkin) Str(%s)", buffer);
+
+	int32_  queryRes = 0;
+	if((queryRes = iDbMgr->ExecSQL(db_handle, buffer)) != 1)
+	{
+		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR, 
+				       "Msg(%d) Update Card status(Checkin)(%s) Table Error", 
+				       ntohl(zmqMsg->msgCode), buffer);
+
+		retCode = TS_SERVER_DB_ERR;
+		retMsg  = "Update Card Status Error";
+		funStatus = LWDP_ERROR;
+		goto RET_TAG;
+	}
+
+	//Insert Card Status
 	localtime_r(&timep, &checkTime); 
 	
 	char_ bufTime[1024] = {0};
 	strftime(bufTime, 1024, "%Y-%m-%d %H:%M:%S", &checkTime);
 
-	char_ buffer[3072] = {0};
 	Api_snprintf(buffer, 3071, Cx_ACDevice::mCardSql.c_str(),  carIdStr.c_str(), 
 															   std::string((char_*)zmqMsg->deviceId, sizeof(zmqMsg->deviceId)-1).c_str(),
 				  											   std::string((char_*)msgBody->sceneryId, sizeof(msgBody->sceneryId)-1).c_str(),
@@ -689,12 +725,7 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(DBHandle db_handle,const uint8_* 
 
 	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::DEBUG,
 				   "Select Db Str(%s)", buffer);
-	GET_OBJECT_RET(DbMgr, iDbMgr, LWDP_GET_OBJECT_ERROR);
 
-	Cx_Interface<Ix_DbQuery> gateQuery;
-	int32_  queryRes = 0;
-	uint32_ retCode  = 0;
-	char_*  retMsg   = "Sucess!";
 	//iDbMgr->Ping();
 	if((queryRes = iDbMgr->ExecSQL(db_handle, buffer)) != 1)
 	{
@@ -708,6 +739,7 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(DBHandle db_handle,const uint8_* 
 	}
 
 
+RET_TAG:
 	uint8_* returnMsg = new uint8_[sizeof(TS_RSP_SERVER_MSG)];
 	ASSERT_CHECK_RET(LWDP_PLUGIN_LOG, LWDP_MALLOC_MEMORY_ERROR, returnMsg, "Malloc Error");
 
@@ -930,7 +962,7 @@ RET_TAG:
 	return LWDP_OK;
 }
 
-LWRESULT Cx_ACDevice::IntArrayToStr(uint32_ int_array[], uint32_ size, std::string& ret_str)
+LWRESULT Cx_ACDevice::intArrayToStr(uint32_ int_array[], uint32_ size, std::string& ret_str)
 {
 #if 0
 	std::string formatStr("");
@@ -950,5 +982,97 @@ LWRESULT Cx_ACDevice::IntArrayToStr(uint32_ int_array[], uint32_ size, std::stri
 	return LWDP_OK;
 }
 
+LWRESULT Cx_ACDevice::cardCheck(DBHandle db_handle, const std::string& carIdStr, 
+	                                 const std::string& sceneryIdStr,
+									 int32_& statusCode,
+									 char_** retMsg)
+{
+	char_ buffer[3072] = {0};
+	int32_  queryRes = 0;
+	statusCode  = -1;
+	*retMsg  = "Sucess!";
+
+	GET_OBJECT_RET(DbMgr, iDbMgr, LWDP_GET_OBJECT_ERROR);
+	Api_snprintf(buffer, 3071, 
+		         "SELECT status FROM sc_sale_scenic WHERE card_no = '%s' AND scenic_id = %s",  
+		         carIdStr.c_str(), 
+			  	 sceneryIdStr.c_str());
+
+	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::DEBUG,
+				   "Select Card Status Str(%s)", buffer);
+
+	Cx_Interface<Ix_DbQuery> cardQuery;
+	if((queryRes = iDbMgr->QuerySQL(db_handle, buffer, cardQuery)) != LWDP_OK)
+	{
+		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR, 
+				       "Msg DB Select Card Status(%s) Table Error", 
+				       buffer);
+
+		statusCode = -1;
+		*retMsg  = "Db Error";
+		return TS_SERVER_DB_ERR;
+	}
+
+	uint32_ rowNum = cardQuery->NumRow();
+	if(0 == rowNum)
+	{
+		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::WARNING, 
+				       "Can't Find Card(id: %d, scenicId: %s) Select(%s) Table Error", 
+                       carIdStr.c_str(), 
+					   sceneryIdStr.c_str(), 
+				       buffer);
+
+		statusCode = -1;
+		*retMsg = "Cannot Find Card Info!";
+		
+		return TS_SERVER_ID_ERROR;
+	}
+
+	int i = 0;
+	for(i = 0; i < rowNum; ++i)
+	{
+		std::string statusValue = cardQuery->GetStringField("status", "");
+		if(statusValue.empty())
+		{	
+			*retMsg = "Unknow Status Card!";
+			continue;
+		}
+		uint32_ statusNum = atol(statusValue.c_str());
+		if(statusNum != LW_ACDEVICE_CARD_STATUS_NOTUSE)
+		{
+			switch(statusNum)
+			{
+				case LW_ACDEVICE_CARD_STATUS_USE:
+				{
+					*retMsg = "Have Use!";
+					break;
+				}
+				case LW_ACDEVICE_CARD_STATUS_ABANDON:
+				{
+					*retMsg = "Abandon Card!";
+					break;
+				}
+				case LW_ACDEVICE_CARD_STATUS_FREEZE:
+				{
+					*retMsg = "Freeze Card!";
+					break;
+				}
+				default:	
+					*retMsg = "Unknow Status Card!";
+			};
+
+			statusCode = statusNum;
+		}
+		else
+			break;
+	}
+
+	if(i == rowNum)
+	{
+		return TS_SERVER_CARD_ERROR;
+	}
+
+	return LWDP_OK;
+}
 
 

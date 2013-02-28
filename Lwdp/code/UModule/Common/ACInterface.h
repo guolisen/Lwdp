@@ -41,6 +41,7 @@ enum TS_RET_MSG_RESAULT_ENUM
 {	
 	TS_SERVER_CHECK_OK_RECONFIG = TS_GATECHECK_MSG_BASE, //验证成功，但须重配参数
 	TS_SERVER_ID_ERROR,     //设备ID未知错误
+	TS_SERVER_CARD_ERROR,     //Card Error 状态错误，已刷卡，冻结等
 	TS_SERVER_TYPE_ERROR,   //设备类型错误
 	TS_SERVER_UNKNOW_ERROR, //未知错误，具体见附加信息
 	TS_SERVER_DB_ERR,        //服务器数据库错误

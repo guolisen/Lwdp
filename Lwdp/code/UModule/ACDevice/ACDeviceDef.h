@@ -32,5 +32,12 @@
 #define LW_ACDEVICE_BULK_THREAD_NUM_NAME          __T("BulkThreadNum")
 #define LW_ACDEVICE_BULK_PAGESIZE_NAME            __T("BulkPageSize")
 
+
+#define LW_ACDEVICE_CARD_STATUS_NOTUSE     0
+#define LW_ACDEVICE_CARD_STATUS_USE        1
+#define LW_ACDEVICE_CARD_STATUS_ABANDON    2
+#define LW_ACDEVICE_CARD_STATUS_FREEZE     3
+
+
 #endif
 
