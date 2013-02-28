@@ -1,0 +1,80 @@
+
+$#include <LwDp.h>
+$#include <Interface/ConfigMgr/Ix_XmlMgr.h>
+$#include <Interface/ConfigMgr/Ix_ConfigMgr.h>
+$#include "Lua_Interface_ConfigMgr.h"
+
+$using namespace NLwdp;
+
+
+struct CAttributeStru
+{
+	std::string AttribName;
+	std::string AttribValue;
+	CAttributeStru();
+
+	//CAttributeStru(const CAttributeStru& other);
+
+};
+
+struct CTagEntry
+{
+	bool    ThereIs;
+	tstring propertyName;
+	tstring propertyText;
+	tstring parentName;
+	
+	CTagEntry();
+
+	//CTagEntry(const CTagEntry& other);
+	const std::string GetAttrByName(const std::string attr_name) const;	  
+//	const std::string operator[](const std::string& attr_name) const;
+	const CAttributeStru operator[](const unsigned int index) const;
+	uint32_ GetAttrCount() const;
+
+};
+  
+
+class XmlResults
+{
+public: 
+	XmlResults();
+	//virtual ~XmlResults();
+
+//	virtual const CTagEntry operator[](const tstring& property_name);
+
+	virtual const CTagEntry operator[](const unsigned int  it);
+
+	virtual void Clear() ;
+	virtual bool Empty();
+
+};
+
+class XmlResultsSet : public XmlResults
+{
+public:
+	XmlResultsSet();
+	//virtual ~XmlResultsSet();
+};
+
+module Script_Ptr
+{
+	inline Script_Ptr* CreateScriptPtr@new();
+	inline char* GetScriptPtr@get(Script_Ptr* ptr);
+}
+
+module XmlResultsMod
+{
+		inline char* GetXmlResults@get(tstring* ptr);
+}
+
+
+module ConfigMgr {
+	inline unsigned int LuaConfigMgrGetScript@GetScript(char* module_or_moid, char* script_name, Script_Ptr& script_buf);
+	inline unsigned int LuaConfigMgrGetModulePropEntry@GetModulePropEntry(char* module_or_moid, char* property_name, XmlResults& propertys);
+	inline unsigned int LuaConfigMgrGetModuleTable@GetModuleTable(char* module_or_moid, char* table_name, XmlResultsSet& property_table);	
+}
+
+
+
+
