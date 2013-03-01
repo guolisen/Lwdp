@@ -226,7 +226,8 @@ int CardData_Send(int socketFd)
 
 	char tmpStr[100] = {0};
 	unsigned int counter = within(100000000);
-	_snprintf(tmpStr, 100, "10011%08d", counter);
+	//_snprintf(tmpStr, 100, "10011%08d", counter);
+	_snprintf(tmpStr, 100, "1001100000003");
 	memcpy(body->cardId, tmpStr, strlen(tmpStr));
 	memcpy(body->sceneryId, "12345678", 8);
 	body->cardType = htons(0x12);
@@ -442,8 +443,8 @@ unsigned int __stdcall threadfun(void* arg)
 		//Init_Send(sockfd);
 		//Config_Send(sockfd);
 		//Status_Send(sockfd);
-		//CardData_Send(sockfd);
-		BulkData_Send(sockfd);
+		CardData_Send(sockfd);
+		//BulkData_Send(sockfd);
 
 		Sleep(3000);
 		closesocket(sockfd); 

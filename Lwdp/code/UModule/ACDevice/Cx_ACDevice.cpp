@@ -685,9 +685,7 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(DBHandle db_handle,const uint8_* 
 	}
 
 	//Update Card Status
-	Api_snprintf(buffer, 3071, "UPDATE sc_sale_scenic \
-	                            SET status = 1 \
-	                            WHERE card_no = '%s' and scenic_id = %s",  
+	Api_snprintf(buffer, 3071, "UPDATE sc_sale_scenic SET status = 1 WHERE card_no = '%s' and scenic_id = %s",  
 	                            carIdStr.c_str(), 
 							    scenicIdStr.c_str());
 				  					
@@ -698,7 +696,7 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(DBHandle db_handle,const uint8_* 
 	if((queryRes = iDbMgr->ExecSQL(db_handle, buffer)) != 1)
 	{
 		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR, 
-				       "Msg(%d) Update Card status(Checkin)(%s) Table Error", 
+				       "Msg(%x) Update Card status(Checkin)(%s) Table Error", 
 				       ntohl(zmqMsg->msgCode), buffer);
 
 		retCode = TS_SERVER_DB_ERR;
@@ -1029,7 +1027,7 @@ LWRESULT Cx_ACDevice::cardCheck(DBHandle db_handle, const std::string& carIdStr,
 	}
 
 	int i = 0;
-	for(i = 0; i < rowNum; ++i)
+	for(i = 0; i < rowNum; ++i, cardQuery->NextRow())
 	{
 		std::string statusValue = cardQuery->GetStringField("status", "");
 		if(statusValue.empty())
