@@ -39,13 +39,26 @@ public:
 	static XPropertyTable gateInfoTable;
 
 protected:
-	virtual LWRESULT cardCheck(DBHandle db_handle,
-								  const std::string& carIdStr, 
-	                              const std::string& sceneryIdStr,
-							      int32_& statusCode,
-							      char_** retMsg);
+	virtual LWRESULT getCardStatus(DBHandle db_handle,
+								    const std::string& carIdStr, 
+	                                const std::string& sceneryIdStr,
+							        int32_& statusCode,
+							        char_** retMsg);
+	virtual LWRESULT cardCheckIn(DBHandle db_handle,
+								    const std::string& carIdStr, 
+	                                const std::string& sceneryIdStr,
+							        int32_& statusCode,
+							        char_** retMsg);
 
+	virtual LWRESULT cardCheckOut(DBHandle db_handle,
+								      const std::string& carIdStr, 
+	                                  const std::string& sceneryIdStr,
+							          int32_& statusCode,
+							          char_** retMsg);
+	
 	virtual LWRESULT intArrayToStr(uint32_ int_array[], uint32_ size, std::string& ret_str);
+
+
 	
 protected:
     // From Ix_ACDevice

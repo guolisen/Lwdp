@@ -674,35 +674,30 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(DBHandle db_handle,const uint8_* 
 	char_ buffer[3072] = {0};
 	int32_ cardStatus = -1;
 	char_* cardMsg = "Sucess!";
-	if((funStatus=cardCheck(db_handle, carIdStr, scenicIdStr, cardStatus, &cardMsg)) != LWDP_OK)
+	int32_ checkAction = ntohs(msgBody->actionId);
+	if(!checkAction) //CheckIn
 	{
-		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::WARNING, 
-				       "Check Card Info Error", ntohl(zmqMsg->msgCode));
-		
-		retCode   = funStatus;
-		retMsg    = cardMsg;
-		goto RET_TAG;
+		if((funStatus=cardCheckIn(db_handle, carIdStr, scenicIdStr, cardStatus, &cardMsg)) != LWDP_OK)
+		{
+			LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::WARNING, 
+					       "CheckIn Card Info Error", ntohl(zmqMsg->msgCode));
+			
+			retCode   = funStatus;
+			retMsg    = cardMsg;
+			goto RET_TAG;
+		}
 	}
-
-	//Update Card Status
-	Api_snprintf(buffer, 3071, "UPDATE sc_sale_scenic SET status = 1 WHERE card_no = '%s' and scenic_id = %s",  
-	                            carIdStr.c_str(), 
-							    scenicIdStr.c_str());
-				  					
-	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::DEBUG,
-				   "Update Card Status(Checkin) Str(%s)", buffer);
-
-	int32_  queryRes = 0;
-	if((queryRes = iDbMgr->ExecSQL(db_handle, buffer)) != 1)
+	else
 	{
-		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR, 
-				       "Msg(%x) Update Card status(Checkin)(%s) Table Error", 
-				       ntohl(zmqMsg->msgCode), buffer);
-
-		retCode = TS_SERVER_DB_ERR;
-		retMsg  = "Update Card Status Error";
-		funStatus = LWDP_ERROR;
-		goto RET_TAG;
+		if((funStatus=cardCheckOut(db_handle, carIdStr, scenicIdStr, cardStatus, &cardMsg)) != LWDP_OK)
+		{
+			LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::WARNING, 
+					       "CheckOut Card Info Error", ntohl(zmqMsg->msgCode));
+			
+			retCode   = funStatus;
+			retMsg    = cardMsg;
+			goto RET_TAG;
+		}
 	}
 
 	//Insert Card Status
@@ -725,6 +720,7 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(DBHandle db_handle,const uint8_* 
 				   "Select Db Str(%s)", buffer);
 
 	//iDbMgr->Ping();
+	int32_  queryRes = 0;
 	if((queryRes = iDbMgr->ExecSQL(db_handle, buffer)) != 1)
 	{
 		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR, 
@@ -979,11 +975,11 @@ LWRESULT Cx_ACDevice::intArrayToStr(uint32_ int_array[], uint32_ size, std::stri
 #endif
 	return LWDP_OK;
 }
-
-LWRESULT Cx_ACDevice::cardCheck(DBHandle db_handle, const std::string& carIdStr, 
-	                                 const std::string& sceneryIdStr,
-									 int32_& statusCode,
-									 char_** retMsg)
+LWRESULT Cx_ACDevice::getCardStatus(DBHandle db_handle,
+							    const std::string& carIdStr, 
+                                const std::string& sceneryIdStr,
+						        int32_& statusCode,
+						        char_** retMsg)
 {
 	char_ buffer[3072] = {0};
 	int32_  queryRes = 0;
@@ -991,13 +987,99 @@ LWRESULT Cx_ACDevice::cardCheck(DBHandle db_handle, const std::string& carIdStr,
 	*retMsg  = "Sucess!";
 
 	GET_OBJECT_RET(DbMgr, iDbMgr, LWDP_GET_OBJECT_ERROR);
+	memset(buffer, 0, 3072 * sizeof(char_));
+	Api_snprintf(buffer, 3071, 
+		         "SELECT card_status FROM sc_card WHERE card_no = '%s'",  
+		         carIdStr.c_str());
+	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::DEBUG,
+				   "Select Card Release Status Str(%s)", buffer);
+	
+	Cx_Interface<Ix_DbQuery> cardReleaseQuery;
+	if((queryRes = iDbMgr->QuerySQL(db_handle, buffer, cardReleaseQuery)) != LWDP_OK)
+	{
+		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR, 
+				       "Msg DB Select sc_card Status(%s) Table Error", 
+				       buffer);
+
+		statusCode = -1;
+		*retMsg  = "Db Error";
+		return TS_SERVER_DB_ERR;
+	}
+
+	uint32_ cardReleaseRowNum = cardReleaseQuery->NumRow();
+	if(0 == cardReleaseRowNum)
+	{
+		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::WARNING, 
+				       "Can't Find Card(id: %s, scenicId: %s) Select(%s) Table Error", 
+                       carIdStr.c_str(), 
+					   sceneryIdStr.c_str(), 
+				       buffer);
+
+		statusCode = -1;
+		*retMsg = "Cannot Find Card Info!";
+		
+		return TS_SERVER_ID_ERROR;
+	}
+
+	std::string statusValue = cardReleaseQuery->GetStringField("card_status", "");
+	if(statusValue.empty())
+	{	
+		*retMsg = "Unknow Status Card!";
+		return TS_SERVER_CARD_ERROR;
+	}
+	uint32_ statusNum = atol(statusValue.c_str());
+	if(statusNum != LW_ACDEVICE_CARD_STATUS_RELEASE)
+	{
+		switch(statusNum)
+		{   		
+			case LW_ACDEVICE_CARD_STATUS_NOTRELEASE:
+			{
+				*retMsg = "Not Release!";
+				break;
+			}
+			case LW_ACDEVICE_CARD_STATUS_LOST:
+			{
+				*retMsg = "Lose Status!";
+				break;
+			}
+			case LW_ACDEVICE_CARD_STATUS_BROKEN:
+			{
+				*retMsg = "Broken Card!";
+				break;
+			}
+			case LW_ACDEVICE_CARD_STATUS_BAN:
+			{
+				*retMsg = "Ban Card!";
+				break;
+			}
+			case LW_ACDEVICE_CARD_STATUS_DISUSE:
+			{
+				*retMsg = "Disuse Card!";
+				break;
+			}
+			case LW_ACDEVICE_CARD_STATUS_AD_BAN:
+			{
+				*retMsg = "Ad Ban Card!";
+				break;
+			}
+			default:	
+				*retMsg = "Unknow Status Card!";
+		};
+
+		statusCode = statusNum;
+		return TS_SERVER_CARD_ERROR;
+	}
+
+
+	/////////////////////////////////////////////////////////////////////
+	memset(buffer, 0, 3072 * sizeof(char_));
 	Api_snprintf(buffer, 3071, 
 		         "SELECT status FROM sc_sale_scenic WHERE card_no = '%s' AND scenic_id = %s",  
 		         carIdStr.c_str(), 
 			  	 sceneryIdStr.c_str());
 
 	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::DEBUG,
-				   "Select Card Status Str(%s)", buffer);
+				   "Select Card Scenic Status Str(%s)", buffer);
 
 	Cx_Interface<Ix_DbQuery> cardQuery;
 	if((queryRes = iDbMgr->QuerySQL(db_handle, buffer, cardQuery)) != LWDP_OK)
@@ -1015,7 +1097,7 @@ LWRESULT Cx_ACDevice::cardCheck(DBHandle db_handle, const std::string& carIdStr,
 	if(0 == rowNum)
 	{
 		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::WARNING, 
-				       "Can't Find Card(id: %d, scenicId: %s) Select(%s) Table Error", 
+				       "Can't Find Card(id: %s, scenicId: %s) Select(%s) Table Error", 
                        carIdStr.c_str(), 
 					   sceneryIdStr.c_str(), 
 				       buffer);
@@ -1071,6 +1153,69 @@ LWRESULT Cx_ACDevice::cardCheck(DBHandle db_handle, const std::string& carIdStr,
 	}
 
 	return LWDP_OK;
+}
+	
+LWRESULT Cx_ACDevice::cardCheckIn(DBHandle db_handle, const std::string& carIdStr, 
+	                                 const std::string& sceneryIdStr,
+									 int32_& statusCode,
+									 char_** retMsg)
+{
+	char_ buffer[3072] = {0};
+	int32_  queryRes = 0;
+	statusCode  = -1;
+	*retMsg  = "Sucess!";
+	LWRESULT retval = 0;
+	
+	if((retval = getCardStatus(db_handle, carIdStr, sceneryIdStr, statusCode, retMsg)) != LWDP_OK)
+	{
+		return retval;
+	}
+
+	//Update Card Status
+	GET_OBJECT_RET(DbMgr, iDbMgr, LWDP_GET_OBJECT_ERROR);
+	memset(buffer, 0 , 3072 * sizeof(char_));
+	Api_snprintf(buffer, 3071, "UPDATE sc_sale_scenic SET status = 1 WHERE card_no = '%s' and scenic_id = %s",  
+	                            carIdStr.c_str(), 
+							    sceneryIdStr.c_str());
+				  					
+	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::DEBUG,
+				   "Update Card Status(Checkin) Str(%s)", buffer);
+
+	if((queryRes = iDbMgr->ExecSQL(db_handle, buffer)) != 1)
+	{
+		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR, 
+				       "Msg Update Card status(CheckIn)(%s) Table Error", buffer);
+
+		statusCode = -1;
+		*retMsg  = "Update Card Status Error";
+
+		return TS_SERVER_DB_ERR;
+	}
+	
+	return LWDP_OK;
+}
+
+LWRESULT Cx_ACDevice::cardCheckOut(DBHandle db_handle, const std::string& carIdStr, 
+	                                   const std::string& sceneryIdStr,
+									   int32_& statusCode,
+									   char_** retMsg)
+{
+	char_ buffer[3072] = {0};
+	int32_  queryRes = 0;
+	statusCode  = -1;
+	*retMsg  = "Sucess!";
+	LWRESULT retval = 0;
+	
+	retval = getCardStatus(db_handle, carIdStr, sceneryIdStr, statusCode, retMsg);
+	if((TS_SERVER_CARD_ERROR == retval) &&
+		(LW_ACDEVICE_CARD_STATUS_USE == statusCode))
+	{
+		statusCode  = 0;
+		*retMsg  = "CheckOut Ok!";
+		return LWDP_OK;
+	}
+
+	return retval;
 }
 
 
