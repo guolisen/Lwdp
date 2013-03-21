@@ -38,27 +38,27 @@
 		<link>
 			<name>PModule/CommonUtilMgr/CommonUtilMgrDef.h</name>
 			<type>1</type>
-			<locationURI>PARENT-1-ECLIPSE_HOME/LwdpGit/Lwdp/Lwdp/code/PModule/CommonUtilMgr/CommonUtilMgrDef.h</locationURI>
+			<locationURI>PARENT-1-ECLIPSE_HOME/Lwdp/Lwdp/Lwdp/code/PModule/CommonUtilMgr/CommonUtilMgrDef.h</locationURI>
 		</link>
 		<link>
 			<name>PModule/CommonUtilMgr/CommonUtilMgrErrno.h</name>
 			<type>1</type>
-			<locationURI>PARENT-1-ECLIPSE_HOME/LwdpGit/Lwdp/Lwdp/code/PModule/CommonUtilMgr/CommonUtilMgrErrno.h</locationURI>
+			<locationURI>PARENT-1-ECLIPSE_HOME/Lwdp/Lwdp/Lwdp/code/PModule/CommonUtilMgr/CommonUtilMgrErrno.h</locationURI>
 		</link>
 		<link>
 			<name>PModule/CommonUtilMgr/CommonUtilMgrModule.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-1-ECLIPSE_HOME/LwdpGit/Lwdp/Lwdp/code/PModule/CommonUtilMgr/CommonUtilMgrModule.cpp</locationURI>
+			<locationURI>PARENT-1-ECLIPSE_HOME/Lwdp/Lwdp/Lwdp/code/PModule/CommonUtilMgr/CommonUtilMgrModule.cpp</locationURI>
 		</link>
 		<link>
 			<name>PModule/CommonUtilMgr/Cx_CommonUtilMgr.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-1-ECLIPSE_HOME/LwdpGit/Lwdp/Lwdp/code/PModule/CommonUtilMgr/Cx_CommonUtilMgr.cpp</locationURI>
+			<locationURI>PARENT-1-ECLIPSE_HOME/Lwdp/Lwdp/Lwdp/code/PModule/CommonUtilMgr/Cx_CommonUtilMgr.cpp</locationURI>
 		</link>
 		<link>
 			<name>PModule/CommonUtilMgr/Cx_CommonUtilMgr.h</name>
 			<type>1</type>
-			<locationURI>PARENT-1-ECLIPSE_HOME/LwdpGit/Lwdp/Lwdp/code/PModule/CommonUtilMgr/Cx_CommonUtilMgr.h</locationURI>
+			<locationURI>PARENT-1-ECLIPSE_HOME/Lwdp/Lwdp/Lwdp/code/PModule/CommonUtilMgr/Cx_CommonUtilMgr.h</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

@@ -105,7 +105,10 @@ const char* HelpStr = "Format:\nTcpMain [config file directory]";
 int32_ main(int argc, char* argv[])
 {
 	LWRESULT stat = LWDP_ERROR;
-	
+	char szWorkDir[260] = {0};
+	getcwd(szWorkDir, 260);
+
+	printf("%s\n", szWorkDir);
 #if defined(LWDP_PLATFORM_DEF_WIN32)
 		char* configDir = "../../../../bin/xml/ConfigExternal.xml";
 #elif defined(LWDP_PLATFORM_DEF_LINUX)

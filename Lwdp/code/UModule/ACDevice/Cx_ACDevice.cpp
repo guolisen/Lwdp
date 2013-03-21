@@ -399,7 +399,7 @@ enum TS_SERVER_CONFIG_MSG_RESAULT_ENUM
 
 typedef struct stru_dev_config_body
 {	
-	uint32_  msgResult; //��Ϣ���ͽ��?
+	uint32_  msgResult; //��Ϣ���ͽ��?
 	char_    msgResultData[32];  // ���ܵĴ�����Ϣ�ַ�
 	uint32_  deviceId;  //�豸����
 	uint32_  deviceType;  //�豸����
@@ -538,10 +538,10 @@ typedef struct stru_dev_status_req_body
 
 typedef struct stru_dev_status_rsp_body
 {	
-	uint32_  msgResult; //��Ϣ���ͽ��?
+	uint32_  msgResult; //��Ϣ���ͽ��?
 	char_    msgResultData[32];  // ���ܵĴ�����Ϣ�ַ�
 	uint32_  oprationCode;  //������
-	uint32_  appendDataLength; //������ݳ���?
+	uint32_  appendDataLength; //������ݳ���?
 	uint8_   appendData[1];
 }TS_DEV_STATUS_RSP_BODY;
 
@@ -606,7 +606,7 @@ LWRESULT Cx_ACDevice::DeviceHBMsgProcess(DBHandle db_handle,const uint8_* ret_ms
 /*
 enum TS_CARD_DATA_MSG_RESAULT_ENUM
 {	
-	TS_SERVER_WRITE_DATA_ERROR = 1, //д��ݿ�ʧ��?
+	TS_SERVER_WRITE_DATA_ERROR = 1, //д��ݿ�ʧ��?
 	TS_SERVER_UNKONW_ERROR,     //�豸IDδ֪����
 };
 
@@ -621,7 +621,7 @@ typedef struct stru_dev_card_data_msg
 
 typedef struct stru_dev_card_data_rsp_msg
 {	
-	uint32_  msgResult; //��Ϣ���ͽ��?
+	uint32_  msgResult; //��Ϣ���ͽ��?
 	char_    msgResultData[32];  // ���ܵĴ�����Ϣ�ַ�
 } TS_DEVICE_CARD_DATA_RSP_BODY;
 
@@ -638,8 +638,15 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(DBHandle db_handle,const uint8_* 
 		return LWDP_PARAMETER_ERROR;
 	}
 
+	char_ buffer[3072] = {0};
+	int32_ cardStatus = -1;
+	char_* cardMsg = "Sucess!";
+
+	int32_  queryRes = 0;
+	char_ bufTime[1024] = {0};
 	uint32_ retCode  = 0;
 	char_*  retMsg   = "Sucess!";
+	int32_ checkAction = -1;
 	time_t timep = time(NULL);//ntohl(msgBody->checkinTime);
 	struct tm checkTime = {0};
 	GET_OBJECT_RET(DbMgr, iDbMgr, LWDP_GET_OBJECT_ERROR);
@@ -671,10 +678,7 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(DBHandle db_handle,const uint8_* 
 			       scenicIdStr.c_str(), 
 			       ntohs(msgBody->cardType), ntohs(msgBody->actionId), ntohl(msgBody->checkinTime));
 
-	char_ buffer[3072] = {0};
-	int32_ cardStatus = -1;
-	char_* cardMsg = "Sucess!";
-	int32_ checkAction = ntohs(msgBody->actionId);
+	checkAction = ntohs(msgBody->actionId);
 	if(!checkAction) //CheckIn
 	{
 		if((funStatus=cardCheckIn(db_handle, carIdStr, scenicIdStr, cardStatus, &cardMsg)) != LWDP_OK)
@@ -703,7 +707,7 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(DBHandle db_handle,const uint8_* 
 	//Insert Card Status
 	localtime_r(&timep, &checkTime); 
 	
-	char_ bufTime[1024] = {0};
+
 	strftime(bufTime, 1024, "%Y-%m-%d %H:%M:%S", &checkTime);
 
 	Api_snprintf(buffer, 3071, Cx_ACDevice::mCardSql.c_str(),  carIdStr.c_str(), 
@@ -720,7 +724,7 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(DBHandle db_handle,const uint8_* 
 				   "Select Db Str(%s)", buffer);
 
 	//iDbMgr->Ping();
-	int32_  queryRes = 0;
+
 	if((queryRes = iDbMgr->ExecSQL(db_handle, buffer)) != 1)
 	{
 		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR, 
@@ -755,19 +759,19 @@ RET_TAG:
 /*
 enum TS_BULK_DATA_MSG_RESAULT_ENUM
 {	
-	TS_SERVER_BULK_WRITE_DATA_ERROR = 1, //д��ݿ�ʧ��?
+	TS_SERVER_BULK_WRITE_DATA_ERROR = 1, //д��ݿ�ʧ��?
 	TS_SERVER_BULK_UNKONW_ERROR,     //�豸IDδ֪����
 };
 
 typedef struct stru_dev_bulk_data_msg
 {  
-	uint32_  cardDataCount;   //�������Ŀ����?
+	uint32_  cardDataCount;   //�������Ŀ����?
 	uint8_*  cardDataEntry;   //��ΪID
 }TS_DEVICE_BULK_DATA_REQ_BODY;
 
 typedef struct stru_dev_bulk_data_rsp_msg
 {	
-	uint32_  msgResult; //��Ϣ���ͽ��?
+	uint32_  msgResult; //��Ϣ���ͽ��?
 	char_    msgResultData[32];  // ���ܵĴ�����Ϣ�ַ�
 	uint32_  errorEntryNum;
 	uint8_   errCardId[1]; //errorEntryNum * 8

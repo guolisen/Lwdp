@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="GB2312"?>
 <Module Name = "LWDP" Modid = "8A74DBB9-F23A-4a33-83DE-1BACE814BFB6">
 	<Property> 
-		<ProjectName>Example</ProjectName>
+		<ProjectName>TicketTcpServer</ProjectName>
 		<Version>1.0</Version>
 	</Property>
 	<Script Name = "GlobalInit">
@@ -109,7 +109,7 @@
 		</Property>
 		<TableSet>
 			<PropertyTable Name = "LibraryTable">
-				<LibraryDirEntry>../../../code/bin/Lua/test.lua</LibraryDirEntry>
+				<!--<LibraryDirEntry>../LuaMgrDll/test.lua</LibraryDirEntry>-->
 			</PropertyTable>
 		</TableSet>
 		<Script Name = "LuaMgrInit">
@@ -202,9 +202,9 @@
 			<!--<WorkThreadConnect>tcp://localhost:12137</WorkThreadConnect>  -->
 			<WorkThreadConnect>ipc://work_thread</WorkThreadConnect>
 			<CtrlConnect>inproc://ctrl_to_workthread</CtrlConnect>
-			<WorkThreadNum>1</WorkThreadNum>
+			<WorkThreadNum>10</WorkThreadNum>
 			
-			<DbIp>10.3.18.56</DbIp>
+			<DbIp>10.3.18.68</DbIp>
 			<DbUser>ptsf</DbUser>
 			<DbPassword>123456</DbPassword>
 			<DbSelect>scenic</DbSelect>
@@ -233,10 +233,10 @@
 			<ModuleDir>plugins/ACDevice.so</ModuleDir>
 			<InitSql>select * from sc_gate where gate_no = '%s'</InitSql>
 			<ConfigSql>select * from sc_gate where gate_no = '%s'</ConfigSql>
-			<CardSql>insert into sc_swiping(card_no, gate_no, scenic_id, ticket_type, action, create_time) 
-			                                VALUES ('%s', '%s', '%s', %d, %d, '%s')
+			<CardSql>insert into sc_swiping(swip_type, swip_no, gate_no, scenic_id, ticket_type, action, create_time) 
+			                                VALUES (1, '%s', '%s', %s, %d, %d, '%s')
 			</CardSql>
-			<BulkThreadNum>5</BulkThreadNum>
+			<BulkThreadNum>1</BulkThreadNum>
 			<BulkPageSize>200</BulkPageSize>
 		</Property>
 		<TableSet>
