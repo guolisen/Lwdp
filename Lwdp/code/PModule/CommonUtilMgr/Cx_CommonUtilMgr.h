@@ -30,7 +30,12 @@ protected:
 
 protected:
 	LWRESULT Init();
-	
+	LWRESULT StrConvert(char_* from_charset,
+                          char_* to_charset,
+                          char * inbuf,
+                          int    inlen,
+                          char * outbuf,
+                          int    outlen);
 
 };
 

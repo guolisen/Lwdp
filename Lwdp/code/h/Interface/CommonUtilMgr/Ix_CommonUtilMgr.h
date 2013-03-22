@@ -403,7 +403,12 @@ public:
 
 INTERFACE_BEGIN(CommonUtilMgr)
 	virtual LWRESULT Init() = 0;
-	
+	virtual LWRESULT StrConvert(char_* from_charset,
+		                        char_* to_charset,
+		                        char * inbuf,
+		                        int    inlen,
+		                        char * outbuf,
+		                        int    outlen) = 0;
 INTERFACE_END();
 
 

@@ -5,6 +5,7 @@
 #include <Interface/ConfigMgr/Ix_ConfigMgr.h>
 #include <Interface/LogMgr/Ix_LogMgr.h>
 #include <Interface/DbMgr/Ix_DbMgr.h>
+#include <Interface/CommonUtilMgr/Ix_CommonUtilMgr.h>
 
 #include "../Interface/ZmqBackend/Ix_ZmqBackend.h"
 #include "../Interface/ACDevice/Ix_ACDevice.h"
@@ -990,6 +991,7 @@ LWRESULT Cx_ACDevice::getCardStatus(DBHandle db_handle,
 	statusCode  = -1;
 	*retMsg  = "Sucess!";
 
+	GET_OBJECT_RET(CommonUtilMgr, iCommonUtilMgr, LWDP_GET_OBJECT_ERROR);
 	GET_OBJECT_RET(DbMgr, iDbMgr, LWDP_GET_OBJECT_ERROR);
 	memset(buffer, 0, 3072 * sizeof(char_));
 	Api_snprintf(buffer, 3071, 
@@ -1128,7 +1130,11 @@ LWRESULT Cx_ACDevice::getCardStatus(DBHandle db_handle,
 			{
 				case LW_ACDEVICE_CARD_STATUS_USE:
 				{
-					*retMsg = "Have Use!";
+					char* tmp = (char*)malloc(1024);
+					iCommonUtilMgr->StrConvert("gb2312","utf-8", "已使用",
+					                           strlen("已使用"),
+					                           tmp, 1024);
+					*retMsg = tmp;
 					break;
 				}
 				case LW_ACDEVICE_CARD_STATUS_ABANDON:

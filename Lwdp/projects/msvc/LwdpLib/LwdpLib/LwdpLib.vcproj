@@ -42,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\..\code\h\LwApiLib\ComLib\Lua;..\..\..\..\code\h;..\..\..\..\code\h\LwApiLib\ComLib\log4cpp;..\..\..\..\code\h\LwApiLib\ComLib;..\..\..\..\code\h\LwApiLib\ComLib\tinyxpath"
+				AdditionalIncludeDirectories="..\..\..\..\code\h\LwApiLib\ComLib\Lua;..\..\..\..\code\h;..\..\..\..\code\h\LwApiLib\ComLib\log4cpp;..\..\..\..\code\h\LwApiLib\ComLib;..\..\..\..\code\h\LwApiLib\ComLib\tinyxpath;..\..\..\..\code\h\LwApiLib\ComLib\iconv"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;LWDP_DEBUG_MACRO;__CLEANUP_C;PTW32_BUILD"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -1787,6 +1787,70 @@
 				>
 				<File
 					RelativePath="..\..\..\..\code\LwApiLib\ComLib\Libev\ev.c"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="iconv"
+				>
+				<File
+					RelativePath="..\..\..\..\code\LwApiLib\ComLib\iconv\aliases.gperf"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\code\LwApiLib\ComLib\iconv\aliases_sysaix.gperf"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\code\LwApiLib\ComLib\iconv\aliases_syshpux.gperf"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\code\LwApiLib\ComLib\iconv\aliases_sysosf1.gperf"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\code\LwApiLib\ComLib\iconv\aliases_syssolaris.gperf"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\code\LwApiLib\ComLib\iconv\encodings.def"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\code\LwApiLib\ComLib\iconv\encodings_aix.def"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\code\LwApiLib\ComLib\iconv\encodings_dos.def"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\code\LwApiLib\ComLib\iconv\encodings_extra.def"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\code\LwApiLib\ComLib\iconv\encodings_local.def"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\code\LwApiLib\ComLib\iconv\encodings_osf1.def"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\code\LwApiLib\ComLib\iconv\iconv.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\code\LwApiLib\ComLib\iconv\localcharset.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\code\LwApiLib\ComLib\iconv\relocatable.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\code\LwApiLib\ComLib\iconv\translit.def"
 					>
 				</File>
 			</Filter>
