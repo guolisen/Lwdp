@@ -41,17 +41,20 @@ public:
 protected:
 	virtual LWRESULT getCardStatus(DBHandle db_handle,
 								    const std::string& carIdStr, 
+								    uint32_ card_type,
 	                                const std::string& sceneryIdStr,
 							        int32_& statusCode,
 							        char_** retMsg);
 	virtual LWRESULT cardCheckIn(DBHandle db_handle,
-								    const std::string& carIdStr, 
+								    const std::string& carIdStr,
+								    uint32_ card_type,
 	                                const std::string& sceneryIdStr,
 							        int32_& statusCode,
 							        char_** retMsg);
 
 	virtual LWRESULT cardCheckOut(DBHandle db_handle,
-								      const std::string& carIdStr, 
+								      const std::string& carIdStr,
+								      uint32_ card_type,
 	                                  const std::string& sceneryIdStr,
 							          int32_& statusCode,
 							          char_** retMsg);

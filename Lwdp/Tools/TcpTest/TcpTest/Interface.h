@@ -23,7 +23,7 @@
 // Req Msg Head
 typedef struct stru_req_server_msg
 {
-	uint32_ msgLength;  //ï¿½ï¿½Ï¢ï¿½å³¤ï¿½ï¿½  ï¿½Ë³ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½È£ï¿½ï¿½ï¿½ï¿½ï¿½msgLengthï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½ï¿½
+	uint32_ msgLength;  //ï¿½ï¿½Ï¢ï¿½å³¤ï¿½ï¿½  ï¿½Ë³ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½È£ï¿½ï¿½ï¿½ï¿½ï¿½msgLengthï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½ï¿?
 	char_   deviceId[TS_GATE_ID_STRU_LEN];
 	uint32_ msgCode;
 	uint8_  customMsgBody[0];  //ï¿½ï¿½Ï¢ï¿½ï¿½
@@ -36,7 +36,7 @@ typedef struct stru_req_server_msg
 
 typedef struct stru_rsp_server_msg
 {
-	uint32_ msgLength;  //ï¿½ï¿½Ï¢ï¿½å³¤ï¿½ï¿½  ï¿½Ë³ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½È£ï¿½ï¿½ï¿½ï¿½ï¿½msgLengthï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½ï¿½
+	uint32_ msgLength;  //ï¿½ï¿½Ï¢ï¿½å³¤ï¿½ï¿½  ï¿½Ë³ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½È£ï¿½ï¿½ï¿½ï¿½ï¿½msgLengthï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½ï¿?
 	uint32_ rspCode;
 	char_   rspMsg[TS_RET_MSG_LEN]; 
 	uint8_  customMsgBody[0];  //ï¿½ï¿½Ï¢ï¿½ï¿½
@@ -59,6 +59,8 @@ enum TS_SYSTEM_MSG_ENUM
 
 #define TS_CARD_ID_STRU_LEN      32
 #define TS_SCENERY_ID_STRU_LEN   32
+#define TS_SELFCHECK_INFO_LEN    128
+#define TS_CARD_KEY_LEN          256
 #define TS_GATECHECK_MSG_BASE    GET_MSG_BASE(TS_ACDEVICE_MODULE)  //0x01000000 Module:0x01 Code0x000000
 
 /////////////////////////////////////////////////////////////
@@ -88,14 +90,14 @@ enum TS_RET_MSG_RESAULT_ENUM
 {	
 	TS_SERVER_CHECK_OK_RECONFIG = TS_GATECHECK_MSG_BASE, //ÑéÖ¤³É¹¦£¬µ«ÐëÖØÅä²ÎÊý
 	TS_SERVER_ID_ERROR,     //Éè±¸IDÎ´Öª´íÎó
+	TS_SERVER_CARD_ERROR,     //Card Error ×´Ì¬´íÎó£¬ÒÑË¢¿¨£¬¶³½áµÈ
 	TS_SERVER_TYPE_ERROR,   //Éè±¸ÀàÐÍ´íÎó
-	TS_SERVER_UNKNOW_ERROR, //Î´Öª´íÎó£¬¾ßÌå¼û¸½¼ÓÐÅÏ¢
+	
 	TS_SERVER_DB_ERR,        //·þÎñÆ÷Êý¾Ý¿â´íÎó
-	TS_SERVER_CONFIG_ERROR, //Ê§°Ü
 	TS_SERVER_BULK_THREAD_ERR,
 	TS_SERVER_HB_ERROR,
-	TS_SERVER_WRITE_DATA_ERROR,
-	TS_SERVER_BULK_WRITE_DATA_ERROR
+	TS_SERVER_BULK_WRITE_DATA_ERROR,
+	TS_SERVER_FORBIDDEN_DEV_SETUP
 };
 
 ////////////////////////////////////////////
@@ -103,9 +105,11 @@ enum TS_RET_MSG_RESAULT_ENUM
 ////////////////////////////////////////////
 typedef struct stru_device_init_req_body
 {	
-	uint32_ deviceType;  //Éè±¸ÀàÐÍ
+	uint32_ deviceAction;  //Éè±¸ÀàÐÍ
 	char_   sceneryId[TS_SCENERY_ID_STRU_LEN];  //¾°µãID
+	char_   cardKey[256];  //¶Á¿¨ÃÜÔ¿
 	uint32_ checkResult; //Éè±¸×Ô¼ì½á¹û
+	char_   checkResultInfo[TS_SELFCHECK_INFO_LEN]; //Éè±¸×Ô¼ì½á¹û¸½¼ÓÐÅÏ¢
 }TS_DEVICE_INIT_REQ_BODY;
 
 typedef struct stru_server_init_rsp_body
@@ -121,9 +125,9 @@ typedef struct stru_server_init_rsp_body
 
 typedef struct stru_dev_config_rsp_body
 {	
-	char_    deviceId[TS_GATE_ID_STRU_LEN];  //Éè±¸ÀàÐÍ
-	uint32_  deviceType;  //Éè±¸ÀàÐÍ
+	uint32_  deviceAction;  //Éè±¸ÀàÐÍ
 	char_    sceneryId[TS_SCENERY_ID_STRU_LEN];  //¾°µãID
+	char_    cardKey[TS_CARD_KEY_LEN];  //¶Á¿¨ÃØÔ¿
 }TS_DEV_CONFIG_RSP_BODY;
 
 
@@ -150,8 +154,8 @@ typedef struct stru_dev_card_data_req_msg
 {
 	char_    cardId[TS_CARD_ID_STRU_LEN];  
     char_    sceneryId[TS_SCENERY_ID_STRU_LEN];
-	uint16_  cardType;   //¿¨ÀàÐÍ
-	uint16_  actionId;   //ÐÐÎªID
+	uint16_  cardType;   //¿¨ÀàÐÍM1,¶þÎ¬Âë£¬Éí·ÝÖ¤
+	uint16_  actionId;   //ÐÐÎªID,½øÃÅ³öÃÅ
 	uint32_  checkinTime;
 }TS_DEVICE_CARD_DATA_REQ_BODY;
 
@@ -171,8 +175,6 @@ typedef struct stru_dev_bulk_data_rsp_msg
 	uint32_  errorEntryNum;
 	uint8_   errCardId[0]; //errorEntryNum * 8
 } TS_DEVICE_BULK_DATA_RSP_BODY;
-
-
 
 
 

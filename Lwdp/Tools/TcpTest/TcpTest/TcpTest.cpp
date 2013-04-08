@@ -13,10 +13,12 @@
 #include "def.h"
 #include "interface.h"
 
+#include <iconv.h>
+
 
 using namespace std;
 #define SERVPORT 12135 /*服务器监听端口号*/
-#define DEST_IP  "10.3.18.68"
+#define DEST_IP  "10.3.18.56"
 //#define DEST_IP  "127.0.0.1"
 #define MAXDATASIZE 1024
 
@@ -32,6 +34,38 @@ int BulkData_Send(int sockfd);
 
 msgFun msgSet[] = {Init_Send, Config_Send, Status_Send, CardData_Send, BulkData_Send};
 char* deviceIdSet[] = {"1001100000001", "1001100000002", "1001100000003", "1001100000004", "1001100000005"};
+
+
+
+int StrConvert(char_* from_charset,
+				char_* to_charset,
+				char * inbuf,
+				int    inlen,
+				char * outbuf,
+				int    outlen)
+{
+	if(!from_charset || !to_charset || !inbuf || !outbuf || !inlen || !outlen)
+		return -1;
+
+	iconv_t cd;
+	int rc = 0;
+	char **pin  = &inbuf;
+	char **pout = &outbuf;
+
+	cd = iconv_open(to_charset, from_charset);
+	if(!cd) 
+		return -1;
+	
+	memset(outbuf, 0, outlen);
+	if((rc=iconv(cd, (const char **)pin, (size_t *)&inlen, pout, (size_t *)&outlen)) == -1) 
+	{
+		iconv_close(cd);
+		return -1;
+	}
+	iconv_close(cd);
+
+	return 0;
+}
 
 
 int uIndex = 0;
@@ -50,7 +84,7 @@ int Init_Send(int socketFd)
 	
 	TS_DEVICE_INIT_REQ_BODY* body = (TS_DEVICE_INIT_REQ_BODY*)tdata->customMsgBody;
 	body->checkResult = htonl(0);
-	body->deviceType = htonl(1);
+	body->deviceAction = htonl(1);
 	body->sceneryId[0] = '1';
 	body->sceneryId[1] = '2';
 	body->sceneryId[2] = '3';
@@ -59,6 +93,9 @@ int Init_Send(int socketFd)
 	body->sceneryId[5] = '6';
 	body->sceneryId[6] = '7';
 	body->sceneryId[7] = '8';
+
+	strcpy(body->cardKey, "AAAAAAAA");
+	strcpy(body->checkResultInfo, "I'm OK!");	
 
 	if (send(socketFd, (char *)tdata, len, 0) == -1)		
 	{
@@ -145,13 +182,13 @@ int Config_Send(int socketFd)
 				ntohl(retTcpMsg->rspCode),
 				retTcpMsg->rspMsg);
 
-		printf( "[Received] deviceId: %s\n", std::string((char*)retBody->deviceId, sizeof(retBody->deviceId)).c_str());
-		printf( "[Received] deviceType: %x\n", ntohl(retBody->deviceType));
+		printf( "[Received] deviceType: %x\n", ntohl(retBody->deviceAction));
 		printf( "[Received] sceneryId: %s\n", std::string((char*)retBody->sceneryId, 8).c_str());
 	}
 
 	return 0;
 }
+
 #include <time.h>
 int Status_Send(int socketFd)
 {
@@ -226,10 +263,10 @@ int CardData_Send(int socketFd)
 
 	char tmpStr[100] = {0};
 	unsigned int counter = within(100000000);
-	//_snprintf(tmpStr, 100, "10011%08d", counter);
-	_snprintf(tmpStr, 100, "1001100000003");
+
+	_snprintf(tmpStr, 100, "6400010110000001");
 	memcpy(body->cardId, tmpStr, strlen(tmpStr));
-	memcpy(body->sceneryId, "12345678", 8);
+	memcpy(body->sceneryId, "10011001", 8);
 	body->cardType = htons(0x12);
 	body->actionId = htons(within(2));
 	body->checkinTime = 0;
@@ -263,8 +300,15 @@ int CardData_Send(int socketFd)
 	{ 
 		TS_RSP_SERVER_MSG* retTcpMsg = (TS_RSP_SERVER_MSG*)buf;
 
+		
+		char tmp[128];
+		memset(tmp, 0 , 128);
+		StrConvert("utf-8","gb2312", retTcpMsg->rspMsg,
+				   strlen(retTcpMsg->rspMsg),
+				   tmp, sizeof(tmp));
+
 		printf( "[Received] LEN: %d RSPCODE: %x msgResultData: %s\n", ntohl(retTcpMsg->msgLength),
-				ntohl(retTcpMsg->rspCode), retTcpMsg->rspMsg);
+				ntohl(retTcpMsg->rspCode), tmp);
 
 	}
 
@@ -414,8 +458,6 @@ unsigned int __stdcall threadfun(void* arg)
 	struct sockaddr_in serv_addr; 
 	struct sockaddr_in dest_addr; /* 目的地址*/  
 
-
-
 	while (1)
 	//for(int i = 0; i<20; i++)
 	{
@@ -443,8 +485,8 @@ unsigned int __stdcall threadfun(void* arg)
 		//Init_Send(sockfd);
 		//Config_Send(sockfd);
 		//Status_Send(sockfd);
-		CardData_Send(sockfd);
-		//BulkData_Send(sockfd);
+		//CardData_Send(sockfd);
+		BulkData_Send(sockfd);
 
 		Sleep(3000);
 		closesocket(sockfd); 
@@ -461,7 +503,7 @@ int main()
 {
 	srand(time(0));
 
-		WORD wVersionRequested;
+	WORD wVersionRequested;
 	WSADATA wsaData;
 	int err;
 	wVersionRequested = MAKEWORD(2,0);

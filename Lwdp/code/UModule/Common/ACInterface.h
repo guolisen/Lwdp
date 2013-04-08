@@ -12,6 +12,8 @@ LWDP_NAMESPACE_BEGIN;
 
 #define TS_CARD_ID_STRU_LEN      32
 #define TS_SCENERY_ID_STRU_LEN   32
+#define TS_SELFCHECK_INFO_LEN    128
+#define TS_CARD_KEY_LEN          256
 #define TS_GATECHECK_MSG_BASE    GET_MSG_BASE(TS_ACDEVICE_MODULE)  //0x01000000 Module:0x01 Code0x000000
 
 /////////////////////////////////////////////////////////////
@@ -43,12 +45,12 @@ enum TS_RET_MSG_RESAULT_ENUM
 	TS_SERVER_ID_ERROR,     //设备ID未知错误
 	TS_SERVER_CARD_ERROR,     //Card Error 状态错误，已刷卡，冻结等
 	TS_SERVER_TYPE_ERROR,   //设备类型错误
-	TS_SERVER_UNKNOW_ERROR, //未知错误，具体见附加信息
+	
 	TS_SERVER_DB_ERR,        //服务器数据库错误
 	TS_SERVER_BULK_THREAD_ERR,
 	TS_SERVER_HB_ERROR,
-	TS_SERVER_WRITE_DATA_ERROR,
-	TS_SERVER_BULK_WRITE_DATA_ERROR
+	TS_SERVER_BULK_WRITE_DATA_ERROR,
+	TS_SERVER_FORBIDDEN_DEV_SETUP
 };
 
 ////////////////////////////////////////////
@@ -56,9 +58,11 @@ enum TS_RET_MSG_RESAULT_ENUM
 ////////////////////////////////////////////
 typedef struct stru_device_init_req_body
 {	
-	uint32_ deviceType;  //设备类型
+	uint32_ deviceAction;  //设备类型
 	char_   sceneryId[TS_SCENERY_ID_STRU_LEN];  //景点ID
+	char_   cardKey[256];  //读卡密钥
 	uint32_ checkResult; //设备自检结果
+	char_   checkResultInfo[TS_SELFCHECK_INFO_LEN]; //设备自检结果附加信息
 }TS_DEVICE_INIT_REQ_BODY;
 
 typedef struct stru_server_init_rsp_body
@@ -74,9 +78,9 @@ typedef struct stru_server_init_rsp_body
 
 typedef struct stru_dev_config_rsp_body
 {	
-	char_    deviceId[TS_GATE_ID_STRU_LEN];  //设备类型
-	uint32_  deviceType;  //设备类型
+	uint32_  deviceAction;  //设备类型
 	char_    sceneryId[TS_SCENERY_ID_STRU_LEN];  //景点ID
+	char_    cardKey[TS_CARD_KEY_LEN];  //读卡秘钥
 }TS_DEV_CONFIG_RSP_BODY;
 
 
@@ -103,8 +107,8 @@ typedef struct stru_dev_card_data_req_msg
 {
 	char_    cardId[TS_CARD_ID_STRU_LEN];  
     char_    sceneryId[TS_SCENERY_ID_STRU_LEN];
-	uint16_  cardType;   //卡类型
-	uint16_  actionId;   //行为ID
+	uint16_  cardType;   //卡类型M1,二维码，身份证
+	uint16_  actionId;   //行为ID,进门出门
 	uint32_  checkinTime;
 }TS_DEVICE_CARD_DATA_REQ_BODY;
 

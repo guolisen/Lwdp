@@ -255,7 +255,7 @@
 				<SceneryIdCol>scenic_id</SceneryIdCol>
 				<ManufacturerCol>manufacturer</ManufacturerCol>
 				<PositionCol>position</PositionCol>
-				<typeCol>type</typeCol>
+				<typeCol>role</typeCol>
 				<statusCol>status</statusCol>
 			</PropertyTable>
 		
