@@ -42,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\..\code\h\LwApiLib\ComLib\Lua;..\..\..\..\code\h;..\..\..\..\code\h\LwApiLib\ComLib\log4cpp;..\..\..\..\code\h\LwApiLib\ComLib;..\..\..\..\code\h\LwApiLib\ComLib\tinyxpath;..\..\..\..\code\h\LwApiLib\ComLib\iconv"
+				AdditionalIncludeDirectories="..\..\..\..\code\h\LwApiLib\ComLib\Lua;..\..\..\..\code\h;..\..\..\..\code\h\LwApiLib\ComLib\iconv;..\..\..\..\code\h\LwApiLib\ComLib\log4cpp;..\..\..\..\code\h\LwApiLib\ComLib;..\..\..\..\code\h\LwApiLib\ComLib\tinyxpath"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;LWDP_DEBUG_MACRO;__CLEANUP_C;PTW32_BUILD"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
