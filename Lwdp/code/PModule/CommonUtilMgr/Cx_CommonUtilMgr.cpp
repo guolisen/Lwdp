@@ -7,7 +7,7 @@
 #include <LwDp.h>
 #include <PluginInc.h>
 #include <iostream>
-#include <LwApiLib\ComLib\iconv\iconv.h>
+#include <iconv.h>
 
 #include <Interface/ConfigMgr/Ix_ConfigMgr.h>
 #include <Interface/LogMgr/Ix_LogMgr.h>
@@ -57,7 +57,7 @@ LWRESULT Cx_CommonUtilMgr::StrConvert(char_* from_charset,
 		return LWDP_ERROR;
 	
 	memset(outbuf, 0, outlen);
-	if((rc=iconv(cd, (const char **)pin, (size_t *)&inlen, pout, (size_t *)&outlen)) == -1) 
+	if((rc=iconv(cd, (char **)pin, (size_t *)&inlen, pout, (size_t *)&outlen)) == -1)
 	{
 		iconv_close(cd);
 		return LWDP_ERROR;

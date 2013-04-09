@@ -264,21 +264,4 @@
 		</Script>
 	</Module>
 	
-	<Module Name = "ExampleTest" Modid = "86347b32-64e4-490c-b273-ec7e010f244e">
-		<!--属性名不可重复-->
-		<Property> 
-			<Version>3.0</Version>
-			<ModuleDir>Plugins/ExampleDll.dll</ModuleDir>
-		</Property>
-		<TableSet>
-			<PropertyTable Name = "TestTable">
-				<Item Name = "Test" ts='t1'>Test1</Item>
-				<Item Name = "Test" ts='t2'>Test2</Item>
-				<Item Name = "Test" ts='t3'>Test3</Item>
-				<Item Name = "Test" ts='t4'>Test4</Item>
-			</PropertyTable>
-		</TableSet>
-		<Script Name = "ExampleTestInit">
-		</Script>
-	</Module>
 </Module>

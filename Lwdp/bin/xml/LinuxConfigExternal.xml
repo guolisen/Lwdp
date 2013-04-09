@@ -21,7 +21,8 @@
 			<ModuleLoad Name = "TimerMgr" 	Modid = "212ED676-7B73-43e7-B2F9-190649FD6EC4" />
 			<ModuleLoad Name = "DbMgr"      Modid = "18D1C5FE-2D94-4a9b-B878-E8A51CA9AF67" />
 			<ModuleLoad Name = "PerfMgr"    Modid = "9D54BB67-8906-4215-BA95-591FE6F52C03" />
-			
+			<ModuleLoad Name = "CommonUtilMgr"    Modid = "EC7C6508-461F-453c-B11F-2E18AC93BED1" />
+
 			<ModuleLoad Name = "TSFrontend" Modid = "6AD26E68-071F-45d5-B5C1-7B3F7EE20D13" />
 			<ModuleLoad Name = "ZmqBackend" Modid = "789D687B-8962-4cae-8C4A-B129B5B8312F" />
 			<ModuleLoad Name = "TcpServer"  Modid = "85FFE433-F268-4728-8086-BD272EB10B66" />
@@ -171,6 +172,18 @@
 		</TableSet>
 		<Script Name = "PerfMgrInit">
 		</Script>
+	</Module>
+
+	<Module Name = "CommonUtilMgr" Modid = "EC7C6508-461F-453c-B11F-2E18AC93BED1">
+		<!--属性名不可重复-->
+		<Property> 
+			<Version>1.0</Version>
+			<ModuleDir>plugins/CommonUtilMgr.so</ModuleDir>
+		</Property>
+		<TableSet>
+		</TableSet>
+		<Script Name = "ConfigMgrInit">
+		</Script>
 	</Module>	
 	<Module Name = "TSFrontend" Modid = "6AD26E68-071F-45d5-B5C1-7B3F7EE20D13">
 		<!--属性名不可重复-->
@@ -245,7 +258,7 @@
 				<SceneryIdCol>scenic_id</SceneryIdCol>
 				<ManufacturerCol>manufacturer</ManufacturerCol>
 				<PositionCol>position</PositionCol>
-				<typeCol>type</typeCol>
+				<typeCol>role</typeCol>
 				<statusCol>status</statusCol>
 			</PropertyTable>
 		
@@ -253,22 +266,5 @@
 		<Script Name = "ACDevice">
 		</Script>
 	</Module>
-	
-	<Module Name = "ExampleTest" Modid = "86347b32-64e4-490c-b273-ec7e010f244e">
-		<!--属性名不可重复-->
-		<Property> 
-			<Version>3.0</Version>
-			<ModuleDir>plugins/ExampleTestSo.so</ModuleDir>
-		</Property>
-		<TableSet>
-			<PropertyTable Name = "TestTable">
-				<Item Name = "Test" ts='t1'>Test1</Item>
-				<Item Name = "Test" ts='t2'>Test2</Item>
-				<Item Name = "Test" ts='t3'>Test3</Item>
-				<Item Name = "Test" ts='t4'>Test4</Item>
-			</PropertyTable>
-		</TableSet>
-		<Script Name = "ExampleTestInit">
-		</Script>
-	</Module>
+
 </Module>
