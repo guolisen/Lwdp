@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\..\code\h\LwApiLib\ComLib\Lua;..\..\..\..\code\h;..\..\..\..\code\h\LwApiLib\ComLib"
+				AdditionalIncludeDirectories="..\..\..\..\code\h\LwApiLib\ComLib\Lua;..\..\..\..\code\h;..\..\..\..\code\h\LwApiLib\ComLib;..\..\..\..\code\h\LwApiLib\ComLib\iconv"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;COMMONUTILMGR_EXPORTS;LWDP_PLUGIN_CONTEXT;LWDP_DEBUG_MACRO"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"

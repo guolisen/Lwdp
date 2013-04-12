@@ -67,7 +67,7 @@ std::string strDbPassword 	= std::string(LW_ZMQBACKEND_DB_PASSWORD);
 std::string strDbName 		= std::string(LW_ZMQBACKEND_DB_SELECT_DBNAME);
 uint32_     DbPort 		    = LW_ZMQBACKEND_DB_PORT_DEFAULT;
 
-
+int gThreadInitTag = 0;
 void* worker_task (void *args)
 {
 	WorkerConter wconter;
@@ -85,9 +85,10 @@ void* worker_task (void *args)
 	{
 		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::INFO, 
 				       "Worke Thread Connect Db Error!");
+		gThreadInitTag = -1;
 		return NULL;
 	}
-	
+
 	LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::INFO, 
 			       "Worke Thread Connect Db Ok!");
 
@@ -117,6 +118,7 @@ void* worker_task (void *args)
 	{
 		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::ERR, 
 					   "Connect to Backend Error(%s)", strWorkThread.c_str());
+		gThreadInitTag = -2;
 		return NULL;
 	}
 
@@ -142,6 +144,7 @@ void* worker_task (void *args)
 	{
 		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::ERR, 
 					   "Connect to Backend Ctrl Error(%s)", strCtrlClient.c_str());
+		gThreadInitTag = -3;
 		return NULL;
 	}
 	iZmqMgr->Setsockopt(ctrlClient, LWDP_SUBSCRIBE, "", 0);
@@ -157,6 +160,7 @@ void* worker_task (void *args)
 	Cx_Interface<Ix_ZMessage> iZMessage;
     int more = 0; // Multipart detection
     uint32_ more_size = sizeof (more);
+	gThreadInitTag = 1;
 	while (1) {
 		more = 0;
 	    iZmqMgr->Poll(items, 2, -1);
@@ -445,6 +449,24 @@ LWRESULT Cx_ZmqBackend::Init()
 						   "Can't Detach Thread Ret: %d", result);
 			return ZMQBACKEND::LWDP_CREATE_DETACH_THREAD_ERR;
 		}
+
+		for(int32_ i=0; i<10; ++i)
+		{
+			if(gThreadInitTag < 0)
+			{
+				LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::ERR, 
+							   "Create Worker Thread Init Error(%d) (Now: %d, Should: %d)", 
+							   gThreadInitTag, gCurrentWorkerNum, workThreadNum);		
+				return ZMQBACKEND::LWDP_CREATE_WORK_THREAD_ERR;
+			}
+			else if(1 == gThreadInitTag)
+				break;
+
+			Api_TaskDelay(1000);
+		}
+
+		if(!gThreadInitTag)
+			return ZMQBACKEND::LWDP_CREATE_WORK_THREAD_TIMEOUT;
 	}
 
 	Api_TaskDelay(1000);

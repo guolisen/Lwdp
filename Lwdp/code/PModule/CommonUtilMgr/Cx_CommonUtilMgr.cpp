@@ -49,7 +49,7 @@ LWRESULT Cx_CommonUtilMgr::StrConvert(char_* from_charset,
 
 	iconv_t cd;
 	int rc = 0;
-	char **pin  = &inbuf;
+	const char **pin  = (const char **)&inbuf;
 	char **pout = &outbuf;
 
 	cd = iconv_open(to_charset, from_charset);
@@ -57,7 +57,7 @@ LWRESULT Cx_CommonUtilMgr::StrConvert(char_* from_charset,
 		return LWDP_ERROR;
 	
 	memset(outbuf, 0, outlen);
-	if((rc=iconv(cd, (char **)pin, (size_t *)&inlen, pout, (size_t *)&outlen)) == -1)
+	if((rc=iconv(cd, pin, (size_t *)&inlen, pout, (size_t *)&outlen)) == -1)
 	{
 		iconv_close(cd);
 		return LWDP_ERROR;

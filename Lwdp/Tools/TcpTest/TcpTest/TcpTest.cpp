@@ -488,7 +488,8 @@ unsigned int __stdcall threadfun(void* arg)
 		CardData_Send(sockfd);
 		//BulkData_Send(sockfd);
 
-		Sleep(1000);
+		int ti = within(1000);
+		Sleep(100);
 		closesocket(sockfd); 
 	}
 	

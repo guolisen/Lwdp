@@ -201,7 +201,7 @@ int main(int argc, char* argv[])
 	if(stat != LWDP_OK)
 	{
 		lw_log_err(LWDP_MODULE_LOG, "Fw_Init Error(0x%x)!", stat);
-		//system("pause");
+		system("pause");
 		return -1;
 	}
   
@@ -210,16 +210,18 @@ int main(int argc, char* argv[])
 	if(ret != LWDP_OK)
 	{
 		lw_log_err(LWDP_MODULE_LOG, "TcpServer Init Error(0x%x)!", ret);
-		//system("pause");
+		system("pause");
 		return -1;
 	} 
 	LWRESULT ret2 = iTcpServer->RunServer();
 	if(ret2 != LWDP_OK)
 	{
 		lw_log_err(LWDP_MODULE_LOG, "TcpServer RunServer Error(0x%x)!", ret2);
-		//system("pause");
+		system("pause");
 		return -1;
 	} 
+
+	lw_log_notice(LWDP_MODULE_LOG, "TcpServer Init OK!");
 
 #ifdef TS_DAEMON_TAG
 	while(1)
