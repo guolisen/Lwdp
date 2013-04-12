@@ -62,9 +62,9 @@ int init_daemon(void)
 
 	//是第二子进程，继续
 	//第二子进程不再是会话组长
-	for(i=0;i< NOFILE;++i)
+	//for(i=0;i< NOFILE;++i)
 	//关闭打开的文件描述符
-		close(i);
+	//	close(i);
 
 	chdir("/usr/local/TcpServer"); //改变工作目录到/tmp
 	umask(0);//重设 文件创建掩模
@@ -154,30 +154,26 @@ const char* HelpStr = "Format:\nTcpMain [config file directory]";
 
 
 int gLog_handle = 0;
-int32_ main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
 #ifdef TS_DAEMON_TAG
+	int dret = init_daemon();
+	if(dret)
+	{
+		return -1;
+	}
+
 	gLog_handle = open("/usr/local/TcpServer/log/platform.log", O_RDWR|O_CREAT|O_APPEND, 0777);
 	if(gLog_handle <= 0)
 	{
 		printf("open log file err!\n");
-		return 123;
+		return 1;
 	}
 
 	dup2(gLog_handle, STDIN_FILENO);
 	dup2(gLog_handle, STDOUT_FILENO);
 	dup2(gLog_handle, STDERR_FILENO);
 
-	int dret = init_daemon();
-	if(dret)
-	{
-		return -1;
-	}
-	//while(1)
-	//{
-	//	sleep(1000);
-
-	//}
 #endif
 	LWRESULT stat = LWDP_ERROR;
 #ifndef WIN32
@@ -207,7 +203,6 @@ int32_ main(int argc, char* argv[])
 		lw_log_err(LWDP_MODULE_LOG, "Fw_Init Error(0x%x)!", stat);
 		//system("pause");
 		return -1;
-		
 	}
   
 	GET_OBJECT_RET(TcpServer, iTcpServer, 0);

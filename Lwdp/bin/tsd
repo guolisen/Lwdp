@@ -5,6 +5,8 @@
 # Source function library.
 . /etc/rc.d/init.d/functions
 
+progpath=/usr/local/TcpServer
+logfile=platform.log
 tsd=${TSD-/usr/bin/tsd}
 prog=tsd
 pidfile=${PIDFILE-/var/run/tsd.pid}
@@ -12,10 +14,101 @@ lockfile=${LOCKFILE-/var/lock/subsys/tsd}
 RETVAL=0
 STOP_TIMEOUT=${STOP_TIMEOUT-10}
 
+# A function to start a program.
+mydaemon() {
+	# Test syntax.
+	local gotbase= force= nicelevel corelimit
+	local pid base= user= nice= bg= pid_file=
+	local cgroup=
+	nicelevel=0
+	while [ "$1" != "${1##[-+]}" ]; do
+	  case $1 in
+	    '')    echo $"$0: Usage: daemon [+/-nicelevel] {program}"
+	           return 1;;
+	    --check)
+		   base=$2
+		   gotbase="yes"
+		   shift 2
+		   ;;
+	    --check=?*)
+	    	   base=${1#--check=}
+		   gotbase="yes"
+		   shift
+		   ;;
+	    --user)
+		   user=$2
+		   shift 2
+		   ;;
+	    --user=?*)
+	           user=${1#--user=}
+		   shift
+		   ;;
+	    --pidfile)
+		   pid_file=$2
+		   shift 2
+		   ;;
+	    --pidfile=?*)
+		   pid_file=${1#--pidfile=}
+		   shift
+		   ;;
+	    --force)
+	    	   force="force"
+		   shift
+		   ;;
+	    [-+][0-9]*)
+	    	   nice="nice -n $1"
+	           shift
+		   ;;
+	    *)     echo $"$0: Usage: daemon [+/-nicelevel] {program}"
+	           return 1;;
+	  esac
+	done
+
+        # Save basename.
+        [ -z "$gotbase" ] && base=${1##*/}
+
+        # See if it's already running. Look *only* at the pid file.
+	__pids_var_run "$base" "$pid_file"
+
+	[ -n "$pid" -a -z "$force" ] && return
+
+	# make sure it doesn't core dump anywhere unless requested
+	corelimit="ulimit -S -c ${DAEMON_COREFILE_LIMIT:-0}"
+	
+	# if they set NICELEVEL in /etc/sysconfig/foo, honor it
+	[ -n "${NICELEVEL:-}" ] && nice="nice -n $NICELEVEL"
+	
+	# if they set CGROUP_DAEMON in /etc/sysconfig/foo, honor it
+	if [ -n "${CGROUP_DAEMON}" ]; then
+		if [ ! -x /bin/cgexec ]; then
+			echo -n "Cgroups not installed"; warning
+			echo
+		else
+			cgroup="/bin/cgexec";
+			for i in $CGROUP_DAEMON; do
+				cgroup="$cgroup -g $i";
+			done
+		fi
+	fi
+
+	# Echo daemon
+        [ "${BOOTUP:-}" = "verbose" -a -z "${LSB:-}" ] && echo -n " $base"
+
+	# And start it up.
+	if [ -z "$user" ]; then
+	   $cgroup $nice /bin/bash -c "$corelimit ; $*"
+	else
+	   $cgroup $nice runuser -s /bin/bash $user -c "$corelimit ; $*"
+	fi
+
+	[ "$?" -eq 0 ] && success $"$base startup" || failure $"$base startup"
+}
+
+
 start() {
         echo -n $"Starting $prog: "
 	ulimit -n 65535
-        daemon --pidfile=${pidfile} $tsd
+        mydaemon --pidfile=${pidfile} $tsd
 	
         RETVAL=$?
         echo

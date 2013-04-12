@@ -75,17 +75,17 @@
 				<!-- STD直接打印  -->
 				<LevelEntry ModuleName = "Test"  Level = "INFO" Type = "STD"/>
 				<!-- File输出到文件  -->
-				<LevelEntry ModuleName = "Test2" Level = "DEBUG" Type = "FILE" FileName = "Log0203.txt"/>
+				<LevelEntry ModuleName = "Test2" Level = "DEBUG" Type = "FILE" FileName = "log/Log0203.txt"/>
 				<!-- File输出到Rolling文件  -->
 				<LevelEntry ModuleName = "Test3" Level = "INFO" Type = "ROLFILE" FileName = "RolLog0203.txt" FileSize = ""/>
 				<!-- File输出到DebugTool  -->
 				<LevelEntry ModuleName = "Test4" Level = "DEBUG" Type = "REMOTE" WinId = "2"/>
 				
-				<LevelEntry ModuleName = "DbMgr"       Level = "DEBUG" Type = "FILE" FileName = "Log0203.txt"/>
-				<LevelEntry ModuleName = "TCPSERVER"   Level = "DEBUG" Type = "FILE" FileName = "Log0203.txt"/>
-				<LevelEntry ModuleName = "TSFRONTEND"  Level = "DEBUG" Type = "FILE" FileName = "Log0203.txt"/>
-				<LevelEntry ModuleName = "ZMQBACKEND"  Level = "DEBUG" Type = "FILE" FileName = "Log0203.txt"/>
-				<LevelEntry ModuleName = "ACDEVICE"    Level = "DEBUG" Type = "FILE" FileName = "Log0203.txt"/>
+				<LevelEntry ModuleName = "DbMgr"       Level = "DEBUG" Type = "ROLFILE" FileName = "log/RLog0203.txt"/>
+				<LevelEntry ModuleName = "TCPSERVER"   Level = "DEBUG" Type = "ROLFILE" FileName = "log/RLog0203.txt"/>
+				<LevelEntry ModuleName = "TSFRONTEND"  Level = "DEBUG" Type = "ROLFILE" FileName = "log/RLog0203.txt"/>
+				<LevelEntry ModuleName = "ZMQBACKEND"  Level = "DEBUG" Type = "ROLFILE" FileName = "log/RLog0203.txt"/>
+				<LevelEntry ModuleName = "ACDEVICE"    Level = "DEBUG" Type = "ROLFILE" FileName = "log/RLog0203.txt"/>
 			</PropertyTable>
 		</TableSet>
 		<Script Name = "LogMgrInit">
