@@ -18,7 +18,7 @@
 
 using namespace std;
 #define SERVPORT 12135 /*·þÎñÆ÷¼àÌý¶Ë¿ÚºÅ*/
-#define DEST_IP  "10.3.18.28"
+#define DEST_IP  "10.3.18.87"
 //#define DEST_IP  "127.0.0.1"
 #define MAXDATASIZE 1024
 
@@ -521,7 +521,7 @@ int main()
 	}
 
     int client_nbr;
-    for (client_nbr = 0; client_nbr < 1000; client_nbr++) {
+    for (client_nbr = 0; client_nbr < 1; client_nbr++) {
         HANDLE client;
         client = (HANDLE) _beginthreadex (NULL, 0,
         threadfun, 0, 0 , NULL);

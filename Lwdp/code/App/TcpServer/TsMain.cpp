@@ -22,6 +22,56 @@ using namespace NLwdp;
 #include <algorithm>
 #include <boost/shared_ptr.hpp>
 
+#ifdef TS_DAEMON_TAG
+#include <unistd.h>
+#include <signal.h>
+#include <sys/param.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+int init_daemon(void)
+{
+	int pid;
+	int i;
+
+	if((pid=fork()) > 0)
+		exit(0);//是父进程，结束父进程
+	else if(pid < 0)
+		return -1;//fork失败，退出
+	//是第一子进程，后台继续执行
+	int npid = setsid();
+	if(npid < -1)
+	{
+		return -1;
+	}
+	//第一子进程成为新的会话组长和进程组长
+	//并与控制终 端分离
+	//if((pid=fork()) > 0)
+	//	exit(0);//是第一子进程，结束第一子进程
+	//else if(pid < 0)
+	//	exit(1);//fork失败，退出
+
+	int sfpid = open("/var/run/tsd.pid", O_WRONLY|O_CREAT|O_TRUNC, 0777);
+
+	char str[100] = {0};
+	memset(str, 0, 100);
+	pid = getpid();
+	sprintf(str, "%d", pid);
+	write(sfpid, str, strlen(str));
+	close(sfpid);
+
+	//是第二子进程，继续
+	//第二子进程不再是会话组长
+	for(i=0;i< NOFILE;++i)
+	//关闭打开的文件描述符
+		close(i);
+
+	chdir("/usr/local/TcpServer"); //改变工作目录到/tmp
+	umask(0);//重设 文件创建掩模
+
+	return 0;
+}
+#endif
 
 class ConfigSrcImp : public Ix_ConfigSrc
 {
@@ -102,8 +152,33 @@ PC_DATA* ConfigSrcImp::LoadConfigData()
 
 const char* HelpStr = "Format:\nTcpMain [config file directory]";
 
+
+int gLog_handle = 0;
 int32_ main(int argc, char* argv[])
 {
+#ifdef TS_DAEMON_TAG
+	gLog_handle = open("/usr/local/TcpServer/log/platform.log", O_RDWR|O_CREAT|O_APPEND, 0777);
+	if(gLog_handle <= 0)
+	{
+		printf("open log file err!\n");
+		return 123;
+	}
+
+	dup2(gLog_handle, STDIN_FILENO);
+	dup2(gLog_handle, STDOUT_FILENO);
+	dup2(gLog_handle, STDERR_FILENO);
+
+	int dret = init_daemon();
+	if(dret)
+	{
+		return -1;
+	}
+	//while(1)
+	//{
+	//	sleep(1000);
+
+	//}
+#endif
 	LWRESULT stat = LWDP_ERROR;
 #ifndef WIN32
 	char szWorkDir[260] = {0};
@@ -112,9 +187,11 @@ int32_ main(int argc, char* argv[])
 #endif
 
 #if defined(LWDP_PLATFORM_DEF_WIN32)
-		char* configDir = "../../../../bin/xml/ConfigExternal.xml";
+	char* configDir = "../../../../bin/xml/ConfigExternal.xml";
 #elif defined(LWDP_PLATFORM_DEF_LINUX)
 	char* configDir = "xml/LinuxConfigExternal.xml";
+#elif defined(TS_DAEMON_TAG)
+	char* configDir = "/usr/local/TcpServer/xml/LinuxConfigExternal.xml";
 #endif
 
 	if(argc > 1)
@@ -128,7 +205,7 @@ int32_ main(int argc, char* argv[])
 	if(stat != LWDP_OK)
 	{
 		lw_log_err(LWDP_MODULE_LOG, "Fw_Init Error(0x%x)!", stat);
-		system("pause");
+		//system("pause");
 		return -1;
 		
 	}
@@ -138,19 +215,25 @@ int32_ main(int argc, char* argv[])
 	if(ret != LWDP_OK)
 	{
 		lw_log_err(LWDP_MODULE_LOG, "TcpServer Init Error(0x%x)!", ret);
-		system("pause");
+		//system("pause");
 		return -1;
 	} 
 	LWRESULT ret2 = iTcpServer->RunServer();
 	if(ret2 != LWDP_OK)
 	{
 		lw_log_err(LWDP_MODULE_LOG, "TcpServer RunServer Error(0x%x)!", ret2);
-		system("pause");
+		//system("pause");
 		return -1;
 	} 
 
+#ifdef TS_DAEMON_TAG
+	while(1)
+	{
+		sleep(1000);
+	}
+#else
 	GET_OBJECT_RET(ConsoleMgr, iConsoleMgr, 0);
 	iConsoleMgr->RunConsole();
-
+#endif
 	//system("pause");
 	return 0;}

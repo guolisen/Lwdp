@@ -81,11 +81,11 @@
 				<!-- FileÊä³öµ½DebugTool  -->
 				<LevelEntry ModuleName = "Test4" Level = "DEBUG" Type = "REMOTE" WinId = "2"/>
 				
-				<LevelEntry ModuleName = "DbMgr"       Level = "DEBUG" Type = "STD"/>
-				<LevelEntry ModuleName = "TCPSERVER"   Level = "DEBUG" Type = "STD"/>
-				<LevelEntry ModuleName = "TSFRONTEND"  Level = "DEBUG" Type = "STD"/>
-				<LevelEntry ModuleName = "ZMQBACKEND"  Level = "DEBUG" Type = "STD"/>
-				<LevelEntry ModuleName = "ACDEVICE"    Level = "DEBUG" Type = "STD"/>
+				<LevelEntry ModuleName = "DbMgr"       Level = "DEBUG" Type = "FILE" FileName = "Log0203.txt"/>
+				<LevelEntry ModuleName = "TCPSERVER"   Level = "DEBUG" Type = "FILE" FileName = "Log0203.txt"/>
+				<LevelEntry ModuleName = "TSFRONTEND"  Level = "DEBUG" Type = "FILE" FileName = "Log0203.txt"/>
+				<LevelEntry ModuleName = "ZMQBACKEND"  Level = "DEBUG" Type = "FILE" FileName = "Log0203.txt"/>
+				<LevelEntry ModuleName = "ACDEVICE"    Level = "DEBUG" Type = "FILE" FileName = "Log0203.txt"/>
 			</PropertyTable>
 		</TableSet>
 		<Script Name = "LogMgrInit">
@@ -217,7 +217,7 @@
 			<CtrlConnect>inproc://ctrl_to_workthread</CtrlConnect>
 			<WorkThreadNum>10</WorkThreadNum>
 			
-			<DbIp>10.3.18.68</DbIp>
+			<DbIp>10.3.18.129</DbIp>
 			<DbUser>ptsf</DbUser>
 			<DbPassword>123456</DbPassword>
 			<DbSelect>scenic</DbSelect>
