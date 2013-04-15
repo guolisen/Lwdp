@@ -29,15 +29,38 @@ using namespace NLwdp;
 #include <sys/types.h>
 #include <sys/stat.h>
 
+int gFd[2];
 int init_daemon(void)
 {
-	int pid;
-	int i;
+	int pid  = 0;
+	int ret  = 0;
+	int nfds = 0;
+	int retcode = 0;
+    fd_set  rdst;
 
-	if((pid=fork()) > 0)
-		exit(0);//是父进程，结束父进程
+    if (pipe(gFd) < 0)
+    {
+       printf("pipe error!\n");
+       return 1;
+    }
+
+	if((pid = fork()) > 0)
+	{
+		close(gFd[1]);
+		read(gFd[0], &ret, sizeof(int));
+		//close(gFd[0]);
+
+		printf("Ret: %d", ret);
+		exit(ret);//是父进程，结束父进程
+	}
 	else if(pid < 0)
-		return -1;//fork失败，退出
+	{
+		close(gFd[0]);
+		close(gFd[1]);
+		exit(1);//fork失败，退出
+	}
+
+	close(gFd[0]);
 	//是第一子进程，后台继续执行
 	int npid = setsid();
 	if(npid < -1)
@@ -156,18 +179,22 @@ const char* HelpStr = "Format:\nTcpMain [config file directory]";
 int gLog_handle = 0;
 int main(int argc, char* argv[])
 {
+	int stat = -1;
 #ifdef TS_DAEMON_TAG
 	int dret = init_daemon();
 	if(dret)
 	{
-		return -1;
+		stat = -1;
+		write(gFd[1], &stat, sizeof(stat));
+		return stat;
 	}
-
+	chdir("/usr/local/TcpServer");
 	gLog_handle = open("/usr/local/TcpServer/log/platform.log", O_RDWR|O_CREAT|O_APPEND, 0777);
 	if(gLog_handle <= 0)
 	{
-		printf("open log file err!\n");
-		return 1;
+		stat = -2;
+		write(gFd[1], &stat, sizeof(stat));
+		return stat;
 	}
 
 	dup2(gLog_handle, STDIN_FILENO);
@@ -175,7 +202,7 @@ int main(int argc, char* argv[])
 	dup2(gLog_handle, STDERR_FILENO);
 
 #endif
-	LWRESULT stat = LWDP_ERROR;
+
 #ifndef WIN32
 	char szWorkDir[260] = {0};
 	getcwd(szWorkDir, 260);
@@ -201,8 +228,12 @@ int main(int argc, char* argv[])
 	if(stat != LWDP_OK)
 	{
 		lw_log_err(LWDP_MODULE_LOG, "Fw_Init Error(0x%x)!", stat);
-		system("pause");
-		return -1;
+		//system("pause");
+		stat = -3;
+#ifdef TS_DAEMON_TAG
+		write(gFd[1], &stat, sizeof(stat));
+#endif
+		return stat;
 	}
   
 	GET_OBJECT_RET(TcpServer, iTcpServer, 0);
@@ -210,27 +241,43 @@ int main(int argc, char* argv[])
 	if(ret != LWDP_OK)
 	{
 		lw_log_err(LWDP_MODULE_LOG, "TcpServer Init Error(0x%x)!", ret);
-		system("pause");
-		return -1;
+		//system("pause");
+		stat = -4;
+#ifdef TS_DAEMON_TAG
+		write(gFd[1], &stat, sizeof(stat));
+#endif
+		return stat;
 	} 
 	LWRESULT ret2 = iTcpServer->RunServer();
 	if(ret2 != LWDP_OK)
 	{
 		lw_log_err(LWDP_MODULE_LOG, "TcpServer RunServer Error(0x%x)!", ret2);
-		system("pause");
-		return -1;
+		//system("pause");
+		stat = -5;
+#ifdef TS_DAEMON_TAG
+		write(gFd[1], &stat, sizeof(stat));
+#endif
+		return stat;
 	} 
 
 	lw_log_notice(LWDP_MODULE_LOG, "TcpServer Init OK!");
+
+#ifdef TS_DAEMON_TAG
+	    stat = 0;
+		write(gFd[1], &stat, sizeof(stat));
+#endif
 
 #ifdef TS_DAEMON_TAG
 	while(1)
 	{
 		sleep(1000);
 	}
+
 #else
 	GET_OBJECT_RET(ConsoleMgr, iConsoleMgr, 0);
 	iConsoleMgr->RunConsole();
 #endif
 	//system("pause");
-	return 0;}
+
+	return stat;
+}

@@ -108,12 +108,12 @@ mydaemon() {
 start() {
         echo -n $"Starting $prog: "
 	ulimit -n 65535
-        mydaemon --pidfile=${pidfile} $tsd
+        mydaemon --pidfile=${pidfile} $tsd 
 	
         RETVAL=$?
         echo
         [ $RETVAL = 0 ] && touch ${lockfile}
-        echo $RETVAL
+    	#echo $RETVAL
 	return $RETVAL
 }
 

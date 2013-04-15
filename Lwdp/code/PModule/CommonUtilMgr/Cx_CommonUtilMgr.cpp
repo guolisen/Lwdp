@@ -49,7 +49,13 @@ LWRESULT Cx_CommonUtilMgr::StrConvert(char_* from_charset,
 
 	iconv_t cd;
 	int rc = 0;
+
+#ifdef LWDP_PLATFORM_DEF_WIN32
 	const char **pin  = (const char **)&inbuf;
+#else
+	char **pin  = &inbuf;
+#endif
+
 	char **pout = &outbuf;
 
 	cd = iconv_open(to_charset, from_charset);
