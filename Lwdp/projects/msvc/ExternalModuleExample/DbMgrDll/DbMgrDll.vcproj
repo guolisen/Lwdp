@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\..\code\h\LwApiLib\ComLib\Lua;..\..\..\..\code\h;..\..\..\..\code\h\LwApiLib\ComLib;C:\mysql\include"
+				AdditionalIncludeDirectories="..\..\..\..\code\h\LwApiLib\ComLib\Lua;..\..\..\..\code\h;..\..\..\..\code\h\LwApiLib\ComLib;&quot;C:\Program Files\MySQL\MySQL Connector C 6.0.2\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;DBMGRDLL_EXPORTS;LWDP_PLUGIN_CONTEXT;LWDP_DEBUG_MACRO"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="..\..\..\..\bin\Lib\LwdpLib.lib ws2_32.lib C:\mysql\lib\debug\libmysql.lib"
+				AdditionalDependencies="..\..\..\..\bin\Lib\LwdpLib.lib ws2_32.lib C:\lib\debug\libmysql.lib"
 				OutputFile="..\..\..\..\bin\plugins\$(ProjectName).dll"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"

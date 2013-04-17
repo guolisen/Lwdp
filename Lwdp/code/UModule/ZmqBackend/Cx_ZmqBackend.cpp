@@ -358,7 +358,13 @@ LWRESULT Cx_ZmqBackend::Init()
 					   "Can't Find <FrontendTarget> In Config File, Default(%s)", strFrontend.c_str());
 	}
 
-	iZmqMgr->Bind(mFrontend, strFrontend.c_str());
+	if(iZmqMgr->Bind(mFrontend, strFrontend.c_str()) != LWDP_OK)
+	{
+		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::ERR, 
+					   "Bind Front Error(%s)", 
+					   strFrontend.c_str());
+		return ZMQBACKEND::LWDP_BIND_ZMQ_WORK_THREAD_ERR;
+	}
 
 	//backend
 	std::string strBackend = std::string(LW_ZMQBACKEND_BACKEND_TARGET);
@@ -376,8 +382,13 @@ LWRESULT Cx_ZmqBackend::Init()
 					   strBackend.c_str());
 	}
 
-	iZmqMgr->Bind(mBackend, strBackend.c_str());
-
+	if(iZmqMgr->Bind(mBackend, strBackend.c_str()) != LWDP_OK)
+	{
+		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::ERR, 
+					   "Bind Backend Error(%s)", 
+					   strBackend.c_str());
+		return ZMQBACKEND::LWDP_BIND_ZMQ_WORK_THREAD_ERR;
+	}
 
 	//Ctrl
 	gCtrlContext = iZmqMgr->GetNewContext();
@@ -403,7 +414,7 @@ LWRESULT Cx_ZmqBackend::Init()
 		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::ERR, 
 					   "Bind Ctrl Error(%s)", 
 					   strCtrlClient.c_str());
-		return NULL;
+		return ZMQBACKEND::LWDP_BIND_ZMQ_WORK_THREAD_ERR;
 	}
 
 

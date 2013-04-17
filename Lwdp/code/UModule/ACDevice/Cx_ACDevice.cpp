@@ -1005,15 +1005,16 @@ LWRESULT Cx_ACDevice::getCardStatus(DBHandle db_handle,
 								        int32_& statusCode,
 								        char_** retMsg)
 {
-	char_ buffer[3072] = {0};
-	int32_  queryRes = 0;
-	statusCode  = -1;
-	*retMsg  = "刷卡成功!";
+	char_   buffer[3072] = {0};
+	int32_  queryRes 	 = 0;
+	std::string cardCol  = "card_no";
+	statusCode = -1;
+	*retMsg    = "刷卡成功!";
 
 	GET_OBJECT_RET(DbMgr, iDbMgr, LWDP_GET_OBJECT_ERROR);
 	memset(buffer, 0, 3072 * sizeof(char_));
 	Api_snprintf(buffer, 3071, 
-		         "SELECT card_status FROM sc_card WHERE card_no = '%s'",  
+		         "SELECT card_status FROM sc_card WHERE card_no = '%s'", 
 		         carIdStr.c_str());
 	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::DEBUG,
 				   "Select Card Release Status Str(%s)", buffer);
@@ -1096,10 +1097,25 @@ LWRESULT Cx_ACDevice::getCardStatus(DBHandle db_handle,
 
 
 	/////////////////////////////////////////////////////////////////////
+	switch(card_type)
+	{
+		case LW_ACDEVICE_CARD_TYPE_M1:
+			cardCol = "card_no";
+			break;
+		case LW_ACDEVICE_CARD_TYPE_2D:
+			cardCol = "two_code"; 
+			break;
+		case LW_ACDEVICE_CARD_TYPE_ID:
+			cardCol = "identity_id";  
+			break;
+		default:
+			cardCol = "card_no";
+	};
 	memset(buffer, 0, 3072 * sizeof(char_));
 	Api_snprintf(buffer, 3071, 
-		         "SELECT status FROM sc_sale_scenic WHERE card_no = '%s' AND scenic_id = %s",  
-		         carIdStr.c_str(), 
+		         "SELECT status FROM sc_sale_scenic WHERE %s = '%s' AND scenic_id = %s",  
+				 cardCol.c_str(), 
+				 carIdStr.c_str(), 
 			  	 sceneryIdStr.c_str());
 
 	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::DEBUG,
@@ -1132,7 +1148,7 @@ LWRESULT Cx_ACDevice::getCardStatus(DBHandle db_handle,
 		return TS_SERVER_ID_ERROR;
 	}
 
-	int i = 0;
+	uint32_ i = 0;
 	for(i = 0; i < rowNum; ++i, cardQuery->NextRow())
 	{
 		std::string statusValue = cardQuery->GetStringField("status", "");

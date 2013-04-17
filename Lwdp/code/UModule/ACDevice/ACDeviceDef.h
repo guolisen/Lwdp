@@ -46,5 +46,9 @@
 #define LW_ACDEVICE_CARD_STATUS_DISUSE     		5
 #define LW_ACDEVICE_CARD_STATUS_AD_BAN     		6
 
+#define LW_ACDEVICE_CARD_TYPE_M1            1
+#define LW_ACDEVICE_CARD_TYPE_2D        	2
+#define LW_ACDEVICE_CARD_TYPE_ID   		    3
+
 #endif
 
