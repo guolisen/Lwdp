@@ -60,7 +60,7 @@ typedef struct stru_device_init_req_body
 {	
 	uint32_ deviceAction;  //设备类型
 	char_   sceneryId[TS_SCENERY_ID_STRU_LEN];  //景点ID
-	char_   cardKey[256];  //读卡密钥
+	char_   cardKey[TS_CARD_KEY_LEN];  //读卡密钥
 	uint32_ checkResult; //设备自检结果
 	char_   checkResultInfo[TS_SELFCHECK_INFO_LEN]; //设备自检结果附加信息
 }TS_DEVICE_INIT_REQ_BODY;

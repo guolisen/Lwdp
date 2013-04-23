@@ -85,14 +85,7 @@ int Init_Send(int socketFd)
 	TS_DEVICE_INIT_REQ_BODY* body = (TS_DEVICE_INIT_REQ_BODY*)tdata->customMsgBody;
 	body->checkResult = htonl(0);
 	body->deviceAction = htonl(1);
-	body->sceneryId[0] = '1';
-	body->sceneryId[1] = '2';
-	body->sceneryId[2] = '3';
-	body->sceneryId[3] = '4';
-	body->sceneryId[4] = '5';
-	body->sceneryId[5] = '6';
-	body->sceneryId[6] = '7';
-	body->sceneryId[7] = '8';
+	strcpy(body->sceneryId, "10011001");
 
 	strcpy(body->cardKey, "AAAAAAAA");
 	strcpy(body->checkResultInfo, "I'm OK!");	
@@ -264,10 +257,12 @@ int CardData_Send(int socketFd)
 	char tmpStr[100] = {0};
 	unsigned int counter = within(100000000);
 
-	_snprintf(tmpStr, 100, "6400010110000001");
+	//_snprintf(tmpStr, 100, "6400010110000001");
+	
+	_snprintf(tmpStr, 100, "102101154866578993");
 	memcpy(body->cardId, tmpStr, strlen(tmpStr));
 	memcpy(body->sceneryId, "10011001", 8);
-	body->cardType = htons(4);
+	body->cardType = htons(3);
 	body->actionId = htons(within(2));
 	body->checkinTime = 0;
 
@@ -489,11 +484,11 @@ unsigned int __stdcall threadfun(void* arg)
 		//BulkData_Send(sockfd);
 
 		int ti = within(1000);
-		Sleep(1000);
+		Sleep(5000);
 		closesocket(sockfd); 
 	}
 	
-
+	system("pause");
  
 	return 0;
 }
