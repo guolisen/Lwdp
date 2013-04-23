@@ -1054,7 +1054,7 @@ LWRESULT Cx_ACDevice::getCardStatus(DBHandle db_handle,
 			statusCode = -1;
 			*retMsg = "未找到此卡信息!";
 			
-			return TS_SERVER_ID_ERROR;
+			return TS_SERVER_CARD_ERROR;
 		}
 
 		std::string statusValue = cardReleaseQuery->GetStringField("card_status", "");
@@ -1156,7 +1156,7 @@ LWRESULT Cx_ACDevice::getCardStatus(DBHandle db_handle,
 		statusCode = -1;
 		*retMsg = "未找到此卡销售信息!";
 		
-		return TS_SERVER_ID_ERROR;
+		return TS_SERVER_CARD_ERROR;
 	}
 
 	uint32_ i = 0;
