@@ -465,7 +465,7 @@ LWRESULT Cx_ACDevice::DeviceConfigMsgProcess(DBHandle db_handle,const uint8_* re
 	Cx_Interface<Ix_DbQuery> gateQuery;
 	LWRESULT queryRes = 0;
 	uint32_ retCode = 0;
-	char_*  retMsg  = "刷卡成功!";
+	char_*  retMsg  = "Sucess!";
 	//iDbMgr->Ping();
 	if((queryRes = iDbMgr->QuerySQL(db_handle, buffer, gateQuery)) != LWDP_OK)
 	{
@@ -474,7 +474,7 @@ LWRESULT Cx_ACDevice::DeviceConfigMsgProcess(DBHandle db_handle,const uint8_* re
 				       ntohl(zmqMsg->msgCode), buffer);
 		
 		retCode = TS_SERVER_DB_ERR;
-		retMsg  = "数据库读写错误";
+		retMsg  = "DB Read Error";
 		goto ERR_RET;
 	}
 
@@ -487,7 +487,7 @@ LWRESULT Cx_ACDevice::DeviceConfigMsgProcess(DBHandle db_handle,const uint8_* re
 				       buffer);
 		
 		retCode = TS_SERVER_ID_ERROR;
-		retMsg  = "未找到此设备";
+		retMsg  = "Unknow Device";
 		
 		goto ERR_RET;
 	}
@@ -1016,7 +1016,7 @@ LWRESULT Cx_ACDevice::getCardStatus(DBHandle db_handle,
 	int32_  queryRes 	 = 0;
 	std::string cardCol  = "card_no";
 	statusCode = -1;
-	*retMsg    = "刷卡成功!";
+	*retMsg    = "\xCB\xA2\xBF\xA8\xB3\xC9\xB9\xA6";//"刷卡成功!";
 
 	GET_OBJECT_RET(DbMgr, iDbMgr, LWDP_GET_OBJECT_ERROR);
 
@@ -1038,7 +1038,7 @@ LWRESULT Cx_ACDevice::getCardStatus(DBHandle db_handle,
 					       buffer);
 
 			statusCode = -1;
-			*retMsg  = "数据库读写失败";
+			*retMsg  = "\xCA\xFD\xBE\xDD\xBF\xE2\xB6\xC1\xD0\xB4\xCA\xA7\xB0\xDC";//"数据库读写失败";
 			return TS_SERVER_DB_ERR;
 		}
 
@@ -1052,7 +1052,7 @@ LWRESULT Cx_ACDevice::getCardStatus(DBHandle db_handle,
 					       buffer);
 
 			statusCode = -1;
-			*retMsg = "未找到此卡信息!";
+			*retMsg = "\xCE\xB4\xD5\xD2\xB5\xBD\xB4\xCB\xBF\xA8\xD0\xC5\xCF\xA2\x21";//"未找到此卡信息!";
 			
 			return TS_SERVER_CARD_ERROR;
 		}
@@ -1060,49 +1060,48 @@ LWRESULT Cx_ACDevice::getCardStatus(DBHandle db_handle,
 		std::string statusValue = cardReleaseQuery->GetStringField("card_status", "");
 		if(statusValue.empty())
 		{	
-			*retMsg = "未知卡!";
+			*retMsg = "\xCE\xB4\xD6\xAA\xBF\xA8\x21";//"未知卡!";
 			return TS_SERVER_CARD_ERROR;
 		}
-		uint32_ statusNum = atol(statusValue.c_str());
-		if(statusNum != LW_ACDEVICE_CARD_STATUS_RELEASE)
+		statusCode = atol(statusValue.c_str());
+		if(statusCode != LW_ACDEVICE_CARD_STATUS_RELEASE)
 		{
-			switch(statusNum)
+			switch(statusCode)
 			{   		
 				case LW_ACDEVICE_CARD_STATUS_NOTRELEASE:
 				{
-					*retMsg = "此卡未发行!";
+					*retMsg = "\xB4\xCB\xBF\xA8\xCE\xB4\xB7\xA2\xD0\xD0\x21";//"此卡未发行!";
 					break;
 				}
 				case LW_ACDEVICE_CARD_STATUS_LOST:
 				{
-					*retMsg = "此卡已挂失!";
+					*retMsg = "\xB4\xCB\xBF\xA8\xD2\xD1\xB9\xD2\xCA\xA7\x21";//"此卡已挂失!";
 					break;
 				}
 				case LW_ACDEVICE_CARD_STATUS_BROKEN:
 				{
-					*retMsg = "此卡已损坏!";
+					*retMsg = "\xB4\xCB\xBF\xA8\xD2\xD1\xCB\xF0\xBB\xB5\x21";//"此卡已损坏!";
 					break;
 				}
 				case LW_ACDEVICE_CARD_STATUS_BAN:
 				{
-					*retMsg = "此卡在黑名单中!";
+					*retMsg = "\xB4\xCB\xBF\xA8\xD4\xDA\xBA\xDA\xC3\xFB\xB5\xA5\xD6\xD0\x21";//"此卡在黑名单中!";
 					break;
 				}
 				case LW_ACDEVICE_CARD_STATUS_DISUSE:
 				{
-					*retMsg = "此卡已遗弃!";
+					*retMsg = "\xB4\xCB\xBF\xA8\xD2\xD1\xD2\xC5\xC6\xFA\x21";//"此卡已遗弃!";
 					break;
 				}
 				case LW_ACDEVICE_CARD_STATUS_AD_BAN:
 				{
-					*retMsg = "建议加入黑名单!";
+					*retMsg = "\xBD\xA8\xD2\xE9\xBC\xD3\xC8\xEB\xBA\xDA\xC3\xFB\xB5\xA5\x21";//"建议加入黑名单!";
 					break;
 				}
 				default:	
-					*retMsg = "未知卡状态!";
+					*retMsg = "\xCE\xB4\xD6\xAA\xBF\xA8\xD7\xB4\xCC\xAC\x21";//"未知卡状态!";
 			};
 
-			statusCode = statusNum;
 			return TS_SERVER_CARD_ERROR;
 		}
 	}
@@ -1124,7 +1123,7 @@ LWRESULT Cx_ACDevice::getCardStatus(DBHandle db_handle,
 	};
 	memset(buffer, 0, 3072 * sizeof(char_));
 	Api_snprintf(buffer, 3071, 
-		         "SELECT status FROM sc_sale_scenic WHERE %s = '%s' AND scenic_id = %s",  
+		         "SELECT status FROM sc_sale_scenic WHERE %s = '%s' AND scenic_id = %s order by id asc",  
 				 cardCol.c_str(), 
 				 carIdStr.c_str(), 
 			  	 sceneryIdStr.c_str());
@@ -1140,7 +1139,7 @@ LWRESULT Cx_ACDevice::getCardStatus(DBHandle db_handle,
 				       buffer);
 
 		statusCode = -1;
-		*retMsg  = "数据库读写失败";
+		*retMsg  = "\xCA\xFD\xBE\xDD\xBF\xE2\xB6\xC1\xD0\xB4\xCA\xA7\xB0\xDC"; //"数据库读写失败";
 		return TS_SERVER_DB_ERR;
 	}
 
@@ -1154,7 +1153,7 @@ LWRESULT Cx_ACDevice::getCardStatus(DBHandle db_handle,
 				       buffer);
 
 		statusCode = -1;
-		*retMsg = "未找到此卡销售信息!";
+		*retMsg = "\xCE\xB4\xD5\xD2\xB5\xBD\xB4\xCB\xBF\xA8\xCF\xFA\xCA\xDB\xD0\xC5\xCF\xA2\x21";//"未找到此卡销售信息!";
 		
 		return TS_SERVER_CARD_ERROR;
 	}
@@ -1165,37 +1164,38 @@ LWRESULT Cx_ACDevice::getCardStatus(DBHandle db_handle,
 		std::string statusValue = cardQuery->GetStringField("status", "");
 		if(statusValue.empty())
 		{	
-			*retMsg = "未知卡2!";
+			*retMsg = "\xCE\xB4\xD6\xAA\xBF\xA8\x32\x21";//"未知卡2!";
 			continue;
 		}
-		uint32_ statusNum = atol(statusValue.c_str());
-		if(statusNum != LW_ACDEVICE_CARD_STATUS_NOTUSE)
+		statusCode = atol(statusValue.c_str());
+		if(statusCode != LW_ACDEVICE_CARD_STATUS_NOTUSE)
 		{
-			switch(statusNum)
+			switch(statusCode)
 			{
 				case LW_ACDEVICE_CARD_STATUS_USE:
 				{
-					*retMsg = "此卡已使用";
+					*retMsg = "\xB4\xCB\xBF\xA8\xD2\xD1\xCA\xB9\xD3\xC3"; //"此卡已使用";
 					break;
 				}
 				case LW_ACDEVICE_CARD_STATUS_ABANDON:
 				{
-					*retMsg = "此卡已被遗弃";
+					*retMsg = "\xB4\xCB\xBF\xA8\xD2\xD1\xB1\xBB\xD2\xC5\xC6\xFA";//"此卡已被遗弃";
 					break;
 				}
 				case LW_ACDEVICE_CARD_STATUS_FREEZE:
 				{
-					*retMsg = "此卡已冻结!";
+					*retMsg = "\xB4\xCB\xBF\xA8\xD2\xD1\xB6\xB3\xBD\xE1\x21";//"此卡已冻结!";
 					break;
 				}
 				default:	
-					*retMsg = "未知卡状态!";
+					*retMsg = "\xCE\xB4\xD6\xAA\xBF\xA8\xD7\xB4\xCC\xAC\x21";//"未知卡状态!";
 			};
-
-			statusCode = statusNum;
 		}
 		else
+		{
+			*retMsg = "\xCB\xA2\xBF\xA8\xB3\xC9\xB9\xA6"; //"刷卡成功"
 			break;
+		}
 	}
 
 	if(i == rowNum)
@@ -1216,7 +1216,7 @@ LWRESULT Cx_ACDevice::cardCheckIn(DBHandle db_handle,
 	char_ buffer[3072] = {0};
 	int32_  queryRes = 0;
 	statusCode  = -1;
-	*retMsg  = "刷卡成功!";
+	*retMsg  = "\xCB\xA2\xBF\xA8\xB3\xC9\xB9\xA6";//"刷卡成功!";
 	LWRESULT retval = 0;
 	std::string cardCol = "";
 	if((retval = getCardStatus(db_handle, carIdStr, card_type, sceneryIdStr, statusCode, retMsg)) != LWDP_OK)
@@ -1241,7 +1241,7 @@ LWRESULT Cx_ACDevice::cardCheckIn(DBHandle db_handle,
 	};	
 	GET_OBJECT_RET(DbMgr, iDbMgr, LWDP_GET_OBJECT_ERROR);
 	memset(buffer, 0 , 3072 * sizeof(char_));
-	Api_snprintf(buffer, 3071, "UPDATE sc_sale_scenic SET status = 1 WHERE %s = '%s' and scenic_id = %s",  
+	Api_snprintf(buffer, 3071, "UPDATE sc_sale_scenic SET status = 1 WHERE %s = '%s' and scenic_id = %s and status = 0",  
 								cardCol.c_str(),
 								carIdStr.c_str(), 
 							    sceneryIdStr.c_str());
@@ -1255,7 +1255,7 @@ LWRESULT Cx_ACDevice::cardCheckIn(DBHandle db_handle,
 				       "Msg Update Card status(CheckIn)(%s) Table Error", buffer);
 
 		statusCode = -1;
-		*retMsg  = "更新卡信息失败";
+		*retMsg  = "\xB8\xFC\xD0\xC2\xCA\xFD\xBE\xDD\xBF\xE2\xBF\xA8\xD0\xC5\xCF\xA2\xCA\xA7\xB0\xDC";//"更新数据库卡信息失败";
 
 		return TS_SERVER_DB_ERR;
 	}
@@ -1273,7 +1273,7 @@ LWRESULT Cx_ACDevice::cardCheckOut(DBHandle db_handle,
 	char_ buffer[3072] = {0};
 	int32_  queryRes = 0;
 	statusCode  = -1;
-	*retMsg  = "刷卡出门成功!";
+	*retMsg  = "\xCB\xA2\xBF\xA8\xB3\xF6\xC3\xC5\xB3\xC9\xB9\xA6\x21";//"刷卡出门成功!";
 	LWRESULT retval = 0;
 	
 	retval = getCardStatus(db_handle, carIdStr, card_type, sceneryIdStr, statusCode, retMsg);
@@ -1281,7 +1281,7 @@ LWRESULT Cx_ACDevice::cardCheckOut(DBHandle db_handle,
 		(LW_ACDEVICE_CARD_STATUS_USE == statusCode))
 	{
 		statusCode  = 0;
-		*retMsg  = "刷卡出门成功!";
+		*retMsg  = "\xCB\xA2\xBF\xA8\xB3\xF6\xC3\xC5\xB3\xC9\xB9\xA6\x21";//"刷卡出门成功!";
 		return LWDP_OK;
 	}
 

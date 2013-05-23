@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\code\h\LwApiLib\ComLib\iconv"
+				AdditionalIncludeDirectories="..\..\..\code\h;..\..\..\code\h\LwApiLib\LwApi\win32\posix\pthread;..\..\..\code\h\LwApiLib\ComLib\iconv"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib"
+				AdditionalDependencies="D:\LWDP\LwdpGit\Lwdp\Lwdp\Lwdp\bin\Lib\LwdpLib.lib ws2_32.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="1"

@@ -214,7 +214,7 @@
 			<CtrlConnect>inproc://ctrl_to_workthread</CtrlConnect>
 			<WorkThreadNum>5</WorkThreadNum>
 			
-			<DbIp>10.3.18.129</DbIp>
+			<DbIp>10.3.18.116</DbIp>
 			<DbUser>ptsf</DbUser>
 			<DbPassword>123456</DbPassword>
 			<DbSelect>scenic</DbSelect>
