@@ -19,7 +19,7 @@
 
 using namespace std;
 #define SERVPORT 12135 /*·þÎñÆ÷¼àÌý¶Ë¿ÚºÅ*/
-#define DEST_IP  "10.3.18.132"
+#define DEST_IP  "10.3.18.91"
 //#define DEST_IP  "127.0.0.1"
 #define MAXDATASIZE 1024
 
@@ -266,7 +266,7 @@ int CardData_Send(int socketFd)
 	memcpy(body->cardId, tmpStr, strlen(tmpStr));
 	memcpy(body->sceneryId, "10011001", 8);
 	body->cardType = htons(1);
-	body->actionId = htons(within(2));
+	body->actionId = 1;//htons(within(2));
 	body->checkinTime = 0;
 
 
@@ -487,7 +487,7 @@ unsigned int __stdcall threadfun(void* arg)
 		//BulkData_Send(sockfd);
 
 		int ti = within(1000);
-		Sleep(2000);
+		Sleep(1000);
 		closesocket(sockfd); 
 	}
 	
@@ -693,7 +693,7 @@ int main()
 	}
 
     int client_nbr;
-    for (client_nbr = 0; client_nbr < 1; client_nbr++) {
+    for (client_nbr = 0; client_nbr < 3; client_nbr++) {
         HANDLE client;
         client = (HANDLE) _beginthreadex (NULL, 0,
         threadfun, 0, 0 , NULL);
