@@ -217,7 +217,7 @@
 			<DbIp>10.3.18.27</DbIp>
 			<DbUser>ptsf</DbUser>
 			<DbPassword>123456</DbPassword>
-			<DbSelect>scenic</DbSelect>
+			<DbSelect>scenic_0517</DbSelect>
 			<DbPort>3306</DbPort>
 		</Property>
 		<TableSet>
@@ -243,7 +243,7 @@
 			<ModuleDir>Plugins/ACDevice.dll</ModuleDir>
 			<InitSql>select * from sc_gate where gate_no = '%s'</InitSql>
 			<ConfigSql>select * from sc_gate where gate_no = '%s'</ConfigSql>
-			<CardSql>insert into sc_swiping(swip_type, swip_no, gate_no, scenic_id, ticket_type, action, create_time) 
+			<CardSql>insert into %s(swip_type, swip_no, gate_no, scenic_id, ticket_type, action, create_time) 
 			                                VALUES (1, '%s', '%s', %s, %d, %d, '%s')
 			</CardSql>
 			<BulkThreadNum>1</BulkThreadNum>

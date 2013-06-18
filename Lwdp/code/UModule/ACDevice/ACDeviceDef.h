@@ -50,5 +50,59 @@
 #define LW_ACDEVICE_CARD_TYPE_2D        	2
 #define LW_ACDEVICE_CARD_TYPE_ID   		    3
 
+#define LW_ACDEVICE_TICKET_TYPE_POS         6
+#define LW_ACDEVICE_TICKET_TYPE_LENGTH      2
+#define LW_ACDEVICE_TICKET_TYPE_ONE         1
+#define LW_ACDEVICE_TICKET_TYPE_SUIT        2
+#define LW_ACDEVICE_TICKET_TYPE_YEAR   		3
+
+#define GET_CARD_TAB(card_type, tab) \
+	switch(card_type) \
+	{ \
+		case LW_ACDEVICE_CARD_TYPE_M1: \
+			tab = "card_no"; \
+			break; \
+		case LW_ACDEVICE_CARD_TYPE_2D: \
+			tab = "two_code"; \
+			break; \
+		case LW_ACDEVICE_CARD_TYPE_ID: \
+			tab = "identity_id"; \
+			break; \
+		default: \
+			tab = "card_no"; \
+	};
+	
+#define GET_TICKET_TAB(ticket_type, tab) \
+	switch(ticket_type) \
+	{ \
+		case LW_ACDEVICE_TICKET_TYPE_ONE: \
+			tab = "sc_sale_scenic"; \
+			break; \
+		case LW_ACDEVICE_TICKET_TYPE_SUIT: \
+			tab = "sc_package_ticket_map"; \
+			break; \
+		case LW_ACDEVICE_TICKET_TYPE_YEAR: \
+			tab = "sc_annual_ticket_scenery_map"; \
+			break; \
+		default: \
+			tab = "sc_sale_scenic"; \
+	};
+	
+#define GET_SWIPING_TAB(ticket_type, tab) \
+	switch(ticket_type) \
+	{ \
+		case LW_ACDEVICE_TICKET_TYPE_ONE: \
+			tab = "sc_swiping"; \
+			break; \
+		case LW_ACDEVICE_TICKET_TYPE_SUIT: \
+			tab = "sc_annual_ticket_swiping"; \
+			break; \
+		case LW_ACDEVICE_TICKET_TYPE_YEAR: \
+			tab = "sc_package_ticket_swiping"; \
+			break; \
+		default: \
+			tab = "sc_swiping"; \
+	};
+	
 #endif
 

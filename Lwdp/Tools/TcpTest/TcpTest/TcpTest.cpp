@@ -693,7 +693,7 @@ int main()
 	}
 
     int client_nbr;
-    for (client_nbr = 0; client_nbr < 3; client_nbr++) {
+    for (client_nbr = 0; client_nbr < 1; client_nbr++) {
         HANDLE client;
         client = (HANDLE) _beginthreadex (NULL, 0,
         threadfun, 0, 0 , NULL);

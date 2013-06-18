@@ -19,6 +19,7 @@
 
 #include <time.h>
 
+
 std::string Cx_ACDevice::mInitSql   = std::string("");
 std::string Cx_ACDevice::mConfigSql = std::string("");
 std::string Cx_ACDevice::mCardSql   = std::string("");
@@ -667,8 +668,11 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(DBHandle db_handle,const uint8_* 
 
 	std::string carIdStr 	= "";
 	std::string scenicIdStr = "";
+	std::string ticketTypeStr = "";
+	std::string ticketTypeTab = "";
 	int32_      checkAction = -1;
-	uint32_     cardType    = -1;
+	uint32_     cardType    = 0;
+	uint32_     ticketType  = 0;
 	
 	char_  buffer[3072] = {0};
 	int32_ cardStatus 	= -1;
@@ -702,17 +706,21 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(DBHandle db_handle,const uint8_* 
 	scenicIdStr = Data2String((char_*)msgBody->sceneryId, sizeof(msgBody->sceneryId));
 	checkAction = ntohs(msgBody->actionId);
 	cardType    = ntohs(msgBody->cardType);
+	ticketTypeStr = carIdStr.substr(LW_ACDEVICE_TICKET_TYPE_POS, LW_ACDEVICE_TICKET_TYPE_LENGTH); 
+	ticketType  = atol(ticketTypeStr.c_str());
+
+	
 	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::INFO,
-				   "[Received] REQ:%s REQCODE: %x, cardId: %s sceneryId: %s cardType: %x actionId: %x checkinTime: %x", 
+				   "[Received] REQ:%s REQCODE: %x, cardId: %s sceneryId: %s cardType: %x ticketType: %x actionId: %x checkinTime: %x", 
 			       Data2String((char_*)zmqMsg->deviceId, sizeof(zmqMsg->deviceId)).c_str(), 
 			       ntohl(zmqMsg->msgCode), 
 				   carIdStr.c_str(), 
 			       scenicIdStr.c_str(), 
-			       ntohs(msgBody->cardType), ntohs(msgBody->actionId), ntohl(msgBody->checkinTime));
+			       ntohs(msgBody->cardType), ticketType, ntohs(msgBody->actionId), ntohl(msgBody->checkinTime));
 
 	if(!checkAction) //CheckIn
 	{
-		if((retCode=cardCheckIn(db_handle, carIdStr, cardType, scenicIdStr, cardStatus, &retMsg)) != LWDP_OK)
+		if((retCode=cardCheckIn(db_handle, carIdStr, cardType, ticketType, scenicIdStr, cardStatus, &retMsg)) != LWDP_OK)
 		{
 			LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::WARNING, 
 					       "CheckIn Card Info Error", ntohl(zmqMsg->msgCode));
@@ -722,7 +730,7 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(DBHandle db_handle,const uint8_* 
 	}
 	else
 	{
-		if((retCode=cardCheckOut(db_handle, carIdStr, cardType, scenicIdStr, cardStatus, &retMsg)) != LWDP_OK)
+		if((retCode=cardCheckOut(db_handle, carIdStr, cardType, ticketType, scenicIdStr, cardStatus, &retMsg)) != LWDP_OK)
 		{
 			LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::WARNING, 
 					       "CheckOut Card Info Error", ntohl(zmqMsg->msgCode));
@@ -732,9 +740,11 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(DBHandle db_handle,const uint8_* 
 	}
 
 	//Insert Card Status
+	GET_SWIPING_TAB(ticketType, ticketTypeTab);
 	localtime_r(&timep, &checkTime); 
 	strftime(bufTime, 1024, "%Y-%m-%d %H:%M:%S", &checkTime);
-	Api_snprintf(buffer, 3071, Cx_ACDevice::mCardSql.c_str(),  carIdStr.c_str(), 
+	Api_snprintf(buffer, 3071, Cx_ACDevice::mCardSql.c_str(), ticketTypeTab.c_str(),
+															   carIdStr.c_str(), 
 															   std::string((char_*)zmqMsg->deviceId, sizeof(zmqMsg->deviceId)-1).c_str(),
 				  											   std::string((char_*)msgBody->sceneryId, sizeof(msgBody->sceneryId)-1).c_str(),
 				  								               ntohs(msgBody->cardType),
@@ -1005,9 +1015,11 @@ LWRESULT Cx_ACDevice::intArrayToStr(uint32_ int_array[], uint32_ size, std::stri
 #endif
 	return LWDP_OK;
 }
-LWRESULT Cx_ACDevice::getCardStatus(DBHandle db_handle,
+
+LWRESULT Cx_ACDevice::checkCard(DBHandle db_handle,
 									    const std::string& carIdStr, 
 									    uint32_ card_type,
+									    uint32_ ticket_type,
 		                                const std::string& sceneryIdStr,
 								        int32_& statusCode,
 								        char_** retMsg)
@@ -1015,6 +1027,7 @@ LWRESULT Cx_ACDevice::getCardStatus(DBHandle db_handle,
 	char_   buffer[3072] = {0};
 	int32_  queryRes 	 = 0;
 	std::string cardCol  = "card_no";
+	std::string ticketTypeTab = "sc_sale_scenic";
 	statusCode = -1;
 	*retMsg    = "\xCB\xA2\xBF\xA8\xB3\xC9\xB9\xA6";//"刷卡成功!";
 
@@ -1107,23 +1120,14 @@ LWRESULT Cx_ACDevice::getCardStatus(DBHandle db_handle,
 	}
 
 	/////////////////////////////////////////////////////////////////////
-	switch(card_type)
-	{
-		case LW_ACDEVICE_CARD_TYPE_M1:
-			cardCol = "card_no";
-			break;
-		case LW_ACDEVICE_CARD_TYPE_2D:
-			cardCol = "two_code"; 
-			break;
-		case LW_ACDEVICE_CARD_TYPE_ID:
-			cardCol = "identity_id";  
-			break;
-		default:
-			cardCol = "card_no";
-	};
+	GET_CARD_TAB(card_type, cardCol);
+	GET_TICKET_TAB(ticket_type, ticketTypeTab);
+		
 	memset(buffer, 0, 3072 * sizeof(char_));
 	Api_snprintf(buffer, 3071, 
-		         "SELECT status FROM sc_sale_scenic WHERE %s = '%s' AND scenic_id = %s order by id asc",  
+		         "SELECT status,(DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i:%s') > end_date) TimeOut \
+		                 FROM %s WHERE %s = '%s' AND scenic_id = %s order by id asc",  
+                 ticketTypeTab.c_str(),
 				 cardCol.c_str(), 
 				 carIdStr.c_str(), 
 			  	 sceneryIdStr.c_str());
@@ -1193,9 +1197,17 @@ LWRESULT Cx_ACDevice::getCardStatus(DBHandle db_handle,
 		}
 		else
 		{
+			std::string isTimeOut = cardQuery->GetStringField("TimeOut", "");
+			if(isTimeOut == "1")
+			{
+				*retMsg = "\0xBF\0xA8\0xD2\0xD1\0xB9\0xFD\0xC6\0xDA"; //"卡已过期"
+				return TS_SERVER_CARD_ERROR;
+			}
+			
 			*retMsg = "\xCB\xA2\xBF\xA8\xB3\xC9\xB9\xA6"; //"刷卡成功"
 			break;
 		}
+
 	}
 
 	if(i == rowNum)
@@ -1209,6 +1221,7 @@ LWRESULT Cx_ACDevice::getCardStatus(DBHandle db_handle,
 LWRESULT Cx_ACDevice::cardCheckIn(DBHandle db_handle, 
 									 const std::string& carIdStr, 
 									 uint32_ card_type,
+									 uint32_ ticket_type,
 	                                 const std::string& sceneryIdStr,
 									 int32_& statusCode,
 									 char_** retMsg)
@@ -1219,29 +1232,20 @@ LWRESULT Cx_ACDevice::cardCheckIn(DBHandle db_handle,
 	*retMsg  = "\xCB\xA2\xBF\xA8\xB3\xC9\xB9\xA6";//"刷卡成功!";
 	LWRESULT retval = 0;
 	std::string cardCol = "";
-	if((retval = getCardStatus(db_handle, carIdStr, card_type, sceneryIdStr, statusCode, retMsg)) != LWDP_OK)
+	std::string ticketTypeTab = "";
+	if((retval = checkCard(db_handle, carIdStr, card_type, ticket_type, sceneryIdStr, statusCode, retMsg)) != LWDP_OK)
 	{
 		return retval;
 	}
 
 	//Update Card Status
-	switch(card_type)
-	{
-		case LW_ACDEVICE_CARD_TYPE_M1:
-			cardCol = "card_no";
-			break;
-		case LW_ACDEVICE_CARD_TYPE_2D:
-			cardCol = "two_code"; 
-			break;
-		case LW_ACDEVICE_CARD_TYPE_ID:
-			cardCol = "identity_id";  
-			break;
-		default:
-			cardCol = "card_no";
-	};	
+	GET_CARD_TAB(card_type, cardCol);
+	GET_TICKET_TAB(ticket_type, ticketTypeTab);
+	
 	GET_OBJECT_RET(DbMgr, iDbMgr, LWDP_GET_OBJECT_ERROR);
 	memset(buffer, 0 , 3072 * sizeof(char_));
-	Api_snprintf(buffer, 3071, "UPDATE sc_sale_scenic SET status = 1 WHERE %s = '%s' and scenic_id = %s and status = 0",  
+	Api_snprintf(buffer, 3071, "UPDATE %s SET status = 1 WHERE %s = '%s' and scenic_id = %s and status = 0",  
+								ticketTypeTab.c_str(),
 								cardCol.c_str(),
 								carIdStr.c_str(), 
 							    sceneryIdStr.c_str());
@@ -1266,6 +1270,7 @@ LWRESULT Cx_ACDevice::cardCheckIn(DBHandle db_handle,
 LWRESULT Cx_ACDevice::cardCheckOut(DBHandle db_handle, 
 									   const std::string& carIdStr, 
 									   uint32_ card_type,
+									   uint32_ ticket_type,
 	                                   const std::string& sceneryIdStr,
 									   int32_& statusCode,
 									   char_** retMsg)
@@ -1276,7 +1281,7 @@ LWRESULT Cx_ACDevice::cardCheckOut(DBHandle db_handle,
 	*retMsg  = "\xCB\xA2\xBF\xA8\xB3\xF6\xC3\xC5\xB3\xC9\xB9\xA6\x21";//"刷卡出门成功!";
 	LWRESULT retval = 0;
 	
-	retval = getCardStatus(db_handle, carIdStr, card_type, sceneryIdStr, statusCode, retMsg);
+	retval = checkCard(db_handle, carIdStr, card_type, ticket_type, sceneryIdStr, statusCode, retMsg);
 	if((TS_SERVER_CARD_ERROR == retval) &&
 		(LW_ACDEVICE_CARD_STATUS_USE == statusCode))
 	{
