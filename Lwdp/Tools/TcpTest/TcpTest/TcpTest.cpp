@@ -19,8 +19,8 @@
 
 using namespace std;
 #define SERVPORT 12135 /*服务器监听端口号*/
-#define DEST_IP  "10.3.18.91"
-//#define DEST_IP  "127.0.0.1"
+//#define DEST_IP  "10.3.18.132"
+#define DEST_IP  "127.0.0.1"
 #define MAXDATASIZE 1024
 
 #define within(num) (int) ((float) (num) * rand () / (RAND_MAX + 1.0))
@@ -266,7 +266,7 @@ int CardData_Send(int socketFd)
 	memcpy(body->cardId, tmpStr, strlen(tmpStr));
 	memcpy(body->sceneryId, "10011001", 8);
 	body->cardType = htons(1);
-	body->actionId = 1;//htons(within(2));
+	body->actionId = htons(within(2));
 	body->checkinTime = 0;
 
 
@@ -497,178 +497,6 @@ unsigned int __stdcall threadfun(void* arg)
 }
 
 
-
-template <int N>
-class Factorial
-{
-public:
-    enum { result = N * Factorial<N-1>::result };
-};
-
-template<>
-class Factorial<1>
-{
-public:
-    enum { result = 1 };
-};
-
-
-
-template<class T>
-struct my_trait;
-
-template<>
-struct my_trait<char>
-{
-	static char const max = 127;	
-	static char const min = -128;	
-};
-
-template<>
-struct my_trait<int>
-{
-	static int const max = 32767;	
-	static int const min = -32768;
-};
-
-
-template<class T>
-int printMax(T a)
-{
-	std::cout << "Type " << typeid(T).name() 
-		      << " Max:" << (int)my_trait<T>::max << std::endl;
-
-	return 0;
-}
-
-template<class T>
-int printMin(T a)
-{
-	std::cout << "Type " << typeid(T).name() 
-		      << " Min:" << (int)my_trait<T>::min << std::endl;
-
-	return 0;
-}
-
-template<class T>
-struct iterator
-{
-	typedef T value_type;
-	//其他代码省略
-};
-
-template<class I>
-struct iterator_trait
-{
-	typedef typename I::value_type value_type;
-};
-
-template<class T>
-struct iterator_trait<T*>
-{
-	typedef T value_type;
-};
-
-
-template<class I>
-typename iterator_trait<I>::value_type func(I iter)
-{
-	return *iter;
-}
-
-#if 0
-//互斥锁Policy
-template<pthread_mutex_t* mutex_lock>
-struct MutexLock
-{
-	void Create(pthread_mutex_t* mutex_lock)
-	{
-		std::cout << "Debug: Lock!" << std::endl;
-		mMutex = mutex_lock;
-
-		pthread_mutex_lock(mMutex);
-	};
-
-	void Destory()
-	{
-		std::cout << "Debug: unLock!" << std::endl;
-		pthread_mutex_unlock(mMutex);
-	};
-
-	pthread_mutex_t* mMutex;
-};
-
-#endif
-
-struct MutexLock
-{
-	void Create(pthread_mutex_t* mutex_lock)
-	{
-		std::cout << "Debug: Lock!" << std::endl;
-		mMutex = mutex_lock;
-
-		//pthread_mutex_lock(mMutex);
-	};
-
-	void Destory()
-	{
-		std::cout << "Debug: unLock!" << std::endl;
-		//pthread_mutex_unlock(mMutex);
-	};
-
-	pthread_mutex_t* mMutex;
-};
-
-
-//计时Policy
-struct TimeCounter
-{
-	void Create()
-	{
-		mStartTick = GetTickCount();
-	};
-
-	void Destory()
-	{
-		DWORD sliceTick = GetTickCount() - mStartTick;
-			std::cout << "Elapsed Time: " << (DWORD)sliceTick 
-					  << std::endl;
-	};
-
-private:
-	DWORD mStartTick;
-};
-
-template<typename chunkType>
-struct chunkMgr: public chunkType
-{
-	chunkMgr()
-	{
-		Create();
-	};
-
-	~chunkMgr()
-	{
-		Destory();
-	};
-};
-
-template<>
-struct chunkMgr<MutexLock> : public MutexLock
-{
-	chunkMgr(pthread_mutex_t* mutex)
-	{
-		Create(mutex);
-	};
-
-	~chunkMgr()
-	{
-		Destory();
-	};
-};
-
-
-extern char const  hello[] = "hello";
 
 int main()
 {

@@ -1,9 +1,15 @@
 luasql = require("luasql.mysql")
 
+local DbServerIp  = "10.3.18.27"
+local DbUser 	  = "ptsf"
+local DbPassword  = "123456"
+local DbName 	  = "scenic"
+local DbPort 	  = 3306
+
 function main()
 	env = assert (luasql.mysql())
 	-- connect to data source
-	mysql_con = assert (env:connect("scenic", "ptsf", "123456", "10.3.18.27", 3306))
+	mysql_con = assert (env:connect(DbName, DbUser, DbPassword, DbServerIp, DbPort))
 
 	local timeTab   = os.date("*t")
 	local nowDate   = string.format("%s-%s-%s", timeTab.year, timeTab.month, timeTab.day)

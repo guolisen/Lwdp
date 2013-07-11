@@ -5,6 +5,12 @@ md5    = require("md5")
 json   = require("dkjson")
 --iconv  = require("luaiconv")
 
+local DbServerIp  = "10.3.18.27"
+local DbUser 	  = "ptsf"
+local DbPassword  = "123456"
+local DbName 	  = "scenic"
+local DbPort 	  = 3306
+
 local REQ_ADDR = "http://10.3.18.69/cardc/1.0/sync/upload"
 
 
@@ -67,7 +73,7 @@ function main()
 	local retCode = 0;
 	env = assert (luasql.mysql())
 	-- connect to data source
-	mysql_con = assert (env:connect("scenic", "ptsf", "123456", "10.3.18.27", 3306))
+	mysql_con = assert (env:connect(DbName, DbUser, DbPassword, DbServerIp, DbPort))
 
 	res = assert(mysql_con:execute([[set names utf8]]))
 	res = assert(mysql_con:execute([[SELECT DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i:%s') dt ]]))

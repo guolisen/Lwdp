@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\code\h;..\..\..\code\h\LwApiLib\LwApi\win32\posix\pthread;..\..\..\code\h\LwApiLib\ComLib\iconv"
+				AdditionalIncludeDirectories="D:\LWDP\LwdpGit\Lwdp\Lwdp\Lwdp\code\h\LwApiLib\ComLib;..\..\..\code\h;..\..\..\code\h\LwApiLib\LwApi\win32\posix\pthread;..\..\..\code\h\LwApiLib\ComLib\iconv"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"

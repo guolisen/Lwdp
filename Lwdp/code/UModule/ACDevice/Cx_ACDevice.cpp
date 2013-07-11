@@ -747,7 +747,6 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(DBHandle db_handle,const uint8_* 
 															   carIdStr.c_str(), 
 															   std::string((char_*)zmqMsg->deviceId, sizeof(zmqMsg->deviceId)-1).c_str(),
 				  											   std::string((char_*)msgBody->sceneryId, sizeof(msgBody->sceneryId)-1).c_str(),
-				  								               ntohs(msgBody->cardType),
 				  								               ntohs(msgBody->actionId),
 				  								               bufTime);
 				  								               //msgBody->checkinTime);
@@ -1125,8 +1124,11 @@ LWRESULT Cx_ACDevice::checkCard(DBHandle db_handle,
 		
 	memset(buffer, 0, 3072 * sizeof(char_));
 	Api_snprintf(buffer, 3071, 
-		         "SELECT status,(DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i:%s') > end_date) TimeOut \
-		                 FROM %s WHERE %s = '%s' AND scenic_id = %s order by id asc",  
+		         "SELECT status, ((DATE_FORMAT(NOW(),'%%Y-%%m-%%d') < begin_date) OR \
+								(DATE_FORMAT(NOW(),'%%Y-%%m-%%d') > end_date)) DateTimeOut,\
+								((DATE_FORMAT(NOW(),'%%H:%%i:%%s') < begin_segment) OR \
+								(DATE_FORMAT(NOW(),'%%H:%%i:%%s') > end_segment)) DayTimeOut \
+								FROM %s WHERE %s = '%s' AND scenic_id = %s ORDER BY id ASC",  
                  ticketTypeTab.c_str(),
 				 cardCol.c_str(), 
 				 carIdStr.c_str(), 
@@ -1197,10 +1199,16 @@ LWRESULT Cx_ACDevice::checkCard(DBHandle db_handle,
 		}
 		else
 		{
-			std::string isTimeOut = cardQuery->GetStringField("TimeOut", "");
-			if(isTimeOut == "1")
+			std::string isDateTimeOut = cardQuery->GetStringField("DateTimeOut", "");
+			std::string isDayTimeOut  = cardQuery->GetStringField("DayTimeOut", "");
+			if(isDateTimeOut == "1")
 			{
-				*retMsg = "\0xBF\0xA8\0xD2\0xD1\0xB9\0xFD\0xC6\0xDA"; //"卡已过期"
+				*retMsg = "\xCA\xB9\xD3\xC3\xC6\xDA\xCE\xB4\xB5\xBD\xBB\xF2\xD2\xD1\xB9\xFD\xC6\xDA"; //"使用期未到或已过期"
+				return TS_SERVER_CARD_ERROR;
+			}
+			else if(isDayTimeOut == "1")
+			{
+				*retMsg = "\xCB\xA2\xBF\xA8\xCA\xB1\xBC\xE4\xCE\xB4\xB5\xBD\xBB\xF2\xCB\xA2\xBF\xA8\xD2\xD1\xCD\xA3\xD6\xB9"; //"刷卡时间未到或刷卡已停止"
 				return TS_SERVER_CARD_ERROR;
 			}
 			

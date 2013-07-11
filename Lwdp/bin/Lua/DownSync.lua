@@ -3,6 +3,14 @@ curl = require("luacurl")
 md5  = require("md5")
 json = require ("dkjson")
 
+local DbServerIp  = "10.3.18.27"
+local DbUser 	  = "ptsf"
+local DbPassword  = "123456"
+local DbName 	  = "scenic"
+local DbPort 	  = 3306
+
+local REQ_ADDR = "http://10.3.18.69/cardc/1.0/sync/down"
+
 
 function get_html(url, post_value)
     local result = { }
@@ -156,14 +164,15 @@ end
 function main()
 	env = assert (luasql.mysql())
 	-- connect to data source
-	mysql_con = assert (env:connect("scenic", "ptsf", "123456", "10.3.18.27", 3306))
+	mysql_con = assert (env:connect(DbName, DbUser, DbPassword, DbServerIp, DbPort))
 
 	res = assert(mysql_con:execute([[SELECT DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i:%s') dt ]]))
 	ent_tab = assert(mysql_con:execute([[select enterprise_id ent_id,ekey from sc_enterprise]]))
 	ent_row = ent_tab:fetch ({}, "a") 
-	local loc_ent_id = ent_row.ent_id
+	local loc_ent_id  = ent_row.ent_id
+	local loc_ent_key = ent_row.ekey
 	ent_tab:close()
-
+ 
 	local timeTab = os.date("*t")
 	local nowDate = string.format("%s-%s-%s %s:%s:%s", timeTab.year, timeTab.month, timeTab.day,
 													   timeTab.hour, timeTab.min, timeTab.sec)
@@ -182,11 +191,11 @@ function main()
 				  "&edate=" .. nowDate ..
 				  "&_task=" .. sync_row.task_name
 			  
-		local md5Key = get_sign(p, "96e79218965eb72c92a549dd5a330112")
+		local md5Key = get_sign(p, loc_ent_key)
 		p = p .. "&_sign=" .. md5Key
 		print("Sending to CC (" .. p .. ")\n")
 
-		ok, html = get_html("http://10.3.18.69/cardc/1.0/sync/down", p)
+		ok, html = get_html(REQ_ADDR, p)
 		if not ok or not html then
 		    print ("Send Request To CC Error")   
 			return 1

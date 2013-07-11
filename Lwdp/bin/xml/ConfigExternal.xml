@@ -243,8 +243,8 @@
 			<ModuleDir>Plugins/ACDevice.dll</ModuleDir>
 			<InitSql>select * from sc_gate where gate_no = '%s'</InitSql>
 			<ConfigSql>select * from sc_gate where gate_no = '%s'</ConfigSql>
-			<CardSql>insert into %s(swip_type, swip_no, gate_no, scenic_id, ticket_type, action, create_time) 
-			                                VALUES (1, '%s', '%s', %s, %d, %d, '%s')
+			<CardSql>insert into %s(swip_type, swip_no, gate_no, scenic_id, action, create_time) 
+			                                VALUES (1, '%s', '%s', %s, %d, '%s')
 			</CardSql>
 			<BulkThreadNum>1</BulkThreadNum>
 			<BulkPageSize>200</BulkPageSize>
