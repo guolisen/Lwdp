@@ -1201,12 +1201,13 @@ LWRESULT Cx_ACDevice::checkCard(DBHandle db_handle,
 		{
 			std::string isDateTimeOut = cardQuery->GetStringField("DateTimeOut", "");
 			std::string isDayTimeOut  = cardQuery->GetStringField("DayTimeOut", "");
-			if(isDateTimeOut == "1")
+			if(isDateTimeOut == "1" && !isDateTimeOut.empty())
 			{
 				*retMsg = "\xCA\xB9\xD3\xC3\xC6\xDA\xCE\xB4\xB5\xBD\xBB\xF2\xD2\xD1\xB9\xFD\xC6\xDA"; //"使用期未到或已过期"
 				return TS_SERVER_CARD_ERROR;
 			}
-			else if(isDayTimeOut == "1")
+
+			if(isDayTimeOut == "1" && !isDayTimeOut.empty())
 			{
 				*retMsg = "\xCB\xA2\xBF\xA8\xCA\xB1\xBC\xE4\xCE\xB4\xB5\xBD\xBB\xF2\xCB\xA2\xBF\xA8\xD2\xD1\xCD\xA3\xD6\xB9"; //"刷卡时间未到或刷卡已停止"
 				return TS_SERVER_CARD_ERROR;

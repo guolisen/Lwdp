@@ -19,7 +19,7 @@
 
 using namespace std;
 #define SERVPORT 12135 /*·þÎñÆ÷¼àÌý¶Ë¿ÚºÅ*/
-//#define DEST_IP  "10.3.18.132"
+//#define DEST_IP  "10.3.18.127"
 #define DEST_IP  "127.0.0.1"
 #define MAXDATASIZE 1024
 

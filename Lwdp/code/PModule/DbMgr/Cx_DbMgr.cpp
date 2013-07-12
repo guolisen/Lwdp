@@ -566,6 +566,8 @@ const std::string Cx_DbQuery::GetStringField(int32_ nField, const std::string& s
 		return szNullValue;
 	if(NULL == mRow)
 		return szNullValue;
+	if(!mRow[nField])
+		return std::string("");
 	
 	return mRow[nField];
 }
