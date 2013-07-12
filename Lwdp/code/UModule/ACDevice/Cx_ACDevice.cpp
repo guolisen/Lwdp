@@ -1032,6 +1032,8 @@ LWRESULT Cx_ACDevice::checkCard(DBHandle db_handle,
 
 	GET_OBJECT_RET(DbMgr, iDbMgr, LWDP_GET_OBJECT_ERROR);
 
+// 刷卡时不需要考虑卡本身的状态，售卡或挂失时已处理
+#if 0
 	//Search From sCard
 	if(LW_ACDEVICE_CARD_TYPE_M1 == card_type)
 	{
@@ -1117,6 +1119,8 @@ LWRESULT Cx_ACDevice::checkCard(DBHandle db_handle,
 			return TS_SERVER_CARD_ERROR;
 		}
 	}
+#endif
+
 
 	/////////////////////////////////////////////////////////////////////
 	GET_CARD_TAB(card_type, cardCol);
@@ -1247,6 +1251,10 @@ LWRESULT Cx_ACDevice::cardCheckIn(DBHandle db_handle,
 		return retval;
 	}
 
+	//年票不需要更新卡状态
+	if(LW_ACDEVICE_TICKET_TYPE_YEAR == ticket_type)
+		return LWDP_OK;
+	
 	//Update Card Status
 	GET_CARD_TAB(card_type, cardCol);
 	GET_TICKET_TAB(ticket_type, ticketTypeTab);
