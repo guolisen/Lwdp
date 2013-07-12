@@ -95,10 +95,10 @@
 			tab = "sc_swiping"; \
 			break; \
 		case LW_ACDEVICE_TICKET_TYPE_SUIT: \
-			tab = "sc_annual_ticket_swiping"; \
+			tab = "sc_package_ticket_swiping"; \
 			break; \
 		case LW_ACDEVICE_TICKET_TYPE_YEAR: \
-			tab = "sc_package_ticket_swiping"; \
+			tab = "sc_annual_ticket_swiping"; \
 			break; \
 		default: \
 			tab = "sc_swiping"; \

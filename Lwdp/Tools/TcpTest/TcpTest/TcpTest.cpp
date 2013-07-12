@@ -259,7 +259,7 @@ int CardData_Send(int socketFd)
 	unsigned int counter = within(100000000);
 
 	
-	_snprintf(tmpStr, 100, "6400010110000002");
+	_snprintf(tmpStr, 100, "6400010310000002");
 	//_snprintf(tmpStr, 100, "6400010110000001");
 	//_snprintf(tmpStr, 100, "102101154866578993");
 	//_snprintf(tmpStr, 100, "59d142cd8d4d73e8832c7b67591f590c");
