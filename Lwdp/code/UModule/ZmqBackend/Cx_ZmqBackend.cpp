@@ -268,6 +268,7 @@ void* worker_task (void *args)
 
 	iZmqMgr->CloseSocket(responder);
 	iZmqMgr->CloseContext(context);
+	iDbMgr->Close(dbHandle);
 	
 	return 0;
 }
@@ -426,6 +427,63 @@ LWRESULT Cx_ZmqBackend::Init()
 				                          LW_ZMQBACKEND_COMMAND_SENDTOWORKER_INFO));
 	}
 
+
+	////////////////////////////////////////////////
+	// Sync System Time From DB Server
+	GET_OBJECT_RET(DbMgr, iDbMgr, 0);	
+	LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::INFO, 
+				   "Sync System Time From DB Server Ip:%s User:%s DbName:%s Port:%d", 
+				   strDbIp.c_str(), strDbUserName.c_str(), strDbName.c_str(), DbPort);
+	DBHandle dbHandle = iDbMgr->Open(strDbIp.c_str(), 
+		                             strDbUserName.c_str(), 
+		                             strDbPassword.c_str(), 
+		                             strDbName.c_str(), 
+		                             DbPort, 0);
+	
+	if(!dbHandle)
+	{
+		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::INFO, 
+				       "Connect Db Error!");
+		return ZMQBACKEND::LWDP_SYNC_DB_TIME_ERR;
+	}
+
+	char_ buffer[3072] = {0};
+	memset(buffer, 0, 3072 * sizeof(char_));
+	Api_snprintf(buffer, 3071, 
+		         "SELECT DATE_FORMAT(NOW(),'%%Y-%%m-%%d %%H:%%i:%%s') nowtime");
+
+	int32_ queryRes = 0;	
+	Cx_Interface<Ix_DbQuery> timeQuery;
+	if((queryRes = iDbMgr->QuerySQL(dbHandle, buffer, timeQuery)) != LWDP_OK)
+	{
+		LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::ERR, 
+				       "Get DB Server Time Error");
+		return ZMQBACKEND::LWDP_SYNC_DB_TIME_ERR;
+	}
+
+	ASSERT_CHECK_RET(LWDP_PLUGIN_LOG, ZMQBACKEND::LWDP_SYNC_DB_TIME_ERR, (timeQuery->NumRow() != 0), 
+		             "Can not Get DB Server Time");
+	std::string timeStrValue = timeQuery->GetStringField("nowtime", "");
+	if(!timeStrValue.empty())
+	{
+		LWDP_LOG_PRINT("ZMQBACKEND", LWDP_LOG_MGR::INFO, 
+			           "Set System Time: %s", timeStrValue.c_str());
+		memset(buffer, 0, 3072 * sizeof(char_));
+#if defined(LWDP_PLATFORM_DEF_LINUX)
+		Api_snprintf(buffer, 3071, "date -s \"%s\" +\"%%Y-%%m-%%d %%H-%%M-%%S\"", timeStrValue.c_str());
+#ifdef LWDP_DEBUG_MACRO
+		std::cout << buffer << std::endl;
+#endif
+		system(buffer);
+#elif defined(LWDP_PLATFORM_DEF_WIN32)
+		Api_snprintf(buffer, 3071, "date -s \"%s\" +\"%%Y-%%m-%%d %%H-%%M-%%S\"", timeStrValue.c_str());
+#ifdef LWDP_DEBUG_MACRO
+		std::cout << buffer << std::endl;
+#endif
+#endif
+	}
+	
+	iDbMgr->Close(dbHandle);
 
 	//////////////////////////////////////////////
 	// thread 

@@ -19,8 +19,8 @@
 
 using namespace std;
 #define SERVPORT 12135 /*服务器监听端口号*/
-//#define DEST_IP  "10.3.18.127"
-#define DEST_IP  "127.0.0.1"
+#define DEST_IP  "10.3.18.127"
+//#define DEST_IP  "127.0.0.1"
 #define MAXDATASIZE 1024
 
 #define within(num) (int) ((float) (num) * rand () / (RAND_MAX + 1.0))
@@ -266,7 +266,7 @@ int CardData_Send(int socketFd)
 	memcpy(body->cardId, tmpStr, strlen(tmpStr));
 	memcpy(body->sceneryId, "10011006", 8);
 	body->cardType = htons(1);
-	body->actionId = htons(within(2)); //0进门 1出门
+	body->actionId = 0;//htons(within(2)); //0进门 1出门
 	body->checkinTime = 0;
 
 
