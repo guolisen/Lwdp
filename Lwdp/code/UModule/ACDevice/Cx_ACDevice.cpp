@@ -1162,7 +1162,7 @@ LWRESULT Cx_ACDevice::checkCard(DBHandle db_handle,
 					   sceneryIdStr.c_str(), 
 				       buffer);
 
-		statusCode = -1;
+		statusCode = LW_ACDEVICE_CARD_STATUS_NOTFIND;
 		*retMsg = "\xCE\xB4\xD5\xD2\xB5\xBD\xB4\xCB\xBF\xA8\xCF\xFA\xCA\xDB\xD0\xC5\xCF\xA2\x21";//"未找到此卡销售信息!";
 		
 		return TS_SERVER_CARD_ERROR;
@@ -1185,20 +1185,23 @@ LWRESULT Cx_ACDevice::checkCard(DBHandle db_handle,
 				case LW_ACDEVICE_CARD_STATUS_USE:
 				{
 					*retMsg = "\xB4\xCB\xBF\xA8\xD2\xD1\xCA\xB9\xD3\xC3"; //"此卡已使用";
-					break;
+					continue;
 				}
 				case LW_ACDEVICE_CARD_STATUS_ABANDON:
 				{
 					*retMsg = "\xB4\xCB\xBF\xA8\xD2\xD1\xB1\xBB\xD2\xC5\xC6\xFA";//"此卡已被遗弃";
-					break;
+					continue;
 				}
 				case LW_ACDEVICE_CARD_STATUS_FREEZE:
 				{
 					*retMsg = "\xB4\xCB\xBF\xA8\xD2\xD1\xB6\xB3\xBD\xE1\x21";//"此卡已冻结!";
-					break;
+					continue;
 				}
 				default:	
+				{
 					*retMsg = "\xCE\xB4\xD6\xAA\xBF\xA8\xD7\xB4\xCC\xAC\x21";//"未知卡状态!";
+					continue;
+				}
 			};
 		}
 		else
@@ -1208,13 +1211,13 @@ LWRESULT Cx_ACDevice::checkCard(DBHandle db_handle,
 			if(isDateTimeOut == "1" && !isDateTimeOut.empty())
 			{
 				*retMsg = "\xCA\xB9\xD3\xC3\xC6\xDA\xCE\xB4\xB5\xBD\xBB\xF2\xD2\xD1\xB9\xFD\xC6\xDA"; //"使用期未到或已过期"
-				return TS_SERVER_CARD_ERROR;
+				continue;
 			}
 
 			if(isDayTimeOut == "1" && !isDayTimeOut.empty())
 			{
 				*retMsg = "\xCB\xA2\xBF\xA8\xCA\xB1\xBC\xE4\xCE\xB4\xB5\xBD\xBB\xF2\xCB\xA2\xBF\xA8\xD2\xD1\xCD\xA3\xD6\xB9"; //"刷卡时间未到或刷卡已停止"
-				return TS_SERVER_CARD_ERROR;
+				continue;
 			}
 			
 			*retMsg = "\xCB\xA2\xBF\xA8\xB3\xC9\xB9\xA6"; //"刷卡成功"
@@ -1261,7 +1264,7 @@ LWRESULT Cx_ACDevice::cardCheckIn(DBHandle db_handle,
 	
 	GET_OBJECT_RET(DbMgr, iDbMgr, LWDP_GET_OBJECT_ERROR);
 	memset(buffer, 0 , 3072 * sizeof(char_));
-	Api_snprintf(buffer, 3071, "UPDATE %s SET status = 1 WHERE %s = '%s' and scenic_id = %s and status = 0",  
+	Api_snprintf(buffer, 3071, "UPDATE %s SET status = 1, update_time = DATE_FORMAT(NOW(),'%%Y-%%m-%%d %%H:%%i:%%s') WHERE %s = '%s' and scenic_id = %s and status = 0",  
 								ticketTypeTab.c_str(),
 								cardCol.c_str(),
 								carIdStr.c_str(), 
@@ -1300,14 +1303,21 @@ LWRESULT Cx_ACDevice::cardCheckOut(DBHandle db_handle,
 	
 	retval = checkCard(db_handle, carIdStr, card_type, ticket_type, sceneryIdStr, statusCode, retMsg);
 	if((TS_SERVER_CARD_ERROR == retval) &&
-		(LW_ACDEVICE_CARD_STATUS_USE == statusCode))
+		(LW_ACDEVICE_CARD_STATUS_NOTFIND == statusCode))
 	{
-		statusCode  = 0;
-		*retMsg  = "\xCB\xA2\xBF\xA8\xB3\xF6\xC3\xC5\xB3\xC9\xB9\xA6\x21";//"刷卡出门成功!";
-		return LWDP_OK;
+		return TS_SERVER_CARD_ERROR;
 	}
 
-	return retval;
+	if((LW_ACDEVICE_CARD_STATUS_ABANDON == statusCode) || 
+		(LW_ACDEVICE_CARD_STATUS_FREEZE == statusCode))
+	{
+		return TS_SERVER_CARD_ERROR;
+	}
+
+	statusCode  = 0;
+	*retMsg  = "\xCB\xA2\xBF\xA8\xB3\xF6\xC3\xC5\xB3\xC9\xB9\xA6\x21";//"刷卡出门成功!";
+
+	return LWDP_OK;
 }
 
 

@@ -259,14 +259,14 @@ int CardData_Send(int socketFd)
 	unsigned int counter = within(100000000);
 
 	
-	_snprintf(tmpStr, 100, "6400020310000002");
+	_snprintf(tmpStr, 100, "6400010110000007");
 	//_snprintf(tmpStr, 100, "6400010110000001");
 	//_snprintf(tmpStr, 100, "102101154866578993");
 	//_snprintf(tmpStr, 100, "59d142cd8d4d73e8832c7b67591f590c");
 	memcpy(body->cardId, tmpStr, strlen(tmpStr));
-	memcpy(body->sceneryId, "10011001", 8);
+	memcpy(body->sceneryId, "10011006", 8);
 	body->cardType = htons(1);
-	body->actionId = htons(within(2));
+	body->actionId = htons(within(2)); //0进门 1出门
 	body->checkinTime = 0;
 
 
