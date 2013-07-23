@@ -1,0 +1,5 @@
+cp -rf /home/ptsf/Lua/lualib/* /usr/lib64/lua/5.1/
+cp -rf /home/ptsf/Lua/lualib/* /usr/lib/lua/5.1/
+
+cp -rf /home/ptsf/Lua/crontab /etc/
+service crond restart

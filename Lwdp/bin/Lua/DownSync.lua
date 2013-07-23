@@ -9,7 +9,7 @@ local DbPassword  = "123456"
 local DbName 	  = "scenic"
 local DbPort 	  = 3306
 
-local REQ_ADDR = "http://10.3.18.69/cardc/1.0/sync/down"
+local REQ_ADDR = "http://10.3.18.27/cardc/1.0/sync/down"
 
 
 function get_html(url, post_value)

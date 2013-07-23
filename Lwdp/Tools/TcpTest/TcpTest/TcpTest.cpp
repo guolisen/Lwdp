@@ -266,7 +266,7 @@ int CardData_Send(int socketFd)
 	memcpy(body->cardId, tmpStr, strlen(tmpStr));
 	memcpy(body->sceneryId, "10011006", 8);
 	body->cardType = htons(1);
-	body->actionId = 0;//htons(within(2)); //0进门 1出门
+	body->actionId = htons(within(2)); //0进门 1出门
 	body->checkinTime = 0;
 
 

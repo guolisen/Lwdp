@@ -184,7 +184,8 @@ LWRESULT SetConsoleColorLeave()
 }
 
 
-class OstreamColorAppender : public log4cpp::OstreamAppender
+class OstreamColorAppender : public log4cpp::OstreamAppender
+
 {
 public:
 	OstreamColorAppender(const std::string& name, std::ostream* stream):log4cpp::OstreamAppender(name,stream){};

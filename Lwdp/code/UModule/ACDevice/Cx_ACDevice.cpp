@@ -751,8 +751,6 @@ LWRESULT Cx_ACDevice::DeviceCardDataMsgProcess(DBHandle db_handle,const uint8_* 
 				  								               bufTime);
 				  								               //msgBody->checkinTime);
 
-
-
 	LWDP_LOG_PRINT("ACDEVICE", LWDP_LOG_MGR::DEBUG,
 				   "Select Db Str(%s)", buffer);
 

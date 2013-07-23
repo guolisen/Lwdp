@@ -68,7 +68,7 @@
 			<ModuleDir>Plugins/LogMgrDll.dll</ModuleDir>
 			<GlobalLevel>DEBUG</GlobalLevel>
 			<!--<LogPattern>%p: %m %d{%H:%M:%S.%l %d %b %Y}%n</LogPattern>-->
-			<LogPattern>[%p] %m%n</LogPattern>
+			<LogPattern>[%d{%m%d-%H:%M:%S}][%p] %m%n</LogPattern>
 		</Property>
 		<TableSet>
 			<PropertyTable Name = "LevelTable">

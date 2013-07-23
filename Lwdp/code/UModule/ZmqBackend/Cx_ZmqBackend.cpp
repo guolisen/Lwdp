@@ -562,7 +562,7 @@ LWRESULT Cx_ZmqBackend::RunServer()
 	};
 
 	GET_OBJECT_RET(ZmqMgr, iZmqMgr, LWDP_GET_OBJECT_ERROR);
-	// Switch messages between sockets
+	// Switch messages among sockets
     int more = 0; // Multipart detection
     uint32_ more_size = sizeof (more);
 	while (1) {
