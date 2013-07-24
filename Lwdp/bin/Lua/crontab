@@ -2,6 +2,7 @@ SHELL=/bin/bash
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 MAILTO=root
 HOME=/
+APPHOME=/usr/local/TcpServer/
 
 # For details see man 4 crontabs
 
@@ -14,5 +15,5 @@ HOME=/
 # |  |  |  |  |
 # *  *  *  *  * user-name command to be executed
 
-*/30	*	*	*	*	root lua /home/ptsf/Lua/DownSync.lua >/home/ptsf/log.txt 2>&1
+*/30	*	*	*	*	root lua $APPHOME/Lua/DownSync.lua > $APPHOME/log/DownSyncLog.txt 2>&1
 

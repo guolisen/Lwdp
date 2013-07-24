@@ -6,10 +6,10 @@ json = require ("dkjson")
 local DbServerIp  = "10.3.18.27"
 local DbUser 	  = "ptsf"
 local DbPassword  = "123456"
-local DbName 	  = "scenic"
+local DbName 	  = "scenic_0517"
 local DbPort 	  = 3306
 
-local REQ_ADDR = "http://10.3.18.27/cardc/1.0/sync/down"
+local REQ_ADDR = "http://10.3.18.67/cardc/1.0/sync/down"
 
 
 function get_html(url, post_value)
@@ -60,7 +60,12 @@ local function crete_insert_sql(db, tabName, jsonObj, metaObj)
 
 	for col_name, col_tab in pairs(metaObj) do 	
 		if col_tab.insert == "Y" then	
+			print("col_name: " .. col_name)
 			local col_value = jsonObj[col_name]
+			if col_value == nil then
+				print("Can't Find Colume(" .. col_name .. ")'s Value")
+				return nil;
+			end
 			if col_tab.primary == "Y" then
 				local pkLineSql = "SELECT COUNT(*) line_count FROM " .. tabName .. " WHERE " .. col_name .. " = " .. col_value
 				print(pkLineSql)
@@ -71,6 +76,7 @@ local function crete_insert_sql(db, tabName, jsonObj, metaObj)
 				end
 			end
 
+			print("col_value: " .. col_value)
 			table.insert(colSet, col_name)
 			if col_tab.type == "V" then
 				table.insert(valSet, "'" .. col_value .."'")
@@ -166,6 +172,7 @@ function main()
 	-- connect to data source
 	mysql_con = assert (env:connect(DbName, DbUser, DbPassword, DbServerIp, DbPort))
 
+	res = assert(mysql_con:execute([[set names utf8]]))
 	res = assert(mysql_con:execute([[SELECT DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i:%s') dt ]]))
 	ent_tab = assert(mysql_con:execute([[select enterprise_id ent_id,ekey from sc_enterprise]]))
 	ent_row = ent_tab:fetch ({}, "a") 
@@ -201,24 +208,31 @@ function main()
 			return 1
 		end		  
 
-		--print(html)
+		print("Receive Server Msg OK!")
+		print(html)
 		local srcObj, tmp, err = json.decode (html, 1, nil)
 		if err then
 			print ("Json Parse CC_Src Error:", err)
 			return 1
 		end
+		if srcObj.code ~= "0000" then
+			print ("Server Return Error: ", srcObj.msg)
+			return 1
+		end
 
-		for i = 1,#srcObj.data do
-			local update_sql = json_to_sql(mysql_con, sync_row.table_name, srcObj.data[i], sync_row.meta)
-			if update_sql ~= nil then
-				print(update_sql)
-				res = mysql_con:execute(update_sql)
-				if res == 0 then
-					print("Execute Sql Error")
-					return 1;
+		if srcObj.data then
+			for i = 1,#srcObj.data do
+				local update_sql = json_to_sql(mysql_con, sync_row.table_name, srcObj.data[i], sync_row.meta)
+				if update_sql ~= nil then
+					print(update_sql)
+					res = mysql_con:execute(update_sql)
+					if res == 0 then
+						print("Execute Sql Error")
+						return 1;
+					end
 				end
-			end
-		end	  
+			end	  
+		end
 
 		local updateTimeSql = [[update sc_sync set update_time=DATE_FORMAT(']] .. nowDate .. 
 			                  [[','%Y-%m-%d %H:%i:%s'),next_time=DATE_ADD(DATE_FORMAT(']] .. nowDate .. 

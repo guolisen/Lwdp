@@ -138,7 +138,7 @@ function main()
 			return 1
 		end	
 
-		--print(html)
+		print(html)
 		local srcObj, tmp, err = json.decode (html, 1, nil)
 		if err then
 			print ("Json Parse CC_Src Error: ", err)
