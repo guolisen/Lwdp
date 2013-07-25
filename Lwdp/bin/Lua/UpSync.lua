@@ -11,7 +11,7 @@ local DbPassword  = "123456"
 local DbName 	  = "scenic_0517"
 local DbPort 	  = 3306
 
-local REQ_ADDR = "http://10.3.18.27/cardc/1.0/sync/upload"
+local REQ_ADDR = "http://10.3.18.67/cardc/1.0/sync/upload"
 
 
 function get_html(url, post_value)
@@ -110,45 +110,47 @@ function main()
 			return 1;
 		end	
 
-		local sendSet = {}
 		reqTab_row = req_tab:fetch ({}, "a")	
-		
 		while reqTab_row do	
+		    print("-------------------------------------")
+			local sendSet = {}
 			for key,value in pairs(reqTab_row) do
 				--table.insert(sendSet, key .."="..  check_one("gbk", "utf-8", tostring(value)))
-				table.insert(sendSet, key .."="..  tostring(value))
+				table.insert(sendSet, 1, key .."="..  tostring(value))
 			end
+
+		    table.insert(sendSet, 1, "_task=".. sync_row.task_name)
+		    table.insert(sendSet, 1, "_ent_id=".. loc_ent_id)
+		    local sendStr = ""
+		    sendStr = table.concat(sendSet, "&")
+		
+			local md5Key = get_sign(sendStr, loc_ent_key)
+			sendStr = sendStr .. "&_sign=" .. md5Key
+
+			--print(md5Key)
+			print("Sending to CC (" .. sendStr .. ")")
+			ok, html = get_html(REQ_ADDR, sendStr)
+			if not ok or not html then
+			    print ("Send Request To CC Error")   
+				return 1
+			end	
+
+			print(html)
+			local srcObj, tmp, err = json.decode (html, 1, nil)
+			if err then
+				print ("Json Parse CC_Src Error: ", err)
+				return 1
+			end
+
+			if srcObj.code ~= "0000" then
+				print("CC Execute Error Return Code(" .. srcObj.code .. ") msg(" .. srcObj.msg .. ")")
+				retCode = 1
+			end
+
 			reqTab_row = req_tab:fetch ({}, "a")	
 	    end
 	    req_tab:close()
 
-	    table.insert(sendSet, "_task=".. sync_row.task_name)
-	    table.insert(sendSet, "_ent_id=".. loc_ent_id)
-	    local sendStr = ""
-	    sendStr = table.concat(sendSet, "&")
-	
-		local md5Key = get_sign(sendStr, loc_ent_key)
-		sendStr = sendStr .. "&_sign=" .. md5Key
-
-		--print(md5Key)
-		print("Sending to CC (" .. sendStr .. ")\n")
-		ok, html = get_html(REQ_ADDR, sendStr)
-		if not ok or not html then
-		    print ("Send Request To CC Error")   
-			return 1
-		end	
-
-		print(html)
-		local srcObj, tmp, err = json.decode (html, 1, nil)
-		if err then
-			print ("Json Parse CC_Src Error: ", err)
-			return 1
-		end
-
-		if srcObj.code ~= "0000" then
-			print("CC Execute Error Return Code(" .. srcObj.code .. ") msg(" .. srcObj.msg .. ")")
-			retCode = 1
-		end
 
 		local updateTimeSql = [[update sc_sync set update_time=DATE_FORMAT(']] .. nowDate .. 
 			                  [[','%Y-%m-%d %H:%i:%s'),next_time=DATE_ADD(DATE_FORMAT(']] .. nowDate .. 
