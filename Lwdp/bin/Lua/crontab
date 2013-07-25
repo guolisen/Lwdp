@@ -16,4 +16,6 @@ APPHOME=/usr/local/TcpServer/
 # *  *  *  *  * user-name command to be executed
 
 */30	*	*	*	*	root lua $APPHOME/Lua/DownSync.lua > $APPHOME/log/DownSyncLog.txt 2>&1
-
+*/30	*	*	*	*	root lua $APPHOME/Lua/UpSync.lua > $APPHOME/log/UpSyncLog.txt 2>&1
+0		0	*	*	*	root lua $APPHOME/Lua/SCDailySum.lua > $APPHOME/log/SCDailySumLog.txt 2>&1
+0		0	*	*	*	root lua $APPHOME/Lua/CCDailySum.lua > $APPHOME/log/CCDailySumLog.txt 2>&1

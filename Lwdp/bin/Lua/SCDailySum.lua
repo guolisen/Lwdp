@@ -239,6 +239,8 @@ function main()
 	end
 	Times_policy_result_tab:close()
 
+	print("//////////////////////// Sum Visitor ////////////////////////")	
+
 
 
 	mysql_con:close()
