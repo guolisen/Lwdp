@@ -17,8 +17,8 @@ function main()
 	local startTime = string.format("%s-%s-%s %s", timeTab.year, timeTab.month, timeTab.day, "00:00:00")
 	local endTime   = string.format("%s-%s-%s %s", timeTab.year, timeTab.month, timeTab.day, "23:59:59")
 	
-	startTime = "2000-07-25 10-22-00"
-	endTime   = "2100-07-25 10-22-00"
+	--startTime = "2000-07-25 10-22-00"
+	--endTime   = "2100-07-25 10-22-00"
 
 	day_tab = assert(mysql_con:execute([[select count(1) line_count from sc_day_stat where stat_date=']] .. nowDate .. [[' ]]))
 	day_row = day_tab:fetch ({}, "a") 

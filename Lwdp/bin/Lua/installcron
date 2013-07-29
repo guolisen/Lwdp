@@ -1,5 +1,9 @@
 cp -rf ./lualib/* /usr/lib64/lua/5.1/
 cp -rf ./lualib/* /usr/lib/lua/5.1/
 
+mkdir /usr/local/TcpServer
+mkdir /usr/local/TcpServer/Lua
+cp -rf * /usr/local/TcpServer/Lua
+
 cp -rf ./crontab /etc/
 service crond restart
