@@ -917,7 +917,8 @@ LWRESULT Cx_ACDevice::DeviceBulkDataMsgProcess(DBHandle db_handle,const uint8_* 
 		domain->msg 		= zmqMsg;
 		domain->object 		= this;
 		result = pthread_create(&t, NULL, work_thread, domain);
-		if(result != 0){
+		if(result != 0)
+		{
 			LWDP_LOG_PRINT("CT", LWDP_LOG_MGR::ERR, 
 						   "Can't Create Thread Ret: %d\n", result);
 

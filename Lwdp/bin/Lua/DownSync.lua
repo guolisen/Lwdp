@@ -64,28 +64,29 @@ local function crete_insert_sql(db, tabName, jsonObj, metaObj)
 			local col_value = jsonObj[col_name]
 			if col_value == nil then
 				print("Can't Find Colume(" .. col_name .. ")'s Value")
-				return nil;
-			end
-			if col_tab.primary == "Y" then
-				local pkLineSql = "SELECT COUNT(*) line_count FROM " .. tabName .. " WHERE " .. col_name .. " = " .. col_value
-				print(pkLineSql)
-				local res = assert(db:execute(pkLineSql))
-				local count_row = res:fetch ({}, "a")	
-				if tonumber(count_row.line_count) >= 1 then
-					return nil
+				--return nil;
+			else
+				if col_tab.primary == "Y" then
+					local pkLineSql = "SELECT COUNT(*) line_count FROM " .. tabName .. " WHERE " .. col_name .. " = " .. col_value
+					print(pkLineSql)
+					local res = assert(db:execute(pkLineSql))
+					local count_row = res:fetch ({}, "a")	
+					if tonumber(count_row.line_count) >= 1 then
+						return nil
+					end
 				end
-			end
 
-			print("col_value: " .. col_value)
-			table.insert(colSet, col_name)
-			if col_tab.type == "V" then
-				table.insert(valSet, "'" .. col_value .."'")
-			elseif col_tab.type == "N" then
-				table.insert(valSet,  col_value)
-			elseif col_tab.type == "D" then
-				table.insert(valSet,  "DATE_FORMAT('" .. col_value .. "','%Y-%m-%d')")
-			elseif col_tab.type == "T" then
-				table.insert(valSet,  "TIME_FORMAT('" .. col_value .. "','%H:%i:%s')")
+				print("col_value: " .. col_value)
+				table.insert(colSet, col_name)
+				if col_tab.type == "V" then
+					table.insert(valSet, "'" .. col_value .."'")
+				elseif col_tab.type == "N" then
+					table.insert(valSet,  col_value)
+				elseif col_tab.type == "D" then
+					table.insert(valSet,  "DATE_FORMAT('" .. col_value .. "','%Y-%m-%d')")
+				elseif col_tab.type == "T" then
+					table.insert(valSet,  "TIME_FORMAT('" .. col_value .. "','%H:%i:%s')")
+				end
 			end
 		end
 	end
@@ -93,6 +94,12 @@ local function crete_insert_sql(db, tabName, jsonObj, metaObj)
 	if #colSet == 0 or #valSet == 0 then 
 		return nil
 	end
+
+	local timeTab = os.date("*t")
+	local nowDate = string.format("%s-%s-%s %s:%s:%s", timeTab.year, timeTab.month, timeTab.day,
+													   timeTab.hour, timeTab.min, timeTab.sec)
+	table.insert(colSet, "update_time")
+	table.insert(valSet,  nowDate)
 
 	local colListStr = ""
 	local valListStr = ""
@@ -142,7 +149,7 @@ local function crete_update_sql(db, tabName, jsonObj, metaObj)
 	local updateColSet = ""
 	updateColSet = table.concat(colSet, ", ")
 
-	local sql = "update " .. tabName .. " set " .. updateColSet .. " where " .. whereStr;
+	local sql = "update " .. tabName .. " set " .. updateColSet .. ", update_time = DATE_FORMAT(NOW(),'%%Y-%%m-%%d %%H:%%i:%%s') where " .. whereStr;
 	return sql
 end
 
