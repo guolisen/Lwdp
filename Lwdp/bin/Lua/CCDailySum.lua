@@ -1,3 +1,9 @@
+
+--[[
+	Author: Guolisen
+	Notice: 必须在0点前执行脚本，才能统计当天信息，因为0点后获取时间是第二天数据
+
+]]
 luasql = require("luasql.mysql")
 
 
