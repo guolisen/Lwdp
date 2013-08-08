@@ -19,3 +19,4 @@ APPHOME=/usr/local/TcpServer/
 */30	*	*	*	*	root lua $APPHOME/Lua/UpSync.lua > $APPHOME/log/UpSyncLog.txt 2>&1
 0		23	*	*	*	root lua $APPHOME/Lua/SCDailySum.lua > $APPHOME/log/SCDailySumLog.txt 2>&1
 30		23	*	*	*	root lua $APPHOME/Lua/CCDailySum.lua > $APPHOME/log/CCDailySumLog.txt 2>&1
+30		22	*	*	*	root lua $APPHOME/Lua/Visitor.lua > $APPHOME/log/Visitor.txt 2>&1
