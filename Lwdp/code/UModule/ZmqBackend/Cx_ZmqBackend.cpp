@@ -519,7 +519,7 @@ LWRESULT Cx_ZmqBackend::Init()
 			return ZMQBACKEND::LWDP_CREATE_DETACH_THREAD_ERR;
 		}
 
-		for(int32_ i=0; i<workThreadNum; ++i)
+		for(int32_ i=0; i<10; ++i) //Try 10 times
 		{
 			if(gThreadInitTag < 0)
 			{
@@ -531,7 +531,7 @@ LWRESULT Cx_ZmqBackend::Init()
 			else if(1 == gThreadInitTag)
 				break;
 
-			Api_TaskDelay(500);
+			Api_TaskDelay(1000);
 		}
 
 		if(!gThreadInitTag)
